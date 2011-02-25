@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<mission>
+  <pockets>
+    <pocket id="1">
+      <damagetype>Thermal</damagetype>
+      <actions>
+        <action name="MoveTo">
+          <parameter name="target" value="Acceleration Gate (Locked Down)" />
+        </action>
+        <action name="ClearPocket" />
+        <action name="Done" />
+      </actions>
+    </pocket>
+  </pockets>
+</mission>

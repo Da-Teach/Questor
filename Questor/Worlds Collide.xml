@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<mission>
+  <pockets>
+    <pocket id="0">
+      <damagetype>Kinetic</damagetype>
+      <actions>
+        <action name="Kill">
+          <parameter name="Target" value="Core Flotilla Admiral" />
+        </action>
+        <action name="Kill">
+          <parameter name="Target" value="Core Rear Admiral" />
+        </action>
+        <action name="Kill">
+          <parameter name="Target" value="Guardian Veteran" />
+        </action>
+        <action name="Activate">
+          <parameter name="Target" value="Gate To The Serpentis Base" />
+        </action>
+      </actions>
+    </pocket>
+    <pocket id="1">
+      <damagetype>Kinetic</damagetype>
+      <actions>
+        <action name="WaitUntilTargeted">
+          <parameter name="Timeout" value="15" />
+        </action>
+        <action name="ClearPocket" />
+        <action name="Loot" />
+        <action name="Activate">
+          <parameter name="Target" value="Gate To The Research Outpost" />
+        </action>
+      </actions>
+    </pocket>
+    <pocket id="2">
+      <damagetype>Kinetic</damagetype>
+      <actions>
+        <action name="WaitUntilTargeted">
+          <parameter name="Timeout" value="15" />
+        </action>
+        <action name="ClearPocket" />
+        <action name="Loot">
+          <parameter name="Item" value="Ship's Crew" />
+        </action>
+        <action name="Activate">
+          <parameter name="Target" value="Gate To The Warzone" />
+        </action>
+      </actions>
+    </pocket>
+    <pocket id="3">
+      <damagetype>Kinetic</damagetype>
+      <actions>
+        <action name="ClearPocket" />
+        <action name="Activate">
+          <parameter name="Target" value="Gate To The Guristas Base" />
+        </action>
+      </actions>
+    </pocket>
+    <pocket id="4">
+      <damagetype>Kinetic</damagetype>
+      <actions>
+        <action name="WaitUntilTargeted">
+          <parameter name="Timeout" value="15" />
+        </action>
+        <action name="ClearPocket" />
+        <action name="Loot" />
+        <action name="Done" />
+      </actions>
+    </pocket>
+  </pockets>
+</mission>

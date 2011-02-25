@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<settings>
+  <!-- Auto start when Questor is loaded -->
+  <autoStart>true</autoStart>
+
+  <!-- Random delay between missions -->
+  <randomDelay>60</randomDelay>
+
+  <!-- X Position of Questor Window -->
+  <windowXPosition>1600</windowXPosition>
+
+  <!-- Y Position of Questor Window -->
+  <windowYPosition>1050</windowYPosition>
+
+  <!-- The agent that you are running missions for -->
+  <agentName></agentName>
+
+  <!-- List of missions which the bot will always decline -->
+  <blacklist>
+    <mission>Enemies Abound (1 of 5)</mission>
+  </blacklist>
+
+  <!-- missionsPath is the sub-directory where the mission xml's are located -->
+  <missionsPath>Caldari Missions</missionsPath>
+
+  <!-- Corporation hangar to use for loot (empty is personal hangar) -->
+  <lootHangar></lootHangar>
+
+  <!-- Corporation hangar to use for ammo (empty is personal hangar) -->
+  <ammoHangar></ammoHangar>
+
+  <!-- Ship used for combat missions, empty means current ship -->
+  <combatShipName></combatShipName>
+
+  <!-- Ship used for after mission salvaging, empty means current ship -->
+  <salvageShipName></salvageShipName>
+
+  <!-- Create salvage bookmarks once a pocket has been cleared and there are wrecks/cans left
+       Note: All salvage bookmarks will be in this naming format:  BookmarkPrefix [time]
+       Note: It will check all salvage bookmarks to see if the current spot has to be bookmarked 
+       Warning: The bot could become slow with a lot of salvage-bookmarks, make sure that
+                after mission salvaging is enabled or that you manually delete bookmarks! -->
+  <createSalvageBookmarks>true</createSalvageBookmarks>
+
+  <!-- All salvage bookmarks will be prefixed by this string, default: Salvage: -->
+  <bookmarkPrefix>Salvage:</bookmarkPrefix>
+
+  <!-- Minimum amount of wrecks / unlooted containers needed for a bookmark to be created -->
+  <minimumWreckCount>5</minimumWreckCount>
+
+  <!-- After-mission salvaging, this will cause the bot to visit all salvage bookmarks 
+       with the salvage ship and pickup loot / salvage wrecks 
+       Note: After mission salvaging will *only* take place if there are *no* accepted missions left ! -->
+  <afterMissionSalvaging>false</afterMissionSalvaging>
+
+  <!-- Unload loot at station when doing after-mission salvaging (*only* when doing after-mission salvaging)
+       Note: If this is disabled then the bot will use the isk/m3 algorithm used in missions to dump low-value loot -->
+  <unloadLootAtStation>false</unloadLootAtStation>
+
+  <!-- Maximum number of targets per value -->
+  <maximumHighValueTargets>4</maximumHighValueTargets>
+  <maximumLowValueTargets>3</maximumLowValueTargets>
+
+  <!-- When defining ammo here, do NOT define them by the damage that the ammo does 
+       but define them based on the ammo you want to use when the bot faces rats weak 
+       to the damageType, each damage type HAS to be present at least once! -->
+  <ammoTypes>
+    <ammoType typeId="24527" damageType="EM"        range="55000" quantity="1250" />
+    <ammoType typeId="27339" damageType="EM"        range="35000" quantity="1250" />
+    <ammoType typeId="24529" damageType="Kinetic"   range="55000" quantity="1250" />
+    <ammoType typeId="27345" damageType="Kinetic"   range="35000" quantity="1250" />
+    <ammoType typeId="24525" damageType="Thermal"   range="55000" quantity="1250" />
+    <ammoType typeId="27351" damageType="Thermal"   range="35000" quantity="1250" />
+    <ammoType typeId="2801"  damageType="Explosive" range="55000" quantity="1250" />
+    <ammoType typeId="27359" damageType="Explosive" range="35000" quantity="1250" />
+  </ammoTypes>
+
+  <!-- If the weapon has less then minimumAmmoCharges, the weapon is forced to reload 
+       before attacking a new target -->
+  <minimumAmmoCharges>6</minimumAmmoCharges>
+
+  <!-- Weapon group (508 = Siege, 506 = Cruise, 771 = HAM, etc) -->
+  <weaponGroupId>508</weaponGroupId>
+
+  <!-- Amount of cargo capacity to reserve, should be at least 80m3 if you are salvaging -->
+  <reserveCargoCapacity>100</reserveCargoCapacity>
+
+  <!-- maximum number of wreck targets, at least 1 is required for salvager or tractor beam to work -->
+  <maximumWreckTargets>2</maximumWreckTargets>
+
+  <!-- When SpeedTank is enabled, Combat-module will try to orbit ships at orbitDistance -->
+  <speedTank>false</speedTank>
+
+  <!-- The range used by SpeedTank -->
+  <orbitDistance>5000</orbitDistance>
+
+  <!-- Activate shield booster or armor rep when shields/armor drop below this percentage -->
+  <activateRepairModules>65</activateRepairModules>
+
+  <!-- Deactivate shield booster or armor rep when shields/armor are above this percentage -->
+  <deactivateRepairModules>95</deactivateRepairModules>
+
+  <!-- Minimum amount of shields before the bot panics and warps to safety -->
+  <minimumShieldPct>50</minimumShieldPct>
+
+  <!-- Minimum amount of armor before the bot panics and warps to safety -->
+  <minimumArmorPct>0</minimumArmorPct>
+
+  <!-- Minimum amount of capacitor before the bot panics and warps to safety -->
+  <minimumCapacitorPct>15</minimumCapacitorPct>
+
+  <!-- Amount of capacitor that is seen as "safe" to return to the mission -->
+  <safeCapacitorPct>65</safeCapacitorPct>
+
+  <!-- Loot everything or only mission loot, if turned off empty loot-actions are ignored 
+       and the action is finished as soon as the mission item is in the ship's cargo, if turned
+       on then the bot will loot all wrecks/cans before finishing the loot-action -->
+  <lootEverything>true</lootEverything>
+
+  <!-- Use drones, disable on ships without a drone bay! -->
+  <useDrones>true</useDrones>
+
+  <!-- Drone type id to load (set to 0 to not reload drones) -->
+  <droneTypeId>2488</droneTypeId>
+
+  <!-- Maximum drone control range -->
+  <droneControlRange>50000</droneControlRange>
+
+  <!-- Do not launch drones if below this shield percentage -->
+  <droneMinimumShieldPct>55</droneMinimumShieldPct>
+
+  <!-- Do not launch drones if below this armor percentage -->
+  <droneMinimumArmorPct>0</droneMinimumArmorPct>
+
+  <!-- Do not launch drones if below this capacitor percentage -->
+  <droneMinimumCapacitorPct>35</droneMinimumCapacitorPct>
+
+  <!-- Recall drones if below this shield percentage -->
+  <droneRecallShieldPct>60</droneRecallShieldPct>
+
+  <!-- Recall drones if below this armor percentage -->
+  <droneRecallArmorPct>0</droneRecallArmorPct>
+
+  <!-- Recall drones if below this capacitor percentage -->
+  <droneRecallCapacitorPct>25</droneRecallCapacitorPct>
+
+  <!-- Recall drones if below this shield percentage and further away then half the drone control range -->
+  <longRangeDroneRecallShieldPct>60</longRangeDroneRecallShieldPct>
+
+  <!-- Recall drones if below this armor percentage and further away then half the drone control range -->
+  <longRangeDroneRecallArmorPct>0</longRangeDroneRecallArmorPct>
+
+  <!-- Recall drones if below this capacitor percentage and further away then half the drone control range -->
+  <longRangeDroneRecallCapacitorPct>30</longRangeDroneRecallCapacitorPct>
+</settings>
