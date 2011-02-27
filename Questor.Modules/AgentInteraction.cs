@@ -36,6 +36,13 @@ namespace Questor.Modules
             AmmoToLoad = new List<Ammo>();
         }
 
+        public long AgentId { get; set; }
+        public DirectAgent Agent
+        {
+            get { return Cache.Instance.DirectEve.GetAgentById(AgentId); }
+        }
+
+        public bool ForceAccept { get; set; }
         public AgentInteractionState State { get; set; }
         public AgentInteractionPurpose Purpose { get; set; }
 
@@ -49,7 +56,7 @@ namespace Questor.Modules
 
         private void WaitForConversation()
         {
-            var agentWindow = Cache.Instance.Agent.Window;
+            var agentWindow = Agent.Window;
             if (agentWindow == null || !agentWindow.IsReady)
                 return;
 
@@ -60,7 +67,7 @@ namespace Questor.Modules
 
         private void ReplyToAgent()
         {
-            var agentWindow = Cache.Instance.Agent.Window;
+            var agentWindow = Agent.Window;
             if (agentWindow == null || !agentWindow.IsReady)
                 return;
 
@@ -163,7 +170,7 @@ namespace Questor.Modules
 
         private void WaitForMission()
         {
-            var agentWindow = Cache.Instance.Agent.Window;
+            var agentWindow = Agent.Window;
             if (agentWindow == null || !agentWindow.IsReady)
                 return;
 
@@ -178,18 +185,23 @@ namespace Questor.Modules
                 return;
             }
 
-            var mission = Cache.Instance.Mission;
+            var mission = Cache.Instance.DirectEve.AgentMissions.FirstOrDefault(m => m.AgentId == AgentId);
             if (mission == null)
                 return;
 
-            // Is the mission offered?
-            if (mission.State == (int) MissionState.Offered && (mission.Type == "Courier" || mission.Type == "Mining" || mission.Type == "Trade" || Settings.Instance.Blacklist.Any(m => m.ToLower() == Cache.Instance.MissionName.ToLower())))
-            {
-                Logging.Log("AgentInteraction: Declining courier/mining/trade/blacklisted mission [" + Cache.Instance.MissionName + "]");
+            var missionName = Cache.Instance.FilterPath(mission.Name);
 
-                State = AgentInteractionState.DeclineMission;
-                _nextAction = DateTime.Now.AddSeconds(7);
-                return;
+            if (!ForceAccept)
+            {
+                // Is the mission offered?
+                if (mission.State == (int) MissionState.Offered && (mission.Type == "Courier" || mission.Type == "Mining" || mission.Type == "Trade" || Settings.Instance.Blacklist.Any(m => m.ToLower() == missionName.ToLower())))
+                {
+                    Logging.Log("AgentInteraction: Declining courier/mining/trade/blacklisted mission [" + missionName + "]");
+
+                    State = AgentInteractionState.DeclineMission;
+                    _nextAction = DateTime.Now.AddSeconds(7);
+                    return;
+                }
             }
 
             var html = agentWindow.Objective;
@@ -204,10 +216,10 @@ namespace Questor.Modules
 
             var loadedAmmo = false;
 
-            var missionXmlPath = Path.Combine(Settings.Instance.MissionsPath, Cache.Instance.MissionName + ".xml");
+            var missionXmlPath = Path.Combine(Settings.Instance.MissionsPath, missionName + ".xml");
             if (File.Exists(missionXmlPath))
             {
-                Logging.Log("AgentInteraction: Loading mission xml [" + Cache.Instance.MissionName + "]");
+                Logging.Log("AgentInteraction: Loading mission xml [" + missionName + "]");
                 try
                 {
                     var missionXml = XDocument.Load(missionXmlPath);
@@ -226,7 +238,7 @@ namespace Questor.Modules
 
             if (!loadedAmmo)
             {
-                Logging.Log("AgentInteraction: No damage type for [" + Cache.Instance.MissionName + "] specified");
+                Logging.Log("AgentInteraction: Detecting damage type for [" + missionName + "]");
 
                 Cache.Instance.DamageType = GetMissionDamageType(html);
                 LoadSpecificAmmo(new[] {Cache.Instance.DamageType});
@@ -234,14 +246,14 @@ namespace Questor.Modules
 
             if (mission.State == (int) MissionState.Offered)
             {
-                Logging.Log("AgentInteraction: Accepting mission [" + Cache.Instance.MissionName + "]");
+                Logging.Log("AgentInteraction: Accepting mission [" + missionName + "]");
 
                 State = AgentInteractionState.AcceptMission;
                 _nextAction = DateTime.Now.AddSeconds(7);
             }
             else // If we already accepted the mission, close the convo
             {
-                Logging.Log("AgentInteraction: Mission [" + Cache.Instance.MissionName + "] already accepted");
+                Logging.Log("AgentInteraction: Mission [" + missionName + "] already accepted");
                 Logging.Log("AgentInteraction: Closing conversation");
 
                 State = AgentInteractionState.CloseConversation;
@@ -251,7 +263,7 @@ namespace Questor.Modules
 
         private void AcceptMission()
         {
-            var agentWindow = Cache.Instance.Agent.Window;
+            var agentWindow = Agent.Window;
             if (agentWindow == null || !agentWindow.IsReady)
                 return;
 
@@ -273,7 +285,7 @@ namespace Questor.Modules
 
         private void DeclineMission()
         {
-            var agentWindow = Cache.Instance.Agent.Window;
+            var agentWindow = Agent.Window;
             if (agentWindow == null || !agentWindow.IsReady)
                 return;
 
@@ -296,7 +308,7 @@ namespace Questor.Modules
 
         public void CloseConversation()
         {
-            var agentWindow = Cache.Instance.Agent.Window;
+            var agentWindow = Agent.Window;
             if (agentWindow == null)
             {
                 Logging.Log("AgentInteraction: Done");
@@ -321,7 +333,7 @@ namespace Questor.Modules
                     break;
 
                 case AgentInteractionState.StartConversation:
-                    Cache.Instance.Agent.InteractWith();
+                    Agent.InteractWith();
 
                     Logging.Log("AgentInteraction: Waiting for conversation");
                     State = AgentInteractionState.WaitForConversation;

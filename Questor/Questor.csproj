@@ -64,6 +64,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Questor.cs" />
     <Compile Include="QuestorState.cs" />
+    <Compile Include="Storylines\IStoryline.cs" />
+    <Compile Include="Storylines\MaterialsForWarPreparation.cs" />
+    <Compile Include="Storylines\Storyline.cs" />
+    <Compile Include="Storylines\StorylineState.cs" />
     <EmbeddedResource Include="frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
     </EmbeddedResource>

@@ -16,6 +16,7 @@ namespace Questor
     using System.Reflection;
     using DirectEve;
     using global::Questor.Modules;
+    using global::Questor.Storylines;
 
     public class Questor
     {
@@ -29,6 +30,7 @@ namespace Questor
         private DateTime _lastPulse;
         private MissionController _missionController;
         private Panic _panic;
+        private Storyline _storyline;
 
         private Salvage _salvage;
         private Traveler _traveler;
@@ -54,6 +56,7 @@ namespace Questor
             _missionController = new MissionController();
             _drones = new Drones();
             _panic = new Panic();
+            _storyline = new Storyline();
 
             Settings.Instance.SettingsLoaded += SettingsLoaded;
 
@@ -102,11 +105,14 @@ namespace Questor
                 ValidSettings = false;
             }
 
-            if (Cache.Instance.Agent == null || !Cache.Instance.Agent.IsValid)
+            var agent = Cache.Instance.DirectEve.GetAgentByName(Settings.Instance.AgentName);
+            if (agent == null || !agent.IsValid)
             {
                 Logging.Log("Settings: Unable to locate agent [" + Settings.Instance.AgentName + "]");
                 ValidSettings = false;
             }
+            else
+                _agentInteraction.AgentId = agent.AgentId;
             
             AutoStart = Settings.Instance.AutoStart;
         }
@@ -325,6 +331,15 @@ namespace Questor
                 case QuestorState.Start:
                     if (_agentInteraction.State == AgentInteractionState.Idle)
                     {
+                        if (_storyline.HasStoryline())
+                        {
+                            Logging.Log("Questor: Storyline detected, doing storyline.");
+
+                            _storyline.Reset();
+                            State = QuestorState.Storyline;
+                            break;
+                        }
+
                         Logging.Log("AgentInteraction: Start conversation [Start Mission]");
 
                         _agentInteraction.State = AgentInteractionState.StartConversation;
@@ -663,6 +678,18 @@ namespace Questor
                     finally
                     {
                         ApplySettings();
+                    }
+                    break;
+
+                case QuestorState.Storyline:
+                    _storyline.ProcessState();
+
+                    if (_storyline.State == StorylineState.Done)
+                    {
+                        Logging.Log("Questor: We have completed the storyline, returning to base");
+
+                        State = QuestorState.GotoBase;
+                        break;
                     }
                     break;
             }
