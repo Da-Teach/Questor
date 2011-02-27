@@ -397,7 +397,7 @@ namespace Questor
 
                 case QuestorState.GotoMission:
                     var missionDestination = _traveler.Destination as MissionBookmarkDestination;
-                    if (missionDestination == null) // We assume that this will always work "correctly" (tm)
+                    if (missionDestination == null || missionDestination.AgentId != Cache.Instance.Agent.AgentId) // We assume that this will always work "correctly" (tm)
                         _traveler.Destination = new MissionBookmarkDestination(Cache.Instance.GetMissionBookmark("Encounter"));
 
                     if (Cache.Instance.PriorityTargets.Any(pt => pt != null && pt.IsValid))
@@ -417,7 +417,7 @@ namespace Questor
                         // Seeing as we just warped to the mission, start the mission controller
                         _missionController.State = MissionControllerState.Start;
                         _combat.State = CombatState.CheckTargets;
-                        
+
                         _traveler.Destination = null;
                     }
                     break;
@@ -608,6 +608,7 @@ namespace Questor
                     if (_traveler.State == TravelerState.AtDestination)
                     {
                         State = QuestorState.Salvage;
+
                         _traveler.Destination = null;
                     }
 
