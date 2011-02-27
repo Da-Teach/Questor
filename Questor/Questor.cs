@@ -417,6 +417,8 @@ namespace Questor
                         // Seeing as we just warped to the mission, start the mission controller
                         _missionController.State = MissionControllerState.Start;
                         _combat.State = CombatState.CheckTargets;
+                        
+                        _traveler.Destination = null;
                     }
                     break;
 
@@ -521,6 +523,8 @@ namespace Questor
                             State = QuestorState.CompleteMission;
                         else
                             State = QuestorState.UnloadLoot;
+
+                        _traveler.Destination = null;
                     }
 
                     if (Settings.Instance.DebugStates)
@@ -602,7 +606,10 @@ namespace Questor
                 case QuestorState.GotoSalvageBookmark:
                     _traveler.ProcessState();
                     if (_traveler.State == TravelerState.AtDestination)
+                    {
                         State = QuestorState.Salvage;
+                        _traveler.Destination = null;
+                    }
 
                     if (Settings.Instance.DebugStates)
                         Logging.Log("Traveler.State = " + _traveler.State);
