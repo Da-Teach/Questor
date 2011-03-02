@@ -1,5 +1,6 @@
 ﻿namespace Questor.Storylines
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DirectEve;
@@ -9,7 +10,8 @@
     {
         public StorylineState State { get; set; }
 
-        private long _agentId;
+        public long AgentId { get; private set; }
+        
         private IStoryline _storyline;
         private Dictionary<string, IStoryline> _storylines;
         private List<long> _agentBlacklist;
@@ -17,6 +19,8 @@
         private Combat _combat;
         private Traveler _traveler;
         private AgentInteraction _agentInteraction;
+
+        private DateTime _nextAction;
 
         public Storyline()
         {
@@ -28,14 +32,17 @@
 
             _storylines = new Dictionary<string, IStoryline>();
             _storylines.Add("Materials For War Preparation", new MaterialsForWarPreparation());
+            _storylines.Add("Shipyard Theft", new GenericCombatStoryline());
         }
 
         public void Reset()
         {
             State = StorylineState.Idle;
-            _agentId = 0;
+            AgentId = 0;
             _storyline = null;
             _agentInteraction.State = AgentInteractionState.Idle;
+            _traveler.State = TravelerState.Idle;
+            _traveler.Destination = null;
         }
 
         private DirectAgentMission Mission
@@ -43,8 +50,8 @@
             get
             {
                 IEnumerable<DirectAgentMission> missions = Cache.Instance.DirectEve.AgentMissions;
-                if (_agentId != 0)
-                    return missions.FirstOrDefault(m => m.AgentId == _agentId);
+                if (AgentId != 0)
+                    return missions.FirstOrDefault(m => m.AgentId == AgentId);
 
                 missions = missions.Where(m => !_agentBlacklist.Contains(m.AgentId));
                 missions = missions.Where(m => m.Important);
@@ -63,11 +70,11 @@
                 return;
             }
 
-            _agentId = mission.AgentId;
-            var agent = Cache.Instance.DirectEve.GetAgentById(_agentId);
+            AgentId = mission.AgentId;
+            var agent = Cache.Instance.DirectEve.GetAgentById(AgentId);
             if (agent == null)
             {
-                Logging.Log("Storyline: Unknown agent [" + _agentId + "]");
+                Logging.Log("Storyline: Unknown agent [" + AgentId + "]");
 
                 State = StorylineState.Done;
                 return;
@@ -79,9 +86,9 @@
             _storyline = _storylines[Cache.Instance.FilterPath(mission.Name)];
         }
 
-        private void GotoAgentState()
+        private void GotoAgent(StorylineState nextState)
         {
-            var agent = Cache.Instance.DirectEve.GetAgentById(_agentId);
+            var agent = Cache.Instance.DirectEve.GetAgentById(AgentId);
             if (agent == null)
             {
                 State = StorylineState.Done;
@@ -100,10 +107,80 @@
 
             _traveler.ProcessState();
             if (_traveler.State == TravelerState.AtDestination)
-                State = StorylineState.PreAcceptMission;
+            {
+                State = nextState;
+                _traveler.Destination = null;
+            }
 
             if (Settings.Instance.DebugStates)
                 Logging.Log("Traveler.State = " + _traveler.State);
+        }
+
+        private void BringSpoilsOfWar()
+        {
+            var directEve = Cache.Instance.DirectEve;
+            if (_nextAction > DateTime.Now)
+                return;
+
+            // Open the item hangar (should still be open)
+            var hangar = directEve.GetItemHangar();
+            if (hangar.Window == null)
+            {
+                _nextAction = DateTime.Now.AddSeconds(10);
+
+                Logging.Log("MaterialsForWarPreparation: Opening hangar floor");
+
+                directEve.ExecuteCommand(DirectCmd.OpenHangarFloor);
+                return;
+            }
+
+            // Wait for it to become ready
+            if (!hangar.IsReady)
+                return;
+
+            // Do we have any implants?
+            if (!hangar.Items.Any(i => i.GroupId == 745))
+            {
+                State = StorylineState.Done;
+                return;
+            }
+
+            // Yes, open the ships cargo
+            var cargo = directEve.GetShipsCargo();
+            if (cargo.Window == null)
+            {
+                _nextAction = DateTime.Now.AddSeconds(10);
+
+                Logging.Log("MaterialsForWarPreparation: Opening cargo");
+
+                directEve.ExecuteCommand(DirectCmd.OpenCargoHoldOfActiveShip);
+                return;
+            }
+
+            if (!cargo.IsReady)
+                return;
+
+            // If we aren't moving items
+            if (Cache.Instance.DirectEve.GetLockedItems().Count == 0)
+            {
+                // Move all the implants to the cargo bay
+                foreach (var item in hangar.Items.Where(i => i.GroupId == 745))
+                {
+                    if (cargo.UsedCapacity - cargo.Capacity - (item.Volume * item.Quantity) < 0)
+                    {
+                        Logging.Log("MaterialsForWarPreparation: We are full, not moving anything else");
+                        State = StorylineState.Done;
+                        return;
+                    }
+
+                    Logging.Log("MaterialsForWarPreparation: Moving [" + item.Name + "][" + item.ItemId + "] to cargo");
+                    cargo.Add(item.ItemId, item.Quantity ?? 1);
+                }
+
+                _nextAction = DateTime.Now.AddSeconds(10);
+            }
+
+            return;
         }
 
         public void ProcessState()
@@ -115,15 +192,15 @@
                     break;
 
                 case StorylineState.Arm:
-                    State = _storyline.Arm();
+                    State = _storyline.Arm(this);
                     break;
 
                 case StorylineState.GotoAgent:
-                    GotoAgentState();
+                    GotoAgent(StorylineState.PreAcceptMission);
                     break;
 
                 case StorylineState.PreAcceptMission:
-                    State = _storyline.PreAcceptMission();
+                    State = _storyline.PreAcceptMission(this);
                     break;
 
                 case StorylineState.AcceptMission:
@@ -133,7 +210,7 @@
 
                         _agentInteraction.State = AgentInteractionState.StartConversation;
                         _agentInteraction.Purpose = AgentInteractionPurpose.StartMission;
-                        _agentInteraction.AgentId = _agentId;
+                        _agentInteraction.AgentId = AgentId;
                         _agentInteraction.ForceAccept = true;
                     }
 
@@ -149,8 +226,12 @@
                     }
                     break;
                 
-                case StorylineState.PostAcceptMission:
-                    State = _storyline.PostAcceptMission();
+                case StorylineState.ExecuteMission:
+                    State = _storyline.ExecuteMission(this);
+                    break;
+
+                case StorylineState.ReturnToAgent:
+                    GotoAgent(StorylineState.CompleteMission);
                     break;
 
                 case StorylineState.CompleteMission:
@@ -170,16 +251,16 @@
                     if (_agentInteraction.State == AgentInteractionState.Done)
                     {
                         _agentInteraction.State = AgentInteractionState.Idle;
-                        State = StorylineState.PostCompleteMission;
+                        State = StorylineState.BringSpoilsOfWar;
                     }
                     break;
 
-                case StorylineState.PostCompleteMission:
-                    State = _storyline.PostCompleteMission();
+                case StorylineState.BringSpoilsOfWar:
+                    BringSpoilsOfWar();
                     break;
 
                 case StorylineState.BlacklistAgent:
-                    _agentBlacklist.Add(_agentId);
+                    _agentBlacklist.Add(AgentId);
                     State = StorylineState.Done;
                     break;
 

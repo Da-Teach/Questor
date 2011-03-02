@@ -24,6 +24,9 @@ namespace Questor.Modules
             AmmoToLoad = new List<Ammo>();
         }
 
+        // Bleh, dont want this here :(
+        public long AgentId { get; set; }
+
         public ArmState State { get; set; }
         public List<Ammo> AmmoToLoad { get; private set; }
 
@@ -113,7 +116,7 @@ namespace Questor.Modules
                     }
 
                     _missionItemMoved = false;
-                    Cache.Instance.RefreshMissionItems();
+                    Cache.Instance.RefreshMissionItems(AgentId);
                     if (AmmoToLoad.Count == 0 && string.IsNullOrEmpty(Cache.Instance.BringMissionItem))
                     {
                         Logging.Log("Arm: Done");

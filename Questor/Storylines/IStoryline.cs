@@ -2,9 +2,8 @@
 {
     interface IStoryline
     {
-        StorylineState Arm();
-        StorylineState PreAcceptMission();
-        StorylineState PostAcceptMission();
-        StorylineState PostCompleteMission();
+        StorylineState Arm(Storyline storyline);
+        StorylineState PreAcceptMission(Storyline storyline);
+        StorylineState ExecuteMission(Storyline storyline);
     }
 }

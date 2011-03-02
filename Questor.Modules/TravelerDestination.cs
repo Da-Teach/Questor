@@ -281,7 +281,7 @@ namespace Questor.Modules
 
         private static DirectAgentMissionBookmark GetMissionBookmark(long agentId, string title)
         {
-            var mission = Cache.Instance.MissionByAgentId(agentId);
+            var mission = Cache.Instance.GetAgentMission(agentId);
             if (mission == null)
                 return null;
 

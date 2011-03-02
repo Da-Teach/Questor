@@ -8,9 +8,11 @@
         PreAcceptMission,
         AcceptMission,
         PostAcceptMission,
+        ExecuteMission,
         CompleteMission,
         Done,
         BlacklistAgent,
-        PostCompleteMission
+        BringSpoilsOfWar,
+        ReturnToAgent
     }
 }

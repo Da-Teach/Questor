@@ -26,6 +26,10 @@ namespace Questor.Modules
         private DateTime _lastEngageCommand;
         private DateTime _lastRecallCommand;
 
+        private int _recallCount;
+        private DateTime _lastLaunch;
+        private DateTime _lastRecall;
+
         private long _lastTarget;
         private DateTime _launchTimeout;
         private int _launchTries;
@@ -168,12 +172,34 @@ namespace Questor.Modules
 
                         // yes if there are targets to kill
                         launch &= Cache.Instance.TargetedBy.Count(e => !e.IsSentry && e.IsNpc && e.Distance < Settings.Instance.DroneControlRange) > 0;
+
+                        // If drones get agro'd within 30 seconds, then wait (5 * _recallCount + 5) seconds since the last recall
+                        if (_lastLaunch < _lastRecall && _lastRecall.Subtract(_lastLaunch).TotalSeconds < 30)
+                        {
+                            if (_lastRecall.AddSeconds(5 * _recallCount + 5) < DateTime.Now)
+                            {
+                                // Increase recall count and allow the launch
+                                _recallCount++;
+
+                                // Never let _recallCount go above 5
+                                if (_recallCount > 5)
+                                    _recallCount = 5;
+                            }
+                            else
+                            {
+                                // Do not launch the drones until the delay has passed
+                                launch = false;
+                            }
+                        }
+                        else // Drones have been out for more then 30s 
+                            _recallCount = 0;
                     }
 
                     if (launch)
                     {
                         // Reset launch tries
                         _launchTries = 0;
+                        _lastLaunch = DateTime.Now;
                         State = DroneState.Launch;
                     }
                     break;

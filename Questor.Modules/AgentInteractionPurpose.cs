@@ -13,5 +13,6 @@ namespace Questor.Modules
     {
         StartMission,
         CompleteMission,
+        AmmoCheck
     }
 }

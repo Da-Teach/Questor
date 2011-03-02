@@ -112,8 +112,12 @@ namespace Questor
                 ValidSettings = false;
             }
             else
+            {
                 _agentInteraction.AgentId = agent.AgentId;
-            
+                _missionController.AgentId = agent.AgentId;
+                _arm.AgentId = agent.AgentId;
+            }
+
             AutoStart = Settings.Instance.AutoStart;
         }
 
@@ -246,10 +250,11 @@ namespace Questor
             if (Cache.Instance.InWarp)
                 return;
 
+            var mission = Cache.Instance.GetAgentMission(Cache.Instance.AgentId);
             switch (State)
             {
                 case QuestorState.Idle:
-                    if (!string.IsNullOrEmpty(Mission) && (Cache.Instance.Mission == null || Cache.Instance.Mission.Name != Mission || Cache.Instance.Mission.State != (int) MissionState.Accepted))
+                    if (!string.IsNullOrEmpty(Mission) && (mission == null || mission.Name != Mission || mission.State != (int)MissionState.Accepted))
                     {
                         // Do not save statistics if loyalty points == -1
                         // Seeing as we completed a mission, we will have loyalty points for this agent
@@ -258,7 +263,7 @@ namespace Questor
 
                         // Get the path
                         var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                        var filename = Path.Combine(path, CharacterName + ".statistics.log");
+                        var filename = Path.Combine(path, Cache.Instance.FilterPath(CharacterName) + ".statistics.log");
 
                         // Write the header
                         if (!File.Exists(filename))
@@ -360,11 +365,11 @@ namespace Questor
 
                     if (_agentInteraction.State == AgentInteractionState.Done)
                     {
-                        if (Cache.Instance.Mission != null)
+                        if (mission != null)
                         {
                             // Update loyalty points again (the first time might return -1)
                             LoyaltyPoints = Cache.Instance.Agent.LoyaltyPoints;
-                            Mission = Cache.Instance.Mission.Name;
+                            Mission = mission.Name;
                         }
 
                         _agentInteraction.State = AgentInteractionState.Idle;
@@ -397,8 +402,8 @@ namespace Questor
 
                 case QuestorState.GotoMission:
                     var missionDestination = _traveler.Destination as MissionBookmarkDestination;
-                    if (missionDestination == null || missionDestination.AgentId != Cache.Instance.Agent.AgentId) // We assume that this will always work "correctly" (tm)
-                        _traveler.Destination = new MissionBookmarkDestination(Cache.Instance.GetMissionBookmark("Encounter"));
+                    if (missionDestination == null || missionDestination.AgentId != Cache.Instance.AgentId) // We assume that this will always work "correctly" (tm)
+                        _traveler.Destination = new MissionBookmarkDestination(Cache.Instance.GetMissionBookmark(Cache.Instance.AgentId, "Encounter"));
 
                     if (Cache.Instance.PriorityTargets.Any(pt => pt != null && pt.IsValid))
                     {
@@ -519,7 +524,7 @@ namespace Questor
                     {
                         if (_missionController.State == MissionControllerState.Error)
                             State = QuestorState.Error;
-                        else if (_combat.State != CombatState.OutOfAmmo && Cache.Instance.Mission != null && Cache.Instance.Mission.State == (int) MissionState.Accepted)
+                        else if (_combat.State != CombatState.OutOfAmmo && mission != null && mission.State == (int)MissionState.Accepted)
                             State = QuestorState.CompleteMission;
                         else
                             State = QuestorState.UnloadLoot;
@@ -573,7 +578,7 @@ namespace Questor
                         // Update total loot value
                         LootValue += _unloadLoot.LootValue;
 
-                        if (_combat.State != CombatState.OutOfAmmo && Settings.Instance.AfterMissionSalvaging && Cache.Instance.BookmarksByLabel(Settings.Instance.BookmarkPrefix + " ").Count > 0 && (Cache.Instance.Mission == null || Cache.Instance.Mission.State == (int)MissionState.Offered))
+                        if (_combat.State != CombatState.OutOfAmmo && Settings.Instance.AfterMissionSalvaging && Cache.Instance.BookmarksByLabel(Settings.Instance.BookmarkPrefix + " ").Count > 0 && (mission == null || mission.State == (int)MissionState.Offered))
                             State = QuestorState.BeginAfterMissionSalvaging;
                         else if (_combat.State == CombatState.OutOfAmmo)
                             State = QuestorState.Start;

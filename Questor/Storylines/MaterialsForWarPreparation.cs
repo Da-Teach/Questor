@@ -9,15 +9,21 @@
     {
         private DateTime _nextAction;
 
-        public StorylineState Arm()
+        /// <summary>
+        ///   Arm does nothing but get into a (assembled) shuttle
+        /// </summary>
+        /// <returns></returns>
+        public StorylineState Arm(Storyline storyline)
         {
             if (_nextAction > DateTime.Now)
                 return StorylineState.Arm; 
             
+            // Are we in a shuttle?  Yes, goto the agent
             var directEve = Cache.Instance.DirectEve;
             if (directEve.ActiveShip.GroupId == 31)
                 return StorylineState.GotoAgent;
 
+            // Open the ship hangar
             var ships = directEve.GetShipHangar();
             if (ships.Window == null)
             {
@@ -30,9 +36,11 @@
                 return StorylineState.Arm;
             }
 
+            // If the ship hangar is not ready then wait for it
             if (!ships.IsReady)
                 return StorylineState.Arm;
-
+            
+            //  Look for a shuttle
             var item = ships.Items.FirstOrDefault(i => i.Quantity == -1 && i.GroupId == 31);
             if (item != null)
             {
@@ -54,12 +62,13 @@
         ///   Check if we have kernite in station
         /// </summary>
         /// <returns></returns>
-        public StorylineState PreAcceptMission()
+        public StorylineState PreAcceptMission(Storyline storyline)
         {
             var directEve = Cache.Instance.DirectEve;
             if (_nextAction > DateTime.Now)
                 return StorylineState.PreAcceptMission;
 
+            // Open the item hangar
             var hangar = directEve.GetItemHangar();
             if (hangar.Window == null)
             {
@@ -71,17 +80,27 @@
                 return StorylineState.PreAcceptMission;
             }
 
+            // Wait for the item hangar to get ready
             if (!hangar.IsReady)
                 return StorylineState.PreAcceptMission;
 
+            // Is there a market window?
+            var marketWindow = directEve.Windows.OfType<DirectMarketWindow>().FirstOrDefault();
+
+            // Do we have 8000 kernite?
+            // TODO: Add lower level missions?
             if (hangar.Items.Where(i => i.TypeId == 20).Sum(i => i.Quantity) >= 8000)
             {
                 Logging.Log("MaterialsForWarPreparation: We have [8000] kernite, accepting mission");
 
+                // Close the market window if there is one
+                if (marketWindow != null)
+                    marketWindow.Close();
+
                 return StorylineState.AcceptMission;
             }
 
-            var marketWindow = directEve.Windows.OfType<DirectMarketWindow>().FirstOrDefault();
+            // We do not have enough kernite, open the market window
             if (marketWindow == null)
             {
                 _nextAction = DateTime.Now.AddSeconds(10);
@@ -92,11 +111,14 @@
                 return StorylineState.PreAcceptMission;
             }
 
+            // Wait for the window to become ready (this includes loading the kernite info)
             if (!marketWindow.IsReady)
                 return StorylineState.PreAcceptMission;
 
+            // Are we currently viewing kernite orders?
             if (marketWindow.DetailTypeId != 20)
             {
+                // No, load the kernite orders
                 marketWindow.LoadTypeId(20);
 
                 Logging.Log("MaterialsForWarPreparation: Loading kernite into market window");
@@ -105,23 +127,29 @@
                 return StorylineState.PreAcceptMission;
             }
 
+            // Get the median sell price
             var type = Cache.Instance.InvTypesById[20];
             var maxPrice = type.MedianSell*2;
 
+            // Do we have orders that sell enough kernite for the mission?
             var orders = marketWindow.SellOrders.Where(o => o.StationId == directEve.Session.StationId && o.Price < maxPrice);
             if (!orders.Any() || orders.Sum(o => o.VolumeRemaining) < 8000)
             {
                 Logging.Log("MaterialsForWarPreparation: Not enough (reasonably priced) kernite available! Blacklisting agent for this Questor session!");
 
+                // No, black list the agent in this Questor session (note we will never decline storylines!)
                 return StorylineState.BlacklistAgent;
             }
 
+            // How much kernite do we still need?
             var neededQuantity = 8000 - (hangar.Items.Where(i => i.TypeId == 20).Sum(i => i.Quantity) ?? 0);
             if (neededQuantity > 0)
             {
+                // Get the first order
                 var order = orders.OrderBy(o => o.Price).FirstOrDefault();
                 if (order != null)
                 {
+                    // Calculate how much kernite we still need
                     var remaining = Math.Min(neededQuantity, order.VolumeRemaining);
                     order.Buy(remaining, DirectOrderRange.Station);
 
@@ -138,65 +166,21 @@
         ///   We have no combat/delivery part in this mission, just accept it
         /// </summary>
         /// <returns></returns>
-        public StorylineState PostAcceptMission()
+        public StorylineState PostAcceptMission(Storyline storyline)
         {
+            // Close the market window (if its open)
             var directEve = Cache.Instance.DirectEve;
-            var marketWindow = directEve.Windows.OfType<DirectMarketWindow>().FirstOrDefault();
-            if (marketWindow != null)
-                marketWindow.Close();
 
             return StorylineState.CompleteMission;
         }
 
-        public StorylineState PostCompleteMission()
+        /// <summary>
+        ///   We have no execute mission code
+        /// </summary>
+        /// <returns></returns>
+        public StorylineState ExecuteMission(Storyline storyline)
         {
-            var directEve = Cache.Instance.DirectEve;
-            if (_nextAction > DateTime.Now)
-                return StorylineState.PostCompleteMission;
-
-            var hangar = directEve.GetItemHangar();
-            if (hangar.Window == null)
-            {
-                _nextAction = DateTime.Now.AddSeconds(10);
-
-                Logging.Log("MaterialsForWarPreparation: Opening hangar floor");
-
-                directEve.ExecuteCommand(DirectCmd.OpenHangarFloor);
-                return StorylineState.PostCompleteMission;
-            }
-
-            if (!hangar.IsReady)
-                return StorylineState.PostCompleteMission;
-
-            if (!hangar.Items.Any(i => i.GroupId == 745))
-                return StorylineState.Done;
-
-            var cargo = directEve.GetShipsCargo();
-            if (cargo.Window == null)
-            {
-                _nextAction = DateTime.Now.AddSeconds(10);
-
-                Logging.Log("MaterialsForWarPreparation: Opening cargo");
-
-                directEve.ExecuteCommand(DirectCmd.OpenCargoHoldOfActiveShip);
-                return StorylineState.PostCompleteMission;
-            }
-
-            if (!cargo.IsReady)
-                return StorylineState.PostCompleteMission;
-
-            if (Cache.Instance.DirectEve.GetLockedItems().Count == 0)
-            {
-                foreach (var item in hangar.Items.Where(i => i.GroupId == 745))
-                {
-                    Logging.Log("MaterialsForWarPreparation: Moving [" + item.Name + "][" + item.ItemId + "] to cargo");
-                    cargo.Add(item.ItemId, item.Quantity ?? 1);
-                }
-
-                _nextAction = DateTime.Now.AddSeconds(10);
-            }
-
-            return StorylineState.PostCompleteMission;
+            return StorylineState.CompleteMission;
         }
     }
 }

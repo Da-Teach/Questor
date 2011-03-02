@@ -60,11 +60,6 @@ namespace Questor.Modules
         private Dictionary<long, EntityCache> _entitiesById;
 
         /// <summary>
-        ///   Returns the agent mission (note only for the agent we are running missions for!)
-        /// </summary>
-        private DirectAgentMission _mission;
-
-        /// <summary>
         ///   Module cache
         /// </summary>
         private List<ModuleCache> _modules;
@@ -197,6 +192,20 @@ namespace Questor.Modules
         ///   Used for Drones to know that it should retract drones
         /// </summary>
         public bool IsMissionPocketDone { get; set; }
+
+        public long AgentId
+        {
+            get
+            {
+                if (!_agentId.HasValue)
+                {
+                    _agent = DirectEve.GetAgentByName(Settings.Instance.AgentName);
+                    _agentId = _agent.AgentId;
+                }
+
+                return _agentId ?? -1;
+            }
+        }
 
         public DirectAgent Agent
         {
@@ -400,29 +409,14 @@ namespace Questor.Modules
             }
         }
 
-        public DirectAgentMission Mission
+        /// <summary>
+        ///   Returns the mission for a specific agent
+        /// </summary>
+        /// <param name="agentId"></param>
+        /// <returns>null if no mission could be found</returns>
+        public DirectAgentMission GetAgentMission(long agentId)
         {
-            get
-            {
-                if (_mission == null)
-                {
-                    var missions = DirectEve.AgentMissions;
-                    if (missions == null)
-                        return null;
-
-                    foreach (var mission in missions)
-                    {
-                        // Did we accept this mission?
-                        if (mission.AgentId != Agent.AgentId)
-                            continue;
-
-                        _mission = mission;
-                        break;
-                    }
-                }
-
-                return _mission;
-            }
+            return DirectEve.AgentMissions.FirstOrDefault(m => m.AgentId == agentId);
         }
 
         /// <summary>
@@ -435,14 +429,6 @@ namespace Questor.Modules
         /// </summary>
         /// <returns></returns>
         public string BringMissionItem { get; private set; }
-
-        /// <summary>
-        ///   Filter illegal path-characters from the mission name
-        /// </summary>
-        public string MissionName
-        {
-            get { return FilterPath(Mission.Name); }
-        }
 
         public DirectWindow GetWindowByCaption(string caption)
         {
@@ -487,38 +473,18 @@ namespace Questor.Modules
         ///   Returns the first mission bookmark that starts with a certain string
         /// </summary>
         /// <returns></returns>
-        public DirectAgentMissionBookmark GetMissionBookmark(string startsWith)
+        public DirectAgentMissionBookmark GetMissionBookmark(long agentId, string startsWith)
         {
             // Get the missons
-            var mission = Instance.Mission;
+            var mission = GetAgentMission(agentId);
             if (mission == null)
                 return null;
 
             // Did we accept this mission?
-            if (mission.State != (int) MissionState.Accepted || mission.AgentId != Instance.Agent.AgentId)
+            if (mission.State != (int) MissionState.Accepted || mission.AgentId != agentId)
                 return null;
 
-            // Get the mission bookmarks
-            foreach (var bookmark in mission.Bookmarks)
-            {
-                // Does it start with what we want?
-                if (!bookmark.Title.ToLower().StartsWith(startsWith.ToLower()))
-                    continue;
-
-                return bookmark;
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        ///   Returns agent mission by agent id
-        /// </summary>
-        /// <param name = "agentId"></param>
-        /// <returns></returns>
-        public DirectAgentMission MissionByAgentId(long agentId)
-        {
-            return DirectEve.AgentMissions.FirstOrDefault(m => m.AgentId == agentId);
+            return mission.Bookmarks.FirstOrDefault(b => b.Title.ToLower().StartsWith(startsWith.ToLower()));
         }
 
         /// <summary>
@@ -557,7 +523,6 @@ namespace Questor.Modules
             _entities = null;
             _agent = null;
             _approaching = null;
-            _mission = null;
             _activeDrones = null;
             _containers = null;
             _priorityTargets.ForEach(pt => pt.ClearCache());
@@ -588,14 +553,17 @@ namespace Questor.Modules
         /// <summary>
         ///   Loads mission objectives from XML file
         /// </summary>
+        /// <param name = "agentId"></param>
         /// <param name = "pocketId"></param>
         /// <returns></returns>
-        public IEnumerable<Action> LoadMissionActions(int pocketId)
+        public IEnumerable<Action> LoadMissionActions(long agentId, int pocketId)
         {
-            if (Mission == null)
+            var mission = GetAgentMission(agentId);
+            if (mission == null)
                 return new Action[0];
 
-            var missionXmlPath = Path.Combine(Settings.Instance.MissionsPath, MissionName + ".xml");
+            var missionName = FilterPath(mission.Name);
+            var missionXmlPath = Path.Combine(Settings.Instance.MissionsPath, missionName + ".xml");
             if (!File.Exists(missionXmlPath))
                 return new Action[0];
 
@@ -639,16 +607,18 @@ namespace Questor.Modules
         /// <summary>
         ///   Refresh the mission items
         /// </summary>
-        public void RefreshMissionItems()
+        public void RefreshMissionItems(long agentId)
         {
             // Clear out old items
             MissionItems.Clear();
             BringMissionItem = string.Empty;
 
-            if (Mission == null)
+            var mission = GetAgentMission(agentId);
+            if (mission == null)
                 return;
 
-            var missionXmlPath = Path.Combine(Settings.Instance.MissionsPath, MissionName + ".xml");
+            var missionName = FilterPath(mission.Name);
+            var missionXmlPath = Path.Combine(Settings.Instance.MissionsPath, missionName + ".xml");
             if (!File.Exists(missionXmlPath))
                 return;
 

@@ -27,6 +27,8 @@ namespace Questor.Modules
         private bool _waiting;
         private DateTime _waitingSince;
 
+        public long AgentId { get; set; }
+
         public MissionController()
         {
             _pocketActions = new List<Action>();
@@ -513,7 +515,7 @@ namespace Questor.Modules
                     _pocket = 0;
 
                     // Reload the items needed for this mission from the XML file
-                    Cache.Instance.RefreshMissionItems();
+                    Cache.Instance.RefreshMissionItems(AgentId);
 
                     // Update x/y/z so that NextPocket wont think we are there yet because its checking (very) old x/y/z cords
                     _lastX = Cache.Instance.DirectEve.ActiveShip.Entity.X;
@@ -525,7 +527,7 @@ namespace Questor.Modules
 
                 case MissionControllerState.LoadPocket:
                     _pocketActions.Clear();
-                    _pocketActions.AddRange(Cache.Instance.LoadMissionActions(_pocket));
+                    _pocketActions.AddRange(Cache.Instance.LoadMissionActions(AgentId, _pocket));
 
                     if (_pocketActions.Count == 0)
                     {
