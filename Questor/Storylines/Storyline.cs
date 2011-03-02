@@ -139,7 +139,7 @@
                 return;
 
             // Do we have any implants?
-            if (!hangar.Items.Any(i => i.GroupId == 745))
+            if (!hangar.Items.Any(i => i.GroupId >= 738 && i.GroupId <= 750))
             {
                 State = StorylineState.Done;
                 return;
@@ -164,7 +164,7 @@
             if (Cache.Instance.DirectEve.GetLockedItems().Count == 0)
             {
                 // Move all the implants to the cargo bay
-                foreach (var item in hangar.Items.Where(i => i.GroupId == 745))
+                foreach (var item in hangar.Items.Where(i => i.GroupId >= 738 && i.GroupId <= 750))
                 {
                     if (cargo.UsedCapacity - cargo.Capacity - (item.Volume * item.Quantity) < 0)
                     {
