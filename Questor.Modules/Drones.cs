@@ -338,6 +338,7 @@ namespace Questor.Modules
                     // Are we done?
                     if (Cache.Instance.ActiveDrones.Count() == 0)
                     {
+                        _lastRecall = DateTime.Now;
                         State = DroneState.WaitingForTargets;
                         break;
                     }
