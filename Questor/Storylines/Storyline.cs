@@ -168,9 +168,9 @@
                 // Move all the implants to the cargo bay
                 foreach (var item in hangar.Items.Where(i => i.GroupId >= 738 && i.GroupId <= 750))
                 {
-                    if (cargo.UsedCapacity - cargo.Capacity - (item.Volume * item.Quantity) < 0)
+                    if (cargo.Capacity - cargo.UsedCapacity - (item.Volume * item.Quantity) < 0)
                     {
-                        Logging.Log("MaterialsForWarPreparation: We are full, not moving anything else");
+                        Logging.Log("Storyline: We are full, not moving anything else");
                         State = StorylineState.Done;
                         return;
                     }
