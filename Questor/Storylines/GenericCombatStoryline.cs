@@ -207,6 +207,9 @@
                         Cache.Instance.LootedContainers.Clear();
 
                         Logging.Log("GenericCombatStoryline: Out of Ammo!");
+
+                        // Reset agent id!
+                        _agentId = 0;
                         return StorylineState.ReturnToAgent;
                     }
 
@@ -214,6 +217,9 @@
                     {
                         // Clear looted containers
                         Cache.Instance.LootedContainers.Clear();
+
+                        // Reset agent id!
+                        _agentId = 0;
                         return StorylineState.ReturnToAgent;
                     }
 
@@ -224,6 +230,9 @@
                         Cache.Instance.LootedContainers.Clear();
 
                         Logging.Log("MissionController: Error");
+
+                        // Reset agent id!
+                        _agentId = 0;
                         return StorylineState.ReturnToAgent;
                     }
                     break;
