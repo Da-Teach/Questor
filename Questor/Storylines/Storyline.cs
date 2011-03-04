@@ -33,6 +33,8 @@
             _storylines = new Dictionary<string, IStoryline>();
             _storylines.Add("Materials For War Preparation", new MaterialsForWarPreparation());
             _storylines.Add("Shipyard Theft", new GenericCombatStoryline());
+            _storylines.Add("Evolution", new GenericCombatStoryline());
+            _storylines.Add("Record Cleaning", new GenericCombatStoryline());
         }
 
         public void Reset()
@@ -222,7 +224,7 @@
                     if (_agentInteraction.State == AgentInteractionState.Done)
                     {
                         _agentInteraction.State = AgentInteractionState.Idle;
-                        State = StorylineState.PostAcceptMission;
+                        State = StorylineState.ExecuteMission;
                     }
                     break;
                 

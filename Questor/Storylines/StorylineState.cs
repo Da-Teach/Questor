@@ -7,7 +7,6 @@
         GotoAgent,
         PreAcceptMission,
         AcceptMission,
-        PostAcceptMission,
         ExecuteMission,
         CompleteMission,
         Done,
