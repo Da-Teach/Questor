@@ -84,6 +84,9 @@
                 if (!LoadAmmo())
                     return StorylineState.Arm;
 
+                // We are done, reset agent id
+                _agentId = 0; 
+                
                 return StorylineState.GotoAgent;
             }
             catch(Exception ex)
@@ -176,8 +179,8 @@
             {
                 case GenericCombatStorylineState.GotoMission:
                     var missionDestination = _traveler.Destination as MissionBookmarkDestination;
-                    if (missionDestination == null || missionDestination.AgentId != _agentId) // We assume that this will always work "correctly" (tm)
-                        _traveler.Destination = new MissionBookmarkDestination(Cache.Instance.GetMissionBookmark(_agentId, "Encounter"));
+                    if (missionDestination == null || missionDestination.AgentId != storyline.AgentId) // We assume that this will always work "correctly" (tm)
+                        _traveler.Destination = new MissionBookmarkDestination(Cache.Instance.GetMissionBookmark(storyline.AgentId, "Encounter"));
 
                     if (Cache.Instance.PriorityTargets.Any(pt => pt != null && pt.IsValid))
                     {
@@ -207,9 +210,6 @@
                         Cache.Instance.LootedContainers.Clear();
 
                         Logging.Log("GenericCombatStoryline: Out of Ammo!");
-
-                        // Reset agent id!
-                        _agentId = 0;
                         return StorylineState.ReturnToAgent;
                     }
 
@@ -217,9 +217,6 @@
                     {
                         // Clear looted containers
                         Cache.Instance.LootedContainers.Clear();
-
-                        // Reset agent id!
-                        _agentId = 0;
                         return StorylineState.ReturnToAgent;
                     }
 
@@ -230,9 +227,6 @@
                         Cache.Instance.LootedContainers.Clear();
 
                         Logging.Log("MissionController: Error");
-
-                        // Reset agent id!
-                        _agentId = 0;
                         return StorylineState.ReturnToAgent;
                     }
                     break;

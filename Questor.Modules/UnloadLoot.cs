@@ -118,7 +118,7 @@ namespace Questor.Modules
                             continue;
 
                         var invType = Cache.Instance.InvTypesById[item.TypeId ?? -1];
-                        LootValue += (invType.MedianBuy ?? 0)*Math.Min(item.Quantity ?? -1, 1);
+                        LootValue += (invType.MedianBuy ?? 0)*Math.Max(item.Quantity ?? -1, 1);
                     }
 
                     // Move loot to the loot hangar
