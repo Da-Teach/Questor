@@ -21,7 +21,7 @@ namespace Questor.Modules
     public class Combat
     {
         private readonly Dictionary<long, DateTime> _lastModuleActivation = new Dictionary<long, DateTime>();
-        private readonly Dictionary<long, DateTime> _lastLauncherReload = new Dictionary<long, DateTime>();
+        private readonly Dictionary<long, DateTime> _lastWeaponReload = new Dictionary<long, DateTime>();
         private bool _isJammed;
         public CombatState State { get; set; }
 
@@ -36,14 +36,6 @@ namespace Questor.Modules
         public bool ReloadNormalAmmo(ModuleCache weapon, EntityCache entity)
         {
             var cargo = Cache.Instance.DirectEve.GetShipsCargo();
-            if (cargo.Window == null)
-            {
-                Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenCargoHoldOfActiveShip);
-                return false;
-            }
-
-            if (!cargo.IsReady)
-                return false;
 
             // Get ammo based on damage type
             var correctAmmo = Settings.Instance.Ammo.Where(a => a.DamageType == Cache.Instance.DamageType);
@@ -79,9 +71,9 @@ namespace Questor.Modules
                 return false;
 
             // We are reloading, wait at least 11 seconds
-            if (_lastLauncherReload.ContainsKey(weapon.ItemId) && DateTime.Now < _lastLauncherReload[weapon.ItemId].AddSeconds(22))
+            if (_lastWeaponReload.ContainsKey(weapon.ItemId) && DateTime.Now < _lastWeaponReload[weapon.ItemId].AddSeconds(22))
                 return false;
-            _lastLauncherReload[weapon.ItemId] = DateTime.Now;
+            _lastWeaponReload[weapon.ItemId] = DateTime.Now;
 
             // Reload or change ammo
             if (weapon.Charge != null && weapon.Charge.TypeId == charge.TypeId)
@@ -102,15 +94,8 @@ namespace Questor.Modules
         public bool ReloadEnergyWeaponAmmo(ModuleCache weapon, EntityCache entity)
         {
             var cargo = Cache.Instance.DirectEve.GetShipsCargo();
-            if (cargo.Window == null)
-            {
-                Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenCargoHoldOfActiveShip);
-                return false;
-            }
 
-            if (!cargo.IsReady)
-                return false;
-
+            // Get ammo based on damage type
             var correctAmmo = Settings.Instance.Ammo.Where(a => a.DamageType == Cache.Instance.DamageType);
 
             // Check if we still have that ammo in our cargo
@@ -140,9 +125,9 @@ namespace Questor.Modules
                 return true;
 
             // We are reloading, wait at least 5 seconds
-            if (_lastLauncherReload.ContainsKey(weapon.ItemId) && DateTime.Now < _lastLauncherReload[weapon.ItemId].AddSeconds(5))
+            if (_lastWeaponReload.ContainsKey(weapon.ItemId) && DateTime.Now < _lastWeaponReload[weapon.ItemId].AddSeconds(5))
                 return false;
-            _lastLauncherReload[weapon.ItemId] = DateTime.Now;
+            _lastWeaponReload[weapon.ItemId] = DateTime.Now;
 
             // Reload or change ammo
             if (weapon.Charge != null && weapon.Charge.TypeId == charge.TypeId)
@@ -168,6 +153,17 @@ namespace Questor.Modules
         /// <returns>True if the (enough/correct) ammo is loaded, false if wrong/not enough ammo is loaded</returns>
         public bool ReloadAmmo(ModuleCache weapon, EntityCache entity)
         {
+            // We need the cargo bay open for both reload actions
+            var cargo = Cache.Instance.DirectEve.GetShipsCargo();
+            if (cargo.Window == null)
+            {
+                Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenCargoHoldOfActiveShip);
+                return false;
+            }
+
+            if (!cargo.IsReady)
+                return false;
+
             return weapon.IsEnergyWeapon ? ReloadEnergyWeaponAmmo(weapon, entity) : ReloadNormalAmmo(weapon, entity);
         }
 
