@@ -57,9 +57,10 @@ namespace Questor.Modules
 
                 var wreck = wrecks.FirstOrDefault(w => w.Id == tractorBeam.TargetId);
                 // If the wreck no longer exists, or its within loot range then disable the tractor beam
-                if (wreck == null || wreck.Distance <= 2500)
+                if (tractorBeam.IsActive && (wreck == null || wreck.Distance <= 2500))
                     tractorBeam.Deactivate();
 
+                // Remove the tractor beam as a possible beam to activate
                 tractorBeams.RemoveAt(i);
                 wrecks.RemoveAll(w => w.Id == tractorBeam.TargetId);
             }
