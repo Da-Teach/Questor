@@ -20,7 +20,7 @@ namespace Questor.Modules
     /// </summary>
     public class Combat
     {
-        private readonly Dictionary<long, DateTime> _lastLauncherActivation = new Dictionary<long, DateTime>();
+        private readonly Dictionary<long, DateTime> _lastModuleActivation = new Dictionary<long, DateTime>();
         private readonly Dictionary<long, DateTime> _lastLauncherReload = new Dictionary<long, DateTime>();
         private bool _isJammed;
         public CombatState State { get; set; }
@@ -177,26 +177,31 @@ namespace Questor.Modules
         /// <remarks>
         ///   The idea behind this function is that a target that explodes isnt being fired on within 5 seconds
         /// </remarks>
-        /// <param name = "weapon"></param>
+        /// <param name = "module"></param>
         /// <param name = "entity"></param>
+        /// <param name = "isWeapon"></param>
         /// <returns></returns>
-        public bool CanActivate(ModuleCache weapon, EntityCache entity)
+        public bool CanActivate(ModuleCache module, EntityCache entity, bool isWeapon)
         {
-            // We have reloaded, allow re-activation
-            if (weapon.CurrentCharges == MaxCharges || entity.Id != weapon.LastTargetId)
+            // We have changed target, allow activation
+            if (entity.Id != module.LastTargetId)
+                return true;
+
+            // We have reloaded, allow activation
+            if (isWeapon && module.CurrentCharges == MaxCharges)
                 return true;
 
             // We havent reloaded, insert a wait-time
-            if (_lastLauncherActivation.ContainsKey(weapon.ItemId))
+            if (_lastModuleActivation.ContainsKey(module.ItemId))
             {
-                if (DateTime.Now.Subtract(_lastLauncherActivation[weapon.ItemId]).TotalSeconds < 3)
+                if (DateTime.Now.Subtract(_lastModuleActivation[module.ItemId]).TotalSeconds < 3)
                     return false;
 
-                _lastLauncherActivation.Remove(weapon.ItemId);
+                _lastModuleActivation.Remove(module.ItemId);
                 return true;
             }
 
-            _lastLauncherActivation.Add(weapon.ItemId, DateTime.Now);
+            _lastModuleActivation.Add(module.ItemId, DateTime.Now);
             return false;
         }
 
@@ -308,7 +313,7 @@ namespace Questor.Modules
                     continue;
 
                 // No, check ammo type and if thats correct, activate weapon
-                if (ReloadAmmo(weapon, target) && CanActivate(weapon, target))
+                if (ReloadAmmo(weapon, target) && CanActivate(weapon, target, true))
                 {
                     Logging.Log("Combat: Activating weapon [" + weapon.ItemId + "] on [" + target.Name + "][" + target.Id + "]");
                     weapon.Activate(target.Id);
@@ -340,8 +345,11 @@ namespace Questor.Modules
                 if (painter.IsDeactivating)
                     continue;
 
-                Logging.Log("Combat: Activating painter [" + painter.ItemId + "] on [" + target.Name + "][" + target.Id + "]");
-                painter.Activate(target.Id);
+                if (CanActivate(painter, target, false))
+                {
+                    Logging.Log("Combat: Activating painter [" + painter.ItemId + "] on [" + target.Name + "][" + target.Id + "]");
+                    painter.Activate(target.Id);
+                }
             }
         }
 
@@ -373,8 +381,11 @@ namespace Questor.Modules
                 if (target.Distance >= web.OptimalRange)
                     continue;
 
-                Logging.Log("Combat: Activating stasis web [" + web.ItemId + "] on [" + target.Name + "][" + target.Id + "]");
-                web.Activate(target.Id);
+                if (CanActivate(web, target, false))
+                {
+                    Logging.Log("Combat: Activating stasis web [" + web.ItemId + "] on [" + target.Name + "][" + target.Id + "]");
+                    web.Activate(target.Id);
+                }
             }
         }
 
