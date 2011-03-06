@@ -35,6 +35,8 @@
             _storylines.Add("Shipyard Theft", new GenericCombatStoryline());
             _storylines.Add("Evolution", new GenericCombatStoryline());
             _storylines.Add("Record Cleaning", new GenericCombatStoryline());
+            _storylines.Add("Covering Your Tracks", new GenericCombatStoryline());
+            _storylines.Add("Crowd Control", new GenericCombatStoryline());
         }
 
         public void Reset()

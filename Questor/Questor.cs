@@ -181,6 +181,7 @@ namespace Questor
                         close |= window.Html.Contains("you do not have the cargo space");
                         close |= window.Html.Contains("cargo units would be required to complete this operation.");
                         close |= window.Html.Contains("You are too far away from the acceleration gate to activate it!");
+                        close |= window.Html.Contains("maximum distance is 2500 meters");
                         // Stupid warning, lets see if we can find it
                         close |= window.Html.Contains("Do you wish to proceed with this dangerous action?");
                         // Yes we know the mission isnt complete, Questor will just redo the mission
