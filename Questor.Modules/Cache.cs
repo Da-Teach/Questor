@@ -625,7 +625,7 @@ namespace Questor.Modules
             try
             {
                 var xdoc = XDocument.Load(missionXmlPath);
-                var items = ((IEnumerable) xdoc.XPathEvaluate("//action[(@name='loot') or (@name='Loot')]/parameter[(@name='item') or (@name='Item')]/@value")).Cast<XAttribute>().Select(a => (string) a);
+                var items = ((IEnumerable)xdoc.XPathEvaluate("//action[(lower-case(@name)='loot') or (lower-case(@name)='lootitem')]/parameter[lower-case(@name)='item']/@value")).Cast<XAttribute>().Select(a => (string)a);
                 MissionItems.AddRange(items);
 
                 BringMissionItem = (string) xdoc.Root.Element("bring");
