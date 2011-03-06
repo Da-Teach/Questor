@@ -133,9 +133,13 @@ namespace Questor.Modules
                         Logging.Log("Panic: We're in a station, resume mission");
                         State = PanicState.Resume;
                     }
-                    else if (Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage > Settings.Instance.SafeCapacitorPct)
+
+                    var isSafe = Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage > Settings.Instance.SafeCapacitorPct;
+                    isSafe &= Cache.Instance.DirectEve.ActiveShip.ShieldPercentage > Settings.Instance.MinimumShieldPct;
+                    isSafe &= Cache.Instance.DirectEve.ActiveShip.ArmorPercentage > Settings.Instance.MinimumArmorPct;
+                    if (isSafe)
                     {
-                        Logging.Log("Panic: We've recovered our capacitor, resume mission");
+                        Logging.Log("Panic: We've recovered, resume mission");
                         State = PanicState.Resume;
                     }
                     break;
