@@ -70,6 +70,8 @@
     <Compile Include="Storylines\MaterialsForWarPreparation.cs" />
     <Compile Include="Storylines\Storyline.cs" />
     <Compile Include="Storylines\StorylineState.cs" />
+    <Compile Include="Storylines\TransactionDataDelivery.cs" />
+    <Compile Include="Storylines\TransactionDataDeliveryState.cs" />
     <EmbeddedResource Include="frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
     </EmbeddedResource>

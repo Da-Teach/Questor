@@ -37,6 +37,7 @@
             _storylines.Add("Record Cleaning", new GenericCombatStoryline());
             _storylines.Add("Covering Your Tracks", new GenericCombatStoryline());
             _storylines.Add("Crowd Control", new GenericCombatStoryline());
+            _storylines.Add("Transaction Data Delivery", new TransactionDataDelivery());
         }
 
         public void Reset()
