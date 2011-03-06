@@ -261,7 +261,7 @@ namespace Questor.Modules
                         continue;
 
                     // We pick up loot depending on isk per m3
-                    var isMissionItem = Cache.Instance.MissionItems.Contains(item.Name);
+                    var isMissionItem = Cache.Instance.MissionItems.Contains((item.Name ?? string.Empty).ToLower());
 
                     // Never pick up contraband (unless its the mission item)
                     if (!isMissionItem && item.IsContraband)
@@ -288,8 +288,8 @@ namespace Questor.Modules
                             worthLess = shipsCargo.Where(sc => sc.IskPerM3.HasValue).ToList();
 
                         // Remove mission item from this list
-                        worthLess.RemoveAll(wl => Cache.Instance.MissionItems.Contains(wl.Name));
-                        worthLess.RemoveAll(wl => wl.Name == Cache.Instance.BringMissionItem);
+                        worthLess.RemoveAll(wl => Cache.Instance.MissionItems.Contains((wl.Name ?? string.Empty).ToLower()));
+                        worthLess.RemoveAll(wl => (wl.Name ?? string.Empty).ToLower() == Cache.Instance.BringMissionItem);
 
                         // Consider dropping ammo if it concerns the mission item!
                         if (!isMissionItem)

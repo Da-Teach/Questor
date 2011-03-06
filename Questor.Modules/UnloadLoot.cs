@@ -110,7 +110,7 @@ namespace Questor.Modules
                 case UnloadLootState.MoveLoot:
                     var lootHangar = corpLootHangar ?? hangar;
 
-                    var lootToMove = cargo.Items.Where(i => i.Name != Cache.Instance.BringMissionItem && !Settings.Instance.Ammo.Any(a => a.TypeId == i.TypeId));
+                    var lootToMove = cargo.Items.Where(i => (i.Name ?? string.Empty).ToLower() != Cache.Instance.BringMissionItem && !Settings.Instance.Ammo.Any(a => a.TypeId == i.TypeId));
                     LootValue = 0;
                     foreach (var item in lootToMove)
                     {
@@ -138,7 +138,7 @@ namespace Questor.Modules
                     var ammoHangar = corpAmmoHangar ?? hangar;
 
                     // Move the mission item & ammo to the ammo hangar
-                    ammoHangar.Add(cargo.Items.Where(i => (i.Name == Cache.Instance.BringMissionItem || Settings.Instance.Ammo.Any(a => a.TypeId == i.TypeId))).Select(i => i.ItemId));
+                    ammoHangar.Add(cargo.Items.Where(i => ((i.Name ?? string.Empty).ToLower() == Cache.Instance.BringMissionItem || Settings.Instance.Ammo.Any(a => a.TypeId == i.TypeId))).Select(i => i.ItemId));
                     _lastAction = DateTime.Now;
 
                     Logging.Log("UnloadLoot: Waiting for items to move");

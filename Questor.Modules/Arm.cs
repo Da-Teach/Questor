@@ -240,13 +240,13 @@ namespace Questor.Modules
 
                     if (!_missionItemMoved)
                     {
-                        var missionItem = (corpHangar ?? itemHangar).Items.FirstOrDefault(i => i.Name == bringItem);
+                        var missionItem = (corpHangar ?? itemHangar).Items.FirstOrDefault(i => (i.Name ?? string.Empty).ToLower() == bringItem);
                         if (missionItem == null)
-                            missionItem = itemHangar.Items.FirstOrDefault(i => i.Name == bringItem);
+                            missionItem = itemHangar.Items.FirstOrDefault(i => (i.Name ?? string.Empty).ToLower() == bringItem);
 
                         if (missionItem != null)
                         {
-                            Logging.Log("Arm: Moving [" + bringItem + "]");
+                            Logging.Log("Arm: Moving [" + missionItem.Name + "]");
 
                             cargo.Add(missionItem.ItemId, 1);
                             _missionItemMoved = true;
