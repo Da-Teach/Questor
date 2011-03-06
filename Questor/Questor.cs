@@ -142,6 +142,10 @@ namespace Questor
             if (!Cache.Instance.DirectEve.Session.IsReady)
                 return;
 
+            // We are not in space or station, don't do shit yet!
+            if (!Cache.Instance.InSpace && !Cache.Instance.InStation)
+                return;
+
             // New frame, invalidate old cache
             Cache.Instance.InvalidateCache();
 
@@ -251,10 +255,21 @@ namespace Questor
             if (Cache.Instance.InWarp)
                 return;
 
-            var mission = Cache.Instance.GetAgentMission(Cache.Instance.AgentId);
+            DirectAgentMission mission;
             switch (State)
             {
                 case QuestorState.Idle:
+                    if (Cache.Instance.InSpace)
+                    {
+                        // Questor doesnt handle inspace-starts very well, head back to base to try again
+                        Logging.Log("Questor: Started questor while in space, heading back to base in 15 seconds");
+
+                        _lastAction = DateTime.Now;
+                        State = QuestorState.DelayedGotoBase;
+                        break;
+                    }
+                    
+                    mission = Cache.Instance.GetAgentMission(Cache.Instance.AgentId);
                     if (!string.IsNullOrEmpty(Mission) && (mission == null || mission.Name != Mission || mission.State != (int)MissionState.Accepted))
                     {
                         // Do not save statistics if loyalty points == -1
@@ -282,16 +297,6 @@ namespace Questor
 
                         // Disable next log line
                         Mission = null;
-                    }
-
-                    if (Cache.Instance.InSpace)
-                    {
-                        // Questor doesnt handle inspace-starts very well, head back to base to try again
-                        Logging.Log("Questor: Started questor while in space, heading back to base in 15 seconds");
-
-                        _lastAction = DateTime.Now;
-                        State = QuestorState.DelayedGotoBase;
-                        break;
                     }
 
                     if (AutoStart)
@@ -366,6 +371,7 @@ namespace Questor
 
                     if (_agentInteraction.State == AgentInteractionState.Done)
                     {
+                        mission = Cache.Instance.GetAgentMission(Cache.Instance.AgentId);
                         if (mission != null)
                         {
                             // Update loyalty points again (the first time might return -1)
@@ -523,6 +529,7 @@ namespace Questor
                     _traveler.ProcessState();
                     if (_traveler.State == TravelerState.AtDestination)
                     {
+                        mission = Cache.Instance.GetAgentMission(Cache.Instance.AgentId);
                         if (_missionController.State == MissionControllerState.Error)
                             State = QuestorState.Error;
                         else if (_combat.State != CombatState.OutOfAmmo && mission != null && mission.State == (int)MissionState.Accepted)
@@ -579,6 +586,7 @@ namespace Questor
                         // Update total loot value
                         LootValue += _unloadLoot.LootValue;
 
+                        mission = Cache.Instance.GetAgentMission(Cache.Instance.AgentId);
                         if (_combat.State != CombatState.OutOfAmmo && Settings.Instance.AfterMissionSalvaging && Cache.Instance.BookmarksByLabel(Settings.Instance.BookmarkPrefix + " ").Count > 0 && (mission == null || mission.State == (int)MissionState.Offered))
                             State = QuestorState.BeginAfterMissionSalvaging;
                         else if (_combat.State == CombatState.OutOfAmmo)
