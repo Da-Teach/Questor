@@ -137,6 +137,9 @@
             {
                 Logging.Log("MaterialsForWarPreparation: Not enough (reasonably priced) kernite available! Blacklisting agent for this Questor session!");
 
+                // Close the market window
+                marketWindow.Close();
+
                 // No, black list the agent in this Questor session (note we will never decline storylines!)
                 return StorylineState.BlacklistAgent;
             }
