@@ -179,7 +179,7 @@
                     }
 
                     Logging.Log("MaterialsForWarPreparation: Moving [" + item.Name + "][" + item.ItemId + "] to cargo");
-                    cargo.Add(item.ItemId, item.Quantity ?? 1);
+                    cargo.Add(item, item.Quantity ?? 1);
                 }
 
                 _nextAction = DateTime.Now.AddSeconds(10);

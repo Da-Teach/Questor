@@ -214,7 +214,7 @@ namespace Questor.Modules
 
                 case ArmState.MoveDrones:
                     var drone = ammoHangar.Items.FirstOrDefault(i => i.TypeId == Settings.Instance.DroneTypeId);
-                    if (drone == null || !drone.Quantity.HasValue)
+                    if (drone == null || !drone.Stacksize.HasValue)
                     {
                         Logging.Log("Arm: Out of drones");
                         State = ArmState.NotEnoughAmmo;
@@ -230,7 +230,7 @@ namespace Questor.Modules
                     }
 
                     // Move needed drones
-                    droneBay.Add(drone.ItemId, (int) Math.Min(neededDrones, drone.Quantity.Value));
+                    droneBay.Add(drone, (int)Math.Min(neededDrones, drone.Stacksize.Value));
                     break;
 
                 case ArmState.MoveItems:
@@ -248,7 +248,7 @@ namespace Questor.Modules
                         {
                             Logging.Log("Arm: Moving [" + missionItem.Name + "]");
 
-                            cargo.Add(missionItem.ItemId, 1);
+                            cargo.Add(missionItem, 1);
                             _missionItemMoved = true;
                             break;
                         }
@@ -268,7 +268,7 @@ namespace Questor.Modules
 
                         var moveQuantity = Math.Min(item.Quantity ?? -1, ammo.Quantity);
                         moveQuantity = Math.Max(moveQuantity, 1);
-                        cargo.Add(item.ItemId, moveQuantity);
+                        cargo.Add(item, moveQuantity);
 
                         ammo.Quantity -= moveQuantity;
                         if (ammo.Quantity <= 0)
