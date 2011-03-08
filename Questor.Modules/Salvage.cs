@@ -309,11 +309,11 @@ namespace Questor.Modules
                         }
 
                         // Start clearing out items that are worth less
-                        var moveTheseItems = new List<long>();
+                        var moveTheseItems = new List<DirectItem>();
                         foreach (var wl in worthLess.OrderBy(wl => wl.IskPerM3.HasValue ? wl.IskPerM3.Value : double.MaxValue).ThenByDescending(wl => wl.TotalVolume))
                         {
                             // Mark this item as moved
-                            moveTheseItems.Add(wl.Id);
+                            moveTheseItems.Add(wl.DirectItem);
 
                             // Substract (now) free volume
                             freeCargoCapacity += wl.TotalVolume;
@@ -336,7 +336,7 @@ namespace Questor.Modules
                                 // Note: This could (in theory) fuck up with the bot jettison an item and 
                                 // then picking it up again :/ (granted it should never happen unless 
                                 // mission item volume > reserved volume
-                                cargo.Jettison(moveTheseItems);
+                                cargo.Jettison(moveTheseItems.Select(i => i.ItemId));
                                 _lastJettison = DateTime.Now;
                                 return;
                             }
@@ -345,7 +345,7 @@ namespace Questor.Modules
                             container.Add(moveTheseItems);
 
                             // Remove it from the ships cargo list
-                            shipsCargo.RemoveAll(i => moveTheseItems.Contains(i.Id));
+                            shipsCargo.RemoveAll(i => moveTheseItems.Any(wl => wl.ItemId == i.Id));
                             Logging.Log("Salvage: Moving [" + moveTheseItems.Count + "] items into the cargo container to make room for the more valuable loot");
                         }
                     }
@@ -363,7 +363,7 @@ namespace Questor.Modules
                 if (lootItems.Count != 0)
                 {
                     Logging.Log("Salvage: Looting container [" + containerEntity.Name + "][" + containerEntity.Id + "], [" + lootItems.Count + "] valuable items");
-                    cargo.Add(lootItems.Select(i => i.Id));
+                    cargo.Add(lootItems.Select(i => i.DirectItem));
                 }
                 else
                     Logging.Log("Salvage: Container [" + containerEntity.Name + "][" + containerEntity.Id + "] contained no valuable items");

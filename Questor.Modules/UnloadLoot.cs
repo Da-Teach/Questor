@@ -122,7 +122,7 @@ namespace Questor.Modules
                     }
 
                     // Move loot to the loot hangar
-                    lootHangar.Add(lootToMove.Select(i => i.ItemId));
+                    lootHangar.Add(lootToMove);
                     _lastAction = DateTime.Now;
 
                     Logging.Log("UnloadLoot: Loot was worth an estimated [" + LootValue.ToString("#,##0") + "] isk in buy-orders");
@@ -138,7 +138,7 @@ namespace Questor.Modules
                     var ammoHangar = corpAmmoHangar ?? hangar;
 
                     // Move the mission item & ammo to the ammo hangar
-                    ammoHangar.Add(cargo.Items.Where(i => ((i.Name ?? string.Empty).ToLower() == Cache.Instance.BringMissionItem || Settings.Instance.Ammo.Any(a => a.TypeId == i.TypeId))).Select(i => i.ItemId));
+                    ammoHangar.Add(cargo.Items.Where(i => ((i.Name ?? string.Empty).ToLower() == Cache.Instance.BringMissionItem || Settings.Instance.Ammo.Any(a => a.TypeId == i.TypeId))));
                     _lastAction = DateTime.Now;
 
                     Logging.Log("UnloadLoot: Waiting for items to move");

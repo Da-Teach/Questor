@@ -20,6 +20,11 @@ namespace Questor.Modules
             _directItem = item;
         }
 
+        public DirectItem DirectItem
+        {
+            get { return _directItem; }
+        }
+
         public long Id
         {
             get { return _directItem.ItemId; }
