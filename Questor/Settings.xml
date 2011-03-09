@@ -6,6 +6,9 @@
   <!-- Random delay between missions -->
   <randomDelay>60</randomDelay>
 
+  <!-- Enable storyline botting (experimental) -->
+  <enableStorylines>false</enableStorylines>
+
   <!-- X Position of Questor Window -->
   <windowXPosition>1600</windowXPosition>
 
@@ -108,6 +111,12 @@
 
   <!-- Minimum amount of capacitor before the bot panics and warps to safety -->
   <minimumCapacitorPct>15</minimumCapacitorPct>
+
+  <!-- Amount of shield that is seen as "safe" to return to the mission -->
+  <safeShieldPct>0</safeShieldPct>
+
+  <!-- Amount of armor that is seen as "safe" to return to the mission -->
+  <safeArmorPct>0</safeArmorPct>
 
   <!-- Amount of capacitor that is seen as "safe" to return to the mission -->
   <safeCapacitorPct>65</safeCapacitorPct>
