@@ -37,6 +37,8 @@ namespace Questor.Modules
         public bool AutoStart { get; set; }
         public int RandomDelay { get; set; }
 
+        public bool EnableStorylines { get; set; }
+
         public string CombatShipName { get; set; }
         public string SalvageShipName { get; set; }
 
@@ -75,6 +77,8 @@ namespace Questor.Modules
         public int MinimumShieldPct { get; set; }
         public int MinimumArmorPct { get; set; }
         public int MinimumCapacitorPct { get; set; }
+        public int SafeShieldPct { get; set; }
+        public int SafeArmorPct { get; set; }
         public int SafeCapacitorPct { get; set; }
 
         public bool LootEverything { get; set; }
@@ -151,6 +155,8 @@ namespace Questor.Modules
                 MinimumShieldPct = 0;
                 MinimumArmorPct = 0;
                 MinimumCapacitorPct = 0;
+                SafeShieldPct = 0;
+                SafeArmorPct = 0;
                 SafeCapacitorPct = 0;
 
                 UseDrones = false;
@@ -173,6 +179,8 @@ namespace Questor.Modules
 
             AutoStart = (bool?) xml.Element("autoStart") ?? false;
             RandomDelay = (int?) xml.Element("randomDelay") ?? 0;
+
+            EnableStorylines = (bool?) xml.Element("enableStorylines") ?? false;
 
             WindowXPosition = (int?) xml.Element("windowXPosition");
             WindowYPosition = (int?) xml.Element("windowYPosition");
@@ -220,7 +228,9 @@ namespace Questor.Modules
             MinimumShieldPct = (int?) xml.Element("minimumShieldPct") ?? 100;
             MinimumArmorPct = (int?) xml.Element("minimumArmorPct") ?? 100;
             MinimumCapacitorPct = (int?) xml.Element("minimumCapacitorPct") ?? 50;
-            SafeCapacitorPct = (int?) xml.Element("safeCapacitorPct") ?? 0;
+            SafeShieldPct = (int?)xml.Element("safeShieldPct") ?? 0;
+            SafeArmorPct = (int?)xml.Element("safeArmorPct") ?? 0;
+            SafeCapacitorPct = (int?)xml.Element("safeCapacitorPct") ?? 0;
 
             LootEverything = (bool?) xml.Element("lootEverything") ?? true;
 

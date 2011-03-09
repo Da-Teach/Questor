@@ -342,7 +342,7 @@ namespace Questor
                 case QuestorState.Start:
                     if (_agentInteraction.State == AgentInteractionState.Idle)
                     {
-                        if (_storyline.HasStoryline())
+                        if (Settings.Instance.EnableStorylines && _storyline.HasStoryline())
                         {
                             Logging.Log("Questor: Storyline detected, doing storyline.");
 
