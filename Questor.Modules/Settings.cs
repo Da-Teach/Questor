@@ -38,6 +38,7 @@ namespace Questor.Modules
         public bool AutoStart { get; set; }
 		  public bool waitDecline { get; set; }
         public int RandomDelay { get; set; }
+		  public float minStandings { get; set; }
 
         public bool EnableStorylines { get; set; }
 
@@ -128,6 +129,7 @@ namespace Questor.Modules
                 AutoStart = false;
 					 waitDecline = false;
                 RandomDelay = 0;
+					 minStandings = 10;
 
                 WindowXPosition = null;
                 WindowYPosition = null;
@@ -185,6 +187,7 @@ namespace Questor.Modules
             AutoStart = (bool?) xml.Element("autoStart") ?? false;
             waitDecline = (bool?) xml.Element("waitDecline") ?? false;
             RandomDelay = (int?) xml.Element("randomDelay") ?? 0;
+			   minStandings = (float?) xml.Element("minStandings") ?? 10;
 
             EnableStorylines = (bool?) xml.Element("enableStorylines") ?? false;
 

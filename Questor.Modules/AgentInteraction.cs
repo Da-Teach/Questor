@@ -32,6 +32,7 @@ namespace Questor.Modules
         private DateTime _nextAction;
 
         public bool waitDecline { get; set; }
+		  public float minStandings { get; set; }
 
         public AgentInteraction()
         {
@@ -59,6 +60,7 @@ namespace Questor.Modules
         private void WaitForConversation()
         {
             waitDecline = Settings.Instance.waitDecline;
+				minStandings = Settings.Instance.minStandings;
 
             var agentWindow = Agent.Window;
             if (agentWindow == null || !agentWindow.IsReady)
@@ -339,28 +341,42 @@ namespace Questor.Modules
 	            var html = agentWindow.Briefing;
 	            if (html.Contains("Declining a mission from this agent within the next"))
 	            {
-						var hourRegex = new Regex("\\s(?<hour>\\d+)\\shour");
-						var minuteRegex = new Regex("\\s(?<minute>\\d+)\\sminute");
-						var hourMatch = hourRegex.Match(html);
-						var minuteMatch = minuteRegex.Match(html);
-						int hours = 0;
-						int minutes = 0;
-						if (hourMatch.Success)
+						var standingRegex = new Regex("Effective Standing:\\s(?<standing>\\d+.\\d+)");
+						var standingMatch = standingRegex.Match(html);
+						float standings = 0;
+						if (standingMatch.Success)
 						{
-							var hourValue = hourMatch.Groups["hour"].Value;
-							hours = Convert.ToInt32(hourValue);
+							var standingValue = standingMatch.Groups["standing"].Value;
+							standings = float.Parse(standingValue);
+							Logging.Log("AgentInteraction: Agent decline timer detected. Current standings: " + standings + ". Minimum standings: " + minStandings);
 						}
-						if (minuteMatch.Success)
+					   if (standings <= minStandings)
 						{
-							var minuteValue = minuteMatch.Groups["minute"].Value;
-							minutes = Convert.ToInt32(minuteValue);
+							var hourRegex = new Regex("\\s(?<hour>\\d+)\\shour");
+							var minuteRegex = new Regex("\\s(?<minute>\\d+)\\sminute");
+							var hourMatch = hourRegex.Match(html);
+							var minuteMatch = minuteRegex.Match(html);
+							int hours = 0;
+							int minutes = 0;
+							if (hourMatch.Success)
+							{
+								var hourValue = hourMatch.Groups["hour"].Value;
+								hours = Convert.ToInt32(hourValue);
+							}
+							if (minuteMatch.Success)
+							{
+								var minuteValue = minuteMatch.Groups["minute"].Value;
+								minutes = Convert.ToInt32(minuteValue);
+							}
+	
+							int secondsToWait = ((hours * 3600) + (minutes * 60) + 60);
+							State = AgentInteractionState.StartConversation;
+			            _nextAction = DateTime.Now.AddSeconds(secondsToWait);
+							Logging.Log("AgentInteraction: Current standings at or below minimum.  Waiting " + (secondsToWait / 60) + " minutes to try decline again.");
+							CloseConversation();
+							return;
 						}
-						int secondsToWait = ((hours * 3600) + (minutes * 60) + 60);
-						State = AgentInteractionState.StartConversation;
-		            _nextAction = DateTime.Now.AddSeconds(secondsToWait);
-						Logging.Log("Agent decline timer detected.  Waiting " + (secondsToWait / 60) + " minutes to try decline again.");
-						CloseConversation();
-						return;
+						Logging.Log("AgentInteraction: Current standings above minimum.  Declining mission.");						
 					}
 				}
 
