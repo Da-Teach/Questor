@@ -7,6 +7,19 @@
 //    http://www.thehackerwithin.com/license.htm)
 //  </copyright>
 //-------------------------------------------------------------------------------
+Friday, March 11, 2011:
+  * Changes/Fixes to Questor:
+    
+    - Added mission decline delay timer.  <char>.xml toggle is
+      <waitDecline>true</waitDecline>
+
+    - Added faction blacklist. Faction blacklist in <char>.xml is
+      <factionblacklist>
+           <faction>Caldari State</faction>
+           <faction>Gallente Federation</faction>
+           <faction>Whatever Else</faction>
+      </factionblacklist>
+
 
 Wednesday, March 9, 2011:
 
