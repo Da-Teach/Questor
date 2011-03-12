@@ -16,13 +16,13 @@ namespace Questor
         public ItemCache(DirectItem item)
         {
             Id = item.ItemId;
-            Name = item.Name;
+            Name = item.TypeName;
 
-            TypeId = item.TypeId ?? -1;
-            GroupId = item.GroupId ?? -1;
-            MarketGroupId = item.MarketGroupId ?? -1;
+            TypeId = item.TypeId;
+            GroupId = item.GroupId;
+            MarketGroupId = item.MarketGroupId;
             
-            Quantity = item.Quantity ?? -1;
+            Quantity = item.Quantity;
             QuantitySold = 0;
         }
 

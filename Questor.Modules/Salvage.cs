@@ -428,7 +428,7 @@ namespace Questor.Modules
                     if (cargo.IsReady && cargo.Items.Any() && _nextAction < DateTime.Now)
                     {
                         // Check if there are actually duplicates
-                        var duplicates = cargo.Items.Where(i => i.Quantity > 0 && i.TypeId.HasValue).GroupBy(i => i.TypeId).Any(t => t.Count() > 1);
+                        var duplicates = cargo.Items.Where(i => i.Quantity > 0).GroupBy(i => i.TypeId).Any(t => t.Count() > 1);
                         if (duplicates)
                             State = SalvageState.StackItems;
                         else

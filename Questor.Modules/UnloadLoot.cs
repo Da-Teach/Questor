@@ -110,15 +110,15 @@ namespace Questor.Modules
                 case UnloadLootState.MoveLoot:
                     var lootHangar = corpLootHangar ?? hangar;
 
-                    var lootToMove = cargo.Items.Where(i => (i.Name ?? string.Empty).ToLower() != Cache.Instance.BringMissionItem && !Settings.Instance.Ammo.Any(a => a.TypeId == i.TypeId));
+                    var lootToMove = cargo.Items.Where(i => (i.TypeName ?? string.Empty).ToLower() != Cache.Instance.BringMissionItem && !Settings.Instance.Ammo.Any(a => a.TypeId == i.TypeId));
                     LootValue = 0;
                     foreach (var item in lootToMove)
                     {
-                        if (!Cache.Instance.InvTypesById.ContainsKey(item.TypeId ?? -1))
+                        if (!Cache.Instance.InvTypesById.ContainsKey(item.TypeId))
                             continue;
 
-                        var invType = Cache.Instance.InvTypesById[item.TypeId ?? -1];
-                        LootValue += (invType.MedianBuy ?? 0)*Math.Max(item.Quantity ?? -1, 1);
+                        var invType = Cache.Instance.InvTypesById[item.TypeId];
+                        LootValue += (invType.MedianBuy ?? 0)*Math.Max(item.Quantity, 1);
                     }
 
                     // Move loot to the loot hangar
@@ -138,7 +138,7 @@ namespace Questor.Modules
                     var ammoHangar = corpAmmoHangar ?? hangar;
 
                     // Move the mission item & ammo to the ammo hangar
-                    ammoHangar.Add(cargo.Items.Where(i => ((i.Name ?? string.Empty).ToLower() == Cache.Instance.BringMissionItem || Settings.Instance.Ammo.Any(a => a.TypeId == i.TypeId))));
+                    ammoHangar.Add(cargo.Items.Where(i => ((i.TypeName ?? string.Empty).ToLower() == Cache.Instance.BringMissionItem || Settings.Instance.Ammo.Any(a => a.TypeId == i.TypeId))));
                     _lastAction = DateTime.Now;
 
                     Logging.Log("UnloadLoot: Waiting for items to move");

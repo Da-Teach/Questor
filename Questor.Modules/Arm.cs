@@ -221,7 +221,7 @@ namespace Questor.Modules
                         break;
                     }
 
-                    var neededDrones = Math.Floor((droneBay.Capacity - droneBay.UsedCapacity)/(drone.Volume ?? 5d));
+                    var neededDrones = Math.Floor((droneBay.Capacity - droneBay.UsedCapacity)/drone.Volume);
                     if (neededDrones == 0)
                     {
                         Logging.Log("Arm: Moving items");
@@ -240,13 +240,13 @@ namespace Questor.Modules
 
                     if (!_missionItemMoved)
                     {
-                        var missionItem = (corpHangar ?? itemHangar).Items.FirstOrDefault(i => (i.Name ?? string.Empty).ToLower() == bringItem);
+                        var missionItem = (corpHangar ?? itemHangar).Items.FirstOrDefault(i => (i.TypeName ?? string.Empty).ToLower() == bringItem);
                         if (missionItem == null)
-                            missionItem = itemHangar.Items.FirstOrDefault(i => (i.Name ?? string.Empty).ToLower() == bringItem);
+                            missionItem = itemHangar.Items.FirstOrDefault(i => (i.TypeName ?? string.Empty).ToLower() == bringItem);
 
                         if (missionItem != null)
                         {
-                            Logging.Log("Arm: Moving [" + missionItem.Name + "]");
+                            Logging.Log("Arm: Moving [" + missionItem.TypeName + "]");
 
                             cargo.Add(missionItem, 1);
                             _missionItemMoved = true;
@@ -264,9 +264,9 @@ namespace Questor.Modules
                         if (ammo == null)
                             continue;
 
-                        Logging.Log("Arm: Moving [" + item.Name + "]");
+                        Logging.Log("Arm: Moving [" + item.TypeName + "]");
 
-                        var moveQuantity = Math.Min(item.Quantity ?? -1, ammo.Quantity);
+                        var moveQuantity = Math.Min(item.Quantity, ammo.Quantity);
                         moveQuantity = Math.Max(moveQuantity, 1);
                         cargo.Add(item, moveQuantity);
 

@@ -146,8 +146,8 @@
             // Move items
             foreach (var item in from.Items.Where(i => i.GroupId == groupId))
             {
-                Logging.Log("TransactionDataDelivery: Moving [" + item.Name + "][" + item.ItemId + "] to " + (pickup ? "cargo" : "hangar"));
-                to.Add(item, item.Quantity ?? 1);
+                Logging.Log("TransactionDataDelivery: Moving [" + item.TypeName + "][" + item.ItemId + "] to " + (pickup ? "cargo" : "hangar"));
+                to.Add(item, item.Quantity);
             }
 
             _nextAction = DateTime.Now.AddSeconds(10);

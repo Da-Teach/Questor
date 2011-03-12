@@ -178,8 +178,8 @@
                         return;
                     }
 
-                    Logging.Log("MaterialsForWarPreparation: Moving [" + item.Name + "][" + item.ItemId + "] to cargo");
-                    cargo.Add(item, item.Quantity ?? 1);
+                    Logging.Log("Storyline: Moving [" + item.TypeName + "][" + item.ItemId + "] to cargo");
+                    cargo.Add(item, item.Quantity);
                 }
 
                 _nextAction = DateTime.Now.AddSeconds(10);

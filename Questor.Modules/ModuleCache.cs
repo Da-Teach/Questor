@@ -23,7 +23,7 @@ namespace Questor.Modules
 
         public int GroupId
         {
-            get { return _module.GroupId ?? -1; }
+            get { return _module.GroupId; }
         }
 
         public bool IsActivatable
@@ -103,7 +103,7 @@ namespace Questor.Modules
             get
             {
                 if (_module.Charge != null)
-                    return _module.Charge.Quantity ?? 0;
+                    return _module.Charge.Quantity;
 
                 return -1;
             }
