@@ -405,7 +405,7 @@ namespace Questor.Modules
                 if (faction != null)
 					 {
                     	var factionName = ((string) faction.Attribute("name"));
-					 		Logging.Log("Mission enemy faction: " + factionName);
+					 		Logging.Log("AgentInteraction: Mission enemy faction: " + factionName);
 							if (Settings.Instance.FactionBlacklist.Any(m => m.ToLower() == factionName.ToLower()))
 								return true;
 					 }
