@@ -78,12 +78,12 @@ namespace Questor.Modules
             // Reload or change ammo
             if (weapon.Charge != null && weapon.Charge.TypeId == charge.TypeId)
             {
-                Logging.Log("Combat: Reloading [" + weapon.ItemId + "] with [" + charge.Name + "][" + charge.TypeId + "]");
+                Logging.Log("Combat: Reloading [" + weapon.ItemId + "] with [" + charge.TypeName + "][" + charge.TypeId + "]");
                 weapon.ReloadAmmo(charge);
             }
             else
             {
-                Logging.Log("Combat: Changing [" + weapon.ItemId + "] with [" + charge.Name + "][" + charge.TypeId + "]");
+                Logging.Log("Combat: Changing [" + weapon.ItemId + "] with [" + charge.TypeName + "][" + charge.TypeId + "]");
                 weapon.ChangeAmmo(charge);
             }
 
@@ -132,12 +132,12 @@ namespace Questor.Modules
             // Reload or change ammo
             if (weapon.Charge != null && weapon.Charge.TypeId == charge.TypeId)
             {
-                Logging.Log("Combat: Reloading [" + weapon.ItemId + "] with [" + charge.Name + "][" + charge.TypeId + "]");
+                Logging.Log("Combat: Reloading [" + weapon.ItemId + "] with [" + charge.TypeName + "][" + charge.TypeId + "]");
                 weapon.ReloadAmmo(charge);
             }
             else
             {
-                Logging.Log("Combat: Changing [" + weapon.ItemId + "] with [" + charge.Name + "][" + charge.TypeId + "]");
+                Logging.Log("Combat: Changing [" + weapon.ItemId + "] with [" + charge.TypeName + "][" + charge.TypeId + "]");
                 weapon.ChangeAmmo(charge);
             }
 

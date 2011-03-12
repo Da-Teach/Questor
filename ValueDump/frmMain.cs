@@ -92,7 +92,7 @@ namespace ValueDump
                     Items.Clear();
                     var hangarItems = hangar.Items;
                     if (hangarItems != null)
-                        Items.AddRange(hangarItems.Where(i => i.ItemId > 0 && i.MarketGroupId.HasValue && i.Quantity > 0).Select(i => new ItemCache(i)));
+                        Items.AddRange(hangarItems.Where(i => i.ItemId > 0 && i.MarketGroupId > 0 && i.Quantity > 0).Select(i => new ItemCache(i)));
 
                     State = ValueDumpState.UpdatePrices;
                     break;
@@ -159,7 +159,7 @@ namespace ValueDump
                     }
 
                     // Update Quantity
-                    _currentItem.QuantitySold = _currentItem.Quantity - (directItem.Quantity ?? _currentItem.Quantity);
+                    _currentItem.QuantitySold = _currentItem.Quantity - directItem.Quantity;
                     
                     Log("Starting QuickSell for " + _currentItem.Name);
                     if (!directItem.QuickSell())

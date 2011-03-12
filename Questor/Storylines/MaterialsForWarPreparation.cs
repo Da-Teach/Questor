@@ -145,7 +145,7 @@
             }
 
             // How much kernite do we still need?
-            var neededQuantity = 8000 - (hangar.Items.Where(i => i.TypeId == 20).Sum(i => i.Quantity) ?? 0);
+            var neededQuantity = 8000 - hangar.Items.Where(i => i.TypeId == 20).Sum(i => i.Quantity);
             if (neededQuantity > 0)
             {
                 // Get the first order

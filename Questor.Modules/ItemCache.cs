@@ -32,17 +32,17 @@ namespace Questor.Modules
 
         public int TypeId
         {
-            get { return _directItem.TypeId ?? 0; }
+            get { return _directItem.TypeId; }
         }
 
         public int GroupID
         {
-            get { return _directItem.GroupId ?? 0; }
+            get { return _directItem.GroupId; }
         }
 
         public int Quantity
         {
-            get { return _directItem.Quantity ?? 0; }
+            get { return _directItem.Quantity; }
         }
 
         public bool IsContraband
@@ -59,12 +59,12 @@ namespace Questor.Modules
 
         public string Name
         {
-            get { return _directItem.Name; }
+            get { return _directItem.TypeName; }
         }
 
         public double Volume
         {
-            get { return _directItem.Volume ?? 0; }
+            get { return _directItem.Volume; }
         }
 
         public double TotalVolume
