@@ -111,7 +111,7 @@ namespace Questor.Modules
 
         public int MaxCharges
         {
-            get { return _module.MaxCharges ?? -1; }
+            get { return _module.MaxCharges; }
         }
 
         public double OptimalRange
