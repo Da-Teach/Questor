@@ -519,6 +519,10 @@ namespace Questor.Modules
             if (Cache.Instance.InStation)
                 return;
 
+            // What? No ship entity?
+            if (Cache.Instance.DirectEve.ActiveShip.Entity == null)
+                return;
+
             // There is no combat when cloaked
             if (Cache.Instance.DirectEve.ActiveShip.Entity.IsCloaked)
                 return;
