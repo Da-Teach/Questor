@@ -27,9 +27,12 @@ namespace Questor.Modules
             switch (State)
             {
                 case PanicState.Normal:
-                    _lastNormalX = Cache.Instance.DirectEve.ActiveShip.Entity.X;
-                    _lastNormalY = Cache.Instance.DirectEve.ActiveShip.Entity.Y;
-                    _lastNormalZ = Cache.Instance.DirectEve.ActiveShip.Entity.Z;
+                    if (Cache.Instance.DirectEve.ActiveShip.Entity != null)
+                    {
+                        _lastNormalX = Cache.Instance.DirectEve.ActiveShip.Entity.X;
+                        _lastNormalY = Cache.Instance.DirectEve.ActiveShip.Entity.Y;
+                        _lastNormalZ = Cache.Instance.DirectEve.ActiveShip.Entity.Z;
+                    }
 
                     if (Cache.Instance.DirectEve.ActiveShip.GroupId == (int) Group.Capsule)
                     {
