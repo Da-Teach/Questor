@@ -402,10 +402,9 @@ namespace Questor.Modules
                 }
             }
 
-            if (_directEntity != null)
-                _directEntity.LockTarget();
-
-            Cache.Instance.TargetingIDs[Id] = DateTime.Now;
+            // Only add targeting id's when its actually being targeted
+            if (_directEntity != null && _directEntity.LockTarget())
+                Cache.Instance.TargetingIDs[Id] = DateTime.Now;
         }
 
         public void UnlockTarget()
