@@ -194,17 +194,31 @@ namespace Questor.Modules
             if (bookmark == null)
                 return true;
 
-            var invType = Cache.Instance.InvTypesById[bookmark.TypeId ?? -1];
-            if (invType.GroupId == (int) Group.Station) // Let StationDestination handle it :)
+            if (Cache.Instance.DirectEve.Session.IsInStation)
             {
-                var arrived = StationDestination.PerformFinalDestinationTask(bookmark.ItemId ?? -1, bookmark.Entity.Name, ref nextAction);
+                // We have arived
+                if (bookmark.ItemId.HasValue && bookmark.ItemId == Cache.Instance.DirectEve.Session.StationId)
+                    return true;
+
+                // We are apparently in a station that is incorrect
+                Logging.Log("Traveler.BookmarkDestination: We're docked in the wrong station, undocking");
+
+                Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdExitStation);
+                nextAction = DateTime.Now.AddSeconds(30);
+                return false;
+            }
+
+            // Is this a station bookmark?
+            if (bookmark.Entity != null && bookmark.Entity.GroupId == (int)Group.Station)
+            {
+                var arrived = StationDestination.PerformFinalDestinationTask(bookmark.Entity.Id, bookmark.Entity.Name, ref nextAction);
                 if (arrived)
                     Logging.Log("Traveler.BookmarkDestination: Arrived at bookmark [" + bookmark.Title + "]");
                 return arrived;
             }
 
             // Its not a station bookmark, make sure we are in space
-            if (!Cache.Instance.InSpace && Cache.Instance.InStation)
+            if (Cache.Instance.DirectEve.Session.IsInStation)
             {
                 // We are in a station, but not the correct station!
                 if (nextAction < DateTime.Now)
