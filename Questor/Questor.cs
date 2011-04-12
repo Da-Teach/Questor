@@ -190,6 +190,8 @@ namespace Questor
                         close |= window.Html.Contains("Do you wish to proceed with this dangerous action?");
                         // Yes we know the mission isnt complete, Questor will just redo the mission
                         close |= window.Html.Contains("Please check your mission journal for further information.");
+                       // Closes window on Worlds Collide that can break questor
+                        close |= window.Html.Contains("This gate is locked!");
                     }
 
                     if (close)
