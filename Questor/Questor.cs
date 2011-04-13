@@ -190,6 +190,7 @@ namespace Questor
                         close |= window.Html.Contains("Do you wish to proceed with this dangerous action?");
                         // Yes we know the mission isnt complete, Questor will just redo the mission
                         close |= window.Html.Contains("Please check your mission journal for further information.");
+                        close |= window.Html.Contains("This gate is locked!");
                     }
 
                     if (close)
