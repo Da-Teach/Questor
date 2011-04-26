@@ -18,6 +18,25 @@
   <!-- The agent that you are running missions for -->
   <agentName></agentName>
 
+  <!-- List of factions which the bot will try to avoid -->
+  <factionblacklist>
+    <faction>Caldari State</faction>
+    <faction>Minmatar Republic</faction>
+    <faction>Amarr Empire</faction>
+    <faction>Gallente Federation</faction>
+    <faction>CONCORD Assembly</faction>
+    <faction>Ammatar Mandate</faction>
+    <faction>Khanid Kingdom</faction>
+    <faction>Mordu's Legion Command</faction>
+    <faction>Thukker Tribe</faction>
+  </factionblacklist>
+
+  <!-- Wait for mission decline timer to expire before declining again -->
+  <waitDecline>true</waitDecline>
+
+  <!-- Minimum standings to decline missions while the decline timer is active -->
+  <minStandings>4.50</minStandings>
+
   <!-- List of missions which the bot will always decline -->
   <blacklist>
     <mission>Enemies Abound (1 of 5)</mission>
@@ -37,6 +56,9 @@
 
   <!-- Ship used for after mission salvaging, empty means current ship -->
   <salvageShipName></salvageShipName>
+
+  <!-- Ship used for courier missions, empty means current ship NOT IMPLIMENTED -->
+  <haulerShipName></haulerShipName>
 
   <!-- Create salvage bookmarks once a pocket has been cleared and there are wrecks/cans left
        Note: All salvage bookmarks will be in this naming format:  BookmarkPrefix [time]
