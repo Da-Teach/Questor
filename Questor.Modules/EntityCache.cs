@@ -337,8 +337,11 @@ namespace Questor.Modules
                 if (_directEntity != null)
                 {
                     var haveLootRights = false;
-                    haveLootRights |= _directEntity.CorpId == Cache.Instance.DirectEve.ActiveShip.Entity.CorpId;
-                    haveLootRights |= _directEntity.OwnerId == Cache.Instance.DirectEve.ActiveShip.Entity.CharId;
+                    if (Cache.Instance.DirectEve.ActiveShip.Entity != null)
+                    {
+                        haveLootRights |= _directEntity.CorpId == Cache.Instance.DirectEve.ActiveShip.Entity.CorpId;
+                        haveLootRights |= _directEntity.OwnerId == Cache.Instance.DirectEve.ActiveShip.Entity.CharId;
+                    }
 
                     return haveLootRights;
                 }
@@ -402,10 +405,9 @@ namespace Questor.Modules
                 }
             }
 
-            if (_directEntity != null)
-                _directEntity.LockTarget();
-
-            Cache.Instance.TargetingIDs[Id] = DateTime.Now;
+            // Only add targeting id's when its actually being targeted
+            if (_directEntity != null && _directEntity.LockTarget())
+                Cache.Instance.TargetingIDs[Id] = DateTime.Now;
         }
 
         public void UnlockTarget()

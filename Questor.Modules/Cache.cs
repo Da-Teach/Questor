@@ -325,7 +325,7 @@ namespace Questor.Modules
 
         public bool InWarp
         {
-            get { return DirectEve.ActiveShip.Entity.Mode == 3; }
+            get { return DirectEve.ActiveShip.Entity != null ? DirectEve.ActiveShip.Entity.Mode == 3 : false; }
         }
 
         public IEnumerable<EntityCache> ActiveDrones
@@ -377,7 +377,7 @@ namespace Questor.Modules
                 if (_approaching == null)
                 {
                     var ship = DirectEve.ActiveShip.Entity;
-                    if (ship.IsValid)
+                    if (ship != null && ship.IsValid)
                         _approaching = EntityById(ship.FollowId);
                 }
 
@@ -671,6 +671,9 @@ namespace Questor.Modules
         /// <returns></returns>
         public double DistanceFromMe(double x, double y, double z)
         {
+            if (DirectEve.ActiveShip.Entity == null)
+                return 0;
+
             var curX = DirectEve.ActiveShip.Entity.X;
             var curY = DirectEve.ActiveShip.Entity.Y;
             var curZ = DirectEve.ActiveShip.Entity.Z;

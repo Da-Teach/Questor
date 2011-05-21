@@ -519,6 +519,10 @@ namespace Questor.Modules
 
         public void ProcessState()
         {
+            // What? No ship entity?
+            if (Cache.Instance.DirectEve.ActiveShip.Entity == null)
+                return;
+
             switch (State)
             {
                 case MissionControllerState.Idle:
