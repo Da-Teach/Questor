@@ -1,0 +1,31 @@
+May 21, 2011:
+  * Changes/Fixes to Questor:
+    - Added command-line start time, stop time, and runtime.
+    - Changed the existing command line args; new args:
+		= -user <username>
+		= -pw <password>
+		= -char <character name>
+		= -start <start time>
+		= -stop <stop time>
+		= -run <runtime in hours>
+		Old command line of <user> <pw> <char> <autorun> will no longer work!
+		Theoretically, start and stop times can be in any format recognizable
+		 by DateTime.Parse.  I've been using military time in HH:MM and have
+		 had no problems.
+		Currently, if start time is more than 12 hours out, bot assumes we
+		 missed the start time and starts immediately.  If we've already passed
+		 the stop time, bot adds a day to the stop time.
+
+
+March 11, 2011:
+  * Changes/Fixes to Questor:
+    
+    - Added mission decline delay timer.  <char>.xml toggle is
+      <waitDecline>true</waitDecline>
+
+    - Added faction blacklist. Faction blacklist in <char>.xml is
+      <factionblacklist>
+           <faction>Caldari State</faction>
+           <faction>Gallente Federation</faction>
+           <faction>Whatever Else</faction>
+      </factionblacklist>

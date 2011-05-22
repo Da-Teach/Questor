@@ -85,6 +85,7 @@ namespace Questor
         public double LootValue { get; set; }
         public int LoyaltyPoints { get; set; }
 
+   
         public void SettingsLoaded(object sender, EventArgs e)
         {
             ApplySettings();
@@ -119,6 +120,7 @@ namespace Questor
             }
 
             AutoStart = Settings.Instance.AutoStart;
+
         }
 
         public void ApplySettings()
@@ -259,6 +261,16 @@ namespace Questor
             switch (State)
             {
                 case QuestorState.Idle:
+                    if (Program.stopTimeSpecified)
+                    {
+                        if (DateTime.Now >= Program.stopTime)
+                        {
+                            Logging.Log("Time to stop.  Quitting game.");
+                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
+                            return;
+                        }
+                    }
+
                     if (Cache.Instance.InSpace)
                     {
                         // Questor doesnt handle inspace-starts very well, head back to base to try again

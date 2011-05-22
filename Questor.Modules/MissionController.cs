@@ -26,7 +26,6 @@ namespace Questor.Modules
         private List<Action> _pocketActions;
         private bool _waiting;
         private DateTime _waitingSince;
-		  public DateTime _lastMovementStop = new DateTime();
 
         public long AgentId { get; set; }
 
@@ -394,13 +393,6 @@ namespace Questor.Modules
                 Logging.Log("MissionController.LootItem: Approaching target [" + closest.Name + "][" + closest.Id + "]");
                 closest.Approach();
             }
-				else
-				if (DateTime.Now > _lastMovementStop.AddSeconds(10))
-				{
-				Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
-				Cache.Instance.Approaching = null;
-				_lastMovementStop = DateTime.Now;
-				}
         }
 
         private void LootAction(Action action)
@@ -442,13 +434,6 @@ namespace Questor.Modules
                 Logging.Log("MissionController.Loot: Approaching target [" + closest.Name + "][" + closest.Id + "]");
                 closest.Approach();
             }
-				else
-				if (DateTime.Now > _lastMovementStop.AddSeconds(10))
-				{
-				Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
-				Cache.Instance.Approaching = null;
-				_lastMovementStop = DateTime.Now;
-				}
         }
 
         private void IgnoreAction(Action action)

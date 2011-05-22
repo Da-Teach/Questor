@@ -106,6 +106,10 @@ namespace Questor.Modules
         public int? WindowYPosition { get; set; }
         public event EventHandler<EventArgs> SettingsLoaded;
 
+        public string startTimeString { get; set; }
+        public string stopTimeString { get; set; }
+        public double runTime { get; set; }
+
         public void LoadSettings()
         {
             var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -175,7 +179,12 @@ namespace Questor.Modules
                 LongRangeDroneRecallCapacitorPct = 0;
 
                 Blacklist.Clear();
-					 FactionBlacklist.Clear();
+				FactionBlacklist.Clear();
+
+                startTimeString = null;
+                stopTimeString = null;
+                runTime = -1;
+
                 return;
             }
 
@@ -267,6 +276,10 @@ namespace Questor.Modules
             if (factionblacklist != null)
                 foreach (var faction in factionblacklist.Elements("faction"))
                     FactionBlacklist.Add((string) faction);
+
+            startTimeString = (string)xml.Element("startTime");
+            stopTimeString = (string)xml.Element("stopTime");
+            runTime = (double?)xml.Element("runTime") ?? -1;
 
             if (SettingsLoaded != null)
                 SettingsLoaded(this, new EventArgs());
