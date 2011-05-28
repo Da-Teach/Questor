@@ -263,7 +263,7 @@ namespace Questor
                 case QuestorState.Idle:
                     if (Program.stopTimeSpecified)
                     {
-                        if (DateTime.Now >= Program.stopTime)
+                        if (DateTime.Now >= Program._stopTime)
                         {
                             Logging.Log("Time to stop.  Quitting game.");
                             Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);

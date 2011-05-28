@@ -28,8 +28,10 @@ namespace Questor.Modules
         public Settings()
         {
             Ammo = new List<Ammo>();
+            FactionFitting = new List<FactionFitting>();
+            MissionFitting = new List<MissionFitting>();
             Blacklist = new List<string>();
-				FactionBlacklist = new List<string>();
+			FactionBlacklist = new List<string>();
         }
 
         public bool DebugStates { get; set; }
@@ -62,6 +64,8 @@ namespace Questor.Modules
         public int MaximumLowValueTargets { get; set; }
 
         public List<Ammo> Ammo { get; private set; }
+        public List<FactionFitting> FactionFitting { get; private set; }
+        public List<MissionFitting> MissionFitting { get; private set; }
 
         public int MinimumAmmoCharges { get; set; }
 
@@ -106,10 +110,6 @@ namespace Questor.Modules
         public int? WindowYPosition { get; set; }
         public event EventHandler<EventArgs> SettingsLoaded;
 
-        public string startTimeString { get; set; }
-        public string stopTimeString { get; set; }
-        public double runTime { get; set; }
-
         public void LoadSettings()
         {
             var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -147,6 +147,8 @@ namespace Questor.Modules
                 MaximumLowValueTargets = 0;
 
                 Ammo.Clear();
+                FactionFitting.Clear();
+                MissionFitting.Clear();
 
                 MinimumAmmoCharges = 0;
 
@@ -180,10 +182,6 @@ namespace Questor.Modules
 
                 Blacklist.Clear();
 				FactionBlacklist.Clear();
-
-                startTimeString = null;
-                stopTimeString = null;
-                runTime = -1;
 
                 return;
             }
@@ -231,6 +229,18 @@ namespace Questor.Modules
 
             MinimumAmmoCharges = (int?) xml.Element("minimumAmmoCharges") ?? 0;
 
+            FactionFitting.Clear();
+            var factionFittings = xml.Element("factionfittings");
+            if (factionFittings != null)
+                foreach (var factionfitting in factionFittings.Elements("factionfitting"))
+                    FactionFitting.Add(new FactionFitting(factionfitting));
+
+            MissionFitting.Clear();
+            var missionFittings = xml.Element("missionfittings");
+            if (missionFittings != null)
+                foreach (var missionfitting in missionFittings.Elements("missionfitting"))
+                    MissionFitting.Add(new MissionFitting(missionfitting));
+
             WeaponGroupId = (int?) xml.Element("weaponGroupId") ?? 0;
 
             ReserveCargoCapacity = (int?) xml.Element("reserveCargoCapacity") ?? 0;
@@ -276,10 +286,6 @@ namespace Questor.Modules
             if (factionblacklist != null)
                 foreach (var faction in factionblacklist.Elements("faction"))
                     FactionBlacklist.Add((string) faction);
-
-            startTimeString = (string)xml.Element("startTime");
-            stopTimeString = (string)xml.Element("stopTime");
-            runTime = (double?)xml.Element("runTime") ?? -1;
 
             if (SettingsLoaded != null)
                 SettingsLoaded(this, new EventArgs());
