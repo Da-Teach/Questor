@@ -430,6 +430,7 @@ namespace Questor.Modules
         /// <returns></returns>
         public string BringMissionItem { get; private set; }
         public string Fitting { get; set; }
+        public string DefaultFitting { get; set; }
         public string currentFit { get; set; }
         public string factionFit { get; set; }
         public string missionFit { get; set; }
@@ -621,6 +622,7 @@ namespace Questor.Modules
             var FactionFitting = Settings.Instance.FactionFitting.FirstOrDefault(m => m.Faction.ToLower() == "default");
             var _factionFit = (string)FactionFitting.Fitting;
             Fitting = _factionFit;
+            DefaultFitting = _factionFit;
 
             var mission = GetAgentMission(agentId);
             if (mission == null)
@@ -648,12 +650,7 @@ namespace Questor.Modules
                 Fitting = factionFit;
 
             if (Fitting == "")
-            {
-                FactionFitting = Settings.Instance.FactionFitting.FirstOrDefault(m => m.Faction.ToLower() == "default");
-                factionFit = (string)FactionFitting.Fitting;
-                //Logging.Log("AgentInteraction: Faction fitting " + FactionFitting.Faction);
-                Fitting = factionFit;
-            }
+                Fitting = DefaultFitting;
 
             var missionName = FilterPath(mission.Name);
             var missionXmlPath = Path.Combine(Settings.Instance.MissionsPath, missionName + ".xml");

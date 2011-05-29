@@ -9,6 +9,7 @@ May 28, 2011:
 			Next comes mission specific fittings that have no attached faction
 			Next comes faction specific fittings
 			Finally, if no other fittings matched, the default fitting is used
+	 - Fixed swap code to switch to default if it can't find the specified fitting
 
 May 27, 2011:
   * Changes/Fixes to Questor:
