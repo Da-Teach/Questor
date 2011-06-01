@@ -24,7 +24,7 @@ namespace Questor
             foreach (var text in Enum.GetNames(typeof(QuestorState)))
                 QuestorStateComboBox.Items.Add(text);
 
-            _questor = new Questor();
+            _questor = new Questor(this);
         }
 
         private void tUpdateUI_Tick(object sender, EventArgs e)

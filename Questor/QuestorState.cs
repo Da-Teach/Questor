@@ -23,6 +23,8 @@ namespace Questor
         UnloadLoot,
         BeginAfterMissionSalvaging,
         GotoSalvageBookmark,
+        SalvageUseGate,
+        SalvageNextPocket,
         Salvage,
         Error,
         Panic,

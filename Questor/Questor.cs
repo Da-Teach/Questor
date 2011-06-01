@@ -14,12 +14,14 @@ namespace Questor
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using System.Windows.Forms;
     using DirectEve;
     using global::Questor.Modules;
     using global::Questor.Storylines;
 
     public class Questor
     {
+        private frmMain m_Parent;
         private AgentInteraction _agentInteraction;
         private Arm _arm;
         private Combat _combat;
@@ -40,8 +42,13 @@ namespace Questor
         private Random _random;
         private int _randomDelay;
 
-        public Questor()
+        private double _lastX;
+        private double _lastY;
+        private double _lastZ;
+
+        public Questor(frmMain form1)
         {
+            m_Parent = form1;
             _lastPulse = DateTime.MinValue;
 
             _random = new Random();
@@ -143,6 +150,10 @@ namespace Questor
             // Session is not ready yet, do not continue
             if (!Cache.Instance.DirectEve.Session.IsReady)
                 return;
+
+            // If Questor window not visible, show it
+            if (!m_Parent.Visible)
+                m_Parent.Visible = true;
 
             // We are not in space or station, don't do shit yet!
             if (!Cache.Instance.InSpace && !Cache.Instance.InStation)
@@ -631,10 +642,11 @@ namespace Questor
 
                 case QuestorState.GotoSalvageBookmark:
                     _traveler.ProcessState();
-                    if (_traveler.State == TravelerState.AtDestination)
+                    string target = "Acceleration Gate";
+                    var targets = Cache.Instance.EntitiesByName(target);
+                    if (_traveler.State == TravelerState.AtDestination || GateInSalvage())
                     {
                         State = QuestorState.Salvage;
-
                         _traveler.Destination = null;
                     }
 
@@ -664,11 +676,14 @@ namespace Questor
                     {
                         Logging.Log("Salvage: Finished salvaging the room");
 
+                        bool GatesInRoom = GateInSalvage();
                         var bookmarks = Cache.Instance.BookmarksByLabel(Settings.Instance.BookmarkPrefix + " ");
                         do
                         {
                             // Remove all bookmarks from address book
                             var bookmark = bookmarks.FirstOrDefault(b => Cache.Instance.DistanceFromMe(b.X ?? 0, b.Y ?? 0, b.Z ?? 0) < 250000);
+                            if (GatesInRoom) // if there're gates in the room, delete all bookmarks
+                                bookmark = bookmarks.FirstOrDefault();
                             if (bookmark == null)
                                 break;
 
@@ -676,16 +691,32 @@ namespace Questor
                             bookmarks.Remove(bookmark);
                         } while (true);
 
-                        if (bookmarks.Count == 0)
+                        if (bookmarks.Count == 0 && !GatesInRoom)
                         {
                             Logging.Log("Salvage: We have salvaged all bookmarks, goto base");
                             State = QuestorState.GotoBase;
                         }
                         else
                         {
-                            Logging.Log("Salvage: Goto the next salvage bookmark");
-                            _traveler.Destination = new BookmarkDestination(bookmarks.OrderBy(b => b.CreatedOn).First());
-                            State = QuestorState.GotoSalvageBookmark;
+
+                            if (!GatesInRoom)
+                            {
+                                Logging.Log("Salvage: Goto the next salvage bookmark");
+
+                                State = QuestorState.GotoSalvageBookmark;
+                                _traveler.Destination = new BookmarkDestination(bookmarks.OrderBy(b => b.CreatedOn).First());
+                            }
+                            else if (Settings.Instance.UseGatesInSalvage)
+                            {
+                                Logging.Log("Salvage: Acceleration gate found - moving to next pocket");
+                                State = QuestorState.SalvageUseGate;
+                            }
+                            else
+                            {
+                                Logging.Log("Salvage: Acceleration gate found, useGatesInSalvage set to false - Returning to base");
+                                State = QuestorState.GotoBase;
+                                _traveler.Destination = null;
+                            }
                         }
                         break;
                     }
@@ -715,6 +746,70 @@ namespace Questor
                     }
                     break;
 
+
+                case QuestorState.SalvageUseGate:
+
+                    target = "Acceleration Gate";
+
+                    targets = Cache.Instance.EntitiesByName(target);
+                    if (targets == null || targets.Count() == 0)
+                    {
+                        State = QuestorState.GotoSalvageBookmark;
+                        return;
+                    }
+
+                    _lastX = Cache.Instance.DirectEve.ActiveShip.Entity.X;
+                    _lastY = Cache.Instance.DirectEve.ActiveShip.Entity.Y;
+                    _lastZ = Cache.Instance.DirectEve.ActiveShip.Entity.Z;
+
+                    var closest = targets.OrderBy(t => t.Distance).First();
+                    if (closest.Distance < 2500)
+                    {
+                        Logging.Log("Salvage: Acceleration gate found - GroupID=" + closest.GroupId);
+
+                        // Activate it and move to the next Pocket
+                        closest.Activate();
+
+                        // Do not change actions, if NextPocket gets a timeout (>2 mins) then it reverts to the last action
+                        Logging.Log("Salvage: Activate [" + closest.Name + "] and change state to 'NextPocket'");
+
+                        State = QuestorState.SalvageNextPocket;
+                        _lastPulse = DateTime.Now;
+                    }
+                    else if (closest.Distance < 150000)
+                    {
+                        // Move to the target
+                        if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
+                        {
+                            Logging.Log("Salvage: Approaching target [" + closest.Name + "][" + closest.Id + "]");
+                            closest.Approach();
+                        }
+                    }
+                    else
+                    {
+                        // Probably never happens
+                        closest.WarpTo();
+                    }
+                    _lastPulse = DateTime.Now.AddSeconds(10);
+                    break;
+
+                case QuestorState.SalvageNextPocket:
+                    var distance = Cache.Instance.DistanceFromMe(_lastX, _lastY, _lastZ);
+                    if (distance > 100000)
+                    {
+                        Logging.Log("Salvage: We've moved to the next Pocket [" + distance + "]");
+
+                        State = QuestorState.Salvage;
+                    }
+                    else if (DateTime.Now.Subtract(_lastPulse).TotalMinutes > 2)
+                    {
+                        Logging.Log("Salvage: We've timed out, retry last action");
+
+                        // We have reached a timeout, revert to ExecutePocketActions (e.g. most likely Activate)
+                        State = QuestorState.SalvageUseGate;
+                    }
+                    break;
+
                 case QuestorState.Storyline:
                     _storyline.ProcessState();
 
@@ -727,6 +822,16 @@ namespace Questor
                     }
                     break;
             }
+        }
+
+        private bool GateInSalvage()
+        {
+            string target = "Acceleration Gate";
+
+            var targets = Cache.Instance.EntitiesByName(target);
+            if (targets == null || targets.Count() == 0)
+                return false;
+            return true;
         }
     }
 }

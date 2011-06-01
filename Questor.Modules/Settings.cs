@@ -38,9 +38,10 @@ namespace Questor.Modules
         public bool DebugPerformance { get; set; }
 
         public bool AutoStart { get; set; }
-		  public bool waitDecline { get; set; }
+		public bool waitDecline { get; set; }
         public int RandomDelay { get; set; }
-		  public float minStandings { get; set; }
+		public float minStandings { get; set; }
+        public bool UseGatesInSalvage { get; set; }
 
         public bool EnableStorylines { get; set; }
 
@@ -180,6 +181,8 @@ namespace Questor.Modules
                 DroneRecallCapacitorPct = 0;
                 LongRangeDroneRecallCapacitorPct = 0;
 
+                UseGatesInSalvage = false;
+
                 Blacklist.Clear();
 				FactionBlacklist.Clear();
 
@@ -194,7 +197,9 @@ namespace Questor.Modules
             AutoStart = (bool?) xml.Element("autoStart") ?? false;
             waitDecline = (bool?) xml.Element("waitDecline") ?? false;
             RandomDelay = (int?) xml.Element("randomDelay") ?? 0;
-			   minStandings = (float?) xml.Element("minStandings") ?? 10;
+			minStandings = (float?) xml.Element("minStandings") ?? 10;
+
+            UseGatesInSalvage = (bool?)xml.Element("useGatesInSalvage") ?? false;
 
             EnableStorylines = (bool?) xml.Element("enableStorylines") ?? false;
 
