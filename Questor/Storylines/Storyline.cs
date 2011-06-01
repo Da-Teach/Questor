@@ -50,6 +50,7 @@
             _storylines.Add("Whispers in the Dark - Lay and Pray (2 of 4)", new GenericCombatStoryline());
             _storylines.Add("Whispers in the Dark - The Outpost (4 of 4)", new GenericCombatStoryline());
             _storylines.Add("Transaction Data Delivery", new TransactionDataDelivery());
+            _storylines.Add("Innocents in the Crossfire", new TransactionDataDelivery());				
         }
 
         public void Reset()

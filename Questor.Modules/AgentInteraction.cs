@@ -289,7 +289,7 @@ namespace Questor.Modules
             {
                 Logging.Log("AgentInteraction: Mission [" + missionName + "] already accepted");
                 Logging.Log("AgentInteraction: Closing conversation");
-
+                //CheckFaction();
                 State = AgentInteractionState.CloseConversation;
                 _nextAction = DateTime.Now.AddSeconds(7);
             }
@@ -403,15 +403,37 @@ namespace Questor.Modules
                 // Load faction xml
                 var xml = XDocument.Load(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Factions.xml"));
                 var faction = xml.Root.Elements("faction").Where(f => (string) f.Attribute("logo") == logo).FirstOrDefault();
+                //Cache.Instance.factionFit = "Default";
+                Cache.Instance.Fitting = "Default";
                 if (faction != null)
-					 {
-                    	var factionName = ((string) faction.Attribute("name"));
-					 		Logging.Log("AgentInteraction: Mission enemy faction: " + factionName);
-							if (Settings.Instance.FactionBlacklist.Any(m => m.ToLower() == factionName.ToLower()))
-								return true;
-					 }
+                {
+                    var factionName = ((string)faction.Attribute("name"));
+                    Logging.Log("AgentInteraction: Mission enemy faction: " + factionName);
+                    if (Settings.Instance.FactionBlacklist.Any(m => m.ToLower() == factionName.ToLower()))
+                        return true;
+                    if (Settings.Instance.FactionFitting.Any(m => m.Faction.ToLower() == factionName.ToLower()))
+                    {
+                        var FactionFitting = Settings.Instance.FactionFitting.FirstOrDefault(m => m.Faction.ToLower() == factionName.ToLower());
+                        Cache.Instance.factionFit = (string)FactionFitting.Fitting;
+                        Logging.Log("AgentInteraction: Faction fitting " + FactionFitting.Faction);
+                        Cache.Instance.Fitting = Cache.Instance.factionFit;
+                        return false;
+                    }
+                }
+                else
+                {
+                    var FactionFitting = Settings.Instance.FactionFitting.FirstOrDefault(m => m.Faction.ToLower() == "default");
+                    Cache.Instance.factionFit = (string)FactionFitting.Fitting;
+                    Logging.Log("AgentInteraction: Faction fitting " + FactionFitting.Faction);
+                    Cache.Instance.Fitting = Cache.Instance.factionFit;
+                    return false;
+                }
             }
-				return false;
+            var _FactionFitting = Settings.Instance.FactionFitting.FirstOrDefault(m => m.Faction.ToLower() == "default");
+            Cache.Instance.factionFit = (string)_FactionFitting.Fitting;
+            Logging.Log("AgentInteraction: Faction fitting " + _FactionFitting.Faction);
+            Cache.Instance.Fitting = Cache.Instance.factionFit;
+			return false;
 		  }
 
         public void CloseConversation()

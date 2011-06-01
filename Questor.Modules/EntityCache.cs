@@ -308,6 +308,17 @@ namespace Questor.Modules
             }
         }
 
+        public int Health
+        {
+            get
+            {
+                if (_directEntity != null)
+                    return (int)((_directEntity.ShieldPct + _directEntity.ArmorPct + _directEntity.StructurePct) * 100);
+
+                return 0;
+            }
+        }
+
         public bool IsSentry
         {
             get

@@ -57,6 +57,7 @@
     <Compile Include="ArmState.cs" />
     <Compile Include="Cache.cs" />
     <Compile Include="CategoryID.cs" />
+    <Compile Include="CharSchedule.cs" />
     <Compile Include="Combat.cs" />
     <Compile Include="CombatState.cs" />
     <Compile Include="DamageType.cs" />
@@ -64,6 +65,7 @@
     <Compile Include="Drones.cs" />
     <Compile Include="DroneState.cs" />
     <Compile Include="EntityCache.cs" />
+    <Compile Include="Fitting.cs" />
     <Compile Include="GroupID.cs" />
     <Compile Include="InvType.cs" />
     <Compile Include="ItemCache.cs" />

@@ -28,8 +28,10 @@ namespace Questor.Modules
         public Settings()
         {
             Ammo = new List<Ammo>();
+            FactionFitting = new List<FactionFitting>();
+            MissionFitting = new List<MissionFitting>();
             Blacklist = new List<string>();
-				FactionBlacklist = new List<string>();
+			FactionBlacklist = new List<string>();
         }
 
         public bool DebugStates { get; set; }
@@ -62,6 +64,8 @@ namespace Questor.Modules
         public int MaximumLowValueTargets { get; set; }
 
         public List<Ammo> Ammo { get; private set; }
+        public List<FactionFitting> FactionFitting { get; private set; }
+        public List<MissionFitting> MissionFitting { get; private set; }
 
         public int MinimumAmmoCharges { get; set; }
 
@@ -143,6 +147,8 @@ namespace Questor.Modules
                 MaximumLowValueTargets = 0;
 
                 Ammo.Clear();
+                FactionFitting.Clear();
+                MissionFitting.Clear();
 
                 MinimumAmmoCharges = 0;
 
@@ -175,7 +181,8 @@ namespace Questor.Modules
                 LongRangeDroneRecallCapacitorPct = 0;
 
                 Blacklist.Clear();
-					 FactionBlacklist.Clear();
+				FactionBlacklist.Clear();
+
                 return;
             }
 
@@ -221,6 +228,18 @@ namespace Questor.Modules
                     Ammo.Add(new Ammo(ammo));
 
             MinimumAmmoCharges = (int?) xml.Element("minimumAmmoCharges") ?? 0;
+
+            FactionFitting.Clear();
+            var factionFittings = xml.Element("factionfittings");
+            if (factionFittings != null)
+                foreach (var factionfitting in factionFittings.Elements("factionfitting"))
+                    FactionFitting.Add(new FactionFitting(factionfitting));
+
+            MissionFitting.Clear();
+            var missionFittings = xml.Element("missionfittings");
+            if (missionFittings != null)
+                foreach (var missionfitting in missionFittings.Elements("missionfitting"))
+                    MissionFitting.Add(new MissionFitting(missionfitting));
 
             WeaponGroupId = (int?) xml.Element("weaponGroupId") ?? 0;
 
