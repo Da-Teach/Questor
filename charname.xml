@@ -26,4 +26,6 @@
     <faction>Minmatar Republic</faction>
   </factionblacklist>
 
+  <useGatesInSalvage>true</useGatesInSalvage>
+
 </settings>

@@ -110,7 +110,7 @@ namespace Questor
                     if (_stopTime < _startTime)
                         _stopTime = _stopTime.AddDays(1);
 
-                    if (_schedule.RunTime != -1) //if runtime is specified, overrides stop time
+                    if (_schedule.RunTime > 0) //if runtime is specified, overrides stop time
                         _stopTime = _startTime.AddHours(_schedule.RunTime);
 
                     string _stopTimeText = "No stop time specified";
@@ -125,7 +125,10 @@ namespace Questor
                         minutesToStart = _startTime.Subtract(DateTime.Now).TotalMinutes;
                         Logging.Log("[Startup] Starting at " + _startTime + ". " + String.Format("{0:0.##}", minutesToStart) + " minutes to go.");
                         _timer.Elapsed += new ElapsedEventHandler(TimerEventProcessor);
-                        _timer.Interval = (int)(minutesToStart * 60000);
+                        if (minutesToStart > 0)
+                            _timer.Interval = (int)(minutesToStart * 60000);
+                        else
+                            _timer.Interval = 1000;
                         _timer.Enabled = true;
                         _timer.Start();
 

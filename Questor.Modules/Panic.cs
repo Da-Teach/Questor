@@ -18,7 +18,7 @@ namespace Questor.Modules
         private double _lastNormalY;
         private double _lastNormalZ;
 
-        private DateTime _nextRepairAction;
+        //private DateTime _nextRepairAction;
 
         public PanicState State { get; set; }
 

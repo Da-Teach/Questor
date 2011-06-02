@@ -1,3 +1,19 @@
+June 01, 2011:
+  * Changes/Fixes to Questor:
+	 - Merged Da_Teach's Incursion 1.6 fix to DirectEve.dll
+	 - Fixed bug that would cause the agent standings check to crash on international systems
+
+May 30, 2011:
+  * Changes/Fixes to Questor:
+	 - Added in code to check for acceleration gates during salvage because pockets didn't despawn
+		 on mission turn-in.  bool <useGatesInSalvage> in char.xml determines behavior when gates
+		 detected; if false, Questor salvages any ships in first pocket, then quits salvaging and
+		 returns to base.  If true, Questor salvages, then proceeds through the gates, salvaging as
+		 it goes.
+	 - Attempt to fix issue with the Questor window occasionally disappearing, leaving Questor running
+		 but with no ability to control it.
+	
+
 May 28, 2011:
   * Changes/Fixes to Questor:
 	 - Merged in Ganondorf's fitting swap code
