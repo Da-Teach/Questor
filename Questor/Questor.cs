@@ -45,6 +45,7 @@ namespace Questor
         private double _lastX;
         private double _lastY;
         private double _lastZ;
+        private bool _GatesPresent;
 
         public Questor(frmMain form1)
         {
@@ -621,6 +622,7 @@ namespace Questor
                     break;
 
                 case QuestorState.BeginAfterMissionSalvaging:
+                    _GatesPresent = false;
                     if (_arm.State == ArmState.Idle)
                         _arm.State = ArmState.SwitchToSalvageShip;
 
@@ -681,10 +683,11 @@ namespace Questor
                         var bookmarks = Cache.Instance.BookmarksByLabel(Settings.Instance.BookmarkPrefix + " ");
                         do
                         {
-                            // Remove all bookmarks from address book
                             var bookmark = bookmarks.FirstOrDefault(b => Cache.Instance.DistanceFromMe(b.X ?? 0, b.Y ?? 0, b.Z ?? 0) < 250000);
-                            if (GatesInRoom) // if there're gates in the room, delete all bookmarks
+                            if (!GatesInRoom && _GatesPresent) // if there were gates, but we've gone through them all, delete all bookmarks
                                 bookmark = bookmarks.FirstOrDefault();
+                            else if (GatesInRoom)
+                                break;
                             if (bookmark == null)
                                 break;
 
@@ -832,6 +835,7 @@ namespace Questor
             var targets = Cache.Instance.EntitiesByName(target);
             if (targets == null || targets.Count() == 0)
                 return false;
+            _GatesPresent = true;
             return true;
         }
     }
