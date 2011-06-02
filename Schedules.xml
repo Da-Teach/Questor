@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<schedule>
-  <user="myusername" pass="mypassword" char="Billy Bob" start="08:00" stop="20:00" run="12.2" />
-</schedule>
+<Chars>
+  <char user="myusername" pass="mypassword" char="Billy Bob" start="08:00" stop="20:00" run="12.2" />
+</Chars>

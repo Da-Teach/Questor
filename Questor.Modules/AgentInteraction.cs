@@ -347,7 +347,7 @@ namespace Questor.Modules
 						if (standingMatch.Success)
 						{
 							var standingValue = standingMatch.Groups["standing"].Value;
-							standings = float.Parse(standingValue);
+                            standings = float.Parse(standingValue, System.Globalization.CultureInfo.InvariantCulture);
 							Logging.Log("AgentInteraction: Agent decline timer detected. Current standings: " + standings + ". Minimum standings: " + minStandings);
 						}
 					   if (standings <= minStandings)

@@ -1,6 +1,7 @@
 June 01, 2011:
   * Changes/Fixes to Questor:
 	 - Merged Da_Teach's Incursion 1.6 fix to DirectEve.dll
+	 - Fixed bug that would cause the agent standings check to crash on international systems
 
 May 30, 2011:
   * Changes/Fixes to Questor:
