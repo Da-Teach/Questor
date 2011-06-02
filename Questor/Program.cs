@@ -125,7 +125,10 @@ namespace Questor
                         minutesToStart = _startTime.Subtract(DateTime.Now).TotalMinutes;
                         Logging.Log("[Startup] Starting at " + _startTime + ". " + String.Format("{0:0.##}", minutesToStart) + " minutes to go.");
                         _timer.Elapsed += new ElapsedEventHandler(TimerEventProcessor);
-                        _timer.Interval = (int)(minutesToStart * 60000);
+                        if (minutesToStart > 0)
+                            _timer.Interval = (int)(minutesToStart * 60000);
+                        else
+                            _timer.Interval = 1000;
                         _timer.Enabled = true;
                         _timer.Start();
 
