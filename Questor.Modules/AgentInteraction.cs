@@ -407,6 +407,7 @@ namespace Questor.Modules
                 if (faction != null)
                 {
                     var factionName = ((string)faction.Attribute("name"));
+                    Cache.Instance.factionName = factionName;
                     Logging.Log("AgentInteraction: Mission enemy faction: " + factionName);
                     if (Settings.Instance.FactionBlacklist.Any(m => m.ToLower() == factionName.ToLower()))
                         return true;
@@ -421,6 +422,7 @@ namespace Questor.Modules
                 }
                 else
                 {
+                    Cache.Instance.factionName = "Default";
                     var FactionFitting = Settings.Instance.FactionFitting.FirstOrDefault(m => m.Faction.ToLower() == "default");
                     Cache.Instance.factionFit = (string)FactionFitting.Fitting;
                     Logging.Log("AgentInteraction: Faction fitting " + FactionFitting.Faction);
@@ -432,7 +434,7 @@ namespace Questor.Modules
             Cache.Instance.factionFit = (string)_FactionFitting.Fitting;
             Logging.Log("AgentInteraction: Faction fitting " + _FactionFitting.Faction);
             Cache.Instance.Fitting = Cache.Instance.factionFit;
-			return false;
+            return false;
 		  }
 
         public void CloseConversation()
