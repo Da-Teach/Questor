@@ -36,7 +36,7 @@ namespace Questor.Modules
             {
                 if (!DateTime.TryParseExact(_start, "HH:mm", enUS, DateTimeStyles.None, out _startTime))
                 {
-                    Logging.Log("[CharSchedule] Couldn't parse starttime. Starting now.");
+                    Logging.Log("[CharSchedule] " + Name + ": Couldn't parse starttime.");
                     _startTime = DateTime.Now;
                 }
                 else
@@ -44,7 +44,7 @@ namespace Questor.Modules
             }
             else
             {
-                Logging.Log("[CharSchedule] No start time specified. Starting now.");
+                //Logging.Log("[CharSchedule] No start time specified. Starting now.");
                 _startTime = DateTime.Now;
             }
             Start = _startTime;
@@ -53,7 +53,7 @@ namespace Questor.Modules
             {
                 if (!DateTime.TryParseExact(_stop, "HH:mm", enUS, DateTimeStyles.None, out _stopTime))
                 {
-                    Logging.Log("[CharSchedule] Couldn't parse stoptime.");
+                    Logging.Log("[CharSchedule] " + Name + ": Couldn't parse stoptime.");
                     _stopTime = DateTime.Now.AddHours(24);
                 }
                 else
@@ -61,7 +61,7 @@ namespace Questor.Modules
             }
             else
             {
-                Logging.Log("[CharSchedule] No stop time specified.");
+                //Logging.Log("[CharSchedule] No stop time specified.");
                 _stopTime = DateTime.Now.AddHours(24);
             }
             Stop = _stopTime;
