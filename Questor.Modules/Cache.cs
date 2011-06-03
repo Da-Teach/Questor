@@ -628,7 +628,8 @@ namespace Questor.Modules
             var mission = GetAgentMission(agentId);
             if (mission == null)
                 return;
-
+            if (factionName == null || factionName == "")
+                factionName = "Default";
             if (Settings.Instance.MissionFitting.Any(m => m.Mission.ToLower() == mission.Name.ToLower()))
             {
                 // if we've got multiple copies of the same mission, find the one with the matching faction
