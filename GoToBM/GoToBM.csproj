@@ -43,14 +43,10 @@
     <Reference Include="DirectEve">
       <HintPath>..\DirectEve\DirectEve.dll</HintPath>
     </Reference>
-    <Reference Include="Questor.Modules">
-      <HintPath>..\Questor.Modules\bin\Release\Questor.Modules.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -60,6 +56,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Questor.Modules\Questor.Modules.csproj">
+      <Project>{0C0BE1A3-BA5B-41A1-B578-F20777D02304}</Project>
+      <Name>Questor.Modules</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
