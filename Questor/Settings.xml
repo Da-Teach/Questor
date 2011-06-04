@@ -30,6 +30,12 @@
     <faction>Mordu's Legion Command</faction>
     <faction>Thukker Tribe</faction>
   </factionblacklist>
+  
+  <!-- List of Faction fittings -->
+  <factionfittings>
+    <factionfitting faction="Default" fitting="Default" />
+  </factionfittings>
+
 
   <!-- Wait for mission decline timer to expire before declining again -->
   <waitDecline>true</waitDecline>
