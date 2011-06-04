@@ -429,6 +429,12 @@ namespace Questor.Modules
         /// </summary>
         /// <returns></returns>
         public string BringMissionItem { get; private set; }
+        public string Fitting { get; set; }
+        public string DefaultFitting { get; set; }
+        public string currentFit { get; set; }
+        public string factionFit { get; set; }
+        public string factionName { get; set; }
+        public string missionFit { get; set; }
 
         public DirectWindow GetWindowByCaption(string caption)
         {
@@ -613,9 +619,40 @@ namespace Questor.Modules
             MissionItems.Clear();
             BringMissionItem = string.Empty;
 
+            //Fitting = "Default";
+            var FactionFitting = Settings.Instance.FactionFitting.FirstOrDefault(m => m.Faction.ToLower() == "default");
+            var _factionFit = (string)FactionFitting.Fitting;
+            Fitting = _factionFit;
+            DefaultFitting = _factionFit;
+
             var mission = GetAgentMission(agentId);
             if (mission == null)
                 return;
+
+            if (Settings.Instance.MissionFitting.Any(m => m.Mission.ToLower() == mission.Name.ToLower()))
+            {
+                // if we've got multiple copies of the same mission, find the one with the matching faction
+                //Logging.Log("Cache: REMOVEME - factionFit: " + factionFit + " - mission.Name: " + mission.Name);
+                if (Settings.Instance.MissionFitting.Any(m => m.Faction.ToLower() == factionName.ToLower() && (m.Mission.ToLower() == mission.Name.ToLower())))
+                {
+                    var MissionFitting = Settings.Instance.MissionFitting.FirstOrDefault(m => m.Faction.ToLower() == factionName.ToLower() && (m.Mission.ToLower() == mission.Name.ToLower()));
+                    missionFit = (string)MissionFitting.Fitting;
+                    Logging.Log("Cache: Mission: " + MissionFitting.Mission + " - Faction: " + factionName + " - Fitting: " + MissionFitting.Fitting);
+                    Fitting = missionFit;
+                }
+                else //otherwise just use the first copy of that mission
+                {
+                    var MissionFitting = Settings.Instance.MissionFitting.FirstOrDefault(m => m.Mission.ToLower() == mission.Name.ToLower());
+                    missionFit = (string)MissionFitting.Fitting;
+                    //Logging.Log("Cache: Mission: " + MissionFitting.Mission + " - Fitting: " + MissionFitting.Fitting);
+                    Fitting = missionFit;
+                }
+            }
+            else if (factionFit != null)
+                Fitting = factionFit;
+
+            if (Fitting == "")
+                Fitting = DefaultFitting;
 
             var missionName = FilterPath(mission.Name);
             var missionXmlPath = Path.Combine(Settings.Instance.MissionsPath, missionName + ".xml");
@@ -630,6 +667,9 @@ namespace Questor.Modules
 
                 BringMissionItem = (string) xdoc.Root.Element("bring") ?? string.Empty;
                 BringMissionItem = BringMissionItem.ToLower();
+
+                //load fitting setting from the mission file
+                //Fitting = (string)xdoc.Root.Element("fitting") ?? "default";  
             }
             catch (Exception ex)
             {
