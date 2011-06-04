@@ -139,7 +139,7 @@
             // We moved the item
             if (to.Items.Any(i => i.GroupId == groupId))
                 return true;
-            
+
             if (directEve.GetLockedItems().Count != 0)
                 return false;
 
@@ -148,9 +148,9 @@
             {
                 Logging.Log("TransactionDataDelivery: Moving [" + item.TypeName + "][" + item.ItemId + "] to " + (pickup ? "cargo" : "hangar"));
                 to.Add(item);
-
-            _nextAction = DateTime.Now.AddSeconds(10);
-            return false;
+            }
+                _nextAction = DateTime.Now.AddSeconds(10);
+                return false;
         }
 
         /// <summary>
