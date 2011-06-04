@@ -148,7 +148,6 @@
             {
                 Logging.Log("TransactionDataDelivery: Moving [" + item.TypeName + "][" + item.ItemId + "] to " + (pickup ? "cargo" : "hangar"));
                 to.Add(item);
-            }
 
             _nextAction = DateTime.Now.AddSeconds(10);
             return false;
