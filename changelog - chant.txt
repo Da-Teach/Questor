@@ -1,3 +1,7 @@
+June 04, 2011:
+  * Changes/Fixes to Questor:
+	 - Bugfix to resolve crash if factionfittings not defined in xml
+
 June 01, 2011:
   * Changes/Fixes to Questor:
 	 - Merged Da_Teach's Incursion 1.6 fix to DirectEve.dll
