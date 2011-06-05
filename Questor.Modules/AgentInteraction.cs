@@ -429,6 +429,7 @@ namespace Questor.Modules
                     Cache.Instance.Fitting = Cache.Instance.factionFit;
                     return false;
                 }
+                return false;
             }
             if (Settings.Instance.FittingsDefined)
             {
