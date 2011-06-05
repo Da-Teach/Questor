@@ -74,6 +74,9 @@ namespace Questor
             _directEve = new DirectEve();
             Cache.Instance.DirectEve = _directEve;
 
+            Cache.Instance.StopTimeSpecified = Program.stopTimeSpecified;
+            Cache.Instance.StopTime = Program._stopTime;
+
             _directEve.OnFrame += OnFrame;
         }
 
@@ -273,9 +276,9 @@ namespace Questor
             switch (State)
             {
                 case QuestorState.Idle:
-                    if (Program.stopTimeSpecified)
+                    if (Cache.Instance.StopTimeSpecified)
                     {
-                        if (DateTime.Now >= Program._stopTime)
+                        if (DateTime.Now >= Cache.Instance.StopTime)
                         {
                             Logging.Log("Time to stop.  Quitting game.");
                             Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);

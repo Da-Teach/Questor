@@ -32,6 +32,7 @@ namespace Questor.Modules
             MissionFitting = new List<MissionFitting>();
             Blacklist = new List<string>();
 			FactionBlacklist = new List<string>();
+            FittingsDefined = false;
         }
 
         public bool DebugStates { get; set; }
@@ -67,6 +68,7 @@ namespace Questor.Modules
         public List<Ammo> Ammo { get; private set; }
         public List<FactionFitting> FactionFitting { get; private set; }
         public List<MissionFitting> MissionFitting { get; private set; }
+        public bool FittingsDefined { get; private set; }
 
         public int MinimumAmmoCharges { get; set; }
 
@@ -237,8 +239,11 @@ namespace Questor.Modules
             FactionFitting.Clear();
             var factionFittings = xml.Element("factionfittings");
             if (factionFittings != null)
+            {
                 foreach (var factionfitting in factionFittings.Elements("factionfitting"))
                     FactionFitting.Add(new FactionFitting(factionfitting));
+                FittingsDefined = true;
+            }
 
             MissionFitting.Clear();
             var missionFittings = xml.Element("missionfittings");

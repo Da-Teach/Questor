@@ -411,7 +411,7 @@ namespace Questor.Modules
                     Logging.Log("AgentInteraction: Mission enemy faction: " + factionName);
                     if (Settings.Instance.FactionBlacklist.Any(m => m.ToLower() == factionName.ToLower()))
                         return true;
-                    if (Settings.Instance.FactionFitting.Any(m => m.Faction.ToLower() == factionName.ToLower()))
+                    if (Settings.Instance.FittingsDefined && Settings.Instance.FactionFitting.Any(m => m.Faction.ToLower() == factionName.ToLower()))
                     {
                         var FactionFitting = Settings.Instance.FactionFitting.FirstOrDefault(m => m.Faction.ToLower() == factionName.ToLower());
                         Cache.Instance.factionFit = (string)FactionFitting.Fitting;
@@ -420,7 +420,7 @@ namespace Questor.Modules
                         return false;
                     }
                 }
-                else
+                else if (Settings.Instance.FittingsDefined)
                 {
                     Cache.Instance.factionName = "Default";
                     var FactionFitting = Settings.Instance.FactionFitting.FirstOrDefault(m => m.Faction.ToLower() == "default");
@@ -430,12 +430,15 @@ namespace Questor.Modules
                     return false;
                 }
             }
-            var _FactionFitting = Settings.Instance.FactionFitting.FirstOrDefault(m => m.Faction.ToLower() == "default");
-            Cache.Instance.factionFit = (string)_FactionFitting.Fitting;
-            Logging.Log("AgentInteraction: Faction fitting " + _FactionFitting.Faction);
-            Cache.Instance.Fitting = Cache.Instance.factionFit;
+            if (Settings.Instance.FittingsDefined)
+            {
+                var _FactionFitting = Settings.Instance.FactionFitting.FirstOrDefault(m => m.Faction.ToLower() == "default");
+                Cache.Instance.factionFit = (string)_FactionFitting.Fitting;
+                Logging.Log("AgentInteraction: Faction fitting " + _FactionFitting.Faction);
+                Cache.Instance.Fitting = Cache.Instance.factionFit;
+            }
             return false;
-		  }
+          }
 
         public void CloseConversation()
         {
