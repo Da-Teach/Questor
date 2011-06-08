@@ -403,7 +403,7 @@ namespace Questor.Modules
                 var xml = XDocument.Load(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Factions.xml"));
                 var faction = xml.Root.Elements("faction").Where(f => (string) f.Attribute("logo") == logo).FirstOrDefault();
                 //Cache.Instance.factionFit = "Default";
-                Cache.Instance.Fitting = "Default";
+                //Cache.Instance.Fitting = "Default";
                 if (faction != null)
                 {
                     var factionName = ((string)faction.Attribute("name"));
@@ -415,28 +415,29 @@ namespace Questor.Modules
                     {
                         var FactionFitting = Settings.Instance.FactionFitting.FirstOrDefault(m => m.Faction.ToLower() == factionName.ToLower());
                         Cache.Instance.factionFit = (string)FactionFitting.Fitting;
-                        Logging.Log("AgentInteraction: Faction fitting " + FactionFitting.Faction);
-                        Cache.Instance.Fitting = Cache.Instance.factionFit;
+                        Logging.Log("AgentInteraction: Faction fitting: " + FactionFitting.Faction);
+                        //Cache.Instance.Fitting = Cache.Instance.factionFit;
                         return false;
                     }
-                }
+                }/*
                 else if (Settings.Instance.FittingsDefined)
                 {
                     Cache.Instance.factionName = "Default";
                     var FactionFitting = Settings.Instance.FactionFitting.FirstOrDefault(m => m.Faction.ToLower() == "default");
                     Cache.Instance.factionFit = (string)FactionFitting.Fitting;
                     Logging.Log("AgentInteraction: Faction fitting " + FactionFitting.Faction);
-                    Cache.Instance.Fitting = Cache.Instance.factionFit;
+                    //Cache.Instance.Fitting = Cache.Instance.factionFit;
                     return false;
                 }
-                return false;
+                return false;  */
             }
             if (Settings.Instance.FittingsDefined)
             {
+                Cache.Instance.factionName = "Default";
                 var _FactionFitting = Settings.Instance.FactionFitting.FirstOrDefault(m => m.Faction.ToLower() == "default");
                 Cache.Instance.factionFit = (string)_FactionFitting.Fitting;
-                Logging.Log("AgentInteraction: Faction fitting " + _FactionFitting.Faction);
-                Cache.Instance.Fitting = Cache.Instance.factionFit;
+                Logging.Log("AgentInteraction: Faction fitting: " + _FactionFitting.Faction);
+                //Cache.Instance.Fitting = Cache.Instance.factionFit;
             }
             return false;
           }
