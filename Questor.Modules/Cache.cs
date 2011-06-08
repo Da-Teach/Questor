@@ -367,7 +367,7 @@ namespace Questor.Modules
             get
             {
                 _priorityTargets.RemoveAll(pt => pt.Entity == null);
-                return _priorityTargets.OrderBy(pt => pt.Priority).ThenBy(pt => pt.Entity.Distance).Select(pt => pt.Entity);
+                return _priorityTargets.OrderBy(pt => pt.Priority).ThenBy(pt => (pt.Entity.ShieldPct + pt.Entity.ArmorPct + pt.Entity.StructurePct)).ThenBy(pt => pt.Entity.Distance).Select(pt => pt.Entity);
             }
         }
 
