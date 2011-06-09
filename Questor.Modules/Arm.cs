@@ -104,7 +104,7 @@ namespace Questor.Modules
 
                     // If we've got a mission-specific ship defined, switch to it
                     if ((State == ArmState.ActivateCombatShip) && !(Cache.Instance.MissionShip == "" || Cache.Instance.MissionShip == null) && TryMissionShip)
-                        shipName = Cache.Instance.MissionShip;
+                        shipName = Cache.Instance.MissionShip.ToLower();
 
                     if (Settings.Instance.CombatShipName.ToLower() == shipName) // if the mission specific ship is our default combat ship, no need to do anything special
                         TryMissionShip = false;
