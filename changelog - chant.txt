@@ -1,3 +1,7 @@
+June 10, 2011:
+  * Changes/Fixes to Questor:
+	 - Fixed bug in which fitting manager breaks after first mission
+
 June 07, 2011:
   * Changes/Fixes to Questor:
 	 - Rewritten fitting manager
@@ -23,6 +27,9 @@ June 07, 2011:
 					- If the ship is the default combat ship, the default fitting is used
 					- If the ship is not the default combat ship, the fitting is not changed and the current loadout
 						is kept.
+
+			=Both the ship="" and the fitting="" entries in <missionfitting> are optional.  If neither is specified,
+				obviously the missionfitting has no effect.
 
 June 04, 2011:
   * Changes/Fixes to Questor:

@@ -51,7 +51,7 @@ namespace Questor.Modules
             switch (State)
             {
                 case ArmState.Idle:
-                    Cache.Instance.ArmLoadedCache = false;
+
                     break;
                 case ArmState.Done:
                     break;
@@ -59,6 +59,7 @@ namespace Questor.Modules
                 case ArmState.Begin:
                     //DefaultFittingChecked = false; //flag to check for the correct default fitting before using the fitting manager
                     //DefaultFittingFound = true; //Did we find the default fitting?
+                    Cache.Instance.ArmLoadedCache = false;
                     TryMissionShip = true;  // Used in the event we can't find the ship specified in the missionfittings
                     UseMissionShip = false; // Were we successful in activating the mission specific ship?
                     State = ArmState.OpenShipHangar;
@@ -237,6 +238,7 @@ namespace Questor.Modules
 
                 case ArmState.OpenFittingWindow:
                     //let's check first if we need to change fitting at all
+                    Logging.Log("Arm: Fitting: " + Cache.Instance.Fitting + " - currentFit: " + Cache.Instance.currentFit);
                     if (Cache.Instance.Fitting.Equals(Cache.Instance.currentFit))
                     {
                         Logging.Log("Arm: Current fit is correct - no change necessary");
@@ -368,6 +370,7 @@ namespace Questor.Modules
                     }
  
                     var neededDrones = Math.Floor((droneBay.Capacity - droneBay.UsedCapacity)/drone.Volume);
+                    Logging.Log("neededDrones: " + neededDrones);
                     if (neededDrones == 0 && ((Settings.Instance.FittingsDefined && DefaultFittingFound) && !(UseMissionShip && !(Cache.Instance.ChangeMissionShipFittings))))
                     {
                         Logging.Log("Arm: Fitting");
