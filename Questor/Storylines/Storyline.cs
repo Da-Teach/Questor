@@ -227,7 +227,8 @@
                     if (_agentInteraction.State == AgentInteractionState.Done)
                     {
                         _agentInteraction.State = AgentInteractionState.Idle;
-                        State = StorylineState.ExecuteMission;
+                        // If theres no mission anymore then we're done (we declined it)
+                        State = Mission == null ? StorylineState.Done : StorylineState.ExecuteMission;
                     }
                     break;
                 

@@ -72,7 +72,7 @@ namespace Questor.Modules
         private EntityCache GetTarget()
         {
             // Get all entity targets
-            var targets = Cache.Instance.Targets.Where(e => e.CategoryId == (int) CategoryID.Entity && e.IsNpc);
+            var targets = Cache.Instance.Targets.Where(e => e.CategoryId == (int)CategoryID.Entity && e.IsNpc && !e.IsContainer && e.GroupId != (int)Group.LargeCollidableStructure);
 
             // Is our last target a high priority target (most likely scrambler) and (still) in the target list?
             var target = Cache.Instance.PriorityTargets.FirstOrDefault(pt => targets.Any(t => t.Id == pt.Id) && pt.Id == _lastTarget && pt.Distance < Settings.Instance.DroneControlRange);
@@ -85,12 +85,12 @@ namespace Questor.Modules
                 return target;
 
             // Is our last non-value target in the target list?
-            target = Cache.Instance.Targets.FirstOrDefault(t => !t.TargetValue.HasValue && t.Distance < Settings.Instance.DroneControlRange && t.IsNpc && t.Id == _lastTarget);
+            target = targets.FirstOrDefault(t => !t.TargetValue.HasValue && t.Distance < Settings.Instance.DroneControlRange && t.Id == _lastTarget);
             if (target != null)
                 return target;
 
             // Get the closest non-value target
-            target = Cache.Instance.Targets.Where(t => !t.TargetValue.HasValue && t.Distance < Settings.Instance.DroneControlRange && t.IsNpc).OrderBy(t => t.Distance).FirstOrDefault();
+            target = targets.Where(t => !t.TargetValue.HasValue && t.Distance < Settings.Instance.DroneControlRange && t.IsNpc).OrderBy(t => t.Distance).FirstOrDefault();
             if (target != null)
                 return target;
 
@@ -100,12 +100,12 @@ namespace Questor.Modules
                 return target;
 
             // Is our last value target in the target list?
-            target = Cache.Instance.Targets.FirstOrDefault(t => t.TargetValue.HasValue && t.Distance < Settings.Instance.DroneControlRange && t.Id == _lastTarget);
+            target = targets.FirstOrDefault(t => t.TargetValue.HasValue && t.Distance < Settings.Instance.DroneControlRange && t.Id == _lastTarget);
             if (target != null)
                 return target;
 
             // Get the closest value target, ordered by lowest value
-            return Cache.Instance.Targets.Where(t => t.TargetValue.HasValue && t.Distance < Settings.Instance.DroneControlRange).OrderBy(t => t.TargetValue.Value).ThenBy(t => t.Distance).FirstOrDefault();
+            return targets.Where(t => t.TargetValue.HasValue && t.Distance < Settings.Instance.DroneControlRange).OrderBy(t => t.TargetValue.Value).ThenBy(t => t.Distance).FirstOrDefault();
         }
 
         /// <summary>
