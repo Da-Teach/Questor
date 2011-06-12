@@ -27,6 +27,7 @@ namespace Questor.Modules
                 activate |= module.GroupId == (int) Group.SensorBooster;
                 activate |= module.GroupId == (int) Group.TrackingComputer;
                 activate |= module.GroupId == (int) Group.ECCM;
+
                 if (!activate)
                     continue;
 
