@@ -1,4 +1,4 @@
-﻿// ------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 //   <copyright from='2010' to='2015' company='THEHACKERWITHIN.COM'>
 //     Copyright (c) TheHackerWithin.COM. All Rights Reserved.
 // 
@@ -24,6 +24,8 @@ namespace Questor.Modules
         ArmorRepairer = 62,
         ArmorHardeners = 328,
         DamageControl = 60,
+
+        ECCM = 202,
 
         SensorBooster = 212,
         TrackingComputer = 213,
