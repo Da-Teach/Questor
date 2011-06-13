@@ -1,3 +1,36 @@
+June 10, 2011:
+  * Changes/Fixes to Questor:
+	 - Fixed bug in which fitting manager breaks after first mission
+
+June 07, 2011:
+  * Changes/Fixes to Questor:
+	 - Rewritten fitting manager
+	 - *New* Ship manager
+	 - Ship and fitting names are no longer case sensitive
+			=Fitting Manager:
+				* If "Default" faction fitting is not specified, or is not found in the fitting browser, fitting
+			 		manager is disabled.
+				* If there is a <missionfitting> entry that matches the mission, the settings in that entry override
+					the entry in <factionfitting>
+				* If there are multiple <missionfitting> entries for a given mission, questor tries to match the 
+					faction as well.  If there is no entry for the proper faction, goes with the first listed entry.
+				* If there is a <missionfitting> entry, but there is no fitting specified (only a ship specified),
+					the <factionfitting> entry is used.
+				* If the fitting is not found in the fitting browser, the default fitting is used.  An omni-tank
+					is highly recommended.
+			
+			=Ship Manager:
+				* Ship can be specified on a per-mission basis via the ship="" flag in <missionfitting>
+				* If the specified ship cannot be found, switches to the default combat ship and the default
+					fitting
+				* If the ship is found but the specified fitting is for another ship type, one of two things happens:
+					- If the ship is the default combat ship, the default fitting is used
+					- If the ship is not the default combat ship, the fitting is not changed and the current loadout
+						is kept.
+
+			=Both the ship="" and the fitting="" entries in <missionfitting> are optional.  If neither is specified,
+				obviously the missionfitting has no effect.
+
 June 04, 2011:
   * Changes/Fixes to Questor:
 	 - Bugfix to resolve crash if factionfittings not defined in xml

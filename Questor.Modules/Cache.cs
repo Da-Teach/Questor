@@ -123,6 +123,9 @@ namespace Questor.Modules
             LootedContainers = new HashSet<long>();
             IgnoreTargets = new HashSet<string>();
             MissionItems = new List<string>();
+            ChangeMissionShipFittings = false;
+            UseMissionShip = false;
+            ArmLoadedCache = false;
 
         }
 
@@ -430,12 +433,19 @@ namespace Questor.Modules
         /// </summary>
         /// <returns></returns>
         public string BringMissionItem { get; private set; }
-        public string Fitting { get; set; }
-        public string DefaultFitting { get; set; }
+
+
+
+        public string Fitting { get; set; } // stores name of the final fitting we want to use
+        public string MissionShip { get; set; } //stores name of mission specific ship
+        public string DefaultFitting { get; set; } //stores name of the default fitting
         public string currentFit { get; set; }
         public string factionFit { get; set; }
         public string factionName { get; set; }
-        public string missionFit { get; set; }
+        public bool ArmLoadedCache { get; set; } // flags whether arm has already loaded the mission
+        public bool UseMissionShip { get; set; } // flags whether we're using a mission specific ship
+        public bool ChangeMissionShipFittings { get; set; } // used for situations in which missionShip's specified, but no faction or mission fittings are; prevents default
+                                                            // fitting from being loaded in arm.cs
         public bool StopTimeSpecified { get; set; }
         public DateTime StopTime { get; set; }
 
@@ -622,45 +632,47 @@ namespace Questor.Modules
             MissionItems.Clear();
             BringMissionItem = string.Empty;
 
-            //Fitting = "Default";
-            if (Settings.Instance.FittingsDefined)
-            {
-                var FactionFitting = Settings.Instance.FactionFitting.FirstOrDefault(m => m.Faction.ToLower() == "default");
-                var _factionFit = (string)FactionFitting.Fitting;
-                Fitting = _factionFit;
-                DefaultFitting = _factionFit;
-            }
-
             var mission = GetAgentMission(agentId);
             if (mission == null)
                 return;
             if (factionName == null || factionName == "")
                 factionName = "Default";
+
             if (Settings.Instance.FittingsDefined)
             {
-                if (Settings.Instance.MissionFitting.Any(m => m.Mission.ToLower() == mission.Name.ToLower()))
+                //Set fitting to default
+                DefaultFitting = (string)Settings.Instance.DefaultFitting.Fitting;
+                Fitting = DefaultFitting;
+                MissionShip = "";
+                ChangeMissionShipFittings = false;
+                if (Settings.Instance.MissionFitting.Any(m => m.Mission.ToLower() == mission.Name.ToLower())) //priority goes to mission-specific fittings
                 {
+                    string _missionFit;
+                    string _missionShip;
+                    MissionFitting _missionFitting;
+
                     // if we've got multiple copies of the same mission, find the one with the matching faction
-                    //Logging.Log("Cache: REMOVEME - factionFit: " + factionFit + " - mission.Name: " + mission.Name);
                     if (Settings.Instance.MissionFitting.Any(m => m.Faction.ToLower() == factionName.ToLower() && (m.Mission.ToLower() == mission.Name.ToLower())))
-                    {
-                        var MissionFitting = Settings.Instance.MissionFitting.FirstOrDefault(m => m.Faction.ToLower() == factionName.ToLower() && (m.Mission.ToLower() == mission.Name.ToLower()));
-                        missionFit = (string)MissionFitting.Fitting;
-                        Logging.Log("Cache: Mission: " + MissionFitting.Mission + " - Faction: " + factionName + " - Fitting: " + MissionFitting.Fitting);
-                        Fitting = missionFit;
-                    }
+                        _missionFitting = Settings.Instance.MissionFitting.FirstOrDefault(m => m.Faction.ToLower() == factionName.ToLower() && (m.Mission.ToLower() == mission.Name.ToLower()));
                     else //otherwise just use the first copy of that mission
+                        _missionFitting = Settings.Instance.MissionFitting.FirstOrDefault(m => m.Mission.ToLower() == mission.Name.ToLower());
+
+                    _missionFit = (string)_missionFitting.Fitting;
+                    _missionShip = (string)_missionFitting.Ship;
+                    if (!(_missionFit == "" && !(_missionShip == ""))) // if we've both specified a mission specific ship and a fitting, then apply that fitting to the ship
                     {
-                        var MissionFitting = Settings.Instance.MissionFitting.FirstOrDefault(m => m.Mission.ToLower() == mission.Name.ToLower());
-                        missionFit = (string)MissionFitting.Fitting;
-                        //Logging.Log("Cache: Mission: " + MissionFitting.Mission + " - Fitting: " + MissionFitting.Fitting);
-                        Fitting = missionFit;
+                        ChangeMissionShipFittings = true;
+                        Fitting = _missionFit;
                     }
+                    else if (!((factionFit == null) || (factionFit == "")))
+                        Fitting = factionFit;
+                    Logging.Log("Cache: Mission: " + _missionFitting.Mission + " - Faction: " + factionName + " - Fitting: " + _missionFit + " - Ship: " + _missionShip + " - ChangeMissionShipFittings: " + ChangeMissionShipFittings);
+                    MissionShip = _missionShip;
                 }
-                else if (factionFit != null)
+                else if (!((factionFit == null) || (factionFit == ""))) // if no mission fittings defined, try to match by faction
                     Fitting = factionFit;
 
-                if (Fitting == "")
+                if (Fitting == "") // otherwise use the default
                     Fitting = DefaultFitting;
             }
 

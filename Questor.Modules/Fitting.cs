@@ -39,10 +39,12 @@ namespace Questor.Modules
             Mission = (string)missionfitting.Attribute("mission") ?? "";
             Faction = (string)missionfitting.Attribute("faction") ?? "Default";
             Fitting = (string)missionfitting.Attribute("fitting") ?? "";
+            Ship = (string)missionfitting.Attribute("ship") ?? "";
         }
 
         public string Mission { get; private set; }
         public string Faction { get; private set; }
         public string Fitting { get; private set; }
+        public string Ship { get; private set; }
     }
 }

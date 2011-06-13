@@ -33,6 +33,7 @@ namespace Questor.Modules
             Blacklist = new List<string>();
 			FactionBlacklist = new List<string>();
             FittingsDefined = false;
+            DefaultFitting = new FactionFitting();
         }
 
         public bool DebugStates { get; set; }
@@ -68,7 +69,8 @@ namespace Questor.Modules
         public List<Ammo> Ammo { get; private set; }
         public List<FactionFitting> FactionFitting { get; private set; }
         public List<MissionFitting> MissionFitting { get; private set; }
-        public bool FittingsDefined { get; private set; }
+        public bool FittingsDefined { get; set; }
+        public FactionFitting DefaultFitting { get; set; }
 
         public int MinimumAmmoCharges { get; set; }
 
@@ -242,8 +244,19 @@ namespace Questor.Modules
             {
                 foreach (var factionfitting in factionFittings.Elements("factionfitting"))
                     FactionFitting.Add(new FactionFitting(factionfitting));
-                FittingsDefined = true;
+                if (FactionFitting.Exists(m => m.Faction.ToLower() == "default"))
+                {
+                    DefaultFitting = FactionFitting.Find(m => m.Faction.ToLower() == "default");
+                    if (!(DefaultFitting.Fitting == "") && !(DefaultFitting.Fitting == null))
+                        FittingsDefined = true;
+                    else
+                        Logging.Log("Settings: Error! No default fitting specified or fitting is incorrect.  Fitting manager will not be used.");
+                }
+                else
+                    Logging.Log("Settings: Error! No default fitting specified or fitting is incorrect.  Fitting manager will not be used.");
             }
+            else
+                Logging.Log("Settings: No faction fittings specified.  Fitting manager will not be used.");
 
             MissionFitting.Clear();
             var missionFittings = xml.Element("missionfittings");
