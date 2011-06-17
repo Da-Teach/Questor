@@ -258,6 +258,11 @@ namespace Questor.Modules
                     if (!isMissionItem && item.IsContraband)
                         continue;
 
+                    // We never want to pick up metal scraps
+                    // TODO: Magic Numbers :/
+                    if(item.TypeId == 30497 || item.TypeId == 15331)
+                        continue;
+
                     // Do we want to loot other items?
                     if (!isMissionItem && !LootEverything)
                         continue;
