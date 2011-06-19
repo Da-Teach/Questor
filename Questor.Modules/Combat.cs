@@ -239,13 +239,16 @@ namespace Questor.Modules
             if (weaponTarget != null)
                 return weaponTarget;
 
+            // Get all entity targets
+            var targets = Cache.Instance.Targets.Where(e => e.CategoryId == (int)CategoryID.Entity && e.IsNpc && !e.IsContainer && e.GroupId != (int)Group.LargeCollidableStructure);
+
             // Get the closest high value target
-            target = Cache.Instance.Targets.Where(t => t.TargetValue.HasValue && t.Distance < Cache.Instance.WeaponRange).OrderByDescending(t => t.TargetValue.Value).ThenBy(t => t.ShieldPct + t.ArmorPct + t.StructurePct).ThenBy(t => t.Distance).FirstOrDefault();
+            target = targets.Where(t => t.TargetValue.HasValue && t.Distance < Cache.Instance.WeaponRange).OrderByDescending(t => t.TargetValue.Value).ThenBy(t => t.ShieldPct + t.ArmorPct + t.StructurePct).ThenBy(t => t.Distance).FirstOrDefault();
             if (target != null)
                 return target;
 
             // Get the closest low value target instead
-            target = Cache.Instance.Targets.Where(t => !t.TargetValue.HasValue && t.Distance < Cache.Instance.WeaponRange && t.IsNpc).OrderBy(t => t.ShieldPct + t.ArmorPct + t.StructurePct).ThenBy(t => t.Distance).FirstOrDefault();
+            target = targets.Where(t => !t.TargetValue.HasValue && t.Distance < Cache.Instance.WeaponRange).OrderBy(t => t.ShieldPct + t.ArmorPct + t.StructurePct).ThenBy(t => t.Distance).FirstOrDefault();
             return target;
         }
 
@@ -418,7 +421,7 @@ namespace Questor.Modules
             var targets = new List<EntityCache>();
             targets.AddRange(Cache.Instance.Targets);
             targets.AddRange(Cache.Instance.Targeting);
-            var combatTargets = targets.Where(t => t.IsNpc && t.CategoryId == (int) CategoryID.Entity).ToList();
+            var combatTargets = targets.Where(e => e.CategoryId == (int)CategoryID.Entity && e.IsNpc && !e.IsContainer && e.GroupId != (int)Group.LargeCollidableStructure).ToList();
 
             // Remove any target that is too far out of range (Weapon Range * 1.5)
             for (var i = combatTargets.Count - 1; i >= 0; i --)
@@ -443,7 +446,7 @@ namespace Questor.Modules
             var lowValueTargets = combatTargets.Where(t => !t.TargetValue.HasValue && !Cache.Instance.PriorityTargets.Any(pt => pt.Id == t.Id)).ToList();
 
             // Build a list of things targeting me
-            var targetingMe = Cache.Instance.TargetedBy.Where(t => t.IsNpc && t.CategoryId == (int) CategoryID.Entity && t.Distance < maxRange && !targets.Any(c => c.Id == t.Id) && !Cache.Instance.IgnoreTargets.Contains(t.Name.Trim())).ToList();
+            var targetingMe = Cache.Instance.TargetedBy.Where(t => t.IsNpc && t.CategoryId == (int) CategoryID.Entity && !t.IsContainer && t.Distance < maxRange && !targets.Any(c => c.Id == t.Id) && !Cache.Instance.IgnoreTargets.Contains(t.Name.Trim())).ToList();
             var highValueTargetingMe = targetingMe.Where(t => t.TargetValue.HasValue).OrderByDescending(t => t.TargetValue.Value).ThenBy(t => t.Distance).ToList();
             var lowValueTargetingMe = targetingMe.Where(t => !t.TargetValue.HasValue).OrderBy(t => t.Distance).ToList();
 
