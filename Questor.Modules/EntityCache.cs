@@ -400,9 +400,23 @@ namespace Questor.Modules
                 return false;
             }
         }
-
+        public bool IsPlayerShip
+        {
+            get
+            {
+                if (GroupId == (int)Group.Concord1 || GroupId == (int)Group.Concord2 || GroupId == (int)Group.Concord3 || GroupId == (int)Group.Indy || GroupId == (int)Group.HAC
+                || GroupId == (int)Group.Covops || GroupId == (int)Group.StrategicCruiser || GroupId == (int)Group.Marauder || GroupId == (int)Group.AssaultFrigate)
+                    return true;
+                else return false;
+            }
+        }
         public void LockTarget()
         {
+            if (IsPlayerShip)
+            {
+                Logging.Log("EntityCache: Attempting to target player!" + this.Name);
+                return;
+            }
             if (Cache.Instance.TargetingIDs.ContainsKey(Id))
             {
                 var lastTargeted = Cache.Instance.TargetingIDs[Id];

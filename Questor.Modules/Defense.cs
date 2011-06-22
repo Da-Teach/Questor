@@ -1,4 +1,4 @@
-﻿// ------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 //   <copyright from='2010' to='2015' company='THEHACKERWITHIN.COM'>
 //     Copyright (c) TheHackerWithin.COM. All Rights Reserved.
 // 
@@ -26,6 +26,8 @@ namespace Questor.Modules
                 activate |= module.GroupId == (int) Group.ArmorHardeners;
                 activate |= module.GroupId == (int) Group.SensorBooster;
                 activate |= module.GroupId == (int) Group.TrackingComputer;
+                activate |= module.GroupId == (int) Group.ECCM;
+
                 if (!activate)
                     continue;
 

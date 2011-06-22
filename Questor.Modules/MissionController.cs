@@ -149,7 +149,7 @@ namespace Questor.Modules
             // Is there a priority target out of range?
             var target = Cache.Instance.PriorityTargets.OrderBy(t => t.Distance).Where(t => !Cache.Instance.IgnoreTargets.Contains(t.Name.Trim())).FirstOrDefault();
             // Or is there a target out of range that is targeting us?
-            target = target ?? Cache.Instance.TargetedBy.Where(t => !t.IsSentry && t.IsNpc && !Cache.Instance.IgnoreTargets.Contains(t.Name.Trim())).OrderBy(t => t.Distance).FirstOrDefault();
+            target = target ?? Cache.Instance.TargetedBy.Where(t => !t.IsSentry && !t.IsContainer && t.IsNpc && t.CategoryId == (int)CategoryID.Entity && t.GroupId != (int)Group.LargeCollidableStructure && !Cache.Instance.IgnoreTargets.Contains(t.Name.Trim())).OrderBy(t => t.Distance).FirstOrDefault();
             // Or is there any target out of range?
             target = target ?? Cache.Instance.Entities.Where(t => !t.IsSentry && !t.IsContainer && t.IsNpc && t.CategoryId == (int) CategoryID.Entity && t.GroupId != (int) Group.LargeCollidableStructure && !Cache.Instance.IgnoreTargets.Contains(t.Name.Trim())).OrderBy(t => t.Distance).FirstOrDefault();
 
