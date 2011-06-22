@@ -16,6 +16,9 @@ namespace Questor.Modules
 
     public class Salvage
     {
+        public static HashSet<int> Salvagers = new HashSet<int> { 25861, 26983, 30836 };
+        public static HashSet<int> TractorBeams = new HashSet<int> { 24348, 24620, 24622, 24644 };
+
         private DateTime _lastJettison = DateTime.MinValue;
         private DateTime _nextAction;
 
@@ -41,7 +44,7 @@ namespace Questor.Modules
         /// </summary>
         private void ActivateTractorBeams()
         {
-            var tractorBeams = Cache.Instance.Modules.Where(m => m.GroupId == (int) Group.TractorBeam).ToList();
+            var tractorBeams = Cache.Instance.Modules.Where(m => TractorBeams.Contains(m.TypeId)).ToList();
             if (tractorBeams.Count == 0)
                 return;
 
@@ -91,7 +94,7 @@ namespace Questor.Modules
         /// </summary>
         private void ActivateSalvagers()
         {
-            var salvagers = Cache.Instance.Modules.Where(m => m.GroupId == (int) Group.Salvager).ToList();
+            var salvagers = Cache.Instance.Modules.Where(m => Salvagers.Contains(m.TypeId)).ToList();
             if (salvagers.Count == 0)
                 return;
 
@@ -129,7 +132,7 @@ namespace Questor.Modules
             targets.AddRange(Cache.Instance.Targets);
             targets.AddRange(Cache.Instance.Targeting);
 
-            var hasSalvagers = Cache.Instance.Modules.Any(m => m.GroupId == (int) Group.Salvager);
+            var hasSalvagers = Cache.Instance.Modules.Any(m => Salvagers.Contains(m.TypeId));
             var wreckTargets = targets.Where(t => (t.GroupId == (int) Group.Wreck || t.GroupId == (int) Group.CargoContainer) && t.CategoryId == (int) CategoryID.Celestial).ToList();
 
             // Check for cargo containers
@@ -156,7 +159,7 @@ namespace Questor.Modules
             if (wreckTargets.Count >= MaximumWreckTargets)
                 return;
 
-            var tractorBeams = Cache.Instance.Modules.Where(m => m.GroupId == (int) Group.TractorBeam).ToList();
+            var tractorBeams = Cache.Instance.Modules.Where(m => TractorBeams.Contains(m.TypeId)).ToList();
             var tractorBeamRange = 0d;
             if (tractorBeams.Count > 0)
                 tractorBeamRange = tractorBeams.Min(t => t.OptimalRange);

@@ -21,6 +21,11 @@ namespace Questor.Modules
             _module = module;
         }
 
+        public int TypeId
+        {
+            get { return _module.TypeId; }
+        }
+
         public int GroupId
         {
             get { return _module.GroupId; }
