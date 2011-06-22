@@ -32,7 +32,7 @@
 
             _storylines = new Dictionary<string, IStoryline>();
             //_storylines.Add("__", new GenericCombatStoryline());
-            //_storylines.Add("Materials For War Preparation", new MaterialsForWarPreparation());
+            _storylines.Add("Materials For War Preparation", new MaterialsForWarPreparation());
             _storylines.Add("Shipyard Theft", new GenericCombatStoryline());
             _storylines.Add("Evolution", new GenericCombatStoryline());
             _storylines.Add("Record Cleaning", new GenericCombatStoryline());
