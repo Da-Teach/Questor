@@ -119,6 +119,11 @@ namespace Questor.Modules
             if (target == null)
                 return;
 
+            if (target.IsPlayerShip)
+            {
+                Logging.Log("Drones: Attempting to engage player: " + target.Name);
+                return;
+            }
             // Is our current target still the same and is the last Engage command no longer then 15s ago?
             if (_lastTarget == target.Id && DateTime.Now.Subtract(_lastEngageCommand).TotalSeconds < 15)
                 return;

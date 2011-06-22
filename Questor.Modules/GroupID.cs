@@ -13,6 +13,7 @@ namespace Questor.Modules
     {
         Star = 6,
         Station = 15,
+        Stargate = 10,
 
         Capsule = 29,
 
@@ -24,8 +25,21 @@ namespace Questor.Modules
         ArmorRepairer = 62,
         ArmorHardeners = 328,
         DamageControl = 60,
-
         ECCM = 202,
+        Concord1 = 25, //frigate - concord and player
+        Concord2 = 26, //cruiser - concord and player
+        Concord3 = 27, //battleship - concord and player
+        Concord4 = 301,
+        Concord5 = 446,
+        ConcBillboard = 323,
+
+        Indy = 28,
+        Ceptor = 831,
+        HAC = 358,
+        AssaultFrigate = 324,
+        Covops = 830,
+        StrategicCruiser = 963,
+        Marauder = 900,
 
         SensorBooster = 212,
         TrackingComputer = 213,
