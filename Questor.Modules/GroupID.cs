@@ -65,9 +65,6 @@ namespace Questor.Modules
         SiegeMissileLaunchers = 508,
         CruiseMissileLaunchers = 506,
 
-        Salvager = 538,
-        TractorBeam = 650,
-
         Wreck = 186,
     }
 }
