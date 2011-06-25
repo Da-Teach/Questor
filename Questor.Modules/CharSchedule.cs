@@ -37,7 +37,7 @@ namespace Questor.Modules
                 if (!DateTime.TryParseExact(_start, "HH:mm", enUS, DateTimeStyles.None, out _startTime))
                 {
                     Logging.Log("[CharSchedule] " + Name + ": Couldn't parse starttime.");
-                    _startTime = DateTime.Now;
+                    _startTime = DateTime.Now.AddSeconds(20);
                 }
                 else
                     startTimeSpecified = true;
@@ -45,7 +45,7 @@ namespace Questor.Modules
             else
             {
                 //Logging.Log("[CharSchedule] No start time specified. Starting now.");
-                _startTime = DateTime.Now;
+                _startTime = DateTime.Now.AddSeconds(20);
             }
             Start = _startTime;
 

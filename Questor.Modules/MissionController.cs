@@ -176,7 +176,7 @@ namespace Questor.Modules
                     Logging.Log("MissionController.ClearPocket: Approaching target [" + target.Name + "][" + target.Id + "]");
 
                     if (Settings.Instance.SpeedTank)
-                        target.Orbit(Settings.Instance.OrbitDistance);
+                        target.Orbit(Cache.Instance.OrbitDistance);
                     else
                         target.Approach((int) (Cache.Instance.WeaponRange*0.8d));
                 }
@@ -350,7 +350,7 @@ namespace Questor.Modules
                     Logging.Log("MissionController.Kill: Approaching target [" + closest.Name + "][" + closest.Id + "]");
 
                     if (Settings.Instance.SpeedTank)
-                        closest.Orbit(Settings.Instance.OrbitDistance);
+                        closest.Orbit(Cache.Instance.OrbitDistance);
                     else
                         closest.Approach((int) (Cache.Instance.WeaponRange*0.8d));
                 }
@@ -563,7 +563,10 @@ namespace Questor.Modules
                     Logging.Log("MissionController: Pocket loaded, executing the following actions");
                     foreach (var a in _pocketActions)
                         Logging.Log("MissionController: Action." + a);
-
+					
+					if (Cache.Instance.OrbitDistance != Settings.Instance.OrbitDistance)
+						Logging.Log("MissionController: Using custom orbit distance: " + Cache.Instance.OrbitDistance);
+						
                     // Reset pocket information
                     _currentAction = 0;
                     Cache.Instance.IsMissionPocketDone = false;
