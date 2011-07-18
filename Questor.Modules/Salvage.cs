@@ -251,6 +251,18 @@ namespace Questor.Modules
                 // Build a list of items to loot
                 var lootItems = new List<ItemCache>();
 
+                // Dump scrap metal if we have any
+                if (containerEntity.Name == "Cargo Container" && shipsCargo.Any(i => i.IsScrapMetal))
+                {
+                    foreach (var item in shipsCargo.Where(i => i.IsScrapMetal))
+                    {
+                        container.Add(item.DirectItem);
+                        freeCargoCapacity += item.TotalVolume;
+                    }
+
+                    shipsCargo.RemoveAll(i => i.IsScrapMetal);
+                }
+
                 // Walk through the list of items ordered by highest value item first
                 foreach (var item in items.OrderByDescending(i => i.IskPerM3))
                 {
@@ -259,8 +271,7 @@ namespace Questor.Modules
                         continue;
 
                     // We never want to pick up metal scraps
-                    // TODO: Magic Numbers :/
-                    if (item.TypeId == 30497 || item.TypeId == 15331)
+                    if (item.IsScrapMetal)
                         continue;
 
                     // We pick up loot depending on isk per m3
