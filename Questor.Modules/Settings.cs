@@ -70,6 +70,8 @@ namespace Questor.Modules
 
         public bool SpeedTank { get; set; }
         public int OrbitDistance { get; set; }
+        public int MinimumPropulsionModuleDistance { get; set; }
+        public int MinimumPropulsionModuleCapacitor { get; set; }
 
         public int ActivateRepairModules { get; set; }
         public int DeactivateRepairModules { get; set; }
@@ -148,6 +150,8 @@ namespace Questor.Modules
 
                 SpeedTank = false;
                 OrbitDistance = 0;
+                MinimumPropulsionModuleDistance = 0;
+                MinimumPropulsionModuleCapacitor = 0;
 
                 ActivateRepairModules = 0;
                 DeactivateRepairModules = 0;
@@ -221,6 +225,8 @@ namespace Questor.Modules
 
             SpeedTank = (bool?) xml.Element("speedTank") ?? false;
             OrbitDistance = (int?) xml.Element("orbitDistance") ?? 0;
+            MinimumPropulsionModuleDistance = (int?) xml.Element("minimumPropulsionModuleDistance") ?? 5000;
+            MinimumPropulsionModuleCapacitor = (int?)xml.Element("minimumPropulsionModuleCapacitor") ?? 0;
 
             ActivateRepairModules = (int?) xml.Element("activateRepairModules") ?? 65;
             DeactivateRepairModules = (int?) xml.Element("deactivateRepairModules") ?? 95;
