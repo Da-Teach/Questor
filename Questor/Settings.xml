@@ -5,7 +5,22 @@
 
   <!-- Random delay between missions -->
   <randomDelay>60</randomDelay>
+  <minimumDelay>15</minimumDelay>
 
+  <!-- Invasion resume delay -->
+  <invasionRandomDelay>300</invasionRandomDelay>
+  <invasionMinimumDelay>15</invasionMinimumDelay>
+
+  <!-- Invasion limits, panic if these number of ships enter your mission pocket -->
+  <frigateInvasionLimit>10</frigateInvasionLimit>
+  <cruiserInvasionLimit>8</cruiserInvasionLimit>
+  <battlecruiserInvasionLimit>4</battlecruiserInvasionLimit>
+  <battleshipInvasionLimit>2</battleshipInvasionLimit>
+
+  <!-- Propulsion mod settings, do not activate AB/MWD unless these settings are matched -->
+  <minimumPropulsionModuleDistance>5000</minimumPropulsionModuleDistance>
+  <minimumPropulsionModuleCapacitor>30</minimumPropulsionModuleCapacitor>
+  
   <!-- Enable storyline botting (experimental) -->
   <enableStorylines>false</enableStorylines>
 
