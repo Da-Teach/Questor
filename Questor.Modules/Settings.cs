@@ -35,7 +35,15 @@ namespace Questor.Modules
         public bool DebugPerformance { get; set; }
 
         public bool AutoStart { get; set; }
+        public int MinimumDelay { get; set; }
         public int RandomDelay { get; set; }
+
+        public int BattleshipInvasionLimit { get; set; }
+        public int BattlecruiserInvasionLimit { get; set; }
+        public int CruiserInvasionLimit { get; set; }
+        public int FrigateInvasionLimit { get; set; }
+        public int InvasionMinimumDelay { get; set; }
+        public int InvasionRandomDelay { get; set; }
 
         public bool EnableStorylines { get; set; }
 
@@ -126,6 +134,7 @@ namespace Questor.Modules
 
                 AutoStart = false;
                 RandomDelay = 0;
+                MinimumDelay = 0;
 
                 WindowXPosition = null;
                 WindowYPosition = null;
@@ -183,6 +192,14 @@ namespace Questor.Modules
 
             AutoStart = (bool?) xml.Element("autoStart") ?? false;
             RandomDelay = (int?) xml.Element("randomDelay") ?? 0;
+            MinimumDelay = (int?)xml.Element("minimumDelay") ?? 0;
+
+            BattleshipInvasionLimit = (int?)xml.Element("battleshipInvasionLimit") ?? 0;
+            BattlecruiserInvasionLimit = (int?)xml.Element("battlecruiserInvasionLimit") ?? 0;
+            CruiserInvasionLimit = (int?)xml.Element("cruiserInvasionLimit") ?? 0;
+            FrigateInvasionLimit = (int?)xml.Element("frigateInvasionLimit") ?? 0;
+            InvasionRandomDelay = (int?)xml.Element("invasionRandomDelay") ?? 0;
+            InvasionMinimumDelay = (int?)xml.Element("invasionMinimumDelay") ?? 0;
 
             EnableStorylines = (bool?) xml.Element("enableStorylines") ?? false;
 
