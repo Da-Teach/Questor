@@ -65,9 +65,33 @@ namespace Questor.Modules
                 if (module.GroupId != (int) Group.Afterburner)
                     continue;
 
-                if (Cache.Instance.Approaching != null && !module.IsActive && !module.IsDeactivating)
+                // Should we activate the module
+                var activate = Cache.Instance.Approaching != null;
+                activate &= !module.IsActive;
+                activate &= !module.IsDeactivating;
+                
+                // Should we deactivate the module?
+                var deactivate = Cache.Instance.Approaching == null;
+                deactivate &= module.IsActive;
+                deactivate &= !module.IsDeactivating;
+                deactivate &= (!Cache.Instance.Entities.Any(e => e.IsAttacking) || !Settings.Instance.SpeedTank);
+
+                // This only applies when not speed tanking
+                if (!Settings.Instance.SpeedTank && Cache.Instance.Approaching != null)
+                {
+                    // Activate if target is far enough
+                    activate &= Cache.Instance.Approaching.Distance > Settings.Instance.MinimumPropulsionModuleDistance;
+                    // Deactivate if target is too close
+                    deactivate |= Cache.Instance.Approaching.Distance <  Settings.Instance.MinimumPropulsionModuleDistance;
+                }
+
+                // If we have less then x% cap, do not activate or deactivate the module
+                activate &= Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage > Settings.Instance.MinimumPropulsionModuleCapacitor;
+                deactivate |= Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage < Settings.Instance.MinimumPropulsionModuleCapacitor;
+
+                if (activate)
                     module.Activate();
-                else if (Cache.Instance.Approaching == null && module.IsActive && !module.IsDeactivating && (!Cache.Instance.Entities.Any(e => e.IsAttacking) || !Settings.Instance.SpeedTank))
+                else if (deactivate)
                     module.Deactivate();
             }
         }

@@ -17,5 +17,6 @@ namespace Questor.Modules
         Panic,
         Resume,
         Repair,
+        DelayedResume,
     }
 }

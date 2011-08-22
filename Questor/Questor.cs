@@ -239,6 +239,7 @@ namespace Questor
             // Panic always runs, not just in space
             watch.Reset();
             watch.Start();
+            _panic.InMission = State == QuestorState.ExecuteMission || (State == QuestorState.Storyline && _storyline.State == StorylineState.ExecuteMission);
             _panic.ProcessState();
             watch.Stop();
 
@@ -337,9 +338,9 @@ namespace Questor
                         if (DateTime.UtcNow.Hour == 11 && DateTime.UtcNow.Minute < 15)
                             break;
 
-                        if (Settings.Instance.RandomDelay > 0)
+                        if (Settings.Instance.RandomDelay > 0 || Settings.Instance.MinimumDelay > 0)
                         {
-                            _randomDelay = _random.Next(Settings.Instance.RandomDelay);
+                            _randomDelay = (Settings.Instance.RandomDelay > 0 ? _random.Next(Settings.Instance.RandomDelay) : 0) + Settings.Instance.MinimumDelay;
                             _lastAction = DateTime.Now;
 
                             State = QuestorState.DelayedStart;
