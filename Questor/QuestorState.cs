@@ -29,6 +29,7 @@ namespace Questor
         Error,
         Panic,
         CombatHelper,
+		Traveler,
         Storyline
     }
 }
