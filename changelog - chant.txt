@@ -1,3 +1,10 @@
+June 26, 2011:
+  * Changes/Fixes to Questor (PoorNewb23):
+	 - Added 20 sec delay to questor startup in order to avoid case where Questors attempts to login before EVE managed to establish server connection
+	 - Added per mission's pocket custom orbit distance setting; 
+		* use <orbitdistance>5000</orbitdistance> for each pocket, in same place where you put <damagetype>
+		* when no orbit distance is specified for given pocket, Questor will use the value from charname.xml file
+
 June 10, 2011:
   * Changes/Fixes to Questor:
 	 - Fixed bug in which fitting manager breaks after first mission
