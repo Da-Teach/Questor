@@ -40,10 +40,21 @@ namespace Questor.Modules
         public bool DebugPerformance { get; set; }
 
         public bool AutoStart { get; set; }
+<<<<<<< HEAD
 		public bool waitDecline { get; set; }
+=======
+        public int MinimumDelay { get; set; }
+>>>>>>> remotes/Da-Teach/master
         public int RandomDelay { get; set; }
 		public float minStandings { get; set; }
         public bool UseGatesInSalvage { get; set; }
+
+        public int BattleshipInvasionLimit { get; set; }
+        public int BattlecruiserInvasionLimit { get; set; }
+        public int CruiserInvasionLimit { get; set; }
+        public int FrigateInvasionLimit { get; set; }
+        public int InvasionMinimumDelay { get; set; }
+        public int InvasionRandomDelay { get; set; }
 
         public bool EnableStorylines { get; set; }
 
@@ -82,6 +93,8 @@ namespace Questor.Modules
 
         public bool SpeedTank { get; set; }
         public int OrbitDistance { get; set; }
+        public int MinimumPropulsionModuleDistance { get; set; }
+        public int MinimumPropulsionModuleCapacitor { get; set; }
 
         public int ActivateRepairModules { get; set; }
         public int DeactivateRepairModules { get; set; }
@@ -138,7 +151,11 @@ namespace Questor.Modules
                 AutoStart = false;
 					 waitDecline = false;
                 RandomDelay = 0;
+<<<<<<< HEAD
 					 minStandings = 10;
+=======
+                MinimumDelay = 0;
+>>>>>>> remotes/Da-Teach/master
 
                 WindowXPosition = null;
                 WindowYPosition = null;
@@ -165,6 +182,8 @@ namespace Questor.Modules
 
                 SpeedTank = false;
                 OrbitDistance = 0;
+                MinimumPropulsionModuleDistance = 0;
+                MinimumPropulsionModuleCapacitor = 0;
 
                 ActivateRepairModules = 0;
                 DeactivateRepairModules = 0;
@@ -201,9 +220,20 @@ namespace Questor.Modules
             AutoStart = (bool?) xml.Element("autoStart") ?? false;
             waitDecline = (bool?) xml.Element("waitDecline") ?? false;
             RandomDelay = (int?) xml.Element("randomDelay") ?? 0;
+<<<<<<< HEAD
 			minStandings = (float?) xml.Element("minStandings") ?? 10;
 
             UseGatesInSalvage = (bool?)xml.Element("useGatesInSalvage") ?? false;
+=======
+            MinimumDelay = (int?)xml.Element("minimumDelay") ?? 0;
+
+            BattleshipInvasionLimit = (int?)xml.Element("battleshipInvasionLimit") ?? 0;
+            BattlecruiserInvasionLimit = (int?)xml.Element("battlecruiserInvasionLimit") ?? 0;
+            CruiserInvasionLimit = (int?)xml.Element("cruiserInvasionLimit") ?? 0;
+            FrigateInvasionLimit = (int?)xml.Element("frigateInvasionLimit") ?? 0;
+            InvasionRandomDelay = (int?)xml.Element("invasionRandomDelay") ?? 0;
+            InvasionMinimumDelay = (int?)xml.Element("invasionMinimumDelay") ?? 0;
+>>>>>>> remotes/Da-Teach/master
 
             EnableStorylines = (bool?) xml.Element("enableStorylines") ?? false;
 
@@ -272,6 +302,8 @@ namespace Questor.Modules
 
             SpeedTank = (bool?) xml.Element("speedTank") ?? false;
             OrbitDistance = (int?) xml.Element("orbitDistance") ?? 0;
+            MinimumPropulsionModuleDistance = (int?) xml.Element("minimumPropulsionModuleDistance") ?? 5000;
+            MinimumPropulsionModuleCapacitor = (int?)xml.Element("minimumPropulsionModuleCapacitor") ?? 0;
 
             ActivateRepairModules = (int?) xml.Element("activateRepairModules") ?? 65;
             DeactivateRepairModules = (int?) xml.Element("deactivateRepairModules") ?? 95;
