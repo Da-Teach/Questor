@@ -20,13 +20,10 @@ namespace Questor.Modules
         private double _lastNormalY;
         private double _lastNormalZ;
 
-<<<<<<< HEAD
         //private DateTime _nextRepairAction;
-=======
         private DateTime _resumeTime;
         private bool _delayedResume;
         private int _randomDelay;
->>>>>>> remotes/Da-Teach/master
 
         public PanicState State { get; set; }
         public bool InMission { get; set; }

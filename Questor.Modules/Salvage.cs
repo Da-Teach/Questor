@@ -266,8 +266,6 @@ namespace Questor.Modules
                 // Walk through the list of items ordered by highest value item first
                 foreach (var item in items.OrderByDescending(i => i.IskPerM3))
                 {
-<<<<<<< HEAD
-=======
                     // We never want to pick up a cap booster
                     if (item.GroupID == (int) Group.CapacitorGroupCharge)
                         continue;
@@ -276,7 +274,6 @@ namespace Questor.Modules
                     if (item.IsScrapMetal)
                         continue;
 
->>>>>>> remotes/Da-Teach/master
                     // We pick up loot depending on isk per m3
                     var isMissionItem = Cache.Instance.MissionItems.Contains((item.Name ?? string.Empty).ToLower());
 
