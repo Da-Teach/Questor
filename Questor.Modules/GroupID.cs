@@ -26,20 +26,6 @@ namespace Questor.Modules
         ArmorHardeners = 328,
         DamageControl = 60,
         ECCM = 202,
-        Concord1 = 25, //frigate - concord and player
-        Concord2 = 26, //cruiser - concord and player
-        Concord3 = 27, //battleship - concord and player
-        Concord4 = 301,
-        Concord5 = 446,
-        ConcBillboard = 323,
-
-        Indy = 28,
-        Ceptor = 831,
-        HAC = 358,
-        AssaultFrigate = 324,
-        Covops = 830,
-        StrategicCruiser = 963,
-        Marauder = 900,
 
         SensorBooster = 212,
         TrackingComputer = 213,
@@ -80,5 +66,35 @@ namespace Questor.Modules
         CruiseMissileLaunchers = 506,
 
         Wreck = 186,
+
+        ConcordDrone = 301,
+        CustomsOfficial = 446,
+        Billboard = 323,
+
+        Frigate = 25,
+        AssaultShip = 324,
+        Destroyer = 420,
+        Interdictor = 541,
+        Interceptor = 831,
+        StealthBomber = 834,
+        ElectronicAttackShip = 893,
+        PrototypeExplorationShip = 1022,
+
+        Cruiser = 26,
+        HeavyAssaultShip = 358,
+        Logistics = 832,
+        ForceReconShip = 833,
+        CombatReconShip = 906,
+        HeavyInterdictor = 894,
+
+        Battlecruiser = 419,
+        CommandShip = 540,
+        StrategicCruiser = 963,
+
+        Battleship = 27,
+        EliteBattleship = 381,
+        BlackOps = 898,
+        Marauder = 900,
+
     }
 }
