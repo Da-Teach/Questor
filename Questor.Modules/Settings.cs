@@ -41,10 +41,15 @@ namespace Questor.Modules
 
         public bool AutoStart { get; set; }
 <<<<<<< HEAD
-		public bool waitDecline { get; set; }
+<<<<<<< HEAD
 =======
+>>>>>>> 854124440675039368bb6f8332a92e1d2f903f89
+		public bool waitDecline { get; set; }
         public int MinimumDelay { get; set; }
+<<<<<<< HEAD
 >>>>>>> remotes/Da-Teach/master
+=======
+>>>>>>> 854124440675039368bb6f8332a92e1d2f903f89
         public int RandomDelay { get; set; }
 		public float minStandings { get; set; }
         public bool UseGatesInSalvage { get; set; }
@@ -149,13 +154,18 @@ namespace Questor.Modules
                 AgentName = string.Empty;
 
                 AutoStart = false;
-					 waitDecline = false;
+				waitDecline = false;
                 RandomDelay = 0;
+<<<<<<< HEAD
 <<<<<<< HEAD
 					 minStandings = 10;
 =======
                 MinimumDelay = 0;
 >>>>>>> remotes/Da-Teach/master
+=======
+                MinimumDelay = 0;
+				minStandings = 10;
+>>>>>>> 854124440675039368bb6f8332a92e1d2f903f89
 
                 WindowXPosition = null;
                 WindowYPosition = null;
@@ -221,11 +231,13 @@ namespace Questor.Modules
             waitDecline = (bool?) xml.Element("waitDecline") ?? false;
             RandomDelay = (int?) xml.Element("randomDelay") ?? 0;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+            MinimumDelay = (int?)xml.Element("minimumDelay") ?? 0;
+>>>>>>> 854124440675039368bb6f8332a92e1d2f903f89
 			minStandings = (float?) xml.Element("minStandings") ?? 10;
 
             UseGatesInSalvage = (bool?)xml.Element("useGatesInSalvage") ?? false;
-=======
-            MinimumDelay = (int?)xml.Element("minimumDelay") ?? 0;
 
             BattleshipInvasionLimit = (int?)xml.Element("battleshipInvasionLimit") ?? 0;
             BattlecruiserInvasionLimit = (int?)xml.Element("battlecruiserInvasionLimit") ?? 0;
@@ -233,7 +245,10 @@ namespace Questor.Modules
             FrigateInvasionLimit = (int?)xml.Element("frigateInvasionLimit") ?? 0;
             InvasionRandomDelay = (int?)xml.Element("invasionRandomDelay") ?? 0;
             InvasionMinimumDelay = (int?)xml.Element("invasionMinimumDelay") ?? 0;
+<<<<<<< HEAD
 >>>>>>> remotes/Da-Teach/master
+=======
+>>>>>>> 854124440675039368bb6f8332a92e1d2f903f89
 
             EnableStorylines = (bool?) xml.Element("enableStorylines") ?? false;
 

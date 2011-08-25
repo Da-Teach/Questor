@@ -829,6 +829,52 @@ namespace Questor
                         break;
                     }
                     break;
+
+				case QuestorState.Traveler:
+					var destination = Cache.Instance.DirectEve.Navigation.GetDestinationPath();
+					if (destination == null || destination.Count == 0)
+					{
+						// should never happen, but still...
+						Logging.Log("Traveler: No destination?");
+						State = QuestorState.Error;
+					}
+					else
+						if (destination.Count == 1 && destination.First() == 0)
+							destination[0] = Cache.Instance.DirectEve.Session.SolarSystemId ?? -1;
+					if (_traveler.Destination == null || _traveler.Destination.SolarSystemId != destination.Last())
+					{
+						var bookmarks = Cache.Instance.DirectEve.Bookmarks.Where(b => b.LocationId == destination.Last());
+						if (bookmarks != null && bookmarks.Count() > 0)
+							_traveler.Destination = new BookmarkDestination(bookmarks.OrderBy(b => b.CreatedOn).First());
+						else
+						{
+							Logging.Log("Traveler: Destination: [" + Cache.Instance.DirectEve.Navigation.GetLocation(destination.Last()).Name + "]");
+							_traveler.Destination = new SolarSystemDestination(destination.Last());
+						}
+					}
+					else
+					{
+						_traveler.ProcessState();
+						if (_traveler.State == TravelerState.AtDestination)
+						{
+							if (_missionController.State == MissionControllerState.Error)
+							{
+								Logging.Log("Questor stopped: an error has occured");
+								State = QuestorState.Error;
+							}
+							else if (Cache.Instance.InSpace)
+							{
+								Logging.Log("Traveler: Arrived at destination (in space, Questor stopped)");
+								State = QuestorState.Error;
+							}
+							else
+							{
+								Logging.Log("Traveler: Arrived at destination");
+								State = QuestorState.Idle;
+							}
+						}		
+					}
+				break;
             }
         }
 
