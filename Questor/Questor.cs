@@ -76,6 +76,7 @@ namespace Questor
         public bool Paused { get; set; }
         public bool Disable3D { get; set; }
         public bool ValidSettings { get; set; }
+        public bool ExitWhenIdle { get; set; }
 
         public string CharacterName { get; set; }
 
@@ -85,7 +86,6 @@ namespace Questor
         public double Wealth { get; set; }
         public double LootValue { get; set; }
         public int LoyaltyPoints { get; set; }
-        public bool ExitWhenIdle { get; set; }
 
         public void SettingsLoaded(object sender, EventArgs e)
         {
@@ -121,6 +121,7 @@ namespace Questor
             }
 
             AutoStart = Settings.Instance.AutoStart;
+            Disable3D = Settings.Instance.Disable3D;
         }
 
         public void ApplySettings()
