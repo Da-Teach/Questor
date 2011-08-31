@@ -43,9 +43,10 @@ namespace Questor.Modules
                     {
                         Logging.Log("Panic: You are in a Capsule, you must have died :(");
                         State = PanicState.StartPanicking;
-                    }
-                    else if (Cache.Instance.InSpace && Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage < Settings.Instance.MinimumCapacitorPct)
+                    } 
+                    else if (InMission && Cache.Instance.InSpace && Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage < Settings.Instance.MinimumCapacitorPct)
                     {
+                        // Only check for cap-panic while in a mission, not while doing anything else
                         Logging.Log("Panic: Start panicking, capacitor [" + Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage + "%] below [" + Settings.Instance.MinimumCapacitorPct + "%]");
                         State = PanicState.StartPanicking;
                     }

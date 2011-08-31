@@ -26,6 +26,7 @@ namespace Questor
         Salvage,
         Error,
         Panic,
+        StorylinePanic,
         CombatHelper,
         Storyline
     }

@@ -20,6 +20,12 @@
 
         private GenericCombatStorylineState _state;
 
+        public GenericCombatStorylineState State
+        {
+            get { return _state; }
+            set { _state = value; }
+        }
+
         public GenericCombatStoryline()
         {
             _neededAmmo = new List<Ammo>();

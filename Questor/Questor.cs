@@ -221,7 +221,11 @@ namespace Questor
             // Panic always runs, not just in space
             watch.Reset();
             watch.Start();
-            _panic.InMission = State == QuestorState.ExecuteMission || (State == QuestorState.Storyline && _storyline.State == StorylineState.ExecuteMission);
+            _panic.InMission = State == QuestorState.ExecuteMission;
+            if (State == QuestorState.Storyline)
+            {
+                _panic.InMission |= _storyline.StorylineHandler is GenericCombatStoryline && (_storyline.StorylineHandler as GenericCombatStoryline).State == GenericCombatStorylineState.ExecuteMission;
+            }
             _panic.ProcessState();
             watch.Stop();
 
@@ -231,7 +235,7 @@ namespace Questor
             if (_panic.State == PanicState.Panic || _panic.State == PanicState.Panicking)
             {
                 // If Panic is in panic state, questor is in panic state :)
-                State = QuestorState.Panic;
+                State = State == QuestorState.Storyline ? QuestorState.StorylinePanic : QuestorState.Panic;
 
                 if (Settings.Instance.DebugStates)
                     Logging.Log("State = " + State);
@@ -241,9 +245,20 @@ namespace Questor
                 // Reset panic state
                 _panic.State = PanicState.Normal;
 
-                // Head back to the mission
-                _traveler.State = TravelerState.Idle;
-                State = QuestorState.GotoMission;
+                // Ugly storyline resume hack
+                if (State == QuestorState.StorylinePanic)
+                {
+                    State = QuestorState.Storyline;
+
+                    if (_storyline.StorylineHandler is GenericCombatStoryline)
+                        (_storyline.StorylineHandler as GenericCombatStoryline).State = GenericCombatStorylineState.GotoMission;
+                }
+                else
+                {
+                    // Head back to the mission
+                    _traveler.State = TravelerState.Idle;
+                    State = QuestorState.GotoMission;
+                }
 
                 if (Settings.Instance.DebugStates)
                     Logging.Log("State = " + State);
