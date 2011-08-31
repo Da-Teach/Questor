@@ -193,7 +193,7 @@ namespace Questor.Modules
 
                     if (State == PanicState.DelayedResume)
                     {
-                        Logging.Log("Panic: Delaying resume for " + _delayedResume + " seconds");
+                        Logging.Log("Panic: Delaying resume for " + _randomDelay + " seconds");
                         _resumeTime = DateTime.Now.AddSeconds(_randomDelay);
                     }
                     break;
