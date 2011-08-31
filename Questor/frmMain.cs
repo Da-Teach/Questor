@@ -65,10 +65,15 @@ namespace Questor
             if (args.Length != 2 || !bool.TryParse(args[1], out value))
             {
                 Logging.Log("SetExitWhenIdle true|false");
+                Logging.Log("Note: AutoStart is automatically turned off when ExitWhenIdle is turned on");
                 return -1;
             }
 
             _questor.ExitWhenIdle = value;
+            
+            if (value)
+                _questor.AutoStart = false;
+
             return 0;
         }
 
