@@ -17,6 +17,7 @@ namespace Questor
     using DirectEve;
     using global::Questor.Modules;
     using global::Questor.Storylines;
+    using LavishScriptAPI;
 
     public class Questor
     {
@@ -84,6 +85,7 @@ namespace Questor
         public double Wealth { get; set; }
         public double LootValue { get; set; }
         public int LoyaltyPoints { get; set; }
+        public bool ExitWhenIdle { get; set; }
 
         public void SettingsLoaded(object sender, EventArgs e)
         {
@@ -337,6 +339,8 @@ namespace Questor
                         else
                             State = QuestorState.Start;
                     }
+                    else if (ExitWhenIdle)
+                        LavishScript.ExecuteCommand("exit");
                     break;
 
                 case QuestorState.DelayedStart:

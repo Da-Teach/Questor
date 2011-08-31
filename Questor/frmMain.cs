@@ -10,6 +10,8 @@ using Questor.Modules;
 
 namespace Questor
 {
+    using LavishScriptAPI;
+
     public partial class frmMain : Form
     {
         private Questor _questor;
@@ -25,6 +27,49 @@ namespace Questor
                 QuestorStateComboBox.Items.Add(text);
 
             _questor = new Questor();
+
+            LavishScript.Commands.AddCommand("SetAutoStart", SetAutoStart);
+            LavishScript.Commands.AddCommand("SetDisable3D", SetDisable3D);
+            LavishScript.Commands.AddCommand("SetExitWhenIdle", SetExitWhenIdle);
+        }
+
+        private int SetAutoStart(string[] args)
+        {
+            bool value;
+            if (args.Length != 2 || !bool.TryParse(args[1], out value))
+            {
+                Logging.Log("SetAutoStart true|false");
+                return -1;
+            }
+
+            _questor.AutoStart = value;
+            return 0;
+        }
+
+        private int SetDisable3D(string[] args)
+        {
+            bool value;
+            if (args.Length != 2 || !bool.TryParse(args[1], out value))
+            {
+                Logging.Log("SetDisable3D true|false");
+                return -1;
+            }
+
+            _questor.Disable3D = value;
+            return 0;
+        }
+
+        private int SetExitWhenIdle(string[] args)
+        {
+            bool value;
+            if (args.Length != 2 || !bool.TryParse(args[1], out value))
+            {
+                Logging.Log("SetExitWhenIdle true|false");
+                return -1;
+            }
+
+            _questor.ExitWhenIdle = value;
+            return 0;
         }
 
         private void tUpdateUI_Tick(object sender, EventArgs e)
@@ -50,6 +95,9 @@ namespace Questor
 
             if (PauseCheckBox.Checked != _questor.Paused)
                 PauseCheckBox.Checked = _questor.Paused;
+
+            if (Disable3DCheckBox.Checked != _questor.Disable3D)
+                Disable3DCheckBox.Checked = _questor.Disable3D;
 
             if (Settings.Instance.WindowXPosition.HasValue)
             {
