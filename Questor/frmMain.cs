@@ -43,6 +43,8 @@ namespace Questor
             }
 
             _questor.AutoStart = value;
+
+            Logging.Log("AutoStart is turned " + (value ? "[on]" : "[off]"));
             return 0;
         }
 
@@ -56,6 +58,8 @@ namespace Questor
             }
 
             _questor.Disable3D = value;
+
+            Logging.Log("Disable3D is turned " + (value ? "[on]" : "[off]"));
             return 0;
         }
 
@@ -74,6 +78,7 @@ namespace Questor
             if (value)
                 _questor.AutoStart = false;
 
+            Logging.Log("ExitWhenIdle is turned " + (value ? "[on]" : "[off]"));
             return 0;
         }
 
