@@ -74,11 +74,15 @@ namespace Questor
             }
 
             _questor.ExitWhenIdle = value;
-            
-            if (value)
-                _questor.AutoStart = false;
 
             Logging.Log("ExitWhenIdle is turned " + (value ? "[on]" : "[off]"));
+
+            if (value && _questor.AutoStart)
+            {
+                _questor.AutoStart = false;
+                Logging.Log("AutoStart is turned [off]");
+            }
+
             return 0;
         }
 
