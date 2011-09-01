@@ -352,6 +352,47 @@ namespace Questor.Modules
             }
         }
 
+
+        /// <summary>
+        ///   Activate target painters
+        /// </summary>
+        public void ActivateNos(EntityCache target)
+        {
+            var webs = Cache.Instance.Modules.Where(m => m.GroupId == (int)Group.nos).ToList();
+            //Logging.Log("Combat: we have " + webs.Count.ToString() + " Nos modules");
+            // Find the first active weapon
+            // Assist this weapon
+            foreach (var web in webs)
+            {
+                // Are we on the right target?
+                if (web.IsActive)
+                {
+                    if (web.TargetId != target.Id)
+                        web.Deactivate();
+
+                    continue;
+                }
+
+                // Are we deactivating?
+                if (web.IsDeactivating)
+                    continue;
+                //Logging.Log("Combat: Distances Target[ " + target.Distance + " Optimal[" + web.OptimalRange.ToString()+"]");
+                // Target is out of web range
+                if (target.Distance >= Settings.Instance.NosDistance)
+                    continue;
+
+                if (CanActivate(web, target, false))
+                {
+                    Logging.Log("Combat: Nos  [" + web.ItemId + "] on [" + target.Name + "][" + target.Id + "]");
+                    web.Activate(target.Id);
+                }
+                else
+                {
+                    Logging.Log("Combat: Cant Activate Nos [" + web.ItemId + "] on [" + target.Name + "][" + target.Id + "]");
+                }
+            }
+        }
+
         /// <summary>
         ///   Activate target painters
         /// </summary>
@@ -555,6 +596,7 @@ namespace Questor.Modules
                         ActivateWeapons(target);
                         ActivateTargetPainters(target);
                         ActivateStasisWeb(target);
+                        ActivateNos(target);
                     }
                     break;
 
