@@ -40,6 +40,7 @@ namespace Questor.Modules
         public bool DebugPerformance { get; set; }
 
         public bool AutoStart { get; set; }
+        public bool Disable3D { get; set; }
 		public bool waitDecline { get; set; }
         public int MinimumDelay { get; set; }
         public int RandomDelay { get; set; }
@@ -146,6 +147,7 @@ namespace Questor.Modules
                 AgentName = string.Empty;
 
                 AutoStart = false;
+                Disable3D = false;
 				waitDecline = false;
                 RandomDelay = 0;
                 MinimumDelay = 0;
@@ -212,6 +214,7 @@ namespace Questor.Modules
             DebugPerformance = (bool?) xml.Element("debugPerformance") ?? false;
 
             AutoStart = (bool?) xml.Element("autoStart") ?? false;
+            Disable3D = (bool?) xml.Element("disable3D") ?? false;
             waitDecline = (bool?) xml.Element("waitDecline") ?? false;
             RandomDelay = (int?) xml.Element("randomDelay") ?? 0;
             MinimumDelay = (int?)xml.Element("minimumDelay") ?? 0;
