@@ -297,7 +297,7 @@ namespace Questor.Modules
             SpeedTank = (bool?) xml.Element("speedTank") ?? false;
             OrbitDistance = (int?) xml.Element("orbitDistance") ?? 0;
             MinimumPropulsionModuleDistance = (int?) xml.Element("minimumPropulsionModuleDistance") ?? 5000;
-            MinimumPropulsionModuleCapacitor = (int?)xml.Element("minimumPropulsionModuleCapacitor") ?? 0;
+            MinimumPropulsionModuleCapacitor = (int?) xml.Element("minimumPropulsionModuleCapacitor") ?? 0;
 
             ActivateRepairModules = (int?) xml.Element("activateRepairModules") ?? 65;
             DeactivateRepairModules = (int?) xml.Element("deactivateRepairModules") ?? 95;

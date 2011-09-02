@@ -606,7 +606,7 @@ namespace Questor.Modules
 					if (pocket.Element("orbitdistance") != null) 	//Load OrbitDistance from mission.xml, if present
                         OrbitDistance = (int) pocket.Element("orbitdistance");
 					else											//Otherwise, use value defined in charname.xml file
-					OrbitDistance = Settings.Instance.OrbitDistance;
+						OrbitDistance = Settings.Instance.OrbitDistance;
 						
                     var actions = new List<Action>();
                     var elements = pocket.Element("actions");
