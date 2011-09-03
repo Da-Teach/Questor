@@ -95,6 +95,7 @@ namespace Questor
         public double Wealth { get; set; }
         public double LootValue { get; set; }
         public int LoyaltyPoints { get; set; }
+        public int LostDrones { get; set; }
 
    
         public void SettingsLoaded(object sender, EventArgs e)
@@ -322,7 +323,7 @@ namespace Questor
 
                         // The mission is finished
                         File.AppendAllText(filename, line);
-
+                        
                         // Disable next log line
                         Mission = null;
                     }
@@ -390,6 +391,7 @@ namespace Questor
                         LoyaltyPoints = Cache.Instance.Agent.LoyaltyPoints;
                         Started = DateTime.Now;
                         Mission = string.Empty;
+                        LostDrones = 0;
                     }
 
                     _agentInteraction.ProcessState();
@@ -575,10 +577,56 @@ namespace Questor
                 case QuestorState.CompleteMission:
                     if (_agentInteraction.State == AgentInteractionState.Idle)
                     {
+                        // Lost drone statistics
+                        // (inelegantly located here so as to avoid the necessity to switch to a combat ship after salvaging)
+                        var droneBay = Cache.Instance.DirectEve.GetShipsDroneBay();
+                        if (droneBay.Window == null)
+                        {
+                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenDroneBayOfActiveShip);
+                            break;
+                        }
+                        if (!droneBay.IsReady)
+                            break;
+                        DirectContainer ammoHangar = null;
+                        if (!string.IsNullOrEmpty(Settings.Instance.AmmoHangar))
+                        {
+                            ammoHangar = Cache.Instance.DirectEve.GetCorporationHangar(Settings.Instance.AmmoHangar);
+                            if (ammoHangar.Window == null)
+                            {
+                                Logging.Log("DroneStats: Corporation hangar seems closed, opening...");
+                                Cache.Instance.DirectEve.OpenCorporationHangar();
+                                break;
+                            }
+                            if (!ammoHangar.IsReady)
+                                break;
+                        }
+                        else
+                        {
+                            ammoHangar = Cache.Instance.DirectEve.GetItemHangar();
+                            if (ammoHangar.Window == null)
+                            {
+                                Logging.Log("DroneStats: Item hangar seems closed, opening...");
+                                Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenHangarFloor);
+                                break;
+                            }                            
+                            if (!ammoHangar.IsReady)
+                                break;
+                        }
+                        var drone = ammoHangar.Items.FirstOrDefault(i => i.TypeId == Settings.Instance.DroneTypeId); // might run into problems if we're fresh out of drones
+                        LostDrones = (int)Math.Floor((droneBay.Capacity - droneBay.UsedCapacity) / drone.Volume);
+                        Logging.Log("DroneStats: Logging the number of lost drones: " + LostDrones.ToString());
+                        var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                        var dronelogfilename = Path.Combine(path, Cache.Instance.FilterPath(CharacterName) + ".dronestats.log");
+                        if (!File.Exists(dronelogfilename))
+                            File.AppendAllText(dronelogfilename, "Mission;Number of lost drones\r\n");
+                        var droneline = Mission + ";";
+                        droneline += ((int)LostDrones) + ";\r\n";
+                        File.AppendAllText(dronelogfilename, droneline);  
+                        
                         Logging.Log("AgentInteraction: Start Conversation [Complete Mission]");
 
                         _agentInteraction.State = AgentInteractionState.StartConversation;
-                        _agentInteraction.Purpose = AgentInteractionPurpose.CompleteMission;
+                        _agentInteraction.Purpose = AgentInteractionPurpose.CompleteMission;                      
                     }
 
                     _agentInteraction.ProcessState();
