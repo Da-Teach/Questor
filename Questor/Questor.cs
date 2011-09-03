@@ -18,6 +18,7 @@ namespace Questor
     using DirectEve;
     using global::Questor.Modules;
     using global::Questor.Storylines;
+    using LavishScriptAPI;
 
     public class Questor
     {
@@ -86,6 +87,7 @@ namespace Questor
         public bool Paused { get; set; }
         public bool Disable3D { get; set; }
         public bool ValidSettings { get; set; }
+        public bool ExitWhenIdle { get; set; }
 
         public string CharacterName { get; set; }
 
@@ -132,7 +134,7 @@ namespace Questor
             }
 
             AutoStart = Settings.Instance.AutoStart;
-
+            Disable3D = Settings.Instance.Disable3D;
         }
 
         public void ApplySettings()
@@ -240,6 +242,11 @@ namespace Questor
             // Panic always runs, not just in space
             watch.Reset();
             watch.Start();
+            _panic.InMission = State == QuestorState.ExecuteMission;
+            if (State == QuestorState.Storyline)
+            {
+                _panic.InMission |= _storyline.StorylineHandler is GenericCombatStoryline && (_storyline.StorylineHandler as GenericCombatStoryline).State == GenericCombatStorylineState.ExecuteMission;
+            }
             _panic.ProcessState();
             watch.Stop();
 
@@ -249,7 +256,7 @@ namespace Questor
             if (_panic.State == PanicState.Panic || _panic.State == PanicState.Panicking)
             {
                 // If Panic is in panic state, questor is in panic state :)
-                State = QuestorState.Panic;
+                State = State == QuestorState.Storyline ? QuestorState.StorylinePanic : QuestorState.Panic;
 
                 if (Settings.Instance.DebugStates)
                     Logging.Log("State = " + State);
@@ -259,9 +266,20 @@ namespace Questor
                 // Reset panic state
                 _panic.State = PanicState.Normal;
 
-                // Head back to the mission
-                _traveler.State = TravelerState.Idle;
-                State = QuestorState.GotoMission;
+                // Ugly storyline resume hack
+                if (State == QuestorState.StorylinePanic)
+                {
+                    State = QuestorState.Storyline;
+
+                    if (_storyline.StorylineHandler is GenericCombatStoryline)
+                        (_storyline.StorylineHandler as GenericCombatStoryline).State = GenericCombatStorylineState.GotoMission;
+                }
+                else
+                {
+                    // Head back to the mission
+                    _traveler.State = TravelerState.Idle;
+                    State = QuestorState.GotoMission;
+                }
 
                 if (Settings.Instance.DebugStates)
                     Logging.Log("State = " + State);
@@ -338,9 +356,9 @@ namespace Questor
                         if (DateTime.UtcNow.Hour == 11 && DateTime.UtcNow.Minute < 15)
                             break;
 
-                        if (Settings.Instance.RandomDelay > 0)
+                        if (Settings.Instance.RandomDelay > 0 || Settings.Instance.MinimumDelay > 0)
                         {
-                            _randomDelay = _random.Next(Settings.Instance.RandomDelay);
+                            _randomDelay = (Settings.Instance.RandomDelay > 0 ? _random.Next(Settings.Instance.RandomDelay) : 0) + Settings.Instance.MinimumDelay;
                             _lastAction = DateTime.Now;
 
                             State = QuestorState.DelayedStart;
@@ -350,6 +368,8 @@ namespace Questor
                         else
                             State = QuestorState.Start;
                     }
+                    else if (ExitWhenIdle)
+                        LavishScript.ExecuteCommand("exit");
                     break;
 
                 case QuestorState.DelayedStart:
@@ -876,6 +896,52 @@ namespace Questor
                         break;
                     }
                     break;
+
+				case QuestorState.Traveler:
+					var destination = Cache.Instance.DirectEve.Navigation.GetDestinationPath();
+					if (destination == null || destination.Count == 0)
+					{
+						// should never happen, but still...
+						Logging.Log("Traveler: No destination?");
+						State = QuestorState.Error;
+					}
+					else
+						if (destination.Count == 1 && destination.First() == 0)
+							destination[0] = Cache.Instance.DirectEve.Session.SolarSystemId ?? -1;
+					if (_traveler.Destination == null || _traveler.Destination.SolarSystemId != destination.Last())
+					{
+						var bookmarks = Cache.Instance.DirectEve.Bookmarks.Where(b => b.LocationId == destination.Last());
+						if (bookmarks != null && bookmarks.Count() > 0)
+							_traveler.Destination = new BookmarkDestination(bookmarks.OrderBy(b => b.CreatedOn).First());
+						else
+						{
+							Logging.Log("Traveler: Destination: [" + Cache.Instance.DirectEve.Navigation.GetLocation(destination.Last()).Name + "]");
+							_traveler.Destination = new SolarSystemDestination(destination.Last());
+						}
+					}
+					else
+					{
+						_traveler.ProcessState();
+						if (_traveler.State == TravelerState.AtDestination)
+						{
+							if (_missionController.State == MissionControllerState.Error)
+							{
+								Logging.Log("Questor stopped: an error has occured");
+								State = QuestorState.Error;
+							}
+							else if (Cache.Instance.InSpace)
+							{
+								Logging.Log("Traveler: Arrived at destination (in space, Questor stopped)");
+								State = QuestorState.Error;
+							}
+							else
+							{
+								Logging.Log("Traveler: Arrived at destination");
+								State = QuestorState.Idle;
+							}
+						}		
+					}
+				break;
             }
         }
 

@@ -14,13 +14,18 @@ namespace Questor.Modules
 
     public class Panic
     {
+        private Random _random = new Random();
+
         private double _lastNormalX;
         private double _lastNormalY;
         private double _lastNormalZ;
 
-        //private DateTime _nextRepairAction;
+        private DateTime _resumeTime;
+        private bool _delayedResume;
+        private int _randomDelay;
 
         public PanicState State { get; set; }
+        public bool InMission { get; set; }
 
         public void ProcessState()
         {
@@ -39,8 +44,9 @@ namespace Questor.Modules
                         Logging.Log("Panic: You are in a Capsule, you must have died :(");
                         State = PanicState.StartPanicking;
                     }
-                    else if (Cache.Instance.InSpace && Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage < Settings.Instance.MinimumCapacitorPct && Cache.Instance.DirectEve.ActiveShip.GroupId != 31)
+                    else if (InMission && Cache.Instance.InSpace && Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage < Settings.Instance.MinimumCapacitorPct && Cache.Instance.DirectEve.ActiveShip.GroupId != 31)
                     {
+                        // Only check for cap-panic while in a mission, not while doing anything else
                         Logging.Log("Panic: Start panicking, capacitor [" + Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage + "%] below [" + Settings.Instance.MinimumCapacitorPct + "%]");
                         State = PanicState.StartPanicking;
                     }
@@ -53,6 +59,53 @@ namespace Questor.Modules
                     {
                         Logging.Log("Panic: Start panicking, armor [" + Cache.Instance.DirectEve.ActiveShip.ArmorPercentage + "%] below [" + Settings.Instance.MinimumArmorPct + "%]");
                         State = PanicState.StartPanicking;
+                    }
+
+                    _delayedResume = false;
+                    if(InMission)
+                    {
+                        var frigates = Cache.Instance.Entities.Count(e => e.IsFrigate && e.IsPlayer);
+                        var cruisers = Cache.Instance.Entities.Count(e => e.IsCruiser && e.IsPlayer);
+                        var battlecruisers = Cache.Instance.Entities.Count(e => e.IsBattlecruiser && e.IsPlayer);
+                        var battleships = Cache.Instance.Entities.Count(e => e.IsBattleship && e.IsPlayer);
+
+                        if (Settings.Instance.FrigateInvasionLimit > 0 && frigates >= Settings.Instance.FrigateInvasionLimit)
+                        {
+                            _delayedResume = true;
+
+                            State = PanicState.StartPanicking;
+                            Logging.Log("Panic: Start panicking, mission invaded by [" + frigates + "] frigates");
+                        }
+
+                        if (Settings.Instance.CruiserInvasionLimit > 0 && cruisers >= Settings.Instance.CruiserInvasionLimit)
+                        {
+                            _delayedResume = true;
+
+                            State = PanicState.StartPanicking;
+                            Logging.Log("Panic: Start panicking, mission invaded by [" + cruisers + "] cruisers");
+                        }
+
+                        if (Settings.Instance.BattlecruiserInvasionLimit > 0 && battlecruisers >= Settings.Instance.BattlecruiserInvasionLimit)
+                        {
+                            _delayedResume = true;
+
+                            State = PanicState.StartPanicking;
+                            Logging.Log("Panic: Start panicking, mission invaded by [" + battlecruisers + "] battlecruisers");
+                        }
+
+                        if (Settings.Instance.BattleshipInvasionLimit > 0 && battleships >= Settings.Instance.BattleshipInvasionLimit)
+                        {
+                            _delayedResume = true;
+
+                            State = PanicState.StartPanicking;
+                            Logging.Log("Panic: Start panicking, mission invaded by [" + battleships + "] battleships");
+                        }
+
+                        if (_delayedResume)
+                        {
+                            _randomDelay = (Settings.Instance.InvasionRandomDelay > 0 ? _random.Next(Settings.Instance.InvasionRandomDelay) : 0);
+                            _randomDelay += Settings.Instance.InvasionMinimumDelay;
+                        }
                     }
 
                     Cache.Instance.AddPriorityTargets(Cache.Instance.TargetedBy.Where(t => t.IsWarpScramblingMe), Priority.WarpScrambler);
@@ -125,16 +178,8 @@ namespace Questor.Modules
 
                     if (Cache.Instance.InStation)
                     {
-                        //var repair = Cache.Instance.DirectEve.ActiveShip.StructurePercentage < 100;
-                        //repair |= Cache.Instance.DirectEve.ActiveShip.ArmorPercentage < 100;
-                        //if (repair)
-                        //{
-                        //    State = PanicState.Repair;
-                        //    break;
-                        //}
-
                         Logging.Log("Panic: We're in a station, resume mission");
-                        State = PanicState.Resume;
+                        State = _delayedResume ? PanicState.DelayedResume : PanicState.Resume;
                     }
 
                     var isSafe = Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage > Settings.Instance.SafeCapacitorPct;
@@ -143,19 +188,20 @@ namespace Questor.Modules
                     if (isSafe)
                     {
                         Logging.Log("Panic: We've recovered, resume mission");
-                        State = PanicState.Resume;
+                        State = _delayedResume ? PanicState.DelayedResume : PanicState.Resume;
+                    }
+
+                    if (State == PanicState.DelayedResume)
+                    {
+                        Logging.Log("Panic: Delaying resume for " + _randomDelay + " seconds");
+                        _resumeTime = DateTime.Now.AddSeconds(_randomDelay);
                     }
                     break;
 
-                    //case PanicState.Repair:
-                    //    if (!Cache.Instance.Windows.Any(w => w.Type == "form.RepairShopWindow"))
-                    //    {
-                    //        if (_nextRepairAction < DateTime.Now)
-                    //        {
-                    //            _nextRepairAction = DateTime.Now.AddSeconds(15);
-                    //        }
-                    //    }
-                    //    break;
+                case PanicState.DelayedResume:
+                    if (DateTime.Now > _resumeTime)
+                        State = PanicState.Resume;
+                    break;
 
                 case PanicState.Resume:
                     // Dont do anything here

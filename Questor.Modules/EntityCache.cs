@@ -400,23 +400,111 @@ namespace Questor.Modules
                 return false;
             }
         }
-        public bool IsPlayerShip
+
+        public bool IsPlayer
+        {
+            get { return _directEntity.IsPc; }
+        }
+
+        /// <summary>
+        /// Frigate includes all elite-variants
+        /// </summary>
+        public bool IsFrigate
         {
             get
             {
-                if (GroupId == (int)Group.Concord1 || GroupId == (int)Group.Concord2 || GroupId == (int)Group.Concord3 || GroupId == (int)Group.Indy || GroupId == (int)Group.HAC
-                || GroupId == (int)Group.Covops || GroupId == (int)Group.StrategicCruiser || GroupId == (int)Group.Marauder || GroupId == (int)Group.AssaultFrigate)
-                    return true;
-                else return false;
+                bool result = false;
+                result |= GroupId == (int)Group.Frigate;
+                result |= GroupId == (int)Group.AssaultShip;
+                result |= GroupId == (int)Group.StealthBomber;
+                result |= GroupId == (int)Group.ElectronicAttackShip;
+                result |= GroupId == (int)Group.PrototypeExplorationShip;
+
+                // Technically not frigs, but for our purposes they are
+                result |= GroupId == (int)Group.Destroyer; 
+                result |= GroupId == (int)Group.Interdictor;
+                result |= GroupId == (int)Group.Interceptor;
+                return result;
             }
         }
+
+        /// <summary>
+        /// Frigate includes all elite-variants
+        /// </summary>
+        public bool IsCruiser
+        {
+            get
+            {
+                bool result = false;
+                result |= GroupId == (int)Group.Cruiser;
+                result |= GroupId == (int)Group.HeavyAssaultShip;
+                result |= GroupId == (int)Group.Logistics;
+                result |= GroupId == (int)Group.ForceReconShip;
+                result |= GroupId == (int)Group.CombatReconShip;
+                result |= GroupId == (int)Group.HeavyInterdictor;
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Frigate includes all elite-variants
+        /// </summary>
+        public bool IsBattlecruiser
+        {
+            get
+            {
+                bool result = false;
+                result |= GroupId == (int)Group.Battlecruiser;
+                result |= GroupId == (int)Group.CommandShip;
+                result |= GroupId == (int)Group.StrategicCruiser; // Technically a cruiser, but hits hard enough to be a BC :)
+                return result;
+            }
+        }
+        /// <summary>
+        /// Frigate includes all elite-variants
+        /// </summary>
+        public bool IsBattleship
+        {
+            get
+            {
+                bool result = false;
+                result |= GroupId == (int)Group.Battleship;
+                result |= GroupId == (int)Group.EliteBattleship;
+                result |= GroupId == (int)Group.BlackOps;
+                result |= GroupId == (int)Group.Marauder;
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// A bad idea to attack these targets
+        /// </summary>
+        public bool IsBadIdea
+        {
+            get
+            {
+                bool result = false;
+                result |= GroupId == (int)Group.ConcordDrone;
+                result |= GroupId == (int)Group.CustomsOfficial;
+                result |= GroupId == (int)Group.Billboard;
+                result |= IsFrigate;
+                result |= IsCruiser;
+                result |= IsBattlecruiser;
+                result |= IsBattleship;
+                result |= _directEntity.IsPc;
+                return result;
+            }
+        }
+
         public void LockTarget()
         {
-            if (IsPlayerShip)
+            // If the bad idea is attacking, attack back
+            if (IsBadIdea && !IsAttacking)
             {
-                Logging.Log("EntityCache: Attempting to target player!" + this.Name);
+                Logging.Log("EntityCache: Attempting to target a player or concord entity! [" + Name + "]");
                 return;
             }
+
             if (Cache.Instance.TargetingIDs.ContainsKey(Id))
             {
                 var lastTargeted = Cache.Instance.TargetingIDs[Id];

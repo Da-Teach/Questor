@@ -159,6 +159,11 @@ namespace Questor.Modules
         public DamageType DamageType { get; set; }
 
         /// <summary>
+        ///   Best orbit distancefor the mission
+        /// </summary>
+        public int OrbitDistance { get; set; }
+		
+		/// <summary>
         ///   Returns the maximum weapon distance
         /// </summary>
         public int WeaponRange
@@ -598,6 +603,11 @@ namespace Questor.Modules
                     if (pocket.Element("damagetype") != null)
                         DamageType = (DamageType) Enum.Parse(typeof (DamageType), (string) pocket.Element("damagetype"), true);
 
+					if (pocket.Element("orbitdistance") != null) 	//Load OrbitDistance from mission.xml, if present
+                        OrbitDistance = (int) pocket.Element("orbitdistance");
+					else											//Otherwise, use value defined in charname.xml file
+						OrbitDistance = Settings.Instance.OrbitDistance;
+						
                     var actions = new List<Action>();
                     var elements = pocket.Element("actions");
                     if (elements != null)

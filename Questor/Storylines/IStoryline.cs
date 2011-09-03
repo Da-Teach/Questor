@@ -1,6 +1,6 @@
 ﻿namespace Questor.Storylines
 {
-    interface IStoryline
+    public interface IStoryline
     {
         StorylineState Arm(Storyline storyline);
         StorylineState PreAcceptMission(Storyline storyline);
