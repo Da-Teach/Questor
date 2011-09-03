@@ -46,6 +46,16 @@ namespace Questor.Modules
             get { return _module.IsActive; }
         }
 
+        public bool IsOnline
+        {
+            get { return _module.IsOnline; }
+        }
+
+        public bool IsGoingOnline
+        {
+            get { return _module.IsGoingOnline; }
+        }
+
         public bool IsReloadingAmmo
         {
             get { return _module.IsReloadingAmmo; }
@@ -134,13 +144,34 @@ namespace Questor.Modules
             _module.ChangeAmmo(charge);
         }
 
+        public bool InLimboState
+        {
+            get 
+            { 
+                var result = false;
+                result |= !IsActivatable;
+                result |= !IsOnline;
+                result |= IsDeactivating;
+                result |= IsGoingOnline;
+                result |= IsReloadingAmmo;
+                result |= IsChangingAmmo;
+                return result;
+            }
+        }
+
         public void Activate()
         {
+           if (InLimboState)
+               return;
+
             _module.Activate();
         }
 
         public void Activate(long entityId)
         {
+            if (InLimboState)
+                return;
+
             _module.Activate(entityId);
 
             Cache.Instance.LastModuleTargetIDs[ItemId] = entityId;
@@ -148,6 +179,9 @@ namespace Questor.Modules
 
         public void Deactivate()
         {
+            if (InLimboState)
+                return;
+            
             _module.Deactivate();
         }
     }
