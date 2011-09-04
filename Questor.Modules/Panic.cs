@@ -1,4 +1,4 @@
-﻿// ------------------------------------------------------------------------------
+﻿﻿// ------------------------------------------------------------------------------
 //   <copyright from='2010' to='2015' company='THEHACKERWITHIN.COM'>
 //     Copyright (c) TheHackerWithin.COM. All Rights Reserved.
 // 
@@ -20,7 +20,6 @@ namespace Questor.Modules
         private double _lastNormalY;
         private double _lastNormalZ;
 
-        //private DateTime _nextRepairAction;
         private DateTime _resumeTime;
         private bool _delayedResume;
         private int _randomDelay;
@@ -40,17 +39,12 @@ namespace Questor.Modules
                         _lastNormalZ = Cache.Instance.DirectEve.ActiveShip.Entity.Z;
                     }
 
-                    if (Cache.Instance.DirectEve.ActiveShip.GroupId == (int) Group.Capsule)
+                    if (Cache.Instance.DirectEve.ActiveShip.GroupId == (int)Group.Capsule)
                     {
                         Logging.Log("Panic: You are in a Capsule, you must have died :(");
                         State = PanicState.StartPanicking;
-<<<<<<< HEAD
                     }
-                    else if (Cache.Instance.InSpace && Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage < Settings.Instance.MinimumCapacitorPct && Cache.Instance.DirectEve.ActiveShip.GroupId != 31)
-=======
-                    } 
                     else if (InMission && Cache.Instance.InSpace && Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage < Settings.Instance.MinimumCapacitorPct)
->>>>>>> 460c338619040e88e33fbc5ab6d17c7960b345d4
                     {
                         // Only check for cap-panic while in a mission, not while doing anything else
                         Logging.Log("Panic: Start panicking, capacitor [" + Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage + "%] below [" + Settings.Instance.MinimumCapacitorPct + "%]");
@@ -68,7 +62,7 @@ namespace Questor.Modules
                     }
 
                     _delayedResume = false;
-                    if(InMission)
+                    if (InMission)
                     {
                         var frigates = Cache.Instance.Entities.Count(e => e.IsFrigate && e.IsPlayer);
                         var cruisers = Cache.Instance.Entities.Count(e => e.IsCruiser && e.IsPlayer);
@@ -127,8 +121,8 @@ namespace Questor.Modules
                         Cache.Instance.AddPriorityTargets(Cache.Instance.TargetedBy.Where(t => t.IsTrackingDisruptingMe), Priority.TrackingDisrupting);
                     break;
 
-                    // NOTE: The difference between Panicking and StartPanicking is that the bot will move to "Panic" state once in warp & Panicking 
-                    //       and the bot wont go into Panic mode while still "StartPanicking"
+                // NOTE: The difference between Panicking and StartPanicking is that the bot will move to "Panic" state once in warp & Panicking 
+                //       and the bot wont go into Panic mode while still "StartPanicking"
                 case PanicState.StartPanicking:
                 case PanicState.Panicking:
                     if (Cache.Instance.InStation)
@@ -179,7 +173,7 @@ namespace Questor.Modules
 
                 case PanicState.Panic:
                     // Do not resume until your no longer in a capsule
-                    if (Cache.Instance.DirectEve.ActiveShip.GroupId == (int) Group.Capsule)
+                    if (Cache.Instance.DirectEve.ActiveShip.GroupId == (int)Group.Capsule)
                         break;
 
                     if (Cache.Instance.InStation)

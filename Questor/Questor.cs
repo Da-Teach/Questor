@@ -133,11 +133,9 @@ namespace Questor
             }
 
             AutoStart = Settings.Instance.AutoStart;
-<<<<<<< HEAD
 
-=======
             Disable3D = Settings.Instance.Disable3D;
->>>>>>> 460c338619040e88e33fbc5ab6d17c7960b345d4
+
         }
 
         public void ApplySettings()
