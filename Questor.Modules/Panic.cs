@@ -44,9 +44,15 @@ namespace Questor.Modules
                     {
                         Logging.Log("Panic: You are in a Capsule, you must have died :(");
                         State = PanicState.StartPanicking;
+<<<<<<< HEAD
                     }
                     else if (Cache.Instance.InSpace && Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage < Settings.Instance.MinimumCapacitorPct && Cache.Instance.DirectEve.ActiveShip.GroupId != 31)
+=======
+                    } 
+                    else if (InMission && Cache.Instance.InSpace && Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage < Settings.Instance.MinimumCapacitorPct)
+>>>>>>> 460c338619040e88e33fbc5ab6d17c7960b345d4
                     {
+                        // Only check for cap-panic while in a mission, not while doing anything else
                         Logging.Log("Panic: Start panicking, capacitor [" + Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage + "%] below [" + Settings.Instance.MinimumCapacitorPct + "%]");
                         State = PanicState.StartPanicking;
                     }
@@ -193,7 +199,7 @@ namespace Questor.Modules
 
                     if (State == PanicState.DelayedResume)
                     {
-                        Logging.Log("Panic: Delaying resume for " + _delayedResume + " seconds");
+                        Logging.Log("Panic: Delaying resume for " + _randomDelay + " seconds");
                         _resumeTime = DateTime.Now.AddSeconds(_randomDelay);
                     }
                     break;

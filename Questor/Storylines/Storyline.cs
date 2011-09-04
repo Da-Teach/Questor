@@ -293,5 +293,10 @@
             // Do we have a registered storyline?
             return Mission != null;
         }
+
+        public IStoryline StorylineHandler
+        {
+            get { return _storyline; }
+        }
     }
 }

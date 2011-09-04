@@ -9,11 +9,12 @@
 //-------------------------------------------------------------------------------
 namespace Questor
 {
+    using System.Collections.Generic;
     using DirectEve;
 
     public class ItemCache
     {
-        public ItemCache(DirectItem item)
+        public ItemCache(DirectItem item, bool cacheRefineOutput)
         {
             Id = item.ItemId;
             Name = item.TypeName;
@@ -21,9 +22,17 @@ namespace Questor
             TypeId = item.TypeId;
             GroupId = item.GroupId;
             MarketGroupId = item.MarketGroupId;
+            PortionSize = item.PortionSize;
             
             Quantity = item.Quantity;
             QuantitySold = 0;
+
+            RefineOutput = new List<ItemCache>();
+            if (cacheRefineOutput)
+            {
+                foreach (var i in item.Materials)
+                    RefineOutput.Add(new ItemCache(i, false));
+            }
         }
 
         public InvType InvType { get; set; }
@@ -34,10 +43,13 @@ namespace Questor
         public int TypeId { get; private set; }
         public int GroupId { get; private set; }
         public int MarketGroupId { get; private set; }
+        public int PortionSize { get; private set; }
 
         public int Quantity { get; private set; }
         public int QuantitySold { get; set; }
 
         public double? StationBuy { get; set; }
+
+        public List<ItemCache> RefineOutput { get; private set; }
     }
 }

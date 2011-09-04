@@ -10,6 +10,8 @@ using Questor.Modules;
 
 namespace Questor
 {
+    using LavishScriptAPI;
+
     public partial class frmMain : Form
     {
         private Questor _questor;
@@ -24,7 +26,68 @@ namespace Questor
             foreach (var text in Enum.GetNames(typeof(QuestorState)))
                 QuestorStateComboBox.Items.Add(text);
 
+<<<<<<< HEAD
             _questor = new Questor(this);
+=======
+            _questor = new Questor();
+
+            LavishScript.Commands.AddCommand("SetAutoStart", SetAutoStart);
+            LavishScript.Commands.AddCommand("SetDisable3D", SetDisable3D);
+            LavishScript.Commands.AddCommand("SetExitWhenIdle", SetExitWhenIdle);
+        }
+
+        private int SetAutoStart(string[] args)
+        {
+            bool value;
+            if (args.Length != 2 || !bool.TryParse(args[1], out value))
+            {
+                Logging.Log("SetAutoStart true|false");
+                return -1;
+            }
+
+            _questor.AutoStart = value;
+
+            Logging.Log("AutoStart is turned " + (value ? "[on]" : "[off]"));
+            return 0;
+        }
+
+        private int SetDisable3D(string[] args)
+        {
+            bool value;
+            if (args.Length != 2 || !bool.TryParse(args[1], out value))
+            {
+                Logging.Log("SetDisable3D true|false");
+                return -1;
+            }
+
+            _questor.Disable3D = value;
+
+            Logging.Log("Disable3D is turned " + (value ? "[on]" : "[off]"));
+            return 0;
+        }
+
+        private int SetExitWhenIdle(string[] args)
+        {
+            bool value;
+            if (args.Length != 2 || !bool.TryParse(args[1], out value))
+            {
+                Logging.Log("SetExitWhenIdle true|false");
+                Logging.Log("Note: AutoStart is automatically turned off when ExitWhenIdle is turned on");
+                return -1;
+            }
+
+            _questor.ExitWhenIdle = value;
+
+            Logging.Log("ExitWhenIdle is turned " + (value ? "[on]" : "[off]"));
+
+            if (value && _questor.AutoStart)
+            {
+                _questor.AutoStart = false;
+                Logging.Log("AutoStart is turned [off]");
+            }
+
+            return 0;
+>>>>>>> 460c338619040e88e33fbc5ab6d17c7960b345d4
         }
 
         private void tUpdateUI_Tick(object sender, EventArgs e)
@@ -50,6 +113,9 @@ namespace Questor
 
             if (PauseCheckBox.Checked != _questor.Paused)
                 PauseCheckBox.Checked = _questor.Paused;
+
+            if (Disable3DCheckBox.Checked != _questor.Disable3D)
+                Disable3DCheckBox.Checked = _questor.Disable3D;
 
             if (Settings.Instance.WindowXPosition.HasValue)
             {
