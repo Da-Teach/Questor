@@ -97,6 +97,7 @@ namespace Questor
         public double Wealth { get; set; }
         public double LootValue { get; set; }
         public int LoyaltyPoints { get; set; }
+        public int LostDrones { get; set; }
 
    
         public void SettingsLoaded(object sender, EventArgs e)
@@ -342,7 +343,7 @@ namespace Questor
 
                         // The mission is finished
                         File.AppendAllText(filename, line);
-
+                        
                         // Disable next log line
                         Mission = null;
                     }
@@ -412,6 +413,7 @@ namespace Questor
                         LoyaltyPoints = Cache.Instance.Agent.LoyaltyPoints;
                         Started = DateTime.Now;
                         Mission = string.Empty;
+                        LostDrones = 0;
                     }
 
                     _agentInteraction.ProcessState();
@@ -597,10 +599,39 @@ namespace Questor
                 case QuestorState.CompleteMission:
                     if (_agentInteraction.State == AgentInteractionState.Idle)
                     {
+                        // Lost drone statistics
+                        // (inelegantly located here so as to avoid the necessity to switch to a combat ship after salvaging)
+                        var droneBay = Cache.Instance.DirectEve.GetShipsDroneBay();
+                        if (droneBay.Window == null)
+                        {
+                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenDroneBayOfActiveShip);
+                            break;
+                        }
+                        if (!droneBay.IsReady)
+                            break;
+                        if (Cache.Instance.InvTypesById.ContainsKey(Settings.Instance.DroneTypeId))
+                        {
+                            var drone = Cache.Instance.InvTypesById[Settings.Instance.DroneTypeId];
+                            LostDrones = (int)Math.Floor((droneBay.Capacity - droneBay.UsedCapacity) / drone.Volume);
+                            Logging.Log("DroneStats: Logging the number of lost drones: " + LostDrones.ToString());
+                            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                            var dronelogfilename = Path.Combine(path, Cache.Instance.FilterPath(CharacterName) + ".dronestats.log");
+                            if (!File.Exists(dronelogfilename))
+                                File.AppendAllText(dronelogfilename, "Mission;Number of lost drones\r\n");
+                            var droneline = Mission + ";";
+                            droneline += ((int)LostDrones) + ";\r\n";
+                            File.AppendAllText(dronelogfilename, droneline);
+                        }
+                        else
+                        {
+                            Logging.Log("DroneStats: Couldn't find the drone TypeID specified in the settings.xml; this shouldn't happen!");
+                        }                   
+                        // Lost drone statistics stuff ends here
+
                         Logging.Log("AgentInteraction: Start Conversation [Complete Mission]");
 
                         _agentInteraction.State = AgentInteractionState.StartConversation;
-                        _agentInteraction.Purpose = AgentInteractionPurpose.CompleteMission;
+                        _agentInteraction.Purpose = AgentInteractionPurpose.CompleteMission;                      
                     }
 
                     _agentInteraction.ProcessState();
