@@ -242,7 +242,7 @@ namespace Questor
             watch.Reset();
             watch.Start();
             _panic.InMission = State == QuestorState.ExecuteMission;
-            if (State == QuestorState.Storyline)
+            if (State == QuestorState.Storyline && _storyline.State == StorylineState.ExecuteMission)
             {
                 _panic.InMission |= _storyline.StorylineHandler is GenericCombatStoryline && (_storyline.StorylineHandler as GenericCombatStoryline).State == GenericCombatStorylineState.ExecuteMission;
             }
