@@ -40,12 +40,12 @@ namespace Questor.Modules
         public bool DebugPerformance { get; set; }
 
         public bool AutoStart { get; set; }
-<<<<<<< HEAD
+
 
 		public bool waitDecline { get; set; }
-=======
+
         public bool Disable3D { get; set; }
->>>>>>> 460c338619040e88e33fbc5ab6d17c7960b345d4
+
         public int MinimumDelay { get; set; }
 
         public int RandomDelay { get; set; }
@@ -152,11 +152,11 @@ namespace Questor.Modules
                 AgentName = string.Empty;
 
                 AutoStart = false;
-<<<<<<< HEAD
+
 				waitDecline = false;
-=======
+
                 Disable3D = false;
->>>>>>> 460c338619040e88e33fbc5ab6d17c7960b345d4
+
                 RandomDelay = 0;
 
 			    minStandings = 10;
@@ -228,11 +228,11 @@ namespace Questor.Modules
             DebugPerformance = (bool?) xml.Element("debugPerformance") ?? false;
 
             AutoStart = (bool?) xml.Element("autoStart") ?? false;
-<<<<<<< HEAD
+
             waitDecline = (bool?) xml.Element("waitDecline") ?? false;
-=======
+
             Disable3D = (bool?) xml.Element("disable3D") ?? false;
->>>>>>> 460c338619040e88e33fbc5ab6d17c7960b345d4
+
             RandomDelay = (int?) xml.Element("randomDelay") ?? 0;
             MinimumDelay = (int?)xml.Element("minimumDelay") ?? 0;
 			minStandings = (float?) xml.Element("minStandings") ?? 10;
