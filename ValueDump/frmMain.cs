@@ -198,7 +198,7 @@ namespace ValueDump
                         ItemsToSell.Clear();
                         ItemsToRefine.Clear();
                         if (cbxUndersell.Checked)
-                            ItemsToSell.AddRange(Items.Where(i => i.InvType != null).Take(5));
+                            ItemsToSell.AddRange(Items.Where(i => i.InvType != null));
                         else
                             ItemsToSell.AddRange(Items.Where(i => i.InvType != null && i.InvType.MedianBuy.HasValue));
                         
