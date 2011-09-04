@@ -393,9 +393,20 @@ namespace ValueDump
                         return;
                     }
 
-                    // TODO: We should wait for the items to appear in our hangar and then sell them...
-                    reprorcessingWindow.Reprocess();
-                    State = ValueDumpState.Idle;
+                    // Wait till we have a quote
+                    if (reprorcessingWindow.Quotes.Count == 0)
+                    {
+                        _lastExecute = DateTime.Now;
+                        return;
+                    }
+                    
+                    // Wait another 5 seconds to view the quote and then reprocess the stuff
+                    if (DateTime.Now.Subtract(_lastExecute).TotalSeconds > 5)
+                    {
+                        // TODO: We should wait for the items to appear in our hangar and then sell them...
+                        reprorcessingWindow.Reprocess();
+                        State = ValueDumpState.Idle;
+                    }
                     break;
             }
 
