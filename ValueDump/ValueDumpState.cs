@@ -14,6 +14,10 @@ namespace ValueDump
         StartQuickSell,
         WaitForSellWindow,
         InspectOrder,
-        WaitingToFinishQuickSell
+        WaitingToFinishQuickSell,
+        CheckMineralPrices,
+        GetMineralPrice,
+        RefineItems,
+        SaveMineralPrices
     }
 }
