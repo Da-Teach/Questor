@@ -198,7 +198,7 @@ namespace ValueDump
                         ItemsToSell.Clear();
                         ItemsToRefine.Clear();
                         if (cbxUndersell.Checked)
-                            ItemsToSell.AddRange(Items.Where(i => i.InvType != null && i.Name == "Paradise Cruise Missile"));
+                            ItemsToSell.AddRange(Items.Where(i => i.InvType != null));
                         else
                             ItemsToSell.AddRange(Items.Where(i => i.InvType != null && i.InvType.MedianBuy.HasValue));
                         
@@ -293,6 +293,27 @@ namespace ValueDump
                     else
                         otherPrices += "[No median buy price]";
 
+                    if (RefineCheckBox.Checked)
+                    {
+                        var portions = quantity/_currentItem.PortionSize;
+                        var refinePrice = _currentItem.RefineOutput.Any() ? _currentItem.RefineOutput.Sum(m => m.Quantity*m.InvType.MedianBuy ?? 0)*portions : 0;
+                        refinePrice *= (double)RefineEfficiencyInput.Value / 100;
+
+                        otherPrices += "[Refine price: " + refinePrice.ToString("#,##0.00") + "]";
+
+                        if (refinePrice > totalPrice)
+                        {
+                            Log("Refining gives a better price for item " + _currentItem.Name + " [Refine price: " + refinePrice.ToString("#,##0.00") + "][Sell price: " + totalPrice.ToString("#,##0.00") + "]");
+
+                            // Add it to the refine list
+                            ItemsToRefine.Add(_currentItem);
+
+                            sellWindow.Cancel();
+                            State = ValueDumpState.WaitingToFinishQuickSell;
+                            break;
+                        }
+                    }
+                    
                     if (!cbxUndersell.Checked)
                     {
                         if (!_currentItem.InvType.MedianBuy.HasValue)
@@ -309,28 +330,7 @@ namespace ValueDump
                         // If percentage < 85% and total price > 1m isk then skip this item (we don't undersell)
                         if (perc < 0.85 && total > 1000000)
                         {
-                            Log("Not underselling item " + _currentItem.Name + " [" + _currentItem.InvType.MedianBuy.Value.ToString("#,##0.00") + "][" + price.ToString("#,##0.00") + "][" + perc.ToString("0%") + "]");
-
-                            sellWindow.Cancel();
-                            State = ValueDumpState.WaitingToFinishQuickSell;
-                            break;
-                        }
-                    }
-
-                    if (RefineCheckBox.Checked)
-                    {
-                        var portions = quantity/_currentItem.PortionSize;
-                        var refinePrice = _currentItem.RefineOutput.Any() ? _currentItem.RefineOutput.Sum(m => m.Quantity*m.InvType.MedianBuy ?? 0)*portions : 0;
-                        refinePrice *= (double)RefineEfficiencyInput.Value / 100;
-
-                        otherPrices += "[Refine price: " + refinePrice.ToString("#,##0.00") + "]";
-
-                        if (refinePrice > totalPrice)
-                        {
-                            Log("Refining gives a better price for item " + _currentItem.Name + " [" + refinePrice.ToString("#,##0.00") + "][" + totalPrice.ToString("#,##0.00") + "]");
-
-                            // Add it to the refine list
-                            ItemsToRefine.Add(_currentItem);
+                            Log("Not underselling item " + _currentItem.Name + " [Median buy price: " + _currentItem.InvType.MedianBuy.Value.ToString("#,##0.00") + "][Sell price: " + price.ToString("#,##0.00") + "][" + perc.ToString("0%") + "]");
 
                             sellWindow.Cancel();
                             State = ValueDumpState.WaitingToFinishQuickSell;
@@ -346,7 +346,7 @@ namespace ValueDump
                         _currentItem.StationBuy = price;
                     _currentItem.StationBuy = (_currentItem.StationBuy + price)/2;
 
-                    Log("Selling " + quantity + " of " + _currentItem.Name + " for " + (price * quantity).ToString("#,##0.00") + otherPrices);
+                    Log("Selling " + quantity + " of " + _currentItem.Name + " [Sell price: " + (price * quantity).ToString("#,##0.00") + "]" + otherPrices);
                     sellWindow.Accept();
 
                     // Requeue to check again
