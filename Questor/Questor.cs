@@ -607,42 +607,25 @@ namespace Questor
                         }
                         if (!droneBay.IsReady)
                             break;
-                        DirectContainer ammoHangar = null;
-                        if (!string.IsNullOrEmpty(Settings.Instance.AmmoHangar))
+                        if (Cache.Instance.InvTypesById.ContainsKey(Settings.Instance.DroneTypeId))
                         {
-                            ammoHangar = Cache.Instance.DirectEve.GetCorporationHangar(Settings.Instance.AmmoHangar);
-                            if (ammoHangar.Window == null)
-                            {
-                                Logging.Log("DroneStats: Corporation hangar seems closed, opening...");
-                                Cache.Instance.DirectEve.OpenCorporationHangar();
-                                break;
-                            }
-                            if (!ammoHangar.IsReady)
-                                break;
+                            var drone = Cache.Instance.InvTypesById[Settings.Instance.DroneTypeId];
+                            LostDrones = (int)Math.Floor((droneBay.Capacity - droneBay.UsedCapacity) / drone.Volume);
+                            Logging.Log("DroneStats: Logging the number of lost drones: " + LostDrones.ToString());
+                            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                            var dronelogfilename = Path.Combine(path, Cache.Instance.FilterPath(CharacterName) + ".dronestats.log");
+                            if (!File.Exists(dronelogfilename))
+                                File.AppendAllText(dronelogfilename, "Mission;Number of lost drones\r\n");
+                            var droneline = Mission + ";";
+                            droneline += ((int)LostDrones) + ";\r\n";
+                            File.AppendAllText(dronelogfilename, droneline);
                         }
                         else
                         {
-                            ammoHangar = Cache.Instance.DirectEve.GetItemHangar();
-                            if (ammoHangar.Window == null)
-                            {
-                                Logging.Log("DroneStats: Item hangar seems closed, opening...");
-                                Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenHangarFloor);
-                                break;
-                            }                            
-                            if (!ammoHangar.IsReady)
-                                break;
-                        }
-                        var drone = ammoHangar.Items.FirstOrDefault(i => i.TypeId == Settings.Instance.DroneTypeId); // might run into problems if we're fresh out of drones
-                        LostDrones = (int)Math.Floor((droneBay.Capacity - droneBay.UsedCapacity) / drone.Volume);
-                        Logging.Log("DroneStats: Logging the number of lost drones: " + LostDrones.ToString());
-                        var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                        var dronelogfilename = Path.Combine(path, Cache.Instance.FilterPath(CharacterName) + ".dronestats.log");
-                        if (!File.Exists(dronelogfilename))
-                            File.AppendAllText(dronelogfilename, "Mission;Number of lost drones\r\n");
-                        var droneline = Mission + ";";
-                        droneline += ((int)LostDrones) + ";\r\n";
-                        File.AppendAllText(dronelogfilename, droneline);  
-                        
+                            Logging.Log("DroneStats: Couldn't find the drone TypeID specified in the settings.xml; this shouldn't happen!");
+                        }                   
+                        // Lost drone statistics stuff ends here
+
                         Logging.Log("AgentInteraction: Start Conversation [Complete Mission]");
 
                         _agentInteraction.State = AgentInteractionState.StartConversation;
