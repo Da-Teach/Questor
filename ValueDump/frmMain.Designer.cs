@@ -35,6 +35,7 @@
             this.chQuantitySold = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chMedianBuy = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chStationBuy = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chTotalBuy = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label1 = new System.Windows.Forms.Label();
             this.tbTotalMedian = new System.Windows.Forms.TextBox();
             this.tbTotalSold = new System.Windows.Forms.TextBox();
@@ -42,7 +43,11 @@
             this.label2 = new System.Windows.Forms.Label();
             this.cbxUndersell = new System.Windows.Forms.CheckBox();
             this.btnStop = new System.Windows.Forms.Button();
-            this.chTotalBuy = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.RefineCheckBox = new System.Windows.Forms.CheckBox();
+            this.RefineEfficiencyInput = new System.Windows.Forms.NumericUpDown();
+            this.label3 = new System.Windows.Forms.Label();
+            this.UpdateMineralPricesButton = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.RefineEfficiencyInput)).BeginInit();
             this.SuspendLayout();
             // 
             // btnHangar
@@ -98,6 +103,10 @@
             // 
             this.chStationBuy.Text = "Price (Station)";
             this.chStationBuy.Width = 74;
+            // 
+            // chTotalBuy
+            // 
+            this.chTotalBuy.Text = "Total";
             // 
             // label1
             // 
@@ -161,15 +170,61 @@
             this.btnStop.UseVisualStyleBackColor = true;
             this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
             // 
-            // chTotalBuy
+            // RefineCheckBox
             // 
-            this.chTotalBuy.Text = "Total";
+            this.RefineCheckBox.AutoSize = true;
+            this.RefineCheckBox.Location = new System.Drawing.Point(164, 41);
+            this.RefineCheckBox.Name = "RefineCheckBox";
+            this.RefineCheckBox.Size = new System.Drawing.Size(117, 17);
+            this.RefineCheckBox.TabIndex = 10;
+            this.RefineCheckBox.Text = "Check refine prices";
+            this.RefineCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // RefineEfficiencyInput
+            // 
+            this.RefineEfficiencyInput.Location = new System.Drawing.Point(570, 38);
+            this.RefineEfficiencyInput.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.RefineEfficiencyInput.Name = "RefineEfficiencyInput";
+            this.RefineEfficiencyInput.Size = new System.Drawing.Size(49, 20);
+            this.RefineEfficiencyInput.TabIndex = 11;
+            this.RefineEfficiencyInput.Value = new decimal(new int[] {
+            95,
+            0,
+            0,
+            0});
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(475, 42);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(89, 13);
+            this.label3.TabIndex = 12;
+            this.label3.Text = "Refine efficiency:";
+            // 
+            // UpdateMineralPricesButton
+            // 
+            this.UpdateMineralPricesButton.Location = new System.Drawing.Point(291, 37);
+            this.UpdateMineralPricesButton.Name = "UpdateMineralPricesButton";
+            this.UpdateMineralPricesButton.Size = new System.Drawing.Size(178, 23);
+            this.UpdateMineralPricesButton.TabIndex = 13;
+            this.UpdateMineralPricesButton.Text = "Update mineral prices";
+            this.UpdateMineralPricesButton.UseVisualStyleBackColor = true;
+            this.UpdateMineralPricesButton.Click += new System.EventHandler(this.UpdateMineralPricesButton_Click);
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(631, 347);
+            this.Controls.Add(this.UpdateMineralPricesButton);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.RefineEfficiencyInput);
+            this.Controls.Add(this.RefineCheckBox);
             this.Controls.Add(this.btnStop);
             this.Controls.Add(this.cbxUndersell);
             this.Controls.Add(this.cbxSell);
@@ -182,6 +237,7 @@
             this.Name = "frmMain";
             this.Text = "Value Dump";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmMain_FormClosed);
+            ((System.ComponentModel.ISupportInitialize)(this.RefineEfficiencyInput)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -204,6 +260,10 @@
         private System.Windows.Forms.CheckBox cbxUndersell;
         private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.ColumnHeader chTotalBuy;
+        private System.Windows.Forms.CheckBox RefineCheckBox;
+        private System.Windows.Forms.NumericUpDown RefineEfficiencyInput;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button UpdateMineralPricesButton;
     }
 }
 
