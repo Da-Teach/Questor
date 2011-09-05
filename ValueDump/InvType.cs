@@ -33,9 +33,13 @@ namespace Questor
             element.SetAttributeValue("volume", Volume);
             element.SetAttributeValue("capacity", Capacity);
             element.SetAttributeValue("portionsize", PortionSize);
-            element.SetAttributeValue("medianbuy", MedianBuy);
-            element.SetAttributeValue("mediansell", MedianSell);
-            element.SetAttributeValue("medianall", MedianAll);
+            if (MedianBuy.HasValue && MedianBuy.Value > 0)
+                element.SetAttributeValue("medianbuy", MedianBuy);
+            if (MedianSell.HasValue && MedianSell.Value > 0)
+                element.SetAttributeValue("mediansell", MedianSell);
+            if (MedianAll.HasValue && MedianAll.Value > 0)
+                element.SetAttributeValue("medianall", MedianAll);
+
             element.SetAttributeValue("lastupdate", LastUpdate);
             return element;
         }

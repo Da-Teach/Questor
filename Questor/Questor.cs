@@ -18,6 +18,7 @@ namespace Questor
     using DirectEve;
     using global::Questor.Modules;
     using global::Questor.Storylines;
+    using LavishScriptAPI;
 
     public class Questor
     {
@@ -86,6 +87,7 @@ namespace Questor
         public bool Paused { get; set; }
         public bool Disable3D { get; set; }
         public bool ValidSettings { get; set; }
+        public bool ExitWhenIdle { get; set; }
 
         public string CharacterName { get; set; }
 
@@ -95,6 +97,7 @@ namespace Questor
         public double Wealth { get; set; }
         public double LootValue { get; set; }
         public int LoyaltyPoints { get; set; }
+        public int LostDrones { get; set; }
 
    
         public void SettingsLoaded(object sender, EventArgs e)
@@ -131,6 +134,8 @@ namespace Questor
             }
 
             AutoStart = Settings.Instance.AutoStart;
+
+            Disable3D = Settings.Instance.Disable3D;
 
         }
 
@@ -239,7 +244,11 @@ namespace Questor
             // Panic always runs, not just in space
             watch.Reset();
             watch.Start();
-            _panic.InMission = State == QuestorState.ExecuteMission || (State == QuestorState.Storyline && _storyline.State == StorylineState.ExecuteMission);
+            _panic.InMission = State == QuestorState.ExecuteMission;
+            if (State == QuestorState.Storyline && _storyline.State == StorylineState.ExecuteMission)
+            {
+                _panic.InMission |= _storyline.StorylineHandler is GenericCombatStoryline && (_storyline.StorylineHandler as GenericCombatStoryline).State == GenericCombatStorylineState.ExecuteMission;
+            }
             _panic.ProcessState();
             watch.Stop();
 
@@ -249,7 +258,7 @@ namespace Questor
             if (_panic.State == PanicState.Panic || _panic.State == PanicState.Panicking)
             {
                 // If Panic is in panic state, questor is in panic state :)
-                State = QuestorState.Panic;
+                State = State == QuestorState.Storyline ? QuestorState.StorylinePanic : QuestorState.Panic;
 
                 if (Settings.Instance.DebugStates)
                     Logging.Log("State = " + State);
@@ -259,9 +268,20 @@ namespace Questor
                 // Reset panic state
                 _panic.State = PanicState.Normal;
 
-                // Head back to the mission
-                _traveler.State = TravelerState.Idle;
-                State = QuestorState.GotoMission;
+                // Ugly storyline resume hack
+                if (State == QuestorState.StorylinePanic)
+                {
+                    State = QuestorState.Storyline;
+
+                    if (_storyline.StorylineHandler is GenericCombatStoryline)
+                        (_storyline.StorylineHandler as GenericCombatStoryline).State = GenericCombatStorylineState.GotoMission;
+                }
+                else
+                {
+                    // Head back to the mission
+                    _traveler.State = TravelerState.Idle;
+                    State = QuestorState.GotoMission;
+                }
 
                 if (Settings.Instance.DebugStates)
                     Logging.Log("State = " + State);
@@ -323,7 +343,7 @@ namespace Questor
 
                         // The mission is finished
                         File.AppendAllText(filename, line);
-
+                        
                         // Disable next log line
                         Mission = null;
                     }
@@ -350,6 +370,8 @@ namespace Questor
                         else
                             State = QuestorState.Start;
                     }
+                    else if (ExitWhenIdle)
+                        LavishScript.ExecuteCommand("exit");
                     break;
 
                 case QuestorState.DelayedStart:
@@ -391,6 +413,7 @@ namespace Questor
                         LoyaltyPoints = Cache.Instance.Agent.LoyaltyPoints;
                         Started = DateTime.Now;
                         Mission = string.Empty;
+                        LostDrones = 0;
                     }
 
                     _agentInteraction.ProcessState();
@@ -576,10 +599,39 @@ namespace Questor
                 case QuestorState.CompleteMission:
                     if (_agentInteraction.State == AgentInteractionState.Idle)
                     {
+                        // Lost drone statistics
+                        // (inelegantly located here so as to avoid the necessity to switch to a combat ship after salvaging)
+                        var droneBay = Cache.Instance.DirectEve.GetShipsDroneBay();
+                        if (droneBay.Window == null)
+                        {
+                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenDroneBayOfActiveShip);
+                            break;
+                        }
+                        if (!droneBay.IsReady)
+                            break;
+                        if (Cache.Instance.InvTypesById.ContainsKey(Settings.Instance.DroneTypeId))
+                        {
+                            var drone = Cache.Instance.InvTypesById[Settings.Instance.DroneTypeId];
+                            LostDrones = (int)Math.Floor((droneBay.Capacity - droneBay.UsedCapacity) / drone.Volume);
+                            Logging.Log("DroneStats: Logging the number of lost drones: " + LostDrones.ToString());
+                            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                            var dronelogfilename = Path.Combine(path, Cache.Instance.FilterPath(CharacterName) + ".dronestats.log");
+                            if (!File.Exists(dronelogfilename))
+                                File.AppendAllText(dronelogfilename, "Mission;Number of lost drones\r\n");
+                            var droneline = Mission + ";";
+                            droneline += ((int)LostDrones) + ";\r\n";
+                            File.AppendAllText(dronelogfilename, droneline);
+                        }
+                        else
+                        {
+                            Logging.Log("DroneStats: Couldn't find the drone TypeID specified in the settings.xml; this shouldn't happen!");
+                        }                   
+                        // Lost drone statistics stuff ends here
+
                         Logging.Log("AgentInteraction: Start Conversation [Complete Mission]");
 
                         _agentInteraction.State = AgentInteractionState.StartConversation;
-                        _agentInteraction.Purpose = AgentInteractionPurpose.CompleteMission;
+                        _agentInteraction.Purpose = AgentInteractionPurpose.CompleteMission;                      
                     }
 
                     _agentInteraction.ProcessState();
