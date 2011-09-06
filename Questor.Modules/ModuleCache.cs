@@ -159,9 +159,17 @@ namespace Questor.Modules
             }
         }
 
+        public void Click()
+        {
+            if (InLimboState)
+                return;
+
+            _module.Click();
+        }
+
         public void Activate()
         {
-           if (InLimboState)
+           if (InLimboState || IsActive)
                return;
 
             _module.Activate();
@@ -169,7 +177,7 @@ namespace Questor.Modules
 
         public void Activate(long entityId)
         {
-            if (InLimboState)
+            if (InLimboState || IsActive)
                 return;
 
             _module.Activate(entityId);
@@ -179,7 +187,7 @@ namespace Questor.Modules
 
         public void Deactivate()
         {
-            if (InLimboState)
+            if (InLimboState || !IsActive)
                 return;
             
             _module.Deactivate();
