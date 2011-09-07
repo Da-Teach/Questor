@@ -178,7 +178,7 @@ namespace Questor.Modules
                     if (Settings.Instance.SpeedTank)
                         target.Orbit(Cache.Instance.OrbitDistance);
                     else
-                        target.Approach((int) (Cache.Instance.WeaponRange*0.8d));
+                        target.Approach((int)(Cache.Instance.OrbitDistance));
                 }
 
                 return;
