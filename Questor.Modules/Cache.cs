@@ -178,9 +178,9 @@ namespace Questor.Modules
                 if (cargo.IsReady)
                     ammo = ammo.Where(a => cargo.Items.Any(i => a.TypeId == i.TypeId && i.Quantity >= Settings.Instance.MinimumAmmoCharges));
 
-                // Return 0 if there's no ammo left
+                // Return ship range if there's no ammo left
                 if (ammo.Count() == 0)
-                    return 0;
+                    return System.Convert.ToInt32(Cache.Instance.DirectEve.ActiveShip.MaxTargetRange);
 
                 // Return max range
                 return ammo.Max(a => a.Range);

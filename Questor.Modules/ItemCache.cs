@@ -53,6 +53,7 @@ namespace Questor.Modules
                 if (GroupID == 282) return true; // Toxic Waste
                 if (GroupID == 283) return true; // Slaves
                 if (GroupID == 280) return true; // Small Arms
+                if (GroupID == 284) return true; // Ectoplasm
                 return false;
             }
         }

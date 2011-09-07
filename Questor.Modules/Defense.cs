@@ -34,7 +34,7 @@ namespace Questor.Modules
                 if (module.IsActive)
                     continue;
 
-                module.Activate();
+                module.Click();
             }
         }
 
@@ -42,6 +42,9 @@ namespace Questor.Modules
         {
             foreach (var module in Cache.Instance.Modules)
             {
+                if (module.InLimboState)
+                    continue;
+
                 double perc;
                 if (module.GroupId == (int) Group.ShieldBoosters)
                     perc = Cache.Instance.DirectEve.ActiveShip.ShieldPercentage;
@@ -51,10 +54,10 @@ namespace Questor.Modules
                     continue;
 
                 var inCombat = Cache.Instance.TargetedBy.Count() > 0;
-                if (!module.IsActive && !module.IsDeactivating && ((inCombat && perc < Settings.Instance.ActivateRepairModules) || (!inCombat && perc < Settings.Instance.DeactivateRepairModules && Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage > Settings.Instance.SafeCapacitorPct)))
-                    module.Activate();
-                else if (module.IsActive && !module.IsDeactivating && perc >= Settings.Instance.DeactivateRepairModules)
-                    module.Deactivate();
+                if (!module.IsActive && ((inCombat && perc < Settings.Instance.ActivateRepairModules) || (!inCombat && perc < Settings.Instance.DeactivateRepairModules && Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage > Settings.Instance.SafeCapacitorPct)))
+                    module.Click();
+                else if (module.IsActive && perc >= Settings.Instance.DeactivateRepairModules)
+                    module.Click();
             }
         }
 
@@ -63,6 +66,9 @@ namespace Questor.Modules
             foreach (var module in Cache.Instance.Modules)
             {
                 if (module.GroupId != (int) Group.Afterburner)
+                    continue;
+
+                if (module.InLimboState)
                     continue;
 
                 // Should we activate the module
@@ -90,9 +96,9 @@ namespace Questor.Modules
                 deactivate |= Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage < Settings.Instance.MinimumPropulsionModuleCapacitor;
 
                 if (activate)
-                    module.Activate();
+                    module.Click();
                 else if (deactivate)
-                    module.Deactivate();
+                    module.Click();
             }
         }
 
