@@ -354,47 +354,47 @@ namespace Questor.Modules
 
 
         /// <summary>
-        ///   Activate target painters
+        ///   Activate Nos
         /// </summary>
         public void ActivateNos(EntityCache target)
         {
-            var webs = Cache.Instance.Modules.Where(m => m.GroupId == (int)Group.nos).ToList();
-            //Logging.Log("Combat: we have " + webs.Count.ToString() + " Nos modules");
+            var noses = Cache.Instance.Modules.Where(m => m.GroupId == (int)Group.nos).ToList();
+            //Logging.Log("Combat: we have " + noses.Count.ToString() + " Nos modules");
             // Find the first active weapon
             // Assist this weapon
-            foreach (var web in webs)
+            foreach (var nos in noses)
             {
                 // Are we on the right target?
-                if (web.IsActive)
+                if (nos.IsActive)
                 {
-                    if (web.TargetId != target.Id)
-                        web.Deactivate();
+                    if (nos.TargetId != target.Id)
+                        nos.Deactivate();
 
                     continue;
                 }
 
                 // Are we deactivating?
-                if (web.IsDeactivating)
+                if (nos.IsDeactivating)
                     continue;
-                //Logging.Log("Combat: Distances Target[ " + target.Distance + " Optimal[" + web.OptimalRange.ToString()+"]");
-                // Target is out of web range
+                //Logging.Log("Combat: Distances Target[ " + target.Distance + " Optimal[" + nos.OptimalRange.ToString()+"]");
+                // Target is out of Nos range
                 if (target.Distance >= Settings.Instance.NosDistance)
                     continue;
 
-                if (CanActivate(web, target, false))
+                if (CanActivate(nos, target, false))
                 {
-                    Logging.Log("Combat: Nos  [" + web.ItemId + "] on [" + target.Name + "][" + target.Id + "]");
-                    web.Activate(target.Id);
+                    Logging.Log("Combat: Nos  [" + nos.ItemId + "] on [" + target.Name + "][" + target.Id + "]");
+                    nos.Activate(target.Id);
                 }
                 else
                 {
-                    Logging.Log("Combat: Cant Activate Nos [" + web.ItemId + "] on [" + target.Name + "][" + target.Id + "]");
+                    Logging.Log("Combat: Cannot Activate Nos [" + nos.ItemId + "] on [" + target.Name + "][" + target.Id + "]");
                 }
             }
         }
 
         /// <summary>
-        ///   Activate target painters
+        ///   Activate StasisWeb
         /// </summary>
         public void ActivateStasisWeb(EntityCache target)
         {
