@@ -190,9 +190,9 @@ namespace Questor.Modules
 
         internal static bool PerformFinalDestinationTask(DirectBookmark bookmark, int warpDistance, ref DateTime nextAction)
         {
-            // The bookmark no longer exists, assume we are there
+            // The bookmark no longer exists, assume we aren't there
             if (bookmark == null)
-                return true;
+                return false;
 
             if (Cache.Instance.DirectEve.Session.IsInStation)
             {
