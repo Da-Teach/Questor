@@ -332,10 +332,11 @@ namespace Questor
 
                         // Write the header
                         if (!File.Exists(filename))
-                            File.AppendAllText(filename, "Mission;Time;Isk;Loot;LP;\r\n");
-                        
+                            File.AppendAllText(filename, "Date;Mission;Time;Isk;Loot;LP;\r\n");
+
                         // Build the line
-                        var line = Mission + ";";
+                        var line = DateTime.Now + ";";
+                        line += Mission + ";";
                         line += ((int)DateTime.Now.Subtract(Started).TotalMinutes) + ";";
                         line += ((int)(Cache.Instance.DirectEve.Me.Wealth - Wealth)) + ";";
                         line += ((int)LootValue) + ";";
