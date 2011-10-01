@@ -19,6 +19,7 @@ namespace Questor.Modules
         Ignore,
         Loot,
         LootItem,
-        Done
+        Done,
+        SalvageBookmark
     }
 }
