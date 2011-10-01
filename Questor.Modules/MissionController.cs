@@ -117,9 +117,9 @@ namespace Questor.Modules
                 if (Cache.Instance.ActiveDrones.Count() > 0)
                     return;
 
-                // Probably never happens
-                Logging.Log("This does happen.");
-                closest.WarpTo();
+                // Happens in rare cases.
+                Logging.Log("MissionController.Activate: Approaching target [" + closest.Name + "][" + closest.Id + "]");
+                closest.Approach();
             }
         }
 
