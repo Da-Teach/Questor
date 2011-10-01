@@ -118,6 +118,7 @@ namespace Questor.Modules
                     return;
 
                 // Probably never happens
+                Logging.Log("This does happen.");
                 closest.WarpTo();
             }
         }
