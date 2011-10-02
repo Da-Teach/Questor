@@ -731,7 +731,7 @@ namespace Questor.Modules
 
             if (lowValueFirst && lowValueTarget != null)
                 return lowValueTarget;
-            if (lowValueFirst && highValueTarget != null)
+            if (!lowValueFirst && highValueTarget != null)
                 return highValueTarget;
 
             // Return either one or the other
