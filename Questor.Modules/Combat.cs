@@ -217,39 +217,8 @@ namespace Questor.Modules
                     break;
             }
 
-            // Is our current target a warp scrambling priority target?
-            if (weaponTarget != null && Cache.Instance.PriorityTargets.Any(pt => pt.Id == weaponTarget.Id && pt.IsWarpScramblingMe))
-                return weaponTarget;
-
-            // Get the closest warp scrambling priority target
-            var target = Cache.Instance.PriorityTargets.FirstOrDefault(pt => pt.Distance < Cache.Instance.WeaponRange && pt.IsWarpScramblingMe && Cache.Instance.Targets.Any(t => t.Id == pt.Id));
-            if (target != null)
-                return target;
-
-            // Is our current target any other priority target?
-            if (weaponTarget != null && Cache.Instance.PriorityTargets.Any(pt => pt.Id == weaponTarget.Id))
-                return weaponTarget;
-
-            // Get the closest priority target
-            target = Cache.Instance.PriorityTargets.FirstOrDefault(pt => pt.Distance < Cache.Instance.WeaponRange && Cache.Instance.Targets.Any(t => t.Id == pt.Id));
-            if (target != null)
-                return target;
-
-            // Do we have a target?
-            if (weaponTarget != null)
-                return weaponTarget;
-
-            // Get all entity targets
-            var targets = Cache.Instance.Targets.Where(e => e.CategoryId == (int)CategoryID.Entity && e.IsNpc && !e.IsContainer && e.GroupId != (int)Group.LargeCollidableStructure);
-
-            // Get the closest high value target
-            target = targets.Where(t => t.TargetValue.HasValue && t.Distance < Cache.Instance.WeaponRange).OrderByDescending(t => t.TargetValue.Value).ThenBy(t => t.ShieldPct + t.ArmorPct + t.StructurePct).ThenBy(t => t.Distance).FirstOrDefault();
-            if (target != null)
-                return target;
-
-            // Get the closest low value target instead
-            target = targets.Where(t => !t.TargetValue.HasValue && t.Distance < Cache.Instance.WeaponRange).OrderBy(t => t.ShieldPct + t.ArmorPct + t.StructurePct).ThenBy(t => t.Distance).FirstOrDefault();
-            return target;
+            // Return best possible target
+            return Cache.Instance.GetBestTarget(weaponTarget, Cache.Instance.WeaponRange, false);
         }
 
         /// <summary>
