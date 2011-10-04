@@ -2,9 +2,9 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-// La información general sobre un ensamblado se controla mediante el siguiente 
-// conjunto de atributos. Cambie estos atributos para modificar la información
-// asociada con un ensamblado.
+// General information about an assembly is controlled through the following
+// Set of attributes. Change these attribute values ​​to modify the information
+// Associated with an assembly.
 [assembly: AssemblyTitle("WindowsFormsApplication1")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
@@ -14,23 +14,24 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-// Si establece ComVisible como false, los tipos de este ensamblado no estarán visibles 
-// para los componentes COM. Si necesita obtener acceso a un tipo de este ensamblado desde 
-// COM, establezca el atributo ComVisible como true en este tipo.
+// General information about an assembly is controlled through the following
+// Set / / If set to false ComVisible, types in this assembly not visible
+// To COM components. If you need access to a type of this assembly from
+// COM, set the attribute to true ComVisible this guy.
 [assembly: ComVisible(false)]
 
-// El siguiente GUID sirve como identificador de typelib si este proyecto se expone a COM
+// The following serves as an identifier GUID typelib if this project is exposed to ComVisible true in this type.
 [assembly: Guid("942c26ef-0b24-48b9-906f-ccc4568c17c3")]
 
-// La información de versión de un ensamblado consta de los cuatro valores siguientes:
+// Version information for an assembly consists of four values:
 //
-//      Versión principal
-//      Versión secundaria 
-//      Número de compilación
-//      Revisión
+// Major Version
+// Minor Version
+// Build Number
+// Review
 //
-// Puede especificar todos los valores o establecer como predeterminados los números de versión de compilación y de revisión 
-// mediante el asterisco ('*'), como se muestra a continuación:
-// [assembly: AssemblyVersion("1.0.*")]
+// You can specify all the values ​​or set as default the build version numbers and revision
+// By the asterisk ('*'), as shown below:
+// [Assembly: AssemblyVersion ("1.0 .*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
