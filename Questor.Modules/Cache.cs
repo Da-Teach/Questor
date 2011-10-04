@@ -761,5 +761,53 @@ namespace Questor.Modules
         {
             DirectEve.BookmarkCurrentLocation(label, "");
         }
+
+        /// <summary>
+        ///   Return the best possible target (based on current target, distance and low value first)
+        /// </summary>
+        /// <param name="currentTarget"></param>
+        /// <param name="distance"></param>
+        /// <param name="lowValueFirst"></param>
+        /// <returns></returns>
+        public EntityCache GetBestTarget(EntityCache currentTarget, double distance, bool lowValueFirst)
+        {
+            // Is our current target a warp scrambling priority target?
+            if (currentTarget != null && PriorityTargets.Any(pt => pt.Id == currentTarget.Id && pt.IsWarpScramblingMe))
+                return currentTarget;
+
+            // Get the closest warp scrambling priority target
+            var target = PriorityTargets.FirstOrDefault(pt => pt.Distance < distance && pt.IsWarpScramblingMe && Targets.Any(t => t.Id == pt.Id));
+            if (target != null)
+                return target;
+
+            // Is our current target any other priority target?
+            if (currentTarget != null && PriorityTargets.Any(pt => pt.Id == currentTarget.Id))
+                return currentTarget;
+
+            // Get the closest priority target
+            target = PriorityTargets.FirstOrDefault(pt => pt.Distance < distance && Targets.Any(t => t.Id == pt.Id));
+            if (target != null)
+                return target;
+
+            // Do we have a target?
+            if (currentTarget != null)
+                return currentTarget;
+
+            // Get all entity targets
+            var targets = Targets.Where(e => e.CategoryId == (int)CategoryID.Entity && e.IsNpc && !e.IsContainer && e.GroupId != (int)Group.LargeCollidableStructure);
+
+            // Get the closest high value target
+            var highValueTarget = targets.Where(t => t.TargetValue.HasValue && t.Distance < distance).OrderByDescending(t => t.TargetValue.Value).ThenBy(t => t.ShieldPct + t.ArmorPct + t.StructurePct).ThenBy(t => t.Distance).FirstOrDefault();
+            // Get the closest low value target
+            var lowValueTarget = targets.Where(t => !t.TargetValue.HasValue && t.Distance < distance).OrderBy(t => t.ShieldPct + t.ArmorPct + t.StructurePct).ThenBy(t => t.Distance).FirstOrDefault();
+
+            if (lowValueFirst && lowValueTarget != null)
+                return lowValueTarget;
+            if (!lowValueFirst && highValueTarget != null)
+                return highValueTarget;
+
+            // Return either one or the other
+            return lowValueTarget ?? highValueTarget;
+        }
     }
 }

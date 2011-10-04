@@ -38,10 +38,6 @@ namespace Questor.Modules
 
         private void BookmarkPocketForSalvaging()
         {
-            // We arent suppose to create bookmarks
-            if (!Settings.Instance.CreateSalvageBookmarks)
-                return;
-
             // Nothing to loot
             if (Cache.Instance.UnlootedContainers.Count() < Settings.Instance.MinimumWreckCount)
             {
@@ -91,7 +87,8 @@ namespace Questor.Modules
                     return;
 
                 // Add bookmark (before we activate)
-                BookmarkPocketForSalvaging();
+                if (Settings.Instance.CreateSalvageBookmarks)
+                    BookmarkPocketForSalvaging();
 
                 // Activate it and move to the next Pocket
                 closest.Activate();
@@ -102,7 +99,7 @@ namespace Questor.Modules
                 State = MissionControllerState.NextPocket;
                 _lastActivateAction = DateTime.Now;
             }
-            else if (closest.Distance < 150000)
+            else
             {
                 // Move to the target
                 if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
@@ -110,15 +107,6 @@ namespace Questor.Modules
                     Logging.Log("MissionController.Activate: Approaching target [" + closest.Name + "][" + closest.Id + "]");
                     closest.Approach();
                 }
-            }
-            else
-            {
-                // We cant warp if we have drones out
-                if (Cache.Instance.ActiveDrones.Count() > 0)
-                    return;
-
-                // Probably never happens
-                closest.WarpTo();
             }
         }
 
@@ -464,6 +452,12 @@ namespace Questor.Modules
                     ClearPocketAction(action);
                     break;
 
+                case ActionState.SalvageBookmark:
+                    BookmarkPocketForSalvaging();
+
+                    _currentAction++;
+                    break;
+
                 case ActionState.Done:
                     // Tell the drones module to retract drones
                     Cache.Instance.IsMissionPocketDone = true;
@@ -472,7 +466,10 @@ namespace Questor.Modules
                     if (Cache.Instance.ActiveDrones.Count() > 0)
                         return;
 
-                    BookmarkPocketForSalvaging();
+                    // Add bookmark (before we're done)
+                    if (Settings.Instance.CreateSalvageBookmarks)
+                        BookmarkPocketForSalvaging();
+
                     State = MissionControllerState.Done;
                     break;
 
