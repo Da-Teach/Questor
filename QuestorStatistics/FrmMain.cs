@@ -21,12 +21,15 @@ namespace WindowsFormsApplication1
 
         string LocalRuta = Application.StartupPath;
 
+        //-------------------------------------------------------------------------
+        // Start the Form and look for the files .Statistics.log in the root
+        // the two Listview are configured
+        //-------------------------------------------------------------------------
 
         public FrmMain()
         {
-            
             InitializeComponent();
-             
+
             System.IO.DirectoryInfo o = new System.IO.DirectoryInfo(LocalRuta);
             System.IO.FileInfo[] myfiles = null;
 
@@ -35,6 +38,7 @@ namespace WindowsFormsApplication1
             {
                 cmb1.Items.Add(myfiles[y].Name);
             }
+
             var _with1 = Lst1;
             _with1.View = View.Details;
             _with1.FullRowSelect = true;
@@ -75,9 +79,12 @@ namespace WindowsFormsApplication1
             return;
         }
 
-
+        //-------------------------------
+        // Open the selected log
+        //-------------------------------
         private void cmb1_SelectedIndexChanged(object sender, EventArgs e)
         {
+
             Lst1.View = View.Details;
             Lst1.FullRowSelect = true;
             Lst1.GridLines = true;
@@ -125,26 +132,34 @@ namespace WindowsFormsApplication1
             StatsMision();
         }
 
-
+        //----------------------------
+        // Day Selector
+        //----------------------------
         private void CmbDia_SelectedIndexChanged_1(object sender, System.EventArgs e)
         {
+         
          ListadoUP();
-
          Dia(CmbDia.SelectedItem.ToString());
          GraficaDia(CmbDia.SelectedItem.ToString());
         }
 
-
+        //----------------------------
+        // Month Selector
+        //----------------------------
         private void cmbMes_SelectedIndexChanged_1(object sender, System.EventArgs e)
         {
            ListadoUP();
-
            Mes(cmbMes.SelectedItem.ToString());
            GraficaMes(cmbMes.SelectedItem.ToString());
         }
 
+
+        //---------------------------
+        // Create the Chart of the Month
+        //---------------------------
         public object GraficaMes(string Seleccion)
         {
+     
             double GananciaTotal = 0;
             string SelectDia = null;
             string AntDia = "";
@@ -177,6 +192,11 @@ namespace WindowsFormsApplication1
             ListadoUP();
             return true;
         }
+
+
+        //-------------------------------
+        // We calculate the data of the Month
+        //-------------------------------
         public object Mes(string Seleccion)
         {
 
@@ -217,6 +237,11 @@ namespace WindowsFormsApplication1
 
             return true;
         }
+
+
+        //---------------------------
+        // Create the Chart of the Day
+        //---------------------------
         public object GraficaDia(string Seleccion)
         {
             ListadoDown();
@@ -239,6 +264,11 @@ namespace WindowsFormsApplication1
             ListadoUP();
             return true;
         }
+
+
+        //-------------------------------
+        // Day data calculated
+        //-------------------------------
         public object Dia(string Seleccion)
         {
 
@@ -267,6 +297,11 @@ namespace WindowsFormsApplication1
             lbmediatotal.Text = Strings.Format((TotalBounty + TotalLoot) / cont1, "###,###,###");
             return true;
         }
+
+
+        //-------------------------------
+        // Mission statistics
+        //-------------------------------
         public object StatsMision()
         {
             string Mision = null;
@@ -307,7 +342,7 @@ namespace WindowsFormsApplication1
                     if (Mision == LstMision.Items[o].SubItems[1].Text)
                     {
                         var1 = true;
-                        break; // TODO: might not be correct. Was : Exit For
+                        break;
                     }
                     else
                     {
@@ -334,6 +369,10 @@ namespace WindowsFormsApplication1
 
         }
 
+
+        //--------------------------------
+        // Load data in the combox
+        //--------------------------------
         public object Precarga()
         {
             string SelectDia = null;
@@ -374,6 +413,10 @@ namespace WindowsFormsApplication1
             return true;
         }
 
+        //----------------------------------------
+        // We organize the listview in descending
+        //----------------------------------------
+
         public object ListadoUP()
         {
 
@@ -385,6 +428,10 @@ namespace WindowsFormsApplication1
             Lst1.ListViewItemSorter = oCompare;
             return true;
         }
+
+        //----------------------------------------
+        // We organize the listview in ascending
+        //----------------------------------------
         public  object ListadoDown()
         {
 
@@ -397,9 +444,11 @@ namespace WindowsFormsApplication1
             return true;
         }
 
+        //----------------------------------
+        // Put mission list
+        //----------------------------------
         public object Colocarmisiones()
         {
-
             ListViewColumnSort oCompare = new ListViewColumnSort();
             oCompare.Sorting = SortOrder.Descending;
             LstMision.Sorting = oCompare.Sorting;
@@ -409,6 +458,9 @@ namespace WindowsFormsApplication1
             return true;
         }
 
+        //-------------------------------
+        // Clear Data
+        //-------------------------------
         public object Limpieza()
         {
             Lst1.ResetText();
@@ -435,6 +487,10 @@ namespace WindowsFormsApplication1
             return true;
         }
 
+
+        //----------------------------------
+        // Organized by column list
+        //----------------------------------
         private void Lst1_ColumnClick(object o, ColumnClickEventArgs e)
         {
 
@@ -486,7 +542,9 @@ namespace WindowsFormsApplication1
 
         }
 
-
+        //----------------------------------
+        // Organizing tasks by column
+        //----------------------------------
         private void LstMision_ColumnClick(object sender, System.Windows.Forms.ColumnClickEventArgs e)
         {
             ListViewColumnSort oCompare = new ListViewColumnSort();
