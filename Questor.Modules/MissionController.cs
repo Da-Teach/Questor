@@ -109,14 +109,15 @@ namespace Questor.Modules
                 }
             }
             else
-            {
-                // We cant warp if we have drones out
-                if (Cache.Instance.ActiveDrones.Count() > 0)
-                    return;
+                {
+                    // We cant warp if we have drones out
+                    if (Cache.Instance.ActiveDrones.Count() > 0)
+                        return;
 
-                // Happens in rare cases.
-                Logging.Log("MissionController.Activate: Approaching target [" + closest.Name + "][" + closest.Id + "]");
-                closest.Approach();
+                    // Happens in rare cases.
+                    Logging.Log("MissionController.Activate: Approaching target [" + closest.Name + "][" + closest.Id + "]");
+                    closest.Approach();
+                }
             }
         }
 
