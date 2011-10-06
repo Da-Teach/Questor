@@ -75,6 +75,8 @@ namespace Questor.Modules
 
         public string AgentName { get; set; }
 
+        public string bookmarkWarpOut { get; set; }
+
         public string MissionsPath { get; set; }
 
         public int MaximumHighValueTargets { get; set; }
@@ -176,6 +178,8 @@ namespace Questor.Modules
 
                 MissionsPath = Path.Combine(path, "Missions");
 
+                bookmarkWarpOut = string.Empty;
+
                 MaximumHighValueTargets = 0;
                 MaximumLowValueTargets = 0;
 
@@ -266,6 +270,8 @@ namespace Questor.Modules
             UnloadLootAtStation = (bool?) xml.Element("unloadLootAtStation") ?? false;
 
             AgentName = (string) xml.Element("agentName");
+
+            bookmarkWarpOut = (string)xml.Element("bookmarkWarpOut");
 
             var missionsPath = (string) xml.Element("missionsPath");
             MissionsPath = !string.IsNullOrEmpty(missionsPath) ? Path.Combine(path, missionsPath) : Path.Combine(path, "Missions");

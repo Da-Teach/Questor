@@ -42,6 +42,7 @@ namespace Questor
         private DateTime _lastAction;
         private Random _random;
         private int _randomDelay;
+        private bool ExitSta = false;
 
         private double _lastX;
         private double _lastY;
@@ -230,6 +231,7 @@ namespace Questor
             {
                 watch.Reset();
                 watch.Start();
+                if (ExitSta == false)
                 _defense.ProcessState();
                 watch.Stop();
 
@@ -456,9 +458,44 @@ namespace Questor
                     if (_arm.State == ArmState.Done)
                     {
                         _arm.State = ArmState.Idle;
-                        State = QuestorState.GotoMission;
+                        State = QuestorState.WarpOutStation;
                     }
                     break;
+
+                case QuestorState.WarpOutStation:
+
+                    var _bookmark = Cache.Instance.BookmarksByLabel(Settings.Instance.bookmarkWarpOut).OrderBy(b => b.CreatedOn).FirstOrDefault();
+                    var _solarid = Cache.Instance.DirectEve.Session.SolarSystemId ?? -1;
+                    if (_bookmark == null)
+                    {
+                        Logging.Log("WarpOut: No Bookmark");
+                        State = QuestorState.GotoMission;
+                    }
+                    else if (_bookmark.LocationId == _solarid)
+                    {
+                        if (_traveler.Destination == null)
+                        {
+                            Logging.Log("WarpOut: Warp at " + _bookmark.Title);
+                            _traveler.Destination = new BookmarkDestination(_bookmark);
+                            ExitSta = true;
+                        }
+
+                        _traveler.ProcessState();
+                        if (_traveler.State == TravelerState.AtDestination)
+                        {
+
+                            Logging.Log("WarpOut: Safe!");
+                            ExitSta = false;
+                            State = QuestorState.GotoMission;
+                            _traveler.Destination = null;
+                        }
+                    }
+                    else
+                    {
+                        Logging.Log("WarpOut: No Bookmark in System");
+                         State = QuestorState.GotoMission;                   
+                    }
+                     break;
 
                 case QuestorState.GotoMission:
                     var missionDestination = _traveler.Destination as MissionBookmarkDestination;
