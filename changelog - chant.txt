@@ -1,3 +1,4 @@
+.
 June 26, 2011:
   * Changes/Fixes to Questor (PoorNewb23):
 	 - Added 20 sec delay to questor startup in order to avoid case where Questors attempts to login before EVE managed to establish server connection
