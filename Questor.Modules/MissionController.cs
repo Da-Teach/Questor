@@ -612,8 +612,17 @@ namespace Questor.Modules
                     foreach (var a in _pocketActions)
                         Logging.Log("MissionController: Action." + a);
 					
+					
 					if (Cache.Instance.OrbitDistance != Settings.Instance.OrbitDistance)
-						Logging.Log("MissionController: Using custom orbit distance: " + Cache.Instance.OrbitDistance);
+					{
+						if (Cache.Instance.OrbitDistance == 0)
+						{
+							Cache.Instance.OrbitDistance = Settings.Instance.OrbitDistance;
+							Logging.Log("MissionController: Using default orbit distance: " + Cache.Instance.OrbitDistance + " (as the custom one was 0)");
+						}
+						else
+							Logging.Log("MissionController: Using custom orbit distance: " + Cache.Instance.OrbitDistance);
+					}
 						
                     // Reset pocket information
                     _currentAction = 0;
