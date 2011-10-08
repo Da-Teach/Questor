@@ -262,7 +262,6 @@ namespace Questor.Modules
                     {
                         Logging.Log("MissionController.Activate: Approaching target [" + closest.Name + "][" + closest.Id + "]");
                         closest.Approach();
-                        _lastApproach = DateTime.Now;
                     }
             }
             else
