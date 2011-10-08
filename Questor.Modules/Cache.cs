@@ -690,6 +690,11 @@ namespace Questor.Modules
             DirectEve.BookmarkCurrentLocation(label, "");
         }
 
+        private Func<EntityCache, int> OrderByLowestHealth()
+        {
+            return t => (int)(t.ShieldPct + t.ArmorPct + t.StructurePct);
+        }
+
         /// <summary>
         ///   Return the best possible target (based on current target, distance and low value first)
         /// </summary>
@@ -704,7 +709,7 @@ namespace Questor.Modules
                 return currentTarget;
 
             // Get the closest warp scrambling priority target
-            var target = PriorityTargets.FirstOrDefault(pt => pt.Distance < distance && pt.IsWarpScramblingMe && Targets.Any(t => t.Id == pt.Id));
+            var target = PriorityTargets.OrderBy(OrderByLowestHealth()).ThenBy(t => t.Distance).FirstOrDefault(pt => pt.Distance < distance && pt.IsWarpScramblingMe && Targets.Any(t => t.Id == pt.Id));
             if (target != null)
                 return target;
 
@@ -713,7 +718,7 @@ namespace Questor.Modules
                 return currentTarget;
 
             // Get the closest priority target
-            target = PriorityTargets.FirstOrDefault(pt => pt.Distance < distance && Targets.Any(t => t.Id == pt.Id));
+            target = PriorityTargets.OrderBy(OrderByLowestHealth()).ThenBy(t => t.Distance).FirstOrDefault(pt => pt.Distance < distance && Targets.Any(t => t.Id == pt.Id));
             if (target != null)
                 return target;
 
@@ -725,9 +730,9 @@ namespace Questor.Modules
             var targets = Targets.Where(e => e.CategoryId == (int)CategoryID.Entity && e.IsNpc && !e.IsContainer && e.GroupId != (int)Group.LargeCollidableStructure);
 
             // Get the closest high value target
-            var highValueTarget = targets.Where(t => t.TargetValue.HasValue && t.Distance < distance).OrderByDescending(t => t.TargetValue.Value).ThenBy(t => t.ShieldPct + t.ArmorPct + t.StructurePct).ThenBy(t => t.Distance).FirstOrDefault();
+            var highValueTarget = targets.Where(t => t.TargetValue.HasValue && t.Distance < distance).OrderByDescending(t => t.TargetValue.Value).ThenBy(OrderByLowestHealth()).ThenBy(t => t.Distance).FirstOrDefault();
             // Get the closest low value target
-            var lowValueTarget = targets.Where(t => !t.TargetValue.HasValue && t.Distance < distance).OrderBy(t => t.ShieldPct + t.ArmorPct + t.StructurePct).ThenBy(t => t.Distance).FirstOrDefault();
+            var lowValueTarget = targets.Where(t => !t.TargetValue.HasValue && t.Distance < distance).OrderBy(OrderByLowestHealth()).ThenBy(t => t.Distance).FirstOrDefault();
 
             if (lowValueFirst && lowValueTarget != null)
                 return lowValueTarget;
