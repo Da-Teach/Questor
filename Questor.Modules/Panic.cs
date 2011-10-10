@@ -172,7 +172,7 @@ namespace Questor.Modules
                     break;
 
                 case PanicState.Panic:
-                    // Do not resume until your no longer in a capsule
+                    // Do not resume until you're no longer in a capsule
                     if (Cache.Instance.DirectEve.ActiveShip.GroupId == (int)Group.Capsule)
                         break;
 

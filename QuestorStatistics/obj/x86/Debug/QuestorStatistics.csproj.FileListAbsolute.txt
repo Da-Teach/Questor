@@ -1,0 +1,8 @@
+C:\Users\Administrator\Projects\Questor\QuestorStatistics\bin\Debug\QuestorStatistics.exe
+C:\Users\Administrator\Projects\Questor\QuestorStatistics\bin\Debug\QuestorStatistics.pdb
+C:\Users\Administrator\Projects\Questor\QuestorStatistics\obj\x86\Debug\QuestorStatistics.csprojResolveAssemblyReference.cache
+C:\Users\Administrator\Projects\Questor\QuestorStatistics\obj\x86\Debug\WindowsFormsApplication1.FrmMain.resources
+C:\Users\Administrator\Projects\Questor\QuestorStatistics\obj\x86\Debug\WindowsFormsApplication1.Properties.Resources.resources
+C:\Users\Administrator\Projects\Questor\QuestorStatistics\obj\x86\Debug\QuestorStatistics.csproj.GenerateResource.Cache
+C:\Users\Administrator\Projects\Questor\QuestorStatistics\obj\x86\Debug\QuestorStatistics.exe
+C:\Users\Administrator\Projects\Questor\QuestorStatistics\obj\x86\Debug\QuestorStatistics.pdb

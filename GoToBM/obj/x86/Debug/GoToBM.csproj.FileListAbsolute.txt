@@ -1,0 +1,9 @@
+C:\Users\Administrator\Projects\Questor\GoToBM\bin\Debug\GoToBM.exe.config
+C:\Users\Administrator\Projects\Questor\GoToBM\bin\Debug\GoToBM.exe
+C:\Users\Administrator\Projects\Questor\GoToBM\bin\Debug\GoToBM.pdb
+C:\Users\Administrator\Projects\Questor\GoToBM\bin\Debug\DirectEve.dll
+C:\Users\Administrator\Projects\Questor\GoToBM\bin\Debug\Questor.Modules.dll
+C:\Users\Administrator\Projects\Questor\GoToBM\bin\Debug\Questor.Modules.pdb
+C:\Users\Administrator\Projects\Questor\GoToBM\obj\x86\Debug\GoToBM.csprojResolveAssemblyReference.cache
+C:\Users\Administrator\Projects\Questor\GoToBM\obj\x86\Debug\GoToBM.exe
+C:\Users\Administrator\Projects\Questor\GoToBM\obj\x86\Debug\GoToBM.pdb

@@ -1,0 +1,12 @@
+C:\Users\Administrator\Projects\Questor\Questor\bin\Debug\Questor.exe.config
+C:\Users\Administrator\Projects\Questor\Questor\bin\Debug\Questor.exe
+C:\Users\Administrator\Projects\Questor\Questor\bin\Debug\Questor.pdb
+C:\Users\Administrator\Projects\Questor\Questor\bin\Debug\DirectEve.dll
+C:\Users\Administrator\Projects\Questor\Questor\bin\Debug\Questor.Modules.dll
+C:\Users\Administrator\Projects\Questor\Questor\bin\Debug\Questor.Modules.pdb
+C:\Users\Administrator\Projects\Questor\Questor\obj\x86\Debug\Questor.csprojResolveAssemblyReference.cache
+C:\Users\Administrator\Projects\Questor\Questor\obj\x86\Debug\Questor.frmMain.resources
+C:\Users\Administrator\Projects\Questor\Questor\obj\x86\Debug\Questor.Properties.Resources.resources
+C:\Users\Administrator\Projects\Questor\Questor\obj\x86\Debug\Questor.csproj.GenerateResource.Cache
+C:\Users\Administrator\Projects\Questor\Questor\obj\x86\Debug\Questor.exe
+C:\Users\Administrator\Projects\Questor\Questor\obj\x86\Debug\Questor.pdb
