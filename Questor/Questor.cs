@@ -610,7 +610,7 @@ namespace Questor
                         }
                         if (!droneBay.IsReady)
                             break;
-                        if (Cache.Instance.InvTypesById.ContainsKey(Settings.Instance.DroneTypeId))
+                        if (Settings.Instance.UseDrones == true)
                         {
                             var drone = Cache.Instance.InvTypesById[Settings.Instance.DroneTypeId];
                             LostDrones = (int)Math.Floor((droneBay.Capacity - droneBay.UsedCapacity) / drone.Volume);
