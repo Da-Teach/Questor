@@ -39,6 +39,8 @@ namespace Questor.Modules
         public bool DebugStates { get; set; }
         public bool DebugPerformance { get; set; }
 
+        public string CharacterMode { get; set; }
+
         public bool AutoStart { get; set; }
 
 
@@ -66,6 +68,7 @@ namespace Questor.Modules
 
         public string LootHangar { get; set; }
         public string AmmoHangar { get; set; }
+        public string BookmarkHangar { get; set; }
 
         public bool CreateSalvageBookmarks { get; set; }
         public string BookmarkPrefix { get; set; }
@@ -152,6 +155,8 @@ namespace Questor.Modules
                 // Clear settings
                 AgentName = string.Empty;
 
+                CharacterMode = "dps";
+
                 AutoStart = false;
 
 				waitDecline = false;
@@ -173,6 +178,7 @@ namespace Questor.Modules
 
                 LootHangar = string.Empty;
                 AmmoHangar = string.Empty;
+                BookmarkHangar = string.Empty;
 
                 MissionsPath = Path.Combine(path, "Missions");
 
@@ -229,6 +235,8 @@ namespace Questor.Modules
             DebugStates = (bool?) xml.Element("debugStates") ?? false;
             DebugPerformance = (bool?) xml.Element("debugPerformance") ?? false;
 
+            CharacterMode = (string) xml.Element("characterMode") ?? "dps";
+
             AutoStart = (bool?) xml.Element("autoStart") ?? false;
 
             waitDecline = (bool?) xml.Element("waitDecline") ?? false;
@@ -258,6 +266,7 @@ namespace Questor.Modules
 
             LootHangar = (string) xml.Element("lootHangar");
             AmmoHangar = (string) xml.Element("ammoHangar");
+            BookmarkHangar = (string)xml.Element("bookmarkHangar");
 
             CreateSalvageBookmarks = (bool?) xml.Element("createSalvageBookmarks") ?? false;
             BookmarkPrefix = (string) xml.Element("bookmarkPrefix") ?? "Salvage:";

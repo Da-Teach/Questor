@@ -10,6 +10,7 @@
 namespace Questor.Modules
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using DirectEve;
 
@@ -34,6 +35,10 @@ namespace Questor.Modules
             DirectContainer corpLootHangar = null;
             if (!string.IsNullOrEmpty(Settings.Instance.LootHangar))
                 corpLootHangar = Cache.Instance.DirectEve.GetCorporationHangar(Settings.Instance.LootHangar);
+
+            DirectContainer corpBookmarkHangar = null;
+            if (!string.IsNullOrEmpty(Settings.Instance.BookmarkHangar))
+                corpBookmarkHangar = Cache.Instance.DirectEve.GetCorporationHangar(Settings.Instance.BookmarkHangar);
 
             switch (State)
             {
@@ -126,6 +131,32 @@ namespace Questor.Modules
                     _lastAction = DateTime.Now;
 
                     Logging.Log("UnloadLoot: Loot was worth an estimated [" + LootValue.ToString("#,##0") + "] isk in buy-orders");
+
+                    //Move bookmarks to the bookmarks hangar
+                    if (!string.IsNullOrEmpty(Settings.Instance.BookmarkHangar) && Settings.Instance.CreateSalvageBookmarks == true)
+                    {
+                        Logging.Log("UnloadLoot: Creating salvage bookmarks in hangar");
+                        var bookmarks = Cache.Instance.BookmarksByLabel(Settings.Instance.BookmarkPrefix + " ");
+                        List<long> salvageBMs = new List<long>();
+                        int i = 0;
+                        foreach (DirectBookmark bookmark in bookmarks)
+                        {
+                            salvageBMs.Add((long)bookmark.BookmarkId);
+                            i++;
+                            if (i == 4)
+                            {
+                                hangar.AddBookmarks(salvageBMs);
+                                salvageBMs.Clear();
+                                i = 0;
+                            }
+                        }
+                        if (salvageBMs.Count > 0)
+                        {
+                            hangar.AddBookmarks(salvageBMs);
+                            salvageBMs.Clear();
+                        }
+                    }
+
                     Logging.Log("UnloadLoot: Moving ammo");
                     State = UnloadLootState.MoveAmmo;
                     break;
@@ -158,6 +189,12 @@ namespace Questor.Modules
 
                     if (Cache.Instance.DirectEve.GetLockedItems().Count == 0)
                     {
+                        if (corpBookmarkHangar != null && Settings.Instance.CreateSalvageBookmarks)
+                        {
+                            Logging.Log("UnloadLoot: Moving salvage bookmarks to corp hangar");
+                            corpBookmarkHangar.Add(hangar.Items.Where(i => i.TypeId == 51));
+                        }
+
                         Logging.Log("UnloadLoot: Stacking items");
                         State = UnloadLootState.StackItems;
                         break;
