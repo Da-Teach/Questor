@@ -1,0 +1,6 @@
+C:\Users\Administrator\Projects\Questor\Questor.Modules\bin\Debug\Questor.Modules.dll
+C:\Users\Administrator\Projects\Questor\Questor.Modules\bin\Debug\Questor.Modules.pdb
+C:\Users\Administrator\Projects\Questor\Questor.Modules\bin\Debug\DirectEve.dll
+C:\Users\Administrator\Projects\Questor\Questor.Modules\obj\Debug\Questor.Modules.csprojResolveAssemblyReference.cache
+C:\Users\Administrator\Projects\Questor\Questor.Modules\obj\Debug\Questor.Modules.dll
+C:\Users\Administrator\Projects\Questor\Questor.Modules\obj\Debug\Questor.Modules.pdb

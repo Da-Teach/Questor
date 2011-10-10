@@ -1,0 +1,8 @@
+C:\Users\Administrator\Projects\Questor\UpdateInvTypes\bin\Debug\UpdateInvTypes.exe
+C:\Users\Administrator\Projects\Questor\UpdateInvTypes\bin\Debug\UpdateInvTypes.pdb
+C:\Users\Administrator\Projects\Questor\UpdateInvTypes\obj\x86\Debug\UpdateInvTypes.csprojResolveAssemblyReference.cache
+C:\Users\Administrator\Projects\Questor\UpdateInvTypes\obj\x86\Debug\UpdateInvTypes.frmMain.resources
+C:\Users\Administrator\Projects\Questor\UpdateInvTypes\obj\x86\Debug\UpdateInvTypes.Properties.Resources.resources
+C:\Users\Administrator\Projects\Questor\UpdateInvTypes\obj\x86\Debug\UpdateInvTypes.csproj.GenerateResource.Cache
+C:\Users\Administrator\Projects\Questor\UpdateInvTypes\obj\x86\Debug\UpdateInvTypes.exe
+C:\Users\Administrator\Projects\Questor\UpdateInvTypes\obj\x86\Debug\UpdateInvTypes.pdb

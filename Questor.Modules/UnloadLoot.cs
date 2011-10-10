@@ -138,16 +138,13 @@ namespace Questor.Modules
                         Logging.Log("UnloadLoot: Creating salvage bookmarks in hangar");
                         var bookmarks = Cache.Instance.BookmarksByLabel(Settings.Instance.BookmarkPrefix + " ");
                         List<long> salvageBMs = new List<long>();
-                        int i = 0;
                         foreach (DirectBookmark bookmark in bookmarks)
                         {
                             salvageBMs.Add((long)bookmark.BookmarkId);
-                            i++;
-                            if (i == 4)
+                            if (salvageBMs.Count == 5)
                             {
                                 hangar.AddBookmarks(salvageBMs);
                                 salvageBMs.Clear();
-                                i = 0;
                             }
                         }
                         if (salvageBMs.Count > 0)

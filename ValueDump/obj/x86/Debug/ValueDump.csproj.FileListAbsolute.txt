@@ -1,0 +1,10 @@
+C:\Users\Administrator\Projects\Questor\ValueDump\bin\Debug\ValueDump.exe.config
+C:\Users\Administrator\Projects\Questor\ValueDump\bin\Debug\ValueDump.exe
+C:\Users\Administrator\Projects\Questor\ValueDump\bin\Debug\ValueDump.pdb
+C:\Users\Administrator\Projects\Questor\ValueDump\bin\Debug\DirectEve.dll
+C:\Users\Administrator\Projects\Questor\ValueDump\obj\x86\Debug\ValueDump.csprojResolveAssemblyReference.cache
+C:\Users\Administrator\Projects\Questor\ValueDump\obj\x86\Debug\ValueDump.frmMain.resources
+C:\Users\Administrator\Projects\Questor\ValueDump\obj\x86\Debug\ValueDump.Properties.Resources.resources
+C:\Users\Administrator\Projects\Questor\ValueDump\obj\x86\Debug\ValueDump.csproj.GenerateResource.Cache
+C:\Users\Administrator\Projects\Questor\ValueDump\obj\x86\Debug\ValueDump.exe
+C:\Users\Administrator\Projects\Questor\ValueDump\obj\x86\Debug\ValueDump.pdb

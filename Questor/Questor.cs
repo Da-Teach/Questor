@@ -10,15 +10,16 @@
 namespace Questor
 {
     using System;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using System.Windows.Forms;
-    using DirectEve;
-    using global::Questor.Modules;
-    using global::Questor.Storylines;
-    using LavishScriptAPI;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Windows.Forms;
+using DirectEve;
+using global::Questor.Modules;
+using global::Questor.Storylines;
+using LavishScriptAPI;
 
     public class Questor
     {
@@ -394,6 +395,11 @@ namespace Questor
                 case QuestorState.Start:
                     if (_agentInteraction.State == AgentInteractionState.Idle)
                     {
+                        if (Settings.Instance.CharacterMode == "salvage")
+                        {
+                            State = QuestorState.BeginAfterMissionSalvaging;
+                            break;
+                        }
                         if (Settings.Instance.EnableStorylines && _storyline.HasStoryline())
                         {
                             Logging.Log("Questor: Storyline detected, doing storyline.");
@@ -687,6 +693,52 @@ namespace Questor
                     if (_arm.State == ArmState.Done)
                     {
                         _arm.State = ArmState.Idle;
+
+                        //Import bookmarks from corp hangar
+                        DirectContainer corpBookmarkHangar = null;
+                        if (!string.IsNullOrEmpty(Settings.Instance.BookmarkHangar))
+                            corpBookmarkHangar = Cache.Instance.DirectEve.GetCorporationHangar(Settings.Instance.BookmarkHangar);
+
+                        if (corpBookmarkHangar != null && Settings.Instance.CharacterMode == "salvage")
+                        {
+                            Logging.Log("Questor: Importing salvage bookmarks from corp hangar");
+
+                            var hangar = Cache.Instance.DirectEve.GetItemHangar();
+                            _lastAction = DateTime.Now;
+                            hangar.Add(corpBookmarkHangar.Items.Where(i => i.TypeId == 51));
+
+                            List<DirectItem> salvageBMs = new List<DirectItem>();
+                            foreach (DirectItem bookmarkItem in hangar.Items.Where(i => i.TypeId == 51))
+                            {
+                                salvageBMs.Add(bookmarkItem);
+                                Logging.Log(salvageBMs.Count.ToString());
+                                if (salvageBMs.Count == 5)
+                                {
+                                    if (Cache.Instance.DirectEve.DropInPeopleAndPlaces(salvageBMs))
+                                    {
+
+                                        Logging.Log("Successfully added bookmarks to people & places");
+                                    }
+                                    else
+                                    {
+                                        Logging.Log("Failed to add bookmarks to people & places");
+                                    }
+                                    salvageBMs.Clear();
+                                }
+                            }
+                            if (salvageBMs.Count > 0)
+                            {
+                                if (Cache.Instance.DirectEve.DropInPeopleAndPlaces(salvageBMs))
+                                {
+                                    Logging.Log("Successfully added bookmarks to people & places");
+                                }
+                                else
+                                {
+                                    Logging.Log("Failed to add bookmarks to people & places");
+                                }
+                                salvageBMs.Clear();
+                            }
+                        }
 
                         var bookmark = Cache.Instance.BookmarksByLabel(Settings.Instance.BookmarkPrefix + " ").OrderBy(b => b.CreatedOn).FirstOrDefault();
                         if (bookmark == null)
