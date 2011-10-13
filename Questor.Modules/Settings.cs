@@ -41,6 +41,9 @@ namespace Questor.Modules
 
         public bool AutoStart { get; set; }
 
+        public bool SaveLog { get; set; }
+
+        public int maxLineConsole { get; set; }
 
 		public bool waitDecline { get; set; }
 
@@ -156,6 +159,10 @@ namespace Questor.Modules
 
                 AutoStart = false;
 
+                SaveLog = false;
+
+                maxLineConsole = 1000;
+
 				waitDecline = false;
 
                 Disable3D = false;
@@ -234,6 +241,10 @@ namespace Questor.Modules
             DebugPerformance = (bool?) xml.Element("debugPerformance") ?? false;
 
             AutoStart = (bool?) xml.Element("autoStart") ?? false;
+
+            SaveLog = (bool?)xml.Element("saveLog") ?? false;
+
+            maxLineConsole = (int?)xml.Element("maxLineConsole") ?? 1000;
 
             waitDecline = (bool?) xml.Element("waitDecline") ?? false;
 

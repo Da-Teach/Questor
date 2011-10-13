@@ -2,6 +2,12 @@
 <settings>
   <!-- Auto start when Questor is loaded -->
   <autoStart>true</autoStart>
+  
+  <!-- Save Log Console -->
+  <saveLog>true</saveLog>
+   
+   <!-- Maximum number of lines in the external console -->
+  <maxLineConsole>1000</maxLineConsole>
 
   <!-- Random delay between missions -->
   <randomDelay>60</randomDelay>

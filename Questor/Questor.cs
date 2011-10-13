@@ -337,7 +337,7 @@ namespace Questor
                             File.AppendAllText(filename, "Date;Mission;Time;Isk;Loot;LP;\r\n");
 
                         // Build the line
-                        var line = DateTime.Now + ";";
+                        var line = string.Format("{0:dd/MM/yyyy HH:mm:ss}", DateTime.Now) + ";";
                         line += Mission + ";";
                         line += ((int)DateTime.Now.Subtract(Started).TotalMinutes) + ";";
                         line += ((int)(Cache.Instance.DirectEve.Me.Wealth - Wealth)) + ";";

@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
 using Questor.Modules;
 
 namespace Questor
@@ -125,6 +126,41 @@ namespace Questor
                 Top = Settings.Instance.WindowYPosition.Value;
                 Settings.Instance.WindowYPosition = null;
             }
+
+            if (Cache.Instance.ExtConsole != null)
+            {
+                txtExtConsole.Text += Cache.Instance.ExtConsole;
+                txtExtConsole.SelectionStart = txtExtConsole.TextLength;
+                txtExtConsole.ScrollToCaret();
+                Cache.Instance.ExtConsole = null;
+
+                if (txtExtConsole.Lines.Count() >= Settings.Instance.maxLineConsole)
+                {
+                    if (Settings.Instance.SaveLog)
+                    {
+                        string Carpeta = Application.StartupPath + "\\Log\\";
+                        string filename = Carpeta + string.Format("{0:ddMMyyyy}", DateTime.Today) + ".log";
+                        Directory.CreateDirectory(Carpeta);
+
+                        if (System.IO.File.Exists(filename))
+                        {
+                            StreamWriter sw1 = File.AppendText(filename);
+                            sw1.WriteLine(txtExtConsole.Text);
+                            sw1.Close();
+                        }
+                        else
+                        {
+                            StreamWriter sw = new StreamWriter(filename);
+                            sw.WriteLine(txtExtConsole.Text);
+                            sw.Close();
+                        }
+                    }
+
+                    txtExtConsole.Text = "";
+                }
+            }
+
+
         }
 
         private void DamageTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -157,5 +193,28 @@ namespace Questor
         {
             _questor.Disable3D = Disable3DCheckBox.Checked;
         }
+
+        private void txtComand_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)13)
+            {
+                LavishScript.ExecuteCommand(txtComand.Text);
+            }
+        }
+
+        private void chkShowConsole_CheckedChanged(object sender, EventArgs e)
+        {
+            Form frmMain = new Form();
+            if (chkShowConsole.Checked)
+            {
+                this.Size = new System.Drawing.Size(901, 406);
+            }
+            else
+            {
+                this.Size = new System.Drawing.Size(362, 124);
+            }
+        }
+
+
     }
 }

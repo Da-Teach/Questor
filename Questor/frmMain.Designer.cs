@@ -38,13 +38,16 @@
             this.StartButton = new System.Windows.Forms.Button();
             this.PauseCheckBox = new System.Windows.Forms.CheckBox();
             this.Disable3DCheckBox = new System.Windows.Forms.CheckBox();
+            this.txtExtConsole = new System.Windows.Forms.TextBox();
+            this.txtComand = new System.Windows.Forms.TextBox();
+            this.chkShowConsole = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // AutoStartCheckBox
             // 
             this.AutoStartCheckBox.Appearance = System.Windows.Forms.Appearance.Button;
             this.AutoStartCheckBox.AutoSize = true;
-            this.AutoStartCheckBox.Location = new System.Drawing.Point(21, 60);
+            this.AutoStartCheckBox.Location = new System.Drawing.Point(12, 60);
             this.AutoStartCheckBox.Name = "AutoStartCheckBox";
             this.AutoStartCheckBox.Size = new System.Drawing.Size(62, 23);
             this.AutoStartCheckBox.TabIndex = 11;
@@ -64,7 +67,7 @@
             this.DamageTypeComboBox.FormattingEnabled = true;
             this.DamageTypeComboBox.Location = new System.Drawing.Point(91, 6);
             this.DamageTypeComboBox.Name = "DamageTypeComboBox";
-            this.DamageTypeComboBox.Size = new System.Drawing.Size(181, 21);
+            this.DamageTypeComboBox.Size = new System.Drawing.Size(252, 21);
             this.DamageTypeComboBox.TabIndex = 16;
             this.DamageTypeComboBox.SelectedIndexChanged += new System.EventHandler(this.DamageTypeComboBox_SelectedIndexChanged);
             // 
@@ -90,16 +93,16 @@
             // 
             this.QuestorStateComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.QuestorStateComboBox.FormattingEnabled = true;
-            this.QuestorStateComboBox.Location = new System.Drawing.Point(91, 33);
+            this.QuestorStateComboBox.Location = new System.Drawing.Point(90, 33);
             this.QuestorStateComboBox.Name = "QuestorStateComboBox";
-            this.QuestorStateComboBox.Size = new System.Drawing.Size(181, 21);
+            this.QuestorStateComboBox.Size = new System.Drawing.Size(253, 21);
             this.QuestorStateComboBox.TabIndex = 19;
             this.QuestorStateComboBox.SelectedIndexChanged += new System.EventHandler(this.QuestorStateComboBox_SelectedIndexChanged);
             // 
             // StartButton
             // 
             this.StartButton.AutoSize = true;
-            this.StartButton.Location = new System.Drawing.Point(89, 60);
+            this.StartButton.Location = new System.Drawing.Point(80, 60);
             this.StartButton.Name = "StartButton";
             this.StartButton.Size = new System.Drawing.Size(47, 23);
             this.StartButton.TabIndex = 20;
@@ -111,7 +114,7 @@
             // 
             this.PauseCheckBox.Appearance = System.Windows.Forms.Appearance.Button;
             this.PauseCheckBox.AutoSize = true;
-            this.PauseCheckBox.Location = new System.Drawing.Point(142, 60);
+            this.PauseCheckBox.Location = new System.Drawing.Point(133, 60);
             this.PauseCheckBox.Name = "PauseCheckBox";
             this.PauseCheckBox.Size = new System.Drawing.Size(47, 23);
             this.PauseCheckBox.TabIndex = 21;
@@ -123,7 +126,7 @@
             // 
             this.Disable3DCheckBox.Appearance = System.Windows.Forms.Appearance.Button;
             this.Disable3DCheckBox.AutoSize = true;
-            this.Disable3DCheckBox.Location = new System.Drawing.Point(195, 60);
+            this.Disable3DCheckBox.Location = new System.Drawing.Point(186, 60);
             this.Disable3DCheckBox.Name = "Disable3DCheckBox";
             this.Disable3DCheckBox.Size = new System.Drawing.Size(69, 23);
             this.Disable3DCheckBox.TabIndex = 22;
@@ -131,11 +134,44 @@
             this.Disable3DCheckBox.UseVisualStyleBackColor = true;
             this.Disable3DCheckBox.CheckedChanged += new System.EventHandler(this.Disable3DCheckBox_CheckedChanged);
             // 
+            // txtExtConsole
+            // 
+            this.txtExtConsole.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtExtConsole.Location = new System.Drawing.Point(12, 105);
+            this.txtExtConsole.Multiline = true;
+            this.txtExtConsole.Name = "txtExtConsole";
+            this.txtExtConsole.ReadOnly = true;
+            this.txtExtConsole.Size = new System.Drawing.Size(1096, 231);
+            this.txtExtConsole.TabIndex = 23;
+            // 
+            // txtComand
+            // 
+            this.txtComand.Location = new System.Drawing.Point(14, 342);
+            this.txtComand.Name = "txtComand";
+            this.txtComand.Size = new System.Drawing.Size(1094, 20);
+            this.txtComand.TabIndex = 24;
+            this.txtComand.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtComand_KeyPress);
+            // 
+            // chkShowConsole
+            // 
+            this.chkShowConsole.Appearance = System.Windows.Forms.Appearance.Button;
+            this.chkShowConsole.AutoSize = true;
+            this.chkShowConsole.Location = new System.Drawing.Point(261, 60);
+            this.chkShowConsole.Name = "chkShowConsole";
+            this.chkShowConsole.Size = new System.Drawing.Size(85, 23);
+            this.chkShowConsole.TabIndex = 25;
+            this.chkShowConsole.Text = "Show Console";
+            this.chkShowConsole.UseVisualStyleBackColor = true;
+            this.chkShowConsole.CheckedChanged += new System.EventHandler(this.chkShowConsole_CheckedChanged);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 91);
+            this.ClientSize = new System.Drawing.Size(356, 96);
+            this.Controls.Add(this.chkShowConsole);
+            this.Controls.Add(this.txtComand);
+            this.Controls.Add(this.txtExtConsole);
             this.Controls.Add(this.Disable3DCheckBox);
             this.Controls.Add(this.PauseCheckBox);
             this.Controls.Add(this.StartButton);
@@ -164,6 +200,9 @@
         private System.Windows.Forms.Button StartButton;
         private System.Windows.Forms.CheckBox PauseCheckBox;
         private System.Windows.Forms.CheckBox Disable3DCheckBox;
+        private System.Windows.Forms.TextBox txtExtConsole;
+        private System.Windows.Forms.TextBox txtComand;
+        private System.Windows.Forms.CheckBox chkShowConsole;
     }
 }
 

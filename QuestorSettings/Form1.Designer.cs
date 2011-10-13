@@ -223,6 +223,12 @@
             this.cmbXML = new System.Windows.Forms.ComboBox();
             this.cmdSave = new System.Windows.Forms.Button();
             this.lblmessage = new System.Windows.Forms.Label();
+            this.txtmaxLineConsole = new System.Windows.Forms.TextBox();
+            this.cmbsaveLog = new System.Windows.Forms.ComboBox();
+            this.label62 = new System.Windows.Forms.Label();
+            this.label63 = new System.Windows.Forms.Label();
+            this.linkLabel62 = new System.Windows.Forms.LinkLabel();
+            this.linkLabel63 = new System.Windows.Forms.LinkLabel();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -252,6 +258,12 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.linkLabel63);
+            this.tabPage1.Controls.Add(this.linkLabel62);
+            this.tabPage1.Controls.Add(this.label63);
+            this.tabPage1.Controls.Add(this.label62);
+            this.tabPage1.Controls.Add(this.cmbsaveLog);
+            this.tabPage1.Controls.Add(this.txtmaxLineConsole);
             this.tabPage1.Controls.Add(this.linkLabel6);
             this.tabPage1.Controls.Add(this.linkLabel5);
             this.tabPage1.Controls.Add(this.linkLabel4);
@@ -281,7 +293,7 @@
             // linkLabel6
             // 
             this.linkLabel6.AutoSize = true;
-            this.linkLabel6.Location = new System.Drawing.Point(219, 206);
+            this.linkLabel6.Location = new System.Drawing.Point(219, 282);
             this.linkLabel6.Name = "linkLabel6";
             this.linkLabel6.Size = new System.Drawing.Size(13, 13);
             this.linkLabel6.TabIndex = 38;
@@ -292,7 +304,7 @@
             // linkLabel5
             // 
             this.linkLabel5.AutoSize = true;
-            this.linkLabel5.Location = new System.Drawing.Point(175, 171);
+            this.linkLabel5.Location = new System.Drawing.Point(175, 247);
             this.linkLabel5.Name = "linkLabel5";
             this.linkLabel5.Size = new System.Drawing.Size(13, 13);
             this.linkLabel5.TabIndex = 37;
@@ -303,7 +315,7 @@
             // linkLabel4
             // 
             this.linkLabel4.AutoSize = true;
-            this.linkLabel4.Location = new System.Drawing.Point(175, 136);
+            this.linkLabel4.Location = new System.Drawing.Point(175, 212);
             this.linkLabel4.Name = "linkLabel4";
             this.linkLabel4.Size = new System.Drawing.Size(13, 13);
             this.linkLabel4.TabIndex = 36;
@@ -314,7 +326,7 @@
             // linkLabel3
             // 
             this.linkLabel3.AutoSize = true;
-            this.linkLabel3.Location = new System.Drawing.Point(175, 98);
+            this.linkLabel3.Location = new System.Drawing.Point(175, 174);
             this.linkLabel3.Name = "linkLabel3";
             this.linkLabel3.Size = new System.Drawing.Size(13, 13);
             this.linkLabel3.TabIndex = 35;
@@ -325,7 +337,7 @@
             // linkLabel2
             // 
             this.linkLabel2.AutoSize = true;
-            this.linkLabel2.Location = new System.Drawing.Point(175, 57);
+            this.linkLabel2.Location = new System.Drawing.Point(175, 133);
             this.linkLabel2.Name = "linkLabel2";
             this.linkLabel2.Size = new System.Drawing.Size(13, 13);
             this.linkLabel2.TabIndex = 34;
@@ -347,7 +359,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(6, 206);
+            this.label13.Location = new System.Drawing.Point(6, 282);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(101, 13);
             this.label13.TabIndex = 32;
@@ -355,7 +367,7 @@
             // 
             // txtbookmarkWarpOut
             // 
-            this.txtbookmarkWarpOut.Location = new System.Drawing.Point(113, 203);
+            this.txtbookmarkWarpOut.Location = new System.Drawing.Point(113, 279);
             this.txtbookmarkWarpOut.Name = "txtbookmarkWarpOut";
             this.txtbookmarkWarpOut.Size = new System.Drawing.Size(100, 20);
             this.txtbookmarkWarpOut.TabIndex = 31;
@@ -363,7 +375,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 171);
+            this.label5.Location = new System.Drawing.Point(6, 247);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(56, 13);
             this.label5.TabIndex = 30;
@@ -372,7 +384,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 136);
+            this.label4.Location = new System.Drawing.Point(6, 212);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(56, 13);
             this.label4.TabIndex = 29;
@@ -380,14 +392,14 @@
             // 
             // txtwindowYPosition
             // 
-            this.txtwindowYPosition.Location = new System.Drawing.Point(113, 168);
+            this.txtwindowYPosition.Location = new System.Drawing.Point(113, 244);
             this.txtwindowYPosition.Name = "txtwindowYPosition";
             this.txtwindowYPosition.Size = new System.Drawing.Size(56, 20);
             this.txtwindowYPosition.TabIndex = 28;
             // 
             // txtwindowXPosition
             // 
-            this.txtwindowXPosition.Location = new System.Drawing.Point(113, 133);
+            this.txtwindowXPosition.Location = new System.Drawing.Point(113, 209);
             this.txtwindowXPosition.Name = "txtwindowXPosition";
             this.txtwindowXPosition.Size = new System.Drawing.Size(56, 20);
             this.txtwindowXPosition.TabIndex = 27;
@@ -395,7 +407,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 95);
+            this.label3.Location = new System.Drawing.Point(6, 171);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(78, 13);
             this.label3.TabIndex = 26;
@@ -404,7 +416,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 61);
+            this.label2.Location = new System.Drawing.Point(6, 137);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(77, 13);
             this.label2.TabIndex = 25;
@@ -432,14 +444,14 @@
             // 
             // txtminimumDelay
             // 
-            this.txtminimumDelay.Location = new System.Drawing.Point(113, 95);
+            this.txtminimumDelay.Location = new System.Drawing.Point(113, 171);
             this.txtminimumDelay.Name = "txtminimumDelay";
             this.txtminimumDelay.Size = new System.Drawing.Size(56, 20);
             this.txtminimumDelay.TabIndex = 24;
             // 
             // txtrandomDelay
             // 
-            this.txtrandomDelay.Location = new System.Drawing.Point(113, 54);
+            this.txtrandomDelay.Location = new System.Drawing.Point(113, 130);
             this.txtrandomDelay.Name = "txtrandomDelay";
             this.txtrandomDelay.Size = new System.Drawing.Size(56, 20);
             this.txtrandomDelay.TabIndex = 22;
@@ -2254,6 +2266,64 @@
             this.lblmessage.Size = new System.Drawing.Size(0, 13);
             this.lblmessage.TabIndex = 3;
             // 
+            // txtmaxLineConsole
+            // 
+            this.txtmaxLineConsole.Location = new System.Drawing.Point(112, 94);
+            this.txtmaxLineConsole.Name = "txtmaxLineConsole";
+            this.txtmaxLineConsole.Size = new System.Drawing.Size(57, 20);
+            this.txtmaxLineConsole.TabIndex = 39;
+            // 
+            // cmbsaveLog
+            // 
+            this.cmbsaveLog.FormattingEnabled = true;
+            this.cmbsaveLog.Items.AddRange(new object[] {
+            "true",
+            "false"});
+            this.cmbsaveLog.Location = new System.Drawing.Point(113, 56);
+            this.cmbsaveLog.Name = "cmbsaveLog";
+            this.cmbsaveLog.Size = new System.Drawing.Size(56, 21);
+            this.cmbsaveLog.TabIndex = 40;
+            // 
+            // label62
+            // 
+            this.label62.AutoSize = true;
+            this.label62.Location = new System.Drawing.Point(6, 59);
+            this.label62.Name = "label62";
+            this.label62.Size = new System.Drawing.Size(53, 13);
+            this.label62.TabIndex = 41;
+            this.label62.Text = "Save Log";
+            // 
+            // label63
+            // 
+            this.label63.AutoSize = true;
+            this.label63.Location = new System.Drawing.Point(6, 97);
+            this.label63.Name = "label63";
+            this.label63.Size = new System.Drawing.Size(91, 13);
+            this.label63.TabIndex = 42;
+            this.label63.Text = "Max Line Console";
+            // 
+            // linkLabel62
+            // 
+            this.linkLabel62.AutoSize = true;
+            this.linkLabel62.Location = new System.Drawing.Point(175, 59);
+            this.linkLabel62.Name = "linkLabel62";
+            this.linkLabel62.Size = new System.Drawing.Size(13, 13);
+            this.linkLabel62.TabIndex = 43;
+            this.linkLabel62.TabStop = true;
+            this.linkLabel62.Text = "?";
+            this.linkLabel62.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel62_LinkClicked);
+            // 
+            // linkLabel63
+            // 
+            this.linkLabel63.AutoSize = true;
+            this.linkLabel63.Location = new System.Drawing.Point(175, 97);
+            this.linkLabel63.Name = "linkLabel63";
+            this.linkLabel63.Size = new System.Drawing.Size(13, 13);
+            this.linkLabel63.TabIndex = 44;
+            this.linkLabel63.TabStop = true;
+            this.linkLabel63.Text = "?";
+            this.linkLabel63.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel63_LinkClicked);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2489,5 +2559,11 @@
         private System.Windows.Forms.LinkLabel linkLabel58;
         private System.Windows.Forms.LinkLabel linkLabel57;
         private System.Windows.Forms.LinkLabel linkLabel56;
+        private System.Windows.Forms.Label label63;
+        private System.Windows.Forms.Label label62;
+        private System.Windows.Forms.ComboBox cmbsaveLog;
+        private System.Windows.Forms.TextBox txtmaxLineConsole;
+        private System.Windows.Forms.LinkLabel linkLabel63;
+        private System.Windows.Forms.LinkLabel linkLabel62;
     }
 }

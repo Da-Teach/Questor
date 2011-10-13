@@ -58,6 +58,8 @@ namespace QuestorSettings
             txtwindowXPosition.Text = (string)xml.Element("windowXPosition");
             txtwindowYPosition.Text = (string)xml.Element("windowYPosition");
             txtbookmarkWarpOut.Text = (string)xml.Element("bookmarkWarpOut");
+            cmbsaveLog.Text = (string)xml.Element("saveLog");
+            txtmaxLineConsole.Text = (string)xml.Element("maxLineConsole");
 
             cmbenableStorylines.Text = (string)xml.Element("enableStorylines");
             txtagentName.Text = (string)xml.Element("agentName");
@@ -174,7 +176,8 @@ namespace QuestorSettings
             strXml += "<windowXPosition>" + txtwindowXPosition.Text + "</windowXPosition>";
             strXml += "<windowYPosition>" + txtwindowYPosition.Text + "</windowYPosition>";
             strXml += "<bookmarkWarpOut>" + txtbookmarkWarpOut.Text + "</bookmarkWarpOut>";
-
+            strXml += "<saveLog>" + cmbsaveLog.Text + "</saveLog>";
+            strXml += "<maxLineConsole>" + txtmaxLineConsole.Text + "</maxLineConsole>";
 
             //Settings Mission
             strXml += "<!--Settings Mission-->";
@@ -602,6 +605,16 @@ namespace QuestorSettings
         private void linkLabel61_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             MessageBox.Show("<!-- Invasion limits, panic if these number of ships enter your mission pocket -->");
+        }
+
+        private void linkLabel62_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            MessageBox.Show("<!-- Save Log Console -->");
+        }
+
+        private void linkLabel63_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            MessageBox.Show("<!-- Maximum number of lines in the external console -->");
         }
 
     }
