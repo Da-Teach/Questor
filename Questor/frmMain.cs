@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Reflection;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -127,41 +128,26 @@ namespace Questor
                 Settings.Instance.WindowYPosition = null;
             }
 
-            if (Cache.Instance.ExtConsole != null)
-            {
-                txtExtConsole.Text += Cache.Instance.ExtConsole;
-                txtExtConsole.SelectionStart = txtExtConsole.TextLength;
-                txtExtConsole.ScrollToCaret();
-                Cache.Instance.ExtConsole = null;
 
+             if (Cache.Instance.ExtConsole != null)
+            {  
                 if (txtExtConsole.Lines.Count() >= Settings.Instance.maxLineConsole)
-                {
-                    if (Settings.Instance.SaveLog)
-                    {
-                        string Carpeta = Application.StartupPath + "\\Log\\";
-                        string filename = Carpeta + string.Format("{0:ddMMyyyy}", DateTime.Today) + ".log";
-                        Directory.CreateDirectory(Carpeta);
-
-                        if (System.IO.File.Exists(filename))
-                        {
-                            StreamWriter sw1 = File.AppendText(filename);
-                            sw1.WriteLine(txtExtConsole.Text);
-                            sw1.Close();
-                        }
-                        else
-                        {
-                            StreamWriter sw = new StreamWriter(filename);
-                            sw.WriteLine(txtExtConsole.Text);
-                            sw.Close();
-                        }
-                    }
-
                     txtExtConsole.Text = "";
+
+                if (Settings.Instance.SaveLog)
+                {
+                    string Carpeta = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Log\\" + _questor.CharacterName + "\\";
+                    string filename = Carpeta + string.Format("{0:ddMMyyyy}", DateTime.Today) + ".log";
+
+                    Directory.CreateDirectory(Carpeta);
+                    File.AppendAllText(filename, Cache.Instance.ExtConsole);    
                 }
+                txtExtConsole.AppendText(Cache.Instance.ExtConsole);
+                Cache.Instance.ExtConsole = null;
             }
 
-
         }
+
 
         private void DamageTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
