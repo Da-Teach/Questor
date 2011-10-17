@@ -113,9 +113,13 @@ namespace Questor.Modules
                 // We cant warp if we have drones out
                 if (Cache.Instance.ActiveDrones.Count() > 0)
                     return;
-
+                    
+                if (DateTime.Now.Subtract(_lastAlign ).TotalMinutes > 2)
+                {
                 // Probably never happens
                 closest.AlignTo();
+                _lastAlign = DateTime.Now;
+                }
             }
         }
 
@@ -239,8 +243,12 @@ namespace Questor.Modules
                 if (Cache.Instance.ActiveDrones.Count() > 0)
                     return;
 
+                if (DateTime.Now.Subtract(_lastAlign ).TotalMinutes > 2)
+                {
                 // Probably never happens
                 closest.AlignTo();
+                _lastAlign = DateTime.Now;
+                }
             }
         }
 
