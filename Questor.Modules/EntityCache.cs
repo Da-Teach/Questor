@@ -560,6 +560,12 @@ namespace Questor.Modules
                 _directEntity.WarpTo();
         }
 
+        public void AlignTo()
+        {
+            if (_directEntity != null)
+                _directEntity.AlignTo();
+        }
+
         public void WarpToAndDock()
         {
             if (_directEntity != null)
