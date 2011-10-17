@@ -99,7 +99,7 @@ namespace Questor.Modules
                 State = MissionControllerState.NextPocket;
                 _lastActivateAction = DateTime.Now;
             }
-            else
+            else if (closest.Distance < 150000)
             {
                 // Move to the target
                 if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
@@ -107,6 +107,15 @@ namespace Questor.Modules
                     Logging.Log("MissionController.Activate: Approaching target [" + closest.Name + "][" + closest.Id + "]");
                     closest.Approach();
                 }
+            }
+            else
+            {
+                // We cant warp if we have drones out
+                if (Cache.Instance.ActiveDrones.Count() > 0)
+                    return;
+
+                // Probably never happens
+                closest.AlignTo();
             }
         }
 
@@ -215,7 +224,7 @@ namespace Questor.Modules
                     Cache.Instance.Approaching = null;
                 }
             }
-            else
+            else if (closest.Distance < 150000)
             {
                 // Move to the target
                 if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
@@ -223,6 +232,15 @@ namespace Questor.Modules
                     Logging.Log("MissionController.MoveTo: Approaching target [" + closest.Name + "][" + closest.Id + "]");
                     closest.Approach();
                 }
+            }
+            else
+            {
+                // We cant warp if we have drones out
+                if (Cache.Instance.ActiveDrones.Count() > 0)
+                    return;
+
+                // Probably never happens
+                closest.AlignTo();
             }
         }
 
