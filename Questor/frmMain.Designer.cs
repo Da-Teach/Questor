@@ -141,6 +141,7 @@
             this.txtExtConsole.Multiline = true;
             this.txtExtConsole.Name = "txtExtConsole";
             this.txtExtConsole.ReadOnly = true;
+            this.txtExtConsole.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtExtConsole.Size = new System.Drawing.Size(1096, 231);
             this.txtExtConsole.TabIndex = 23;
             // 

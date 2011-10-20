@@ -70,7 +70,7 @@ namespace Questor.Modules
 
                     weapon.ReloadAmmo(charge);
                 }
-                return;
+
             }
             return;
         }
