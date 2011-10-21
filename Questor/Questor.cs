@@ -464,7 +464,7 @@ namespace Questor
 
                 case QuestorState.WarpOutStation:
 
-                    var _bookmark = Cache.Instance.BookmarksByLabel(Settings.Instance.bookmarkWarpOut).OrderBy(b => b.CreatedOn).FirstOrDefault();
+                    var _bookmark = Cache.Instance.BookmarksByLabel(Settings.Instance.bookmarkWarpOut ?? "").OrderBy(b => b.CreatedOn).FirstOrDefault();
                     var _solarid = Cache.Instance.DirectEve.Session.SolarSystemId ?? -1;
                     if (_bookmark == null)
                     {
