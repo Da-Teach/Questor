@@ -26,7 +26,8 @@ namespace Questor.Modules
         private List<Action> _pocketActions;
         private bool _waiting;
         private DateTime _waitingSince;
-
+        private DateTime _lastAlign;
+    
         public long AgentId { get; set; }
 
         public MissionController()
