@@ -99,6 +99,8 @@ namespace Questor
         public double LootValue { get; set; }
         public int LoyaltyPoints { get; set; }
         public int LostDrones { get; set; }
+        public double AmmoValue { get; set; }
+        public double AmmoConsumption { get; set; }
 
    
         public void SettingsLoaded(object sender, EventArgs e)
@@ -342,7 +344,10 @@ namespace Questor
                         line += ((int)DateTime.Now.Subtract(Started).TotalMinutes) + ";";
                         line += ((int)(Cache.Instance.DirectEve.Me.Wealth - Wealth)) + ";";
                         line += ((int)LootValue) + ";";
-                        line += (Cache.Instance.Agent.LoyaltyPoints - LoyaltyPoints) + ";\r\n";
+                        line += (Cache.Instance.Agent.LoyaltyPoints - LoyaltyPoints) + ";";
+                        line += ((int)LostDrones) + ";";
+                        line += ((int)AmmoConsumption) + ";";
+                        line += ((int)AmmoValue) + ";\r\n";
 
                         // The mission is finished
                         File.AppendAllText(filename, line);
@@ -417,6 +422,8 @@ namespace Questor
                         Started = DateTime.Now;
                         Mission = string.Empty;
                         LostDrones = 0;
+                        AmmoConsumption = 0;
+                        AmmoValue = 0;
                     }
 
                     _agentInteraction.ProcessState();
@@ -668,6 +675,30 @@ namespace Questor
                             }
                         }
                         // Lost drone statistics stuff ends here
+
+
+                        // Ammo Consumption statistics
+                        // Is cargo open?
+                        var cargoship = Cache.Instance.DirectEve.GetShipsCargo();
+                        if (cargoship.Window == null)
+                        {
+                            // No, command it to open
+                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenCargoHoldOfActiveShip);
+                            break;
+                        }
+
+                        if (!cargoship.IsReady)
+                            break;
+
+                        var correctAmmo1 = Settings.Instance.Ammo.Where(a => a.DamageType == Cache.Instance.DamageType);
+                        var AmmoCargo = cargoship.Items.Where(i => correctAmmo1.Any(a => a.TypeId == i.TypeId));
+                        foreach (var item in AmmoCargo)
+                        {
+                            var Ammo1 = Settings.Instance.Ammo.Where(a => a.TypeId == item.TypeId).FirstOrDefault();
+                            var AmmoType = Cache.Instance.InvTypesById[item.TypeId];
+                            AmmoConsumption = (Ammo1.Quantity - item.Quantity);
+                            AmmoValue = (AmmoType.MedianBuy ?? 0) * AmmoConsumption;
+                        }
 
                         Logging.Log("AgentInteraction: Start Conversation [Complete Mission]");
 
