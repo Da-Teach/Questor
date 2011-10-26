@@ -661,13 +661,6 @@ namespace Questor
                                 var drone = Cache.Instance.InvTypesById[Settings.Instance.DroneTypeId];
                                 LostDrones = (int)Math.Floor((droneBay.Capacity - droneBay.UsedCapacity) / drone.Volume);
                                 Logging.Log("DroneStats: Logging the number of lost drones: " + LostDrones.ToString());
-                                var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                                var dronelogfilename = Path.Combine(path, Cache.Instance.FilterPath(CharacterName) + ".dronestats.log");
-                                if (!File.Exists(dronelogfilename))
-                                    File.AppendAllText(dronelogfilename, "Mission;Number of lost drones\r\n");
-                                var droneline = Mission + ";";
-                                droneline += ((int)LostDrones) + ";\r\n";
-                                File.AppendAllText(dronelogfilename, droneline);
                             }
                             else
                             {
