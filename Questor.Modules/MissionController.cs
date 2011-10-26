@@ -26,6 +26,7 @@ namespace Questor.Modules
         private List<Action> _pocketActions;
         private bool _waiting;
         private DateTime _waitingSince;
+        private DateTime _lastAlign;
         private readonly Dictionary<long, DateTime> _lastWeaponReload = new Dictionary<long, DateTime>();
 
         public long AgentId { get; set; }
@@ -285,20 +286,12 @@ namespace Questor.Modules
 
                 if (DateTime.Now.Subtract(_lastAlign ).TotalMinutes > 2)
                 {
-                // Probably never happens
-                closest.AlignTo();
-                _lastAlign = DateTime.Now;
-                    }
+                    // Probably never happens
+                    closest.AlignTo();
+                     _lastAlign = DateTime.Now;
+                }
             }
-            else
-            {
-                // We cant warp if we have drones out
-                if (Cache.Instance.ActiveDrones.Count() > 0)
-                    return;
 
-                // Probably never happens
-                closest.AlignTo();
-            }
         }
 
         private void WaitUntilTargeted(Action action)
