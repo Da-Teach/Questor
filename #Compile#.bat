@@ -6,6 +6,8 @@ del .\output\*.* /Q
 copy .\questor\bin\debug\*.exe .\output\*.exe
 copy .\questor\bin\debug\*.dll .\output\*.dll
 copy .\gotobm\bin\debug\*.exe .\output\*.exe
+copy .\questorstatistics\bin\debug\*.exe .\output\*.exe
+copy .\questorsettings\bin\debug\*.exe .\output\*.exe
 copy .\updateinvtypes\bin\debug\*.exe .\output\*.exe
 copy .\valuedump\bin\debug\*.exe .\output\*.exe
 pause

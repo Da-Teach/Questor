@@ -12,7 +12,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Text.RegularExpressions;
    
-namespace WindowsFormsApplication1
+namespace QuestorStatistics
 {
 
     public partial class FrmMain : Form
@@ -58,6 +58,9 @@ namespace WindowsFormsApplication1
             _with1.Columns.Add("LP", 80, HorizontalAlignment.Right);
             _with1.Columns.Add("LP/Min", 60, HorizontalAlignment.Right);
             _with1.Columns.Add("Total ISK/Min", 80, HorizontalAlignment.Right);
+            _with1.Columns.Add("Lost Drones", 80, HorizontalAlignment.Right);
+            _with1.Columns.Add("Ammo Consumption", 80, HorizontalAlignment.Right);
+            _with1.Columns.Add("Ammo Value", 80, HorizontalAlignment.Right);
 
 
             var _with2 = LstMision;
@@ -76,6 +79,9 @@ namespace WindowsFormsApplication1
             _with2.Columns.Add("Media Isk Loot", 100, HorizontalAlignment.Right);
             _with2.Columns.Add("Media LP", 100, HorizontalAlignment.Right);
             _with2.Columns.Add("Media ISK/Min", 100, HorizontalAlignment.Right);
+            _with2.Columns.Add("Lost Drones", 100, HorizontalAlignment.Right);
+            _with2.Columns.Add("Media Ammo Consumption", 100, HorizontalAlignment.Right);
+            _with2.Columns.Add("Media Ammo Value", 100, HorizontalAlignment.Right);
             return;
         }
 
@@ -93,6 +99,7 @@ namespace WindowsFormsApplication1
             string fic = LocalRuta + "\\" + cmb1.SelectedItem.ToString();
             dynamic Datos = null;
             bool Cabecera = false;
+            bool AmmoStat = true;
             System.IO.StreamReader sr = new System.IO.StreamReader(fic);
             Cabecera = true;
             Limpieza();
@@ -110,7 +117,10 @@ namespace WindowsFormsApplication1
                 else
                 {
                     ListViewItem item = new ListViewItem("");
-
+                    if (Datos[6] == "")
+                    {
+                        AmmoStat = false;
+                    }
       
                     var _with3 = item;
                     _with3.SubItems.Add(Datos[0]);
@@ -123,6 +133,19 @@ namespace WindowsFormsApplication1
                     _with3.SubItems.Add(Strings.Format(Convert.ToDouble(Datos[5]), "###,###,##0"));
                     _with3.SubItems.Add(Strings.Format(Convert.ToDouble(Datos[5]) / Convert.ToDouble(Datos[2]), "###,###,##0"));
                     _with3.SubItems.Add(Strings.Format((Convert.ToDouble(Datos[3]) + Convert.ToDouble(Datos[4])) / Convert.ToDouble(Datos[2]), "###,###,##0"));
+                    if (AmmoStat)
+                    {
+                        _with3.SubItems.Add(Strings.Format(Convert.ToDouble(Datos[6]), "###,###,##0"));
+                        _with3.SubItems.Add(Strings.Format(Convert.ToDouble(Datos[7]), "###,###,##0"));
+                        _with3.SubItems.Add(Strings.Format(Convert.ToDouble(Datos[8]), "###,###,##0"));
+                    }
+                    else
+                    {
+                        _with3.SubItems.Add(Strings.Format(Convert.ToDouble("0"), "###,###,##0"));
+                        _with3.SubItems.Add(Strings.Format(Convert.ToDouble("0"), "###,###,##0"));
+                        _with3.SubItems.Add(Strings.Format(Convert.ToDouble("0"), "###,###,##0"));
+                    }
+                    AmmoStat = true;
                     Lst1.Items.Add(item);
   
                 }
@@ -204,6 +227,9 @@ namespace WindowsFormsApplication1
             double TotalLoot = 0;
             double Nmission = 0;
             double TotalLP = 0;
+            double LostDrones = 0;
+            double AmmoConsumption = 0;
+            double AmmoValue = 0;
             var cont1 = 0;
             var cont2 = 0;
             var var1 = "";
@@ -212,9 +238,12 @@ namespace WindowsFormsApplication1
             {
                 if (Seleccion == Strings.Mid(Lst1.Items[i].SubItems[1].Text, 4, 7))
                 {
-                    TotalBounty = TotalBounty + Convert.ToDouble(Lst1.Items[i].SubItems[4].Text);
-                    TotalLoot = TotalLoot + Convert.ToDouble(Lst1.Items[i].SubItems[6].Text);
-                    TotalLP = TotalLP + Convert.ToDouble(Lst1.Items[i].SubItems[8].Text);
+                    TotalBounty += Convert.ToDouble(Lst1.Items[i].SubItems[4].Text);
+                    TotalLoot += Convert.ToDouble(Lst1.Items[i].SubItems[6].Text);
+                    TotalLP += Convert.ToDouble(Lst1.Items[i].SubItems[8].Text);
+                    LostDrones += Convert.ToDouble(Lst1.Items[i].SubItems[11].Text);
+                    AmmoConsumption += Convert.ToDouble(Lst1.Items[i].SubItems[12].Text);
+                    AmmoValue += Convert.ToDouble(Lst1.Items[i].SubItems[13].Text);
                     Nmission = Nmission + 1;
                     cont1 = cont1 + 1;
                 }
@@ -227,13 +256,16 @@ namespace WindowsFormsApplication1
                     }
                 }
             }
-
+            
             lbttMbounty.Text = Strings.Format(TotalBounty, "###,###,###");
             LbttMloot.Text = Strings.Format(TotalLoot, "###,###,###");
             LbttMlp.Text = Strings.Format(TotalLP, "###,###,###");
             LbttMnmision.Text = Strings.Format(Nmission, "###,###,###");
             lbttMganancia.Text = Strings.Format(TotalBounty + TotalLoot, "###,###,###,###");
             LbttMmedia.Text = Strings.Format((TotalBounty + TotalLoot) / cont2, "###,###,###,###");
+            lblMonthLostDrones.Text = Strings.Format(LostDrones, "###,###,###");
+            lblMonthAmmoConsu.Text = Strings.Format(AmmoConsumption, "###,###,###");
+            lblMonthAmmovalue.Text = Strings.Format(AmmoValue, "###,###,###");
 
             return true;
         }
@@ -274,6 +306,9 @@ namespace WindowsFormsApplication1
 
             double TotalBounty = 0;
             double TotalLoot = 0;
+            double LostDrones = 0;
+            double AmmoConsumption = 0;
+            double AmmoValue = 0;
             var Nmission = 0;
             double TotalLP = 0;
             var cont1 = 0;
@@ -282,19 +317,26 @@ namespace WindowsFormsApplication1
             {
                 if (Seleccion == Strings.Left(Lst1.Items[i].SubItems[1].Text, 10))
                 {
-                    TotalBounty = TotalBounty + Convert.ToDouble(Lst1.Items[i].SubItems[4].Text);
-                    TotalLoot = TotalLoot + Convert.ToDouble(Lst1.Items[i].SubItems[6].Text);
-                    TotalLP = TotalLP + Convert.ToDouble(Lst1.Items[i].SubItems[8].Text);
+                    TotalBounty += Convert.ToDouble(Lst1.Items[i].SubItems[4].Text);
+                    TotalLoot += Convert.ToDouble(Lst1.Items[i].SubItems[6].Text);
+                    TotalLP += Convert.ToDouble(Lst1.Items[i].SubItems[8].Text);
+                    LostDrones += Convert.ToDouble(Lst1.Items[i].SubItems[11].Text);
+                    AmmoConsumption += Convert.ToDouble(Lst1.Items[i].SubItems[12].Text);
+                    AmmoValue += Convert.ToDouble(Lst1.Items[i].SubItems[13].Text);
                     Nmission = Nmission + 1;
                     cont1 = cont1 + 1;
                 }
             }
+            
             lbTotalbounty.Text = Strings.Format(TotalBounty, "###,###,###");
             LBtotalloot.Text = Strings.Format(TotalLoot, "###,###,###");
             LBtotallp.Text = Strings.Format(TotalLP, "###,###,###");
             LBNmision.Text = Strings.Format(Nmission, "###,###,###");
             LBGanacia.Text = Strings.Format(TotalBounty + TotalLoot, "###,###,###");
             lbmediatotal.Text = Strings.Format((TotalBounty + TotalLoot) / cont1, "###,###,###");
+            lblDaylostDrones.Text = Strings.Format(LostDrones, "###,###,###");
+            lblDayAmmoConsu.Text = Strings.Format(AmmoConsumption, "###,###,###");
+            lblDayAmmoValue.Text = Strings.Format(AmmoValue, "###,###,###");
             return true;
         }
 
@@ -311,6 +353,9 @@ namespace WindowsFormsApplication1
             double Lp = 0;
             double Iskmedia = 0;
             double Nmision = 0;
+            double LostDrones = 0;
+            double AmmoConsumption = 0;
+            double AmmoValue = 0;
             double Tmision = Lst1.Items.Count;
             bool var1 = false;
             LstMision.Items.Clear();
@@ -324,16 +369,22 @@ namespace WindowsFormsApplication1
                  Loot = 0;
                  Lp = 0;
                  Iskmedia = 0;
+                 LostDrones = 0;
+                 AmmoConsumption = 0;
+                 AmmoValue = 0;
                 for (var e = 0; e <= Lst1.Items.Count - 1; e++)
                 {
                     if (Mision == Lst1.Items[e].SubItems[2].Text)
                     {
                         Nmision = Nmision + 1;
-                        Time = Time + Convert.ToDouble(Lst1.Items[e].SubItems[3].Text);
-                        Bounty = Bounty + Convert.ToDouble(Lst1.Items[e].SubItems[4].Text);
-                        Loot = Loot + Convert.ToDouble(Lst1.Items[e].SubItems[6].Text);
-                        Lp = Lp + Convert.ToDouble(Lst1.Items[e].SubItems[8].Text);
-                        Iskmedia = Iskmedia + Convert.ToDouble(Lst1.Items[e].SubItems[10].Text);
+                        Time += Convert.ToDouble(Lst1.Items[e].SubItems[3].Text);
+                        Bounty += Convert.ToDouble(Lst1.Items[e].SubItems[4].Text);
+                        Loot += Convert.ToDouble(Lst1.Items[e].SubItems[6].Text);
+                        Lp += Convert.ToDouble(Lst1.Items[e].SubItems[8].Text);
+                        Iskmedia += Convert.ToDouble(Lst1.Items[e].SubItems[10].Text);
+                        LostDrones += Convert.ToDouble(Lst1.Items[i].SubItems[11].Text);
+                        AmmoConsumption += Convert.ToDouble(Lst1.Items[i].SubItems[12].Text);
+                        AmmoValue += Convert.ToDouble(Lst1.Items[i].SubItems[13].Text);
                     }
                 }
 
@@ -360,6 +411,9 @@ namespace WindowsFormsApplication1
                     _with1.SubItems.Add(Strings.Format(Convert.ToDouble(Loot / Nmision), "###,###,##0"));
                     _with1.SubItems.Add(Strings.Format(Convert.ToDouble(Lp / Nmision), "###,###,##0"));
                     _with1.SubItems.Add(Strings.Format(Convert.ToDouble(Iskmedia / Nmision), "###,###,##0"));
+                    _with1.SubItems.Add(Strings.Format(Convert.ToDouble(LostDrones / Nmision), "###,###,##0"));
+                    _with1.SubItems.Add(Strings.Format(Convert.ToDouble(AmmoConsumption / Nmision), "###,###,##0"));
+                    _with1.SubItems.Add(Strings.Format(Convert.ToDouble(AmmoValue / Nmision), "###,###,##0"));
                     LstMision.Items.Add(item1);
                     var1 = true;
                 }
@@ -484,6 +538,12 @@ namespace WindowsFormsApplication1
             LBNmision.Text = "";
             LBGanacia.Text = "";
             lbmediatotal.Text = "";
+            lblDayAmmoConsu.Text = "";
+            lblDayAmmoValue.Text = "";
+            lblDaylostDrones.Text = "";
+            lblMonthAmmoConsu.Text = "";
+            lblMonthAmmovalue.Text = "";
+            lblMonthLostDrones.Text = "";
             return true;
         }
 
@@ -534,7 +594,15 @@ namespace WindowsFormsApplication1
                     break;
                 case 10:
                     oCompare.CompararPor = ListViewColumnSort.TipoCompare.Numero;
-
+                    break;
+                case 11:
+                    oCompare.CompararPor = ListViewColumnSort.TipoCompare.Numero;
+                    break;
+                case 12:
+                    oCompare.CompararPor = ListViewColumnSort.TipoCompare.Numero;
+                    break;
+                case 13:
+                    oCompare.CompararPor = ListViewColumnSort.TipoCompare.Numero;
                     break;
             }
 
@@ -578,12 +646,21 @@ namespace WindowsFormsApplication1
                     break;
                 case 7:
                     oCompare.CompararPor = ListViewColumnSort.TipoCompare.Numero;
-
+                    break;
+                case 8:
+                    oCompare.CompararPor = ListViewColumnSort.TipoCompare.Numero;
+                    break;
+                case 9:
+                    oCompare.CompararPor = ListViewColumnSort.TipoCompare.Numero;
+                    break;
+                case 10:
+                    oCompare.CompararPor = ListViewColumnSort.TipoCompare.Numero;
                     break;
 
             }
             LstMision.ListViewItemSorter = oCompare;
 
         }
+
     }
 }

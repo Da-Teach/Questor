@@ -2,6 +2,12 @@
 <settings>
   <!-- Auto start when Questor is loaded -->
   <autoStart>true</autoStart>
+  
+  <!-- Save Log Console -->
+  <saveLog>true</saveLog>
+   
+   <!-- Maximum number of lines in the external console -->
+  <maxLineConsole>1000</maxLineConsole>
 
   <!-- Random delay between missions -->
   <randomDelay>60</randomDelay>
@@ -29,6 +35,9 @@
 
   <!-- Y Position of Questor Window -->
   <windowYPosition>1050</windowYPosition>
+
+  <!-- Create Bookmark to the output line from the station to more than 500km -->
+  <bookmarkWarpOut></bookmarkWarpOut>
 
   <!-- The agent that you are running missions for -->
   <agentName></agentName>

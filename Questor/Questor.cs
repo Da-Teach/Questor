@@ -42,6 +42,7 @@ namespace Questor
         private DateTime _lastAction;
         private Random _random;
         private int _randomDelay;
+        private bool ExitSta = false;
 
         private double _lastX;
         private double _lastY;
@@ -98,6 +99,8 @@ namespace Questor
         public double LootValue { get; set; }
         public int LoyaltyPoints { get; set; }
         public int LostDrones { get; set; }
+        public double AmmoValue { get; set; }
+        public double AmmoConsumption { get; set; }
 
    
         public void SettingsLoaded(object sender, EventArgs e)
@@ -230,6 +233,7 @@ namespace Questor
             {
                 watch.Reset();
                 watch.Start();
+                if (ExitSta == false)
                 _defense.ProcessState();
                 watch.Stop();
 
@@ -335,12 +339,15 @@ namespace Questor
                             File.AppendAllText(filename, "Date;Mission;Time;Isk;Loot;LP;\r\n");
 
                         // Build the line
-                        var line = DateTime.Now + ";";
+                        var line = string.Format("{0:dd/MM/yyyy HH:mm:ss}", DateTime.Now) + ";";
                         line += Mission + ";";
                         line += ((int)DateTime.Now.Subtract(Started).TotalMinutes) + ";";
                         line += ((int)(Cache.Instance.DirectEve.Me.Wealth - Wealth)) + ";";
                         line += ((int)LootValue) + ";";
-                        line += (Cache.Instance.Agent.LoyaltyPoints - LoyaltyPoints) + ";\r\n";
+                        line += (Cache.Instance.Agent.LoyaltyPoints - LoyaltyPoints) + ";";
+                        line += ((int)LostDrones) + ";";
+                        line += ((int)AmmoConsumption) + ";";
+                        line += ((int)AmmoValue) + ";\r\n";
 
                         // The mission is finished
                         File.AppendAllText(filename, line);
@@ -415,6 +422,8 @@ namespace Questor
                         Started = DateTime.Now;
                         Mission = string.Empty;
                         LostDrones = 0;
+                        AmmoConsumption = 0;
+                        AmmoValue = 0;
                     }
 
                     _agentInteraction.ProcessState();
@@ -456,9 +465,44 @@ namespace Questor
                     if (_arm.State == ArmState.Done)
                     {
                         _arm.State = ArmState.Idle;
-                        State = QuestorState.GotoMission;
+                        State = QuestorState.WarpOutStation;
                     }
                     break;
+
+                case QuestorState.WarpOutStation:
+
+                    var _bookmark = Cache.Instance.BookmarksByLabel(Settings.Instance.bookmarkWarpOut ?? "").OrderBy(b => b.CreatedOn).FirstOrDefault();
+                    var _solarid = Cache.Instance.DirectEve.Session.SolarSystemId ?? -1;
+                    if (_bookmark == null)
+                    {
+                        Logging.Log("WarpOut: No Bookmark");
+                        State = QuestorState.GotoMission;
+                    }
+                    else if (_bookmark.LocationId == _solarid)
+                    {
+                        if (_traveler.Destination == null)
+                        {
+                            Logging.Log("WarpOut: Warp at " + _bookmark.Title);
+                            _traveler.Destination = new BookmarkDestination(_bookmark);
+                            ExitSta = true;
+                        }
+
+                        _traveler.ProcessState();
+                        if (_traveler.State == TravelerState.AtDestination)
+                        {
+
+                            Logging.Log("WarpOut: Safe!");
+                            ExitSta = false;
+                            State = QuestorState.GotoMission;
+                            _traveler.Destination = null;
+                        }
+                    }
+                    else
+                    {
+                        Logging.Log("WarpOut: No Bookmark in System");
+                         State = QuestorState.GotoMission;                   
+                    }
+                     break;
 
                 case QuestorState.GotoMission:
                     var missionDestination = _traveler.Destination as MissionBookmarkDestination;
@@ -602,32 +646,59 @@ namespace Questor
                     {
                         // Lost drone statistics
                         // (inelegantly located here so as to avoid the necessity to switch to a combat ship after salvaging)
-                        var droneBay = Cache.Instance.DirectEve.GetShipsDroneBay();
-                        if (droneBay.Window == null)
+                        if (Settings.Instance.UseDrones)
                         {
-                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenDroneBayOfActiveShip);
-                            break;
+                            var droneBay = Cache.Instance.DirectEve.GetShipsDroneBay();
+                            if (droneBay.Window == null)
+                            {
+                                Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenDroneBayOfActiveShip);
+                                break;
+                            }
+                            if (!droneBay.IsReady)
+                                break;
+                            if (Cache.Instance.InvTypesById.ContainsKey(Settings.Instance.DroneTypeId))
+                            {
+                                var drone = Cache.Instance.InvTypesById[Settings.Instance.DroneTypeId];
+                                LostDrones = (int)Math.Floor((droneBay.Capacity - droneBay.UsedCapacity) / drone.Volume);
+                                Logging.Log("DroneStats: Logging the number of lost drones: " + LostDrones.ToString());
+                                var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                                var dronelogfilename = Path.Combine(path, Cache.Instance.FilterPath(CharacterName) + ".dronestats.log");
+                                if (!File.Exists(dronelogfilename))
+                                    File.AppendAllText(dronelogfilename, "Mission;Number of lost drones\r\n");
+                                var droneline = Mission + ";";
+                                droneline += ((int)LostDrones) + ";\r\n";
+                                File.AppendAllText(dronelogfilename, droneline);
+                            }
+                            else
+                            {
+                                Logging.Log("DroneStats: Couldn't find the drone TypeID specified in the settings.xml; this shouldn't happen!");
+                            }
                         }
-                        if (!droneBay.IsReady)
-                            break;
-                        if (Cache.Instance.InvTypesById.ContainsKey(Settings.Instance.DroneTypeId))
-                        {
-                            var drone = Cache.Instance.InvTypesById[Settings.Instance.DroneTypeId];
-                            LostDrones = (int)Math.Floor((droneBay.Capacity - droneBay.UsedCapacity) / drone.Volume);
-                            Logging.Log("DroneStats: Logging the number of lost drones: " + LostDrones.ToString());
-                            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                            var dronelogfilename = Path.Combine(path, Cache.Instance.FilterPath(CharacterName) + ".dronestats.log");
-                            if (!File.Exists(dronelogfilename))
-                                File.AppendAllText(dronelogfilename, "Mission;Number of lost drones\r\n");
-                            var droneline = Mission + ";";
-                            droneline += ((int)LostDrones) + ";\r\n";
-                            File.AppendAllText(dronelogfilename, droneline);
-                        }
-                        else
-                        {
-                            Logging.Log("DroneStats: Couldn't find the drone TypeID specified in the settings.xml; this shouldn't happen!");
-                        }                   
                         // Lost drone statistics stuff ends here
+
+
+                        // Ammo Consumption statistics
+                        // Is cargo open?
+                        var cargoship = Cache.Instance.DirectEve.GetShipsCargo();
+                        if (cargoship.Window == null)
+                        {
+                            // No, command it to open
+                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenCargoHoldOfActiveShip);
+                            break;
+                        }
+
+                        if (!cargoship.IsReady)
+                            break;
+
+                        var correctAmmo1 = Settings.Instance.Ammo.Where(a => a.DamageType == Cache.Instance.DamageType);
+                        var AmmoCargo = cargoship.Items.Where(i => correctAmmo1.Any(a => a.TypeId == i.TypeId));
+                        foreach (var item in AmmoCargo)
+                        {
+                            var Ammo1 = Settings.Instance.Ammo.Where(a => a.TypeId == item.TypeId).FirstOrDefault();
+                            var AmmoType = Cache.Instance.InvTypesById[item.TypeId];
+                            AmmoConsumption = (Ammo1.Quantity - item.Quantity);
+                            AmmoValue = (AmmoType.MedianBuy ?? 0) * AmmoConsumption;
+                        }
 
                         Logging.Log("AgentInteraction: Start Conversation [Complete Mission]");
 
