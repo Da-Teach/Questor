@@ -2,6 +2,12 @@
 <settings>
   <!-- Auto start when Questor is loaded -->
   <autoStart>true</autoStart>
+  
+  <!-- Save Log Console -->
+  <saveLog>true</saveLog>
+   
+   <!-- Maximum number of lines in the external console -->
+  <maxLineConsole>1000</maxLineConsole>
 
   <!-- Random delay between missions -->
   <randomDelay>60</randomDelay>
@@ -30,8 +36,36 @@
   <!-- Y Position of Questor Window -->
   <windowYPosition>1050</windowYPosition>
 
+  <!-- Create Bookmark to the output line from the station to more than 500km -->
+  <bookmarkWarpOut></bookmarkWarpOut>
+
   <!-- The agent that you are running missions for -->
   <agentName></agentName>
+
+  <!-- List of factions which the bot will try to avoid -->
+  <factionblacklist>
+    <faction>Caldari State</faction>
+    <faction>Minmatar Republic</faction>
+    <faction>Amarr Empire</faction>
+    <faction>Gallente Federation</faction>
+    <faction>CONCORD Assembly</faction>
+    <faction>Ammatar Mandate</faction>
+    <faction>Khanid Kingdom</faction>
+    <faction>Mordu's Legion Command</faction>
+    <faction>Thukker Tribe</faction>
+  </factionblacklist>
+  
+  <!-- List of Faction fittings -->
+  <factionfittings>
+    <factionfitting faction="Default" fitting="Default" />
+  </factionfittings>
+
+
+  <!-- Wait for mission decline timer to expire before declining again -->
+  <waitDecline>true</waitDecline>
+
+  <!-- Minimum standings to decline missions while the decline timer is active -->
+  <minStandings>4.50</minStandings>
 
   <!-- List of missions which the bot will always decline -->
   <blacklist>
@@ -52,6 +86,9 @@
 
   <!-- Ship used for after mission salvaging, empty means current ship -->
   <salvageShipName></salvageShipName>
+
+  <!-- Ship used for courier missions, empty means current ship NOT IMPLIMENTED -->
+  <haulerShipName></haulerShipName>
 
   <!-- Create salvage bookmarks once a pocket has been cleared and there are wrecks/cans left
        Note: All salvage bookmarks will be in this naming format:  BookmarkPrefix [time]

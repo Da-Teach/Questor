@@ -308,6 +308,17 @@ namespace Questor.Modules
             }
         }
 
+        public int Health
+        {
+            get
+            {
+                if (_directEntity != null)
+                    return (int)((_directEntity.ShieldPct + _directEntity.ArmorPct + _directEntity.StructurePct) * 100);
+
+                return 0;
+            }
+        }
+
         public bool IsSentry
         {
             get
@@ -558,6 +569,12 @@ namespace Questor.Modules
         {
             if (_directEntity != null)
                 _directEntity.WarpTo();
+        }
+
+        public void AlignTo()
+        {
+            if (_directEntity != null)
+                _directEntity.AlignTo();
         }
 
         public void WarpToAndDock()

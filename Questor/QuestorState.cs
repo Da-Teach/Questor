@@ -15,6 +15,7 @@ namespace Questor
         DelayedStart,
         Start,
         Arm,
+        WarpOutStation,
         GotoMission,
         ExecuteMission,
         DelayedGotoBase,
@@ -23,11 +24,14 @@ namespace Questor
         UnloadLoot,
         BeginAfterMissionSalvaging,
         GotoSalvageBookmark,
+        SalvageUseGate,
+        SalvageNextPocket,
         Salvage,
         Error,
         Panic,
         StorylinePanic,
         CombatHelper,
+		Traveler,
         Storyline
     }
 }
