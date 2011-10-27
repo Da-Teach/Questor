@@ -409,6 +409,11 @@ namespace Questor.Modules
                     }
 
                     var itemMoved = false;
+                    if (Cache.Instance.missionAmmo.Count() != 0)
+                    {
+                        AmmoToLoad = new List<Ammo>(Cache.Instance.missionAmmo);
+
+                    }
                     foreach (var item in ammoHangar.Items.OrderBy(i => i.Quantity))
                     {
                         if (item.ItemId <= 0)
@@ -426,8 +431,10 @@ namespace Questor.Modules
 
                         ammo.Quantity -= moveQuantity;
                         if (ammo.Quantity <= 0)
+                        {
+                            Cache.Instance.missionAmmo.RemoveAll(a => a.TypeId == item.TypeId);
                             AmmoToLoad.RemoveAll(a => a.TypeId == item.TypeId);
-
+                        }
                         itemMoved = true;
                         break;
                     }

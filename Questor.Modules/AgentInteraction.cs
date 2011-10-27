@@ -243,12 +243,19 @@ namespace Questor.Modules
             var loadedAmmo = false;
 
             var missionXmlPath = Path.Combine(Settings.Instance.MissionsPath, missionName + ".xml");
+            Cache.Instance.missionAmmo = new List<Ammo>();
             if (File.Exists(missionXmlPath))
             {
                 Logging.Log("AgentInteraction: Loading mission xml [" + missionName + "]");
                 try
                 {
                     var missionXml = XDocument.Load(missionXmlPath);
+                    //load mission specific ammo and weapongroupid if specified in the mission xml
+                    var ammoTypes = missionXml.Root.Element("missionammo");
+                    if (ammoTypes != null)
+                        foreach (var ammo in ammoTypes.Elements("ammo"))
+                            Cache.Instance.missionAmmo.Add(new Ammo(ammo));
+                    Cache.Instance.MissionWeaponGroupId = (int?)missionXml.Root.Element("weaponGroupId") ?? 0;
                     var damageTypes = missionXml.XPathSelectElements("//damagetype").Select(e => (DamageType) Enum.Parse(typeof (DamageType), (string) e, true));
                     if (damageTypes.Any())
                     {
