@@ -27,7 +27,8 @@ namespace Questor.Modules
         private List<Action> _pocketActions;
         private bool _waiting;
         private DateTime _waitingSince;
-
+        private DateTime _lastAlign;
+    
         public long AgentId { get; set; }
 
         public MissionController()
@@ -139,13 +140,26 @@ namespace Questor.Modules
                 State = MissionControllerState.NextPocket;
                 _lastActivateAction = DateTime.Now;
             }
-            else
+            else if (closest.Distance < 150000)
             {
                 // Move to the target
                 if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
                 {
                     Logging.Log("MissionController.Activate: Approaching target [" + closest.Name + "][" + closest.Id + "]");
                     closest.Approach();
+                }
+            }
+            else
+            {
+                // We cant warp if we have drones out
+                if (Cache.Instance.ActiveDrones.Count() > 0)
+                    return;
+                    
+                if (DateTime.Now.Subtract(_lastAlign ).TotalMinutes > 2)
+                {
+                // Probably never happens
+                closest.AlignTo();
+                _lastAlign = DateTime.Now;
                 }
             }
         }
@@ -204,9 +218,9 @@ namespace Questor.Modules
                     Logging.Log("MissionController.ClearPocket: Approaching target [" + target.Name + "][" + target.Id + "]");
 
                     if (Settings.Instance.SpeedTank)
-                        target.Orbit(Settings.Instance.OrbitDistance);
+                        target.Orbit(Cache.Instance.OrbitDistance);
                     else
-                        target.Approach((int) (Cache.Instance.WeaponRange*0.8d));
+                        target.Approach((int)(Cache.Instance.OrbitDistance));
                 }
 
                 return;
@@ -255,13 +269,26 @@ namespace Questor.Modules
                     Cache.Instance.Approaching = null;
                 }
             }
-            else
+            else if (closest.Distance < 150000)
             {
                 // Move to the target
                 if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
                 {
                     Logging.Log("MissionController.MoveTo: Approaching target [" + closest.Name + "][" + closest.Id + "]");
                     closest.Approach();
+                }
+            }
+            else
+            {
+                // We cant warp if we have drones out
+                if (Cache.Instance.ActiveDrones.Count() > 0)
+                    return;
+
+                if (DateTime.Now.Subtract(_lastAlign ).TotalMinutes > 2)
+                {
+                // Probably never happens
+                closest.AlignTo();
+                _lastAlign = DateTime.Now;
                 }
             }
         }
@@ -378,7 +405,7 @@ namespace Questor.Modules
                     Logging.Log("MissionController.Kill: Approaching target [" + closest.Name + "][" + closest.Id + "]");
 
                     if (Settings.Instance.SpeedTank)
-                        closest.Orbit(Settings.Instance.OrbitDistance);
+                        closest.Orbit(Cache.Instance.OrbitDistance);
                     else
                         closest.Approach((int) (Cache.Instance.WeaponRange*0.8d));
                 }
@@ -603,7 +630,10 @@ namespace Questor.Modules
                     Logging.Log("MissionController: Pocket loaded, executing the following actions");
                     foreach (var a in _pocketActions)
                         Logging.Log("MissionController: Action." + a);
-
+					
+					if (Cache.Instance.OrbitDistance != Settings.Instance.OrbitDistance)
+						Logging.Log("MissionController: Using custom orbit distance: " + Cache.Instance.OrbitDistance);
+						
                     // Reset pocket information
                     _currentAction = 0;
                     Cache.Instance.IsMissionPocketDone = false;

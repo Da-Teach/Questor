@@ -1,5 +1,5 @@
 ﻿// ------------------------------------------------------------------------------
-//   <copyright from='2010' to='2015' company='THEHACKERWITHIN.COM'>
+//   <copyright from='2010' to='2015' company='THEHACKERWITHIN.COM'> 
 //     Copyright (c) TheHackerWithin.COM. All Rights Reserved.
 // 
 //     Please look in the accompanying license.htm file for the license that 
@@ -28,16 +28,29 @@ namespace Questor.Modules
         public Settings()
         {
             Ammo = new List<Ammo>();
+            FactionFitting = new List<FactionFitting>();
+            MissionFitting = new List<MissionFitting>();
             Blacklist = new List<string>();
+			FactionBlacklist = new List<string>();
+            FittingsDefined = false;
+            DefaultFitting = new FactionFitting();
         }
 
         public bool DebugStates { get; set; }
         public bool DebugPerformance { get; set; }
 
         public bool AutoStart { get; set; }
+
+
+		public bool waitDecline { get; set; }
+
         public bool Disable3D { get; set; }
+
         public int MinimumDelay { get; set; }
+
         public int RandomDelay { get; set; }
+		public float minStandings { get; set; }
+        public bool UseGatesInSalvage { get; set; }
 
         public int BattleshipInvasionLimit { get; set; }
         public int BattlecruiserInvasionLimit { get; set; }
@@ -68,6 +81,10 @@ namespace Questor.Modules
         public int MaximumLowValueTargets { get; set; }
 
         public List<Ammo> Ammo { get; private set; }
+        public List<FactionFitting> FactionFitting { get; private set; }
+        public List<MissionFitting> MissionFitting { get; private set; }
+        public bool FittingsDefined { get; set; }
+        public FactionFitting DefaultFitting { get; set; }
 
         public int MinimumAmmoCharges { get; set; }
 
@@ -79,6 +96,7 @@ namespace Questor.Modules
 
         public bool SpeedTank { get; set; }
         public int OrbitDistance { get; set; }
+        public int NosDistance { get; set; }
         public int MinimumPropulsionModuleDistance { get; set; }
         public int MinimumPropulsionModuleCapacitor { get; set; }
 
@@ -94,7 +112,21 @@ namespace Questor.Modules
 
         public bool LootEverything { get; set; }
 
-        public bool UseDrones { get; set; }
+        private bool _UseDrones;
+
+        public bool UseDrones
+        {
+            get
+            {
+                if (Cache.Instance.MissionUseDrones != null)
+                    return (bool)Cache.Instance.MissionUseDrones;
+                else return _UseDrones;
+            }
+            set
+            {
+                _UseDrones = value;
+            }
+        }
         public int DroneTypeId { get; set; }
         public int DroneControlRange { get; set; }
         public int DroneMinimumShieldPct { get; set; }
@@ -108,6 +140,7 @@ namespace Questor.Modules
         public int LongRangeDroneRecallCapacitorPct { get; set; }
 
         public List<string> Blacklist { get; private set; }
+        public List<string> FactionBlacklist { get; private set; }
 
         public int? WindowXPosition { get; set; }
         public int? WindowYPosition { get; set; }
@@ -134,9 +167,20 @@ namespace Questor.Modules
                 AgentName = string.Empty;
 
                 AutoStart = false;
+
+				waitDecline = false;
+
                 Disable3D = false;
+
                 RandomDelay = 0;
+
+			    minStandings = 10;
+
                 MinimumDelay = 0;
+
+                MinimumDelay = 0;
+				minStandings = 10;
+
 
                 WindowXPosition = null;
                 WindowYPosition = null;
@@ -150,6 +194,8 @@ namespace Questor.Modules
                 MaximumLowValueTargets = 0;
 
                 Ammo.Clear();
+                FactionFitting.Clear();
+                MissionFitting.Clear();
 
                 MinimumAmmoCharges = 0;
 
@@ -161,6 +207,7 @@ namespace Questor.Modules
 
                 SpeedTank = false;
                 OrbitDistance = 0;
+                NosDistance = 38000;
                 MinimumPropulsionModuleDistance = 0;
                 MinimumPropulsionModuleCapacitor = 0;
 
@@ -183,7 +230,11 @@ namespace Questor.Modules
                 DroneRecallCapacitorPct = 0;
                 LongRangeDroneRecallCapacitorPct = 0;
 
+                UseGatesInSalvage = false;
+
                 Blacklist.Clear();
+				FactionBlacklist.Clear();
+
                 return;
             }
 
@@ -193,9 +244,16 @@ namespace Questor.Modules
             DebugPerformance = (bool?) xml.Element("debugPerformance") ?? false;
 
             AutoStart = (bool?) xml.Element("autoStart") ?? false;
+
+            waitDecline = (bool?) xml.Element("waitDecline") ?? false;
+
             Disable3D = (bool?) xml.Element("disable3D") ?? false;
+
             RandomDelay = (int?) xml.Element("randomDelay") ?? 0;
             MinimumDelay = (int?)xml.Element("minimumDelay") ?? 0;
+			minStandings = (float?) xml.Element("minStandings") ?? 10;
+
+            UseGatesInSalvage = (bool?)xml.Element("useGatesInSalvage") ?? false;
 
             BattleshipInvasionLimit = (int?)xml.Element("battleshipInvasionLimit") ?? 0;
             BattlecruiserInvasionLimit = (int?)xml.Element("battlecruiserInvasionLimit") ?? 0;
@@ -237,6 +295,32 @@ namespace Questor.Modules
 
             MinimumAmmoCharges = (int?) xml.Element("minimumAmmoCharges") ?? 0;
 
+            FactionFitting.Clear();
+            var factionFittings = xml.Element("factionfittings");
+            if (factionFittings != null)
+            {
+                foreach (var factionfitting in factionFittings.Elements("factionfitting"))
+                    FactionFitting.Add(new FactionFitting(factionfitting));
+                if (FactionFitting.Exists(m => m.Faction.ToLower() == "default"))
+                {
+                    DefaultFitting = FactionFitting.Find(m => m.Faction.ToLower() == "default");
+                    if (!(DefaultFitting.Fitting == "") && !(DefaultFitting.Fitting == null))
+                        FittingsDefined = true;
+                    else
+                        Logging.Log("Settings: Error! No default fitting specified or fitting is incorrect.  Fitting manager will not be used.");
+                }
+                else
+                    Logging.Log("Settings: Error! No default fitting specified or fitting is incorrect.  Fitting manager will not be used.");
+            }
+            else
+                Logging.Log("Settings: No faction fittings specified.  Fitting manager will not be used.");
+
+            MissionFitting.Clear();
+            var missionFittings = xml.Element("missionfittings");
+            if (missionFittings != null)
+                foreach (var missionfitting in missionFittings.Elements("missionfitting"))
+                    MissionFitting.Add(new MissionFitting(missionfitting));
+
             WeaponGroupId = (int?) xml.Element("weaponGroupId") ?? 0;
 
             ReserveCargoCapacity = (int?) xml.Element("reserveCargoCapacity") ?? 0;
@@ -245,6 +329,7 @@ namespace Questor.Modules
 
             SpeedTank = (bool?) xml.Element("speedTank") ?? false;
             OrbitDistance = (int?) xml.Element("orbitDistance") ?? 0;
+            NosDistance = (int?)xml.Element("NosDistance") ?? 38000;
             MinimumPropulsionModuleDistance = (int?) xml.Element("minimumPropulsionModuleDistance") ?? 5000;
             MinimumPropulsionModuleCapacitor = (int?)xml.Element("minimumPropulsionModuleCapacitor") ?? 0;
 
@@ -278,6 +363,12 @@ namespace Questor.Modules
             if (blacklist != null)
                 foreach (var mission in blacklist.Elements("mission"))
                     Blacklist.Add((string) mission);
+
+            FactionBlacklist.Clear();
+            var factionblacklist = xml.Element("factionblacklist");
+            if (factionblacklist != null)
+                foreach (var faction in factionblacklist.Elements("faction"))
+                    FactionBlacklist.Add((string) faction);
 
             if (SettingsLoaded != null)
                 SettingsLoaded(this, new EventArgs());

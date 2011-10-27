@@ -228,7 +228,7 @@ namespace Questor.Modules
         {
             // Enable speed tank
             if (Cache.Instance.Approaching == null && Settings.Instance.SpeedTank)
-                target.Orbit(Settings.Instance.OrbitDistance);
+                target.Orbit(Cache.Instance.OrbitDistance);
 
             // Get the weapons
             var weapons = Cache.Instance.Weapons;
@@ -321,8 +321,49 @@ namespace Questor.Modules
             }
         }
 
+
         /// <summary>
-        ///   Activate target painters
+        ///   Activate Nos
+        /// </summary>
+        public void ActivateNos(EntityCache target)
+        {
+            var noses = Cache.Instance.Modules.Where(m => m.GroupId == (int)Group.nos).ToList();
+            //Logging.Log("Combat: we have " + noses.Count.ToString() + " Nos modules");
+            // Find the first active weapon
+            // Assist this weapon
+            foreach (var nos in noses)
+            {
+                // Are we on the right target?
+                if (nos.IsActive)
+                {
+                    if (nos.TargetId != target.Id)
+                        nos.Deactivate();
+
+                    continue;
+                }
+
+                // Are we deactivating?
+                if (nos.IsDeactivating)
+                    continue;
+                //Logging.Log("Combat: Distances Target[ " + target.Distance + " Optimal[" + nos.OptimalRange.ToString()+"]");
+                // Target is out of Nos range
+                if (target.Distance >= Settings.Instance.NosDistance)
+                    continue;
+
+                if (CanActivate(nos, target, false))
+                {
+                    Logging.Log("Combat: Nos  [" + nos.ItemId + "] on [" + target.Name + "][" + target.Id + "]");
+                    nos.Activate(target.Id);
+                }
+                else
+                {
+                    Logging.Log("Combat: Cannot Activate Nos [" + nos.ItemId + "] on [" + target.Name + "][" + target.Id + "]");
+                }
+            }
+        }
+
+        /// <summary>
+        ///   Activate StasisWeb
         /// </summary>
         public void ActivateStasisWeb(EntityCache target)
         {
@@ -524,6 +565,7 @@ namespace Questor.Modules
                         ActivateWeapons(target);
                         ActivateTargetPainters(target);
                         ActivateStasisWeb(target);
+                        ActivateNos(target);
                     }
                     break;
 
