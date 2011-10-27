@@ -256,6 +256,7 @@ namespace Questor.Modules
                         foreach (var ammo in ammoTypes.Elements("ammo"))
                             Cache.Instance.missionAmmo.Add(new Ammo(ammo));
                     Cache.Instance.MissionWeaponGroupId = (int?)missionXml.Root.Element("weaponGroupId") ?? 0;
+                    Cache.Instance.MissionUseDrones = (bool?)missionXml.Root.Element("useDrones");
                     var damageTypes = missionXml.XPathSelectElements("//damagetype").Select(e => (DamageType) Enum.Parse(typeof (DamageType), (string) e, true));
                     if (damageTypes.Any())
                     {
