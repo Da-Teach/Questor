@@ -19,6 +19,7 @@ namespace Questor.Modules
         private DateTime? _clearPocketTimeout;
         private int _currentAction;
         private DateTime _lastActivateAction;
+        private readonly Dictionary<long, DateTime> _lastWeaponReload = new Dictionary<long, DateTime>();
         private double _lastX;
         private double _lastY;
         private double _lastZ;
@@ -35,6 +36,44 @@ namespace Questor.Modules
         }
 
         public MissionControllerState State { get; set; }
+
+        private void ReloadAll()
+        {
+            var weapons = Cache.Instance.Weapons;
+            var cargo = Cache.Instance.DirectEve.GetShipsCargo();
+            var correctAmmo1 = Settings.Instance.Ammo.Where(a => a.DamageType == Cache.Instance.DamageType);
+            correctAmmo1 = correctAmmo1.Where(a => cargo.Items.Any(i => i.TypeId == a.TypeId));
+
+            if (correctAmmo1.Count() == 0)
+                return;
+
+            var ammo = correctAmmo1.Where(a => a.Range > 1).OrderBy(a => a.Range).FirstOrDefault();
+            var charge = cargo.Items.FirstOrDefault(i => i.TypeId == ammo.TypeId);
+
+            if (ammo == null)
+                return;
+
+            foreach (var weapon in weapons)
+            {
+
+                if (weapon.CurrentCharges >= weapon.MaxCharges)
+                    return;
+
+                if (_lastWeaponReload.ContainsKey(weapon.ItemId) && DateTime.Now < _lastWeaponReload[weapon.ItemId].AddSeconds(22))
+                    return;
+
+                _lastWeaponReload[weapon.ItemId] = DateTime.Now;
+
+                if (weapon.Charge.TypeId == charge.TypeId)
+                {
+                    Logging.Log("MissionController: Reloading All [" + weapon.ItemId + "] with [" + charge.TypeName + "][" + charge.TypeId + "]");
+
+                    weapon.ReloadAmmo(charge);
+                }
+
+            }
+            return;
+        }
 
         private void BookmarkPocketForSalvaging()
         {
@@ -90,7 +129,8 @@ namespace Questor.Modules
                 if (Settings.Instance.CreateSalvageBookmarks)
                     BookmarkPocketForSalvaging();
 
-                // Activate it and move to the next Pocket
+                // Reload weapons and activate gate to move to the next pocket
+                ReloadAll();
                 closest.Activate();
 
                 // Do not change actions, if NextPocket gets a timeout (>2 mins) then it reverts to the last action
@@ -469,6 +509,9 @@ namespace Questor.Modules
                     // Add bookmark (before we're done)
                     if (Settings.Instance.CreateSalvageBookmarks)
                         BookmarkPocketForSalvaging();
+
+                    // Reload weapons
+                    ReloadAll();
 
                     State = MissionControllerState.Done;
                     break;
