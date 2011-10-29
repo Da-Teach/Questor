@@ -126,6 +126,8 @@ namespace Questor.Modules
             ChangeMissionShipFittings = false;
             UseMissionShip = false;
             ArmLoadedCache = false;
+            missionAmmo = new List<Ammo>();
+            MissionUseDrones = null;
 
         }
 
@@ -246,7 +248,12 @@ namespace Questor.Modules
 
         public IEnumerable<ModuleCache> Weapons
         {
-            get { return Modules.Where(m => m.GroupId == Settings.Instance.WeaponGroupId); }
+            get
+            { 
+                if(Cache.Instance.MissionWeaponGroupId != 0)
+                    return Modules.Where(m => m.GroupId == Cache.Instance.MissionWeaponGroupId); 
+                else return Modules.Where(m => m.GroupId == Settings.Instance.WeaponGroupId); 
+            }
         }
 
         public IEnumerable<EntityCache> Containers
@@ -451,6 +458,9 @@ namespace Questor.Modules
         public bool UseMissionShip { get; set; } // flags whether we're using a mission specific ship
         public bool ChangeMissionShipFittings { get; set; } // used for situations in which missionShip's specified, but no faction or mission fittings are; prevents default
                                                             // fitting from being loaded in arm.cs
+        public List<Ammo> missionAmmo;
+        public int MissionWeaponGroupId = 0;
+        public bool? MissionUseDrones;
         public bool StopTimeSpecified { get; set; }
         public DateTime StopTime { get; set; }
 

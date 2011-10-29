@@ -112,7 +112,21 @@ namespace Questor.Modules
 
         public bool LootEverything { get; set; }
 
-        public bool UseDrones { get; set; }
+        private bool _UseDrones;
+
+        public bool UseDrones
+        {
+            get
+            {
+                if (Cache.Instance.MissionUseDrones != null)
+                    return (bool)Cache.Instance.MissionUseDrones;
+                else return _UseDrones;
+            }
+            set
+            {
+                _UseDrones = value;
+            }
+        }
         public int DroneTypeId { get; set; }
         public int DroneControlRange { get; set; }
         public int DroneMinimumShieldPct { get; set; }
