@@ -258,6 +258,13 @@ namespace Questor.Modules
                     continue;
 
                 var ammo = Settings.Instance.Ammo.FirstOrDefault(a => a.TypeId == weapon.Charge.TypeId);
+
+                //use mission specific ammo
+                if (Cache.Instance.missionAmmo.Count() != 0)
+                {
+                    ammo = Cache.Instance.missionAmmo.FirstOrDefault(a => a.TypeId == weapon.Charge.TypeId);
+                }
+
                 // How can this happen? Someone manually loaded ammo
                 if (ammo == null)
                     continue;
