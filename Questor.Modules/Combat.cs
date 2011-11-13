@@ -49,6 +49,12 @@ namespace Questor.Modules
                 correctAmmo = Cache.Instance.missionAmmo.Where(a => a.DamageType == Cache.Instance.DamageType);
             }
 
+            // Check if we still have that ammo in our cargo
+            correctAmmo = correctAmmo.Where(a => cargo.Items.Any(i => i.TypeId == a.TypeId && i.Quantity >= Settings.Instance.MinimumAmmoCharges));
+            if (Cache.Instance.missionAmmo.Count() != 0)
+            {
+                correctAmmo = Cache.Instance.missionAmmo;
+            }
 
             // We are out of ammo! :(
             if (correctAmmo.Count() == 0)
