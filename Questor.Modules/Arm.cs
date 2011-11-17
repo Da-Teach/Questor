@@ -13,6 +13,8 @@ namespace Questor.Modules
     using System.Collections.Generic;
     using System.Linq;
     using DirectEve;
+    using System.Xml.Linq;
+    using System.IO;
 
     public class Arm
     {
@@ -474,6 +476,28 @@ namespace Questor.Modules
                             droneBay.Window.Close();
 
                         Logging.Log("Arm: Done");
+
+                        //reload the ammo setting for combat
+                        try
+                        {
+                            var mission = Cache.Instance.DirectEve.AgentMissions.FirstOrDefault(m => m.AgentId == AgentId);
+                            if (mission == null)
+                                return;
+
+                            var missionName = Cache.Instance.FilterPath(mission.Name);
+                            var missionXmlPath = Path.Combine(Settings.Instance.MissionsPath, missionName + ".xml");
+                            var missionXml = XDocument.Load(missionXmlPath);
+                            Cache.Instance.missionAmmo = new List<Ammo>();
+                            var ammoTypes = missionXml.Root.Element("missionammo");
+                            if (ammoTypes != null)
+                                foreach (var ammo in ammoTypes.Elements("ammo"))
+                                    Cache.Instance.missionAmmo.Add(new Ammo(ammo));
+                        }
+                        catch (Exception e)
+                        {
+                            Cache.Instance.missionAmmo = new List<Ammo>();
+                        }
+
                         State = ArmState.Done;
                         break;
                     }
