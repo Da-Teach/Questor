@@ -206,6 +206,7 @@ namespace Questor
                         close |= window.Html.Contains("Please check your mission journal for further information.");
 			            // Lag :/
                         close |= window.Html.Contains("The Zbikoki's Hacker Card");
+                        close |= window.Html.Contains(" units free.");
                     }
 
                     if (close)
