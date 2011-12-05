@@ -23,11 +23,14 @@ namespace Questor
         UnloadLoot,
         BeginAfterMissionSalvaging,
         GotoSalvageBookmark,
+        SalvageUseGate,
+        SalvageNextPocket,
         Salvage,
         Error,
         Panic,
         StorylinePanic,
         CombatHelper,
+		Traveler,
         Storyline
     }
 }

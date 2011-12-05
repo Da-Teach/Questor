@@ -14,21 +14,23 @@
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>false</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;UseDirectEve</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DirectEve, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -57,6 +59,7 @@
     <Compile Include="ArmState.cs" />
     <Compile Include="Cache.cs" />
     <Compile Include="CategoryID.cs" />
+    <Compile Include="CharSchedule.cs" />
     <Compile Include="Combat.cs" />
     <Compile Include="CombatState.cs" />
     <Compile Include="DamageType.cs" />
@@ -64,6 +67,7 @@
     <Compile Include="Drones.cs" />
     <Compile Include="DroneState.cs" />
     <Compile Include="EntityCache.cs" />
+    <Compile Include="Fitting.cs" />
     <Compile Include="GroupID.cs" />
     <Compile Include="InvType.cs" />
     <Compile Include="ItemCache.cs" />
