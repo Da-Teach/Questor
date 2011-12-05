@@ -315,7 +315,7 @@ namespace Questor.Modules
 
         public bool InSpace
         {
-            get { return DirectEve.Session.IsInSpace && !DirectEve.Session.IsInStation && DirectEve.Session.IsReady; }
+            get { return DirectEve.Session.IsInSpace && !DirectEve.Session.IsInStation && DirectEve.Session.IsReady && DirectEve.ActiveShip.Entity != null; }
         }
 
         public bool InStation
@@ -383,19 +383,7 @@ namespace Questor.Modules
 
                 return _approaching != null && _approaching.IsValid ? _approaching : null;
             }
-            set
-            {
-                if (value != null)
-                {
-                    _approaching = value;
-                    //_approachingId = value.ID;
-                }
-                else
-                {
-                    _approaching = null;
-                    //_approachingId = null;
-                }
-            }
+            set { _approaching = value; }
         }
 
         public List<DirectWindow> Windows
@@ -672,7 +660,7 @@ namespace Questor.Modules
         public double DistanceFromMe(double x, double y, double z)
         {
             if (DirectEve.ActiveShip.Entity == null)
-                return 0;
+                return double.MaxValue;
 
             var curX = DirectEve.ActiveShip.Entity.X;
             var curY = DirectEve.ActiveShip.Entity.Y;

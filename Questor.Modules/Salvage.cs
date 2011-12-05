@@ -17,7 +17,7 @@ namespace Questor.Modules
     public class Salvage
     {
         public static HashSet<int> Salvagers = new HashSet<int> { 25861, 26983, 30836 };
-        public static HashSet<int> TractorBeams = new HashSet<int> { 24348, 24620, 24622, 24644 };
+        public static HashSet<int> TractorBeams = new HashSet<int> { 24348, 24620, 24622, 24644, 4250 };
 
         private DateTime _lastJettison = DateTime.MinValue;
         private DateTime _nextAction;
