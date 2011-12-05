@@ -769,7 +769,7 @@ namespace Questor.Modules
         /// <param name = "label"></param>
         public void CreateBookmark(string label)
         {
-            DirectEve.BookmarkCurrentLocation(label, "");
+            DirectEve.BookmarkCurrentLocation(label, "", null);
         }
 
         private Func<EntityCache, int> OrderByLowestHealth()
