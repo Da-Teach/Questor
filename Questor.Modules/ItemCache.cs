@@ -58,11 +58,6 @@ namespace Questor.Modules
             }
         }
 
-        public bool IsScrapMetal
-        {
-            get { return TypeId == 30497 || TypeId == 15331; }
-        }
-
         public string Name
         {
             get { return _directItem.TypeName; }
