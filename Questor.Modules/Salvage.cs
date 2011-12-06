@@ -17,7 +17,7 @@ namespace Questor.Modules
     public class Salvage
     {
         public static HashSet<int> Salvagers = new HashSet<int> { 25861, 26983, 30836 };
-        public static HashSet<int> TractorBeams = new HashSet<int> { 24348, 24620, 24622, 24644 };
+        public static HashSet<int> TractorBeams = new HashSet<int> { 24348, 24620, 24622, 24644, 4250 };
 
         private DateTime _lastJettison = DateTime.MinValue;
         private DateTime _nextAction;
@@ -224,7 +224,7 @@ namespace Questor.Modules
 
             var shipsCargo = cargo.Items.Select(i => new ItemCache(i)).ToList();
             var freeCargoCapacity = cargo.Capacity - cargo.UsedCapacity;
-            var lootWindows = Cache.Instance.DirectEve.Windows.OfType<DirectContainerWindow>().Where(w => !string.IsNullOrEmpty(w.Name) && w.Name.StartsWith("loot_"));
+            var lootWindows = Cache.Instance.DirectEve.Windows.OfType<DirectContainerWindow>().Where(w => !string.IsNullOrEmpty(w.Name) && w.Name.StartsWith("loot"));
             foreach (var window in lootWindows)
             {
                 // The window is not ready, then continue
@@ -251,27 +251,11 @@ namespace Questor.Modules
                 // Build a list of items to loot
                 var lootItems = new List<ItemCache>();
 
-                // Dump scrap metal if we have any
-                if (containerEntity.Name == "Cargo Container" && shipsCargo.Any(i => i.IsScrapMetal))
-                {
-                    foreach (var item in shipsCargo.Where(i => i.IsScrapMetal))
-                    {
-                        container.Add(item.DirectItem);
-                        freeCargoCapacity += item.TotalVolume;
-                    }
-
-                    shipsCargo.RemoveAll(i => i.IsScrapMetal);
-                }
-
                 // Walk through the list of items ordered by highest value item first
                 foreach (var item in items.OrderByDescending(i => i.IskPerM3))
                 {
                     // We never want to pick up a cap booster
                     if (item.GroupID == (int) Group.CapacitorGroupCharge)
-                        continue;
-
-                    // We never want to pick up metal scraps
-                    if (item.IsScrapMetal)
                         continue;
 
                     // We pick up loot depending on isk per m3

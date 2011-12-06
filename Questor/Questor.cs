@@ -103,7 +103,14 @@ namespace Questor
         public void SettingsLoaded(object sender, EventArgs e)
         {
             ApplySettings();
+            ValidateSettings();
 
+            AutoStart = Settings.Instance.AutoStart;
+            Disable3D = Settings.Instance.Disable3D;
+        }
+
+        public void ValidateSettings()
+        {
             ValidSettings = true;
             if (Settings.Instance.Ammo.Select(a => a.DamageType).Distinct().Count() != 4)
             {
@@ -132,11 +139,6 @@ namespace Questor
                 _missionController.AgentId = agent.AgentId;
                 _arm.AgentId = agent.AgentId;
             }
-
-            AutoStart = Settings.Instance.AutoStart;
-
-            Disable3D = Settings.Instance.Disable3D;
-
         }
 
         public void ApplySettings()
@@ -181,7 +183,14 @@ namespace Questor
 
             // Invalid settings, quit while we're ahead
             if (!ValidSettings)
+            {
+                if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 15)
+                {
+                    ValidateSettings();
+                    _lastAction = DateTime.Now;
+                }
                 return;
+            }
 
             foreach (var window in Cache.Instance.Windows)
             {
@@ -212,9 +221,10 @@ namespace Questor
                         close |= window.Html.Contains("Do you wish to proceed with this dangerous action?");
                         // Yes we know the mission isnt complete, Questor will just redo the mission
                         close |= window.Html.Contains("Please check your mission journal for further information.");
-			// Lag :/
+			            // Lag :/
                         close |= window.Html.Contains("This gate is locked!");
                         close |= window.Html.Contains("The Zbikoki's Hacker Card");
+                        close |= window.Html.Contains(" units free.");
                     }
 
                     if (close)
@@ -634,7 +644,7 @@ namespace Questor
                         Logging.Log("AgentInteraction: Start Conversation [Complete Mission]");
 
                         _agentInteraction.State = AgentInteractionState.StartConversation;
-                        _agentInteraction.Purpose = AgentInteractionPurpose.CompleteMission;                      
+                        _agentInteraction.Purpose = AgentInteractionPurpose.CompleteMission;
                     }
 
                     _agentInteraction.ProcessState();
