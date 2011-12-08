@@ -224,7 +224,7 @@ namespace Questor.Modules
 
             var shipsCargo = cargo.Items.Select(i => new ItemCache(i)).ToList();
             var freeCargoCapacity = cargo.Capacity - cargo.UsedCapacity;
-            var lootWindows = Cache.Instance.DirectEve.Windows.OfType<DirectContainerWindow>().Where(w => !string.IsNullOrEmpty(w.Name) && (w.Name.StartsWith("loot") || w.Name.StartsWith("('loot")));
+            var lootWindows = Cache.Instance.DirectEve.Windows.OfType<DirectContainerWindow>().Where(w => w.Type == "form.LootCargoView");
             foreach (var window in lootWindows)
             {
                 // The window is not ready, then continue
@@ -263,11 +263,6 @@ namespace Questor.Modules
 
                     // Never pick up contraband (unless its the mission item)
                     if (!isMissionItem && item.IsContraband)
-                        continue;
-
-                    // We never want to pick up metal scraps or cap boosters
-                    if (item.TypeId == 30497 || item.TypeId == 15331 || item.TypeId == 263 || item.TypeId == 264 || item.TypeId == 3552 || item.TypeId == 3554 
-                        || item.TypeId == 11283 || item.TypeId == 11285 || item.TypeId == 11287 || item.TypeId == 11289)
                         continue;
 
                     // Do we want to loot other items?
