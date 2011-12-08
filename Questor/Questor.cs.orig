@@ -142,8 +142,14 @@ namespace Questor
                 _missionController.AgentId = agent.AgentId;
                 _arm.AgentId = agent.AgentId;
             }
+<<<<<<< HEAD
 
+            AutoStart = Settings.Instance.AutoStart;
 
+            Disable3D = Settings.Instance.Disable3D;
+
+=======
+>>>>>>> 6e72887cdcc52ed03204bee0af02e93a49868345
         }
 
         public void ApplySettings()
@@ -226,9 +232,13 @@ namespace Questor
                         close |= window.Html.Contains("Do you wish to proceed with this dangerous action?");
                         // Yes we know the mission isnt complete, Questor will just redo the mission
                         close |= window.Html.Contains("Please check your mission journal for further information.");
+<<<<<<< HEAD
+                        close |= window.Html.Contains("This gate is locked!");
+=======
 			            // Lag :/
                         close |= window.Html.Contains("The Zbikoki's Hacker Card");
                         close |= window.Html.Contains(" units free.");
+>>>>>>> 6e72887cdcc52ed03204bee0af02e93a49868345
                     }
 
                     if (close)
