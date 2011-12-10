@@ -68,6 +68,9 @@ namespace Traveler
 
         public void OnFrame(object sender, EventArgs e)
         {
+            if (!DirectEve.Instance.Session.IsReady)
+                return;
+
             InitializeTraveler();
 
             // We are warping
