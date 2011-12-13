@@ -10,7 +10,8 @@ c:\Windows\Microsoft.NET\Framework\v3.5\msbuild .\valuedump\ValueDump.csproj
 C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild .\questorstatistics\QuestorStatistics.csproj
 C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild .\QuestorSettings\QuestorSettings.csproj
 mkdir output
-del .\output\*.* /Q
+del .\output\*.exe /Q
+del .\output\*.dll /Q
 copy .\questor\bin\debug\*.exe .\output\*.exe
 copy .\questor\bin\debug\*.dll .\output\*.dll
 copy .\gotobm\bin\debug\*.exe .\output\*.exe
