@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<mission>
+  <pockets>
+    <pocket id="0">
+      <damagetype>Thermal</damagetype>
+      <actions>
+        <action name="Ignore">
+          <parameter name="Add" value="Kruul" />
+        </action>
+        <action name="ClearPocket" />
+        <action name="Ignore">
+          <parameter name="Remove" value="Kruul" />
+        </action>
+        <action name="ClearPocket" />
+        <action name="Kill">
+          <parameter name="Target" value="Kruul's Pleasure Gardens" />
+          <parameter name="BreakOnAttackers" value="True" />
+        </action>
+        <action name="Loot">
+          <parameter name="Item" value="The Damsel" />
+          <parameter name="Target" value="Cargo Container" />
+        </action>
+        <action name="Done" />
+      </actions>
+    </pocket>
+  </pockets>
+</mission>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<missions>
+  <pockets>
+    <pocket id="0">
+      <damagetype>Thermal</damagetype>
+      <actions>
+        <action name="Activate">
+          <parameter name="Target" value="Gate to Patrol Area" />
+        </action>
+      </actions>
+    </pocket>
+    <pocket id="1">
+      <damagetype>Thermal</damagetype>
+      <actions>
+        <action name="Kill">
+          <parameter name="target" value="Mercenary Overlord" />
+          <parameter name="ignoreattackers" value="True" />
+        </action>
+	<action name="ClearPocket" />
+        <action name="Activate">
+          <parameter name="Target" value="Gate to Pirate Base" />
+        </action>
+      </actions>
+    </pocket>
+    <pocket id="2">
+      <damagetype>Thermal</damagetype>
+      <actions>
+	<action name="ClearPocket" />
+        <action name="Loot">
+          <parameter name="Item" value="Hostages" />
+          <parameter name="Target" value="Asteroid Pirate Station" />
+        </action>
+        <action name="Done" />
+      </actions>
+    </pocket>
+  </pockets>
+</missions>

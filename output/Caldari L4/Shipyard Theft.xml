@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<mission>
+  <pockets>
+    <pocket id="0">
+      <actions>
+        <action name="Activate">
+          <parameter name="target" value="Acceleration Gate" />
+        </action>
+      </actions>
+    </pocket>
+    <pocket id="1">
+      <actions>
+        <action name="ClearPocket" />
+        <action name="Activate">
+          <parameter name="target" value="Acceleration Gate" />
+        </action>
+      </actions>
+    </pocket>
+    <pocket id="2">
+      <actions>
+        <action name="ClearPocket" />
+        <action name="Kill">
+          <parameter name="target" value="Storage Silo" />
+        </action>
+        <action name="Loot">
+          <parameter name="Item" value="Small Sealed Cargo Containers" />
+          <parameter name="Target" value="Cargo Container" />
+        </action>
+        <action name="Done" />
+      </actions>
+    </pocket>
+  </pockets>
+</mission>

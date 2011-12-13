@@ -2,17 +2,21 @@
 <mission>
   <pockets>
     <pocket id="0">
+      <damagetype>Kinetic</damagetype>
       <actions>
+        <action name="ClearPocket" />
         <action name="Activate">
           <parameter name="target" value="Acceleration Gate" />
         </action>
       </actions>
     </pocket>
     <pocket id="1">
+      <damagetype>Kinetic</damagetype>
       <actions>
         <action name="ClearPocket" />
         <action name="Loot">
-          <parameter name="Item" value="Special Delivery" />
+          <parameter name="target" value="Cargo Container" />
+          <parameter name="Item" value="Confiscated Viral Agent" />
         </action>
         <action name="Done" />
       </actions>

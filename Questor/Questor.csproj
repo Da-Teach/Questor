@@ -99,19 +99,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Recon %283 of 3%29.xml" />
-    <Content Include="Factions.xml" />
-    <Content Include="Recon %282 of 3%29.xml" />
-    <Content Include="Settings.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="ShipTargetValues.xml" />
-    <Content Include="InvTypes.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Worlds Collide.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Questor.Modules\Questor.Modules.csproj">
       <Project>{0C0BE1A3-BA5B-41A1-B578-F20777D02304}</Project>
       <Name>Questor.Modules</Name>

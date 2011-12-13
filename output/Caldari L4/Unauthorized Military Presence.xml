@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<mission>
+  <pockets>
+    <pocket id="0">
+      <damagetype>Kinetic</damagetype>
+      <actions>
+        <action name="ClearPocket" />
+        <action name="Activate">
+          <parameter name="target" value="Acceleration Gate" />
+        </action>
+      </actions>
+    </pocket>
+    <pocket id="1">
+      <actions>
+        <action name="ClearPocket" />
+		<action name="Loot">
+          <parameter name="target" value="Blood Raider Personnel Transport Wreck" />
+          <parameter name="Item" value="Militants" />
+        </action>
+        <action name="Loot">
+          <parameter name="Target" value="Guristas Personnel Transport Wreck"/>
+          <parameter name="Item" value="Militants" />
+        </action>
+        <action name="Loot">
+          <parameter name="Target" value="Serpentis Personnel Transport Wreck"/>
+          <parameter name="Item" value="Militants" />
+        </action>
+		<action name="Loot">
+          <parameter name="Target" value="Angel Cartel Personnel Transport Wreck"/>
+          <parameter name="Item" value="Militants" />
+        </action>
+        <action name="Done" />
+      </actions>
+    </pocket>
+  </pockets>
+</mission>
