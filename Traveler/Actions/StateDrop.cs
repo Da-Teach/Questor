@@ -8,12 +8,14 @@ namespace Traveler.Actions
     public enum StateDrop
     {
         Idle,
-        Done,
         Begin,
         OpenItemHangar,
         OpenCargo,
         MoveItems,
         AllItems,
-        WaitForItems,
+        WaitForMove,
+        StackItemsHangar,
+        WaitForStacking,
+        Done,
     }
 }

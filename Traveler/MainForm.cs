@@ -15,6 +15,7 @@ namespace Traveler
     using System.Windows.Forms;
     using System.Xml.Linq;
     using System.IO;
+    using System.Reflection;
     using DirectEve;
     using global::Traveler.Common;
     using global::Traveler.Domains;
@@ -33,6 +34,7 @@ namespace Traveler
 
 
         private object _destination;
+        private object ExtrDestination;
         private int _jumps;
 
         private object _previousDestination;
@@ -41,33 +43,53 @@ namespace Traveler
         private List<DirectStation> _stations;
         private List<DirectBookmark> _bookmarks;
         private List<ListItems> _list { get; set; }
+        public List<ItemCache> Items { get; set; }
+        public List<ItemCache> ItemsToSell { get; set; }
+        public List<ItemCache> ItemsToRefine { get; set; }
+        public Dictionary<int, InvType> InvTypesById { get; set; }
+  
 
         private Traveler _traveler;
         private Grab _grab;
         private Drop _drop;
         private Buy _buy;
         private Sell _sell;
+        private ValueDump _valuedump;
         private ListItems item;
 
+        private DateTime _lastAction;
+
         private string SelectHangar = "Local Hangar";
+
+        string pathXML = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+        
+        
 
 
 
         public MainForm()
         {
             InitializeComponent();
-
+            
             _traveler = new Traveler();
             _grab = new Grab();
             _drop = new Drop();
             _buy = new Buy();
             _sell = new Sell();
+            _valuedump = new ValueDump(this);
             _list = new List<ListItems>();
-            
+            Items = new List<ItemCache>();
+            ItemsToSell = new List<ItemCache>();
+            ItemsToRefine = new List<ItemCache>();
 
-           
+
             var invTypes = XDocument.Load(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\InvTypes.xml");
-           
+
+            InvTypesById = new Dictionary<int, InvType>();
+            foreach (var element in invTypes.Root.Elements("invtype"))
+                 InvTypesById.Add((int)element.Attribute("id"), new InvType(element));
+
             _list.Clear();
             foreach (var element in invTypes.Root.Elements("invtype"))
             {
@@ -76,8 +98,8 @@ namespace Traveler
                 item.name = (string)element.Attribute("name");
                 _list.Add(item);
             }
-            
-            
+
+            RefreshXML();
 
             DirectEve.Instance.OnFrame += OnFrame;
         }
@@ -131,6 +153,9 @@ namespace Traveler
 
                 case State.NextAction:
 
+                     if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 3)
+                         break;
+
                      if (LstTask.Items.Count <= 0)
                      {
                          Logging.Log("Traveler: Finish");
@@ -146,6 +171,13 @@ namespace Traveler
                      {
                          _destination = LstTask.Items[0].Tag;
                          State = State.Traveler;
+                         break;
+                     }
+
+                     if ("ValueDump" == LstTask.Items[0].Text)
+                     {
+                         LblStatus.Text = LstTask.Items[0].Text + ": Item:" + LstTask.Items[0].SubItems[1].Text;
+                         State = State.ValueDump;
                          break;
                      }
 
@@ -186,6 +218,37 @@ namespace Traveler
 
                      break;
 
+                case State.ValueDump:
+
+
+                     if (chkUpdateMineral.Checked)
+                     {
+                         chkUpdateMineral.Checked = false;
+                         _valuedump.State = ValueDumpState.CheckMineralPrices;
+                     }
+                     
+
+                     if (_valuedump.State == ValueDumpState.Idle)
+                    {
+                        Logging.Log("ValueDump: Begin");
+                        _valuedump.State = ValueDumpState.Begin;
+                    }
+
+
+                     _valuedump.ProcessState();
+
+
+                     if (_valuedump.State == ValueDumpState.Done)
+                    {
+                        _valuedump.State = ValueDumpState.Idle;
+                        ProcessItems();
+                        LstTask.Items.Remove(LstTask.Items[0]);
+                        _lastAction = DateTime.Now;
+                        State = State.NextAction;
+                    } 
+
+                     break;
+
                 case State.MakeShip:
 
                     var shipHangar = DirectEve.Instance.GetShipHangar();
@@ -206,6 +269,7 @@ namespace Traveler
                             
                         ship.ActivateShip();
                         LstTask.Items.Remove(LstTask.Items[0]);
+                        _lastAction = DateTime.Now;
                         State = State.NextAction;
                         break;
                     }
@@ -216,16 +280,16 @@ namespace Traveler
 
                 case State.Buy:
 
-                     _buy.Item = Convert.ToInt32(LstTask.Items[0].Tag);
-                     _buy.Unit = Convert.ToInt32(LstTask.Items[0].SubItems[2].Text);
-                     
 
                      if (_buy.State == StateBuy.Idle)
                     {
+                        _buy.Item = Convert.ToInt32(LstTask.Items[0].Tag);
+                        _buy.Unit = Convert.ToInt32(LstTask.Items[0].SubItems[2].Text);
                         Logging.Log("Buy: Begin");
                         _buy.State = StateBuy.Begin;
                     }
 
+                     
                      _buy.ProcessState();
 
 
@@ -233,6 +297,7 @@ namespace Traveler
                     {
                         _buy.State = StateBuy.Idle;
                         LstTask.Items.Remove(LstTask.Items[0]);
+                        _lastAction = DateTime.Now;
                         State = State.NextAction;
                     } 
 
@@ -256,6 +321,7 @@ namespace Traveler
                     {
                         _sell.State = StateSell.Idle;
                         LstTask.Items.Remove(LstTask.Items[0]);
+                        _lastAction = DateTime.Now;
                         State = State.NextAction;
                     } 
                      break;
@@ -280,6 +346,7 @@ namespace Traveler
                     {
                         _drop.State = StateDrop.Idle;
                         LstTask.Items.Remove(LstTask.Items[0]);
+                        _lastAction = DateTime.Now;
                         State = State.NextAction;
                     }   
 
@@ -307,6 +374,7 @@ namespace Traveler
                      {
                          _grab.State = StateGrab.Idle;
                          LstTask.Items.Remove(LstTask.Items[0]);
+                         _lastAction = DateTime.Now;
                          State = State.NextAction;
                      }     
 
@@ -314,7 +382,7 @@ namespace Traveler
 
                 case State.Traveler:
 
-                     
+
                     // We are warping
                     if (DirectEve.Instance.Session.IsInSpace && DirectEve.Instance.ActiveShip.Entity != null && DirectEve.Instance.ActiveShip.Entity.IsWarping)
                         return;
@@ -358,6 +426,7 @@ namespace Traveler
                         _traveler.Destination = null;
                         _destination = null;
                         LstTask.Items.Remove(LstTask.Items[0]);
+                        _lastAction = DateTime.Now;
                         State = State.NextAction;
                     }
 
@@ -442,7 +511,7 @@ namespace Traveler
             try
             {
                 SearchResults.Items.Clear();
-                SearchResults.Items.AddRange(Filter(search, _bookmarks, b => b.Title, b => "Bookmark (" + ((Category) b.CategoryId) + ")"));
+                SearchResults.Items.AddRange(Filter(search, _bookmarks, b => b.Title, b => "Bookmark (" + ((Category) b.CategoryId ) + ")"));
                 SearchResults.Items.AddRange(Filter(search, _solarSystems, s => s.Name, b => "Solar System"));
                 SearchResults.Items.AddRange(Filter(search, _stations, s => s.Name, b => "Station"));
 
@@ -470,6 +539,11 @@ namespace Traveler
             {
                 BttnStart.Text = "Start";
                 State = State.Idle;
+                _buy.State = StateBuy.Idle;
+                _drop.State = StateDrop.Idle;
+                _grab.State = StateGrab.Idle;
+                _sell.State = StateSell.Idle;
+                _valuedump.State = ValueDumpState.Idle;
                 Start = false;
             }
         }
@@ -484,11 +558,16 @@ namespace Traveler
             var listItem = new ListViewItem("Traveler");
             listItem.SubItems.Add(SearchResults.SelectedItems[0].Text);
             listItem.Tag = SearchResults.SelectedItems[0].Tag;
+            listItem.SubItems.Add(" ");
+            listItem.SubItems.Add(" ");
             LstTask.Items.Add(listItem);
         }
 
         private void BttnTaskForItem_Click_1(object sender, EventArgs e)
         {
+            if (cmbMode.Text == "Select Mode")
+                return;
+
             foreach (ListViewItem item in LstItems.CheckedItems)
             {
                 var listItem = new ListViewItem(cmbMode.Text);
@@ -509,19 +588,26 @@ namespace Traveler
             selIdx = lv.SelectedItems[0].Index;
             if (moveUp)
             {
+                
                 // ignore moveup of row(0)
                 if (selIdx == 0)
                     return;
-
+                if (Start)
+                    if (selIdx == 1)
+                        return;
                 // move the subitems for the previous row
                 // to cache to make room for the selected row
                 for (int i = 0; i < lv.Items[selIdx].SubItems.Count; i++)
                 {
                     cache = lv.Items[selIdx - 1].SubItems[i].Text;
-                    lv.Items[selIdx - 1].SubItems[i].Text =
-                      lv.Items[selIdx].SubItems[i].Text;
+                    lv.Items[selIdx - 1].SubItems[i].Text = lv.Items[selIdx].SubItems[i].Text;
                     lv.Items[selIdx].SubItems[i].Text = cache;
+                    
                 }
+                var cache1 = lv.Items[selIdx - 1].Tag;
+                lv.Items[selIdx - 1].Tag = lv.Items[selIdx].Tag;
+                lv.Items[selIdx].Tag = cache1;
+
                 lv.Items[selIdx - 1].Selected = true;
                 lv.Refresh();
                 lv.Focus();
@@ -531,15 +617,21 @@ namespace Traveler
                 // ignore movedown of last item
                 if (selIdx == lv.Items.Count - 1)
                     return;
+                if (Start)
+                    if (selIdx == 0)
+                        return;
                 // move the subitems for the next row
                 // to cache so we can move the selected row down
                 for (int i = 0; i < lv.Items[selIdx].SubItems.Count; i++)
                 {
                     cache = lv.Items[selIdx + 1].SubItems[i].Text;
-                    lv.Items[selIdx + 1].SubItems[i].Text =
-                      lv.Items[selIdx].SubItems[i].Text;
+                    lv.Items[selIdx + 1].SubItems[i].Text = lv.Items[selIdx].SubItems[i].Text;
                     lv.Items[selIdx].SubItems[i].Text = cache;
                 }
+                var cache1 = lv.Items[selIdx + 1].Tag;
+                lv.Items[selIdx + 1].Tag = lv.Items[selIdx].Tag;
+                lv.Items[selIdx].Tag = cache1;
+
                 lv.Items[selIdx + 1].Selected = true;
                 lv.Refresh();
                 lv.Focus();
@@ -558,6 +650,10 @@ namespace Traveler
 
         private void bttnDelete_Click(object sender, EventArgs e)
         {
+            if (Start)
+                if (LstTask.SelectedItems[0].Index == 0)
+                    return;
+
             while (LstTask.SelectedItems.Count > 0)
             {
                     LstTask.Items.Remove(LstTask.SelectedItems[0]);
@@ -591,6 +687,9 @@ namespace Traveler
 
         private void bttnTaskAllItems_Click(object sender, EventArgs e)
         {
+            if (cmbAllMode.Text == "Select Mode")
+                return;
+
             var listItem = new ListViewItem(cmbAllMode.Text);
             listItem.SubItems.Add("All items");
             listItem.Tag = 00;
@@ -601,6 +700,9 @@ namespace Traveler
 
         private void bttnTaskMakeShip_Click(object sender, EventArgs e)
         {
+            if (txtNameShip.Text == "")
+                return;
+
             var listItem = new ListViewItem("MakeShip");
             listItem.SubItems.Add(txtNameShip.Text);
             LstTask.Items.Add(listItem);
@@ -642,6 +744,207 @@ namespace Traveler
         private void txtNameCorp_TextChanged(object sender, EventArgs e)
         {
             SelectHangar = txtNameCorp.Text;
+        }
+
+        private void ProcessItems()
+        {
+
+            lvItems.Items.Clear();
+            foreach (var item in Items.Where(i => i.InvType != null).OrderByDescending(i => i.InvType.MedianBuy * i.Quantity))
+            {
+                var listItem = new ListViewItem(item.Name);
+                listItem.SubItems.Add(string.Format("{0:#,##0}", item.Quantity));
+                listItem.SubItems.Add(string.Format("{0:#,##0}", item.QuantitySold));
+                listItem.SubItems.Add(string.Format("{0:#,##0}", item.InvType.MedianBuy));
+                listItem.SubItems.Add(string.Format("{0:#,##0}", item.StationBuy));
+
+                if (cbxSell.Checked)
+                    listItem.SubItems.Add(string.Format("{0:#,##0}", item.StationBuy * item.QuantitySold));
+                else
+                    listItem.SubItems.Add(string.Format("{0:#,##0}", item.InvType.MedianBuy * item.Quantity));
+
+
+                lvItems.Items.Add(listItem);
+            }
+
+            if (cbxSell.Checked)
+            {
+                tbTotalMedian.Text = string.Format("{0:#,##0}", Items.Where(i => i.InvType != null).Sum(i => i.InvType.MedianBuy * i.QuantitySold));
+                tbTotalSold.Text = string.Format("{0:#,##0}", Items.Sum(i => i.StationBuy * i.QuantitySold));
+            }
+            else
+            {
+                tbTotalMedian.Text = string.Format("{0:#,##0}", Items.Where(i => i.InvType != null).Sum(i => i.InvType.MedianBuy * i.Quantity));
+                tbTotalSold.Text = "";
+            }
+        }
+
+        private void frmMain_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            DirectEve.Instance.Dispose();
+        }
+
+        private void UpdateMineralPricesButton_Click(object sender, EventArgs e)
+        {
+            _valuedump.State = ValueDumpState.CheckMineralPrices;
+        }
+
+        private void lvItems_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+
+            ListViewColumnSort oCompare = new ListViewColumnSort();
+
+            if (lvItems.Sorting == SortOrder.Ascending)
+                oCompare.Sorting = SortOrder.Descending;
+            else
+                oCompare.Sorting = SortOrder.Ascending;
+            lvItems.Sorting = oCompare.Sorting;
+            oCompare.ColumnIndex = e.Column;
+
+            switch (e.Column)
+            {
+                case 1:
+                    oCompare.CompararPor = ListViewColumnSort.TipoCompare.Cadena;
+                    break;
+                case 2:
+                    oCompare.CompararPor = ListViewColumnSort.TipoCompare.Numero;
+                    break;
+                case 3:
+                    oCompare.CompararPor = ListViewColumnSort.TipoCompare.Numero;
+                    break;
+                case 4:
+                    oCompare.CompararPor = ListViewColumnSort.TipoCompare.Numero;
+                    break;
+                case 5:
+                    oCompare.CompararPor = ListViewColumnSort.TipoCompare.Numero;
+                    break;
+                case 6:
+                    oCompare.CompararPor = ListViewColumnSort.TipoCompare.Numero;
+                    break;
+
+            }
+
+            lvItems.ListViewItemSorter = oCompare;
+
+        }
+
+        private void bttnTaskValueDump_Click(object sender, EventArgs e)
+        {
+            var listItem = new ListViewItem("ValueDump");
+            listItem.SubItems.Add("All Items");
+            listItem.SubItems.Add(" ");
+            listItem.SubItems.Add(" ");
+            LstTask.Items.Add(listItem);
+        }
+
+        private void bttnSaveTask_Click(object sender, EventArgs e)
+        {
+
+            if (cmbXML.Text == "Select Jobs")
+            {
+                MessageBox.Show("Write name to save");
+                return;
+            }
+
+            string fic = Path.Combine(pathXML, cmbXML.Text + ".jobs"); 
+                   string strXml = "<Jobs>";
+
+                    for (int o = 0; o < LstTask.Items.Count; o++)
+                        strXml += "<Job typeJob='" + LstTask.Items[o].SubItems[0].Text + "' Name='" + LstTask.Items[o].SubItems[1].Text + "' Unit='" + LstTask.Items[o].SubItems[2].Text + "' Hangar='" + LstTask.Items[o].SubItems[3].Text + "' Tag='" + LstTask.Items[o].Tag + "' />";
+
+                    strXml += "</Jobs>";
+
+                    XElement xml = XElement.Parse(strXml);
+                    XDocument FileXml = new XDocument(xml);
+                    FileXml.Save(fic);
+                
+                RefreshXML();
+            
+        }
+
+        private void RefreshXML()
+        {
+            cmbXML.Items.Clear();
+
+            System.IO.DirectoryInfo o = new System.IO.DirectoryInfo(pathXML);
+            System.IO.FileInfo[] myfiles = null;
+
+            myfiles = o.GetFiles("*.jobs");
+            for (int y = 0; y <= myfiles.Length - 1; y++)
+            {
+                var file = myfiles[y].Name.Split('.');
+                cmbXML.Items.Add(file[0]);
+            }
+        }
+
+        private void ExtractTraveler(string nameDestination)
+        {
+
+            if (ExtrDestination == null)
+            {
+                foreach (var item in _stations)
+                {
+                    if (nameDestination == item.Name)
+                        ExtrDestination = item;
+                }
+            }
+            else if (ExtrDestination == null)
+            {
+                foreach (var item in _solarSystems)
+                {
+                    if (nameDestination == item.Name)
+                        ExtrDestination = item;
+                }
+            }
+            else if (ExtrDestination == null)
+            {
+                foreach (var item in _bookmarks)
+                {
+                    if (nameDestination == item.Title)
+                        ExtrDestination = item;
+                }
+            }
+        }
+
+
+        private void ReadXML(string fic)
+        {
+
+            var xml = XDocument.Load(fic).Root;
+
+                LstTask.Items.Clear();
+                if (xml != null)
+                {
+                    foreach (var Job in xml.Elements("Job"))
+                    {
+                        var listItem = new ListViewItem((string)Job.Attribute("typeJob"));
+                        listItem.SubItems.Add((string)Job.Attribute("Name"));
+                        listItem.SubItems.Add((string)Job.Attribute("Unit"));
+                        listItem.SubItems.Add((string)Job.Attribute("Hangar"));
+                        if (((string)Job.Attribute("typeJob")) == "Traveler")
+                        {
+                            ExtractTraveler(((string)Job.Attribute("Name")));
+                            listItem.Tag = ExtrDestination;
+                        }
+                        else
+                            listItem.Tag = (string)Job.Attribute("Tag");
+
+                        LstTask.Items.Add(listItem);
+
+                    }
+                }
+
+        }
+
+        private void cmbXML_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string fic = Path.Combine(pathXML, cmbXML.Text + ".jobs");
+            ReadXML(fic);
+        }
+
+        private void bttnDeleteXML_Click(object sender, EventArgs e)
+        {
+
         }
 
     }

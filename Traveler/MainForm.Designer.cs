@@ -32,6 +32,8 @@
             this.UpdateSearchResults = new System.Windows.Forms.Timer(this.components);
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.cmbXML = new System.Windows.Forms.ComboBox();
+            this.bttnSaveTask = new System.Windows.Forms.Button();
             this.chkPause = new System.Windows.Forms.CheckBox();
             this.bttnDelete = new System.Windows.Forms.Button();
             this.bttnDown = new System.Windows.Forms.Button();
@@ -78,6 +80,25 @@
             this.txtSearchItems = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.chkUpdateMineral = new System.Windows.Forms.CheckBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.RefineEfficiencyInput = new System.Windows.Forms.NumericUpDown();
+            this.RefineCheckBox = new System.Windows.Forms.CheckBox();
+            this.cbxUndersell = new System.Windows.Forms.CheckBox();
+            this.cbxSell = new System.Windows.Forms.CheckBox();
+            this.tbTotalSold = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.tbTotalMedian = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.lvItems = new System.Windows.Forms.ListView();
+            this.chName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chQuantity = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chQuantitySold = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chMedianBuy = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chStationBuy = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chTotalBuy = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.bttnTaskValueDump = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -86,6 +107,8 @@
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.tabPage4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.RefineEfficiencyInput)).BeginInit();
             this.SuspendLayout();
             // 
             // UpdateSearchResults
@@ -99,6 +122,7 @@
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Location = new System.Drawing.Point(1, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -107,6 +131,8 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.cmbXML);
+            this.tabPage1.Controls.Add(this.bttnSaveTask);
             this.tabPage1.Controls.Add(this.chkPause);
             this.tabPage1.Controls.Add(this.bttnDelete);
             this.tabPage1.Controls.Add(this.bttnDown);
@@ -122,6 +148,26 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "General";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // cmbXML
+            // 
+            this.cmbXML.FormattingEnabled = true;
+            this.cmbXML.Location = new System.Drawing.Point(385, 216);
+            this.cmbXML.Name = "cmbXML";
+            this.cmbXML.Size = new System.Drawing.Size(121, 21);
+            this.cmbXML.TabIndex = 29;
+            this.cmbXML.Text = "Select Jobs";
+            this.cmbXML.SelectedIndexChanged += new System.EventHandler(this.cmbXML_SelectedIndexChanged);
+            // 
+            // bttnSaveTask
+            // 
+            this.bttnSaveTask.Location = new System.Drawing.Point(512, 216);
+            this.bttnSaveTask.Name = "bttnSaveTask";
+            this.bttnSaveTask.Size = new System.Drawing.Size(75, 23);
+            this.bttnSaveTask.TabIndex = 28;
+            this.bttnSaveTask.Text = "Save Task";
+            this.bttnSaveTask.UseVisualStyleBackColor = true;
+            this.bttnSaveTask.Click += new System.EventHandler(this.bttnSaveTask_Click);
             // 
             // chkPause
             // 
@@ -584,6 +630,184 @@
             this.label2.TabIndex = 8;
             this.label2.Text = "Search Item";
             // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.chkUpdateMineral);
+            this.tabPage4.Controls.Add(this.label8);
+            this.tabPage4.Controls.Add(this.RefineEfficiencyInput);
+            this.tabPage4.Controls.Add(this.RefineCheckBox);
+            this.tabPage4.Controls.Add(this.cbxUndersell);
+            this.tabPage4.Controls.Add(this.cbxSell);
+            this.tabPage4.Controls.Add(this.tbTotalSold);
+            this.tabPage4.Controls.Add(this.label9);
+            this.tabPage4.Controls.Add(this.tbTotalMedian);
+            this.tabPage4.Controls.Add(this.label10);
+            this.tabPage4.Controls.Add(this.lvItems);
+            this.tabPage4.Controls.Add(this.bttnTaskValueDump);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(648, 245);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "ValueDump";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // chkUpdateMineral
+            // 
+            this.chkUpdateMineral.AutoSize = true;
+            this.chkUpdateMineral.Location = new System.Drawing.Point(286, 33);
+            this.chkUpdateMineral.Name = "chkUpdateMineral";
+            this.chkUpdateMineral.Size = new System.Drawing.Size(125, 17);
+            this.chkUpdateMineral.TabIndex = 26;
+            this.chkUpdateMineral.Text = "Update Mineral Price";
+            this.chkUpdateMineral.UseVisualStyleBackColor = true;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(470, 35);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(89, 13);
+            this.label8.TabIndex = 25;
+            this.label8.Text = "Refine efficiency:";
+            // 
+            // RefineEfficiencyInput
+            // 
+            this.RefineEfficiencyInput.Location = new System.Drawing.Point(565, 31);
+            this.RefineEfficiencyInput.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.RefineEfficiencyInput.Name = "RefineEfficiencyInput";
+            this.RefineEfficiencyInput.Size = new System.Drawing.Size(49, 20);
+            this.RefineEfficiencyInput.TabIndex = 24;
+            this.RefineEfficiencyInput.Value = new decimal(new int[] {
+            95,
+            0,
+            0,
+            0});
+            // 
+            // RefineCheckBox
+            // 
+            this.RefineCheckBox.AutoSize = true;
+            this.RefineCheckBox.Location = new System.Drawing.Point(159, 34);
+            this.RefineCheckBox.Name = "RefineCheckBox";
+            this.RefineCheckBox.Size = new System.Drawing.Size(117, 17);
+            this.RefineCheckBox.TabIndex = 23;
+            this.RefineCheckBox.Text = "Check refine prices";
+            this.RefineCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // cbxUndersell
+            // 
+            this.cbxUndersell.AutoSize = true;
+            this.cbxUndersell.Location = new System.Drawing.Point(83, 34);
+            this.cbxUndersell.Name = "cbxUndersell";
+            this.cbxUndersell.Size = new System.Drawing.Size(70, 17);
+            this.cbxUndersell.TabIndex = 21;
+            this.cbxUndersell.Text = "Undersell";
+            this.cbxUndersell.UseVisualStyleBackColor = true;
+            // 
+            // cbxSell
+            // 
+            this.cbxSell.AutoSize = true;
+            this.cbxSell.Location = new System.Drawing.Point(7, 34);
+            this.cbxSell.Name = "cbxSell";
+            this.cbxSell.Size = new System.Drawing.Size(70, 17);
+            this.cbxSell.TabIndex = 20;
+            this.cbxSell.Text = "Sell items";
+            this.cbxSell.UseVisualStyleBackColor = true;
+            // 
+            // tbTotalSold
+            // 
+            this.tbTotalSold.Location = new System.Drawing.Point(502, 5);
+            this.tbTotalSold.Name = "tbTotalSold";
+            this.tbTotalSold.Size = new System.Drawing.Size(112, 20);
+            this.tbTotalSold.TabIndex = 19;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(388, 10);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(108, 13);
+            this.label9.TabIndex = 18;
+            this.label9.Text = "Amount (Station Sell):";
+            // 
+            // tbTotalMedian
+            // 
+            this.tbTotalMedian.Location = new System.Drawing.Point(286, 7);
+            this.tbTotalMedian.Name = "tbTotalMedian";
+            this.tbTotalMedian.Size = new System.Drawing.Size(96, 20);
+            this.tbTotalMedian.TabIndex = 17;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(169, 10);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(111, 13);
+            this.label10.TabIndex = 16;
+            this.label10.Text = "Amount (Median Buy):";
+            // 
+            // lvItems
+            // 
+            this.lvItems.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lvItems.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.chName,
+            this.chQuantity,
+            this.chQuantitySold,
+            this.chMedianBuy,
+            this.chStationBuy,
+            this.chTotalBuy});
+            this.lvItems.Location = new System.Drawing.Point(7, 57);
+            this.lvItems.Name = "lvItems";
+            this.lvItems.Size = new System.Drawing.Size(630, 179);
+            this.lvItems.TabIndex = 15;
+            this.lvItems.UseCompatibleStateImageBehavior = false;
+            this.lvItems.View = System.Windows.Forms.View.Details;
+            // 
+            // chName
+            // 
+            this.chName.Text = "Name";
+            this.chName.Width = 138;
+            // 
+            // chQuantity
+            // 
+            this.chQuantity.Text = "Quantity";
+            this.chQuantity.Width = 54;
+            // 
+            // chQuantitySold
+            // 
+            this.chQuantitySold.Text = "Quantity Sold";
+            this.chQuantitySold.Width = 108;
+            // 
+            // chMedianBuy
+            // 
+            this.chMedianBuy.Text = "Price (Median)";
+            this.chMedianBuy.Width = 108;
+            // 
+            // chStationBuy
+            // 
+            this.chStationBuy.Text = "Price (Station)";
+            this.chStationBuy.Width = 74;
+            // 
+            // chTotalBuy
+            // 
+            this.chTotalBuy.Text = "Total";
+            // 
+            // bttnTaskValueDump
+            // 
+            this.bttnTaskValueDump.Location = new System.Drawing.Point(7, 5);
+            this.bttnTaskValueDump.Name = "bttnTaskValueDump";
+            this.bttnTaskValueDump.Size = new System.Drawing.Size(75, 23);
+            this.bttnTaskValueDump.TabIndex = 14;
+            this.bttnTaskValueDump.Text = "Add Task";
+            this.bttnTaskValueDump.UseVisualStyleBackColor = true;
+            this.bttnTaskValueDump.Click += new System.EventHandler(this.bttnTaskValueDump_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -606,6 +830,9 @@
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.RefineEfficiencyInput)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -661,6 +888,27 @@
         private System.Windows.Forms.RadioButton rbttnShip;
         private System.Windows.Forms.RadioButton rbttnLocal;
         private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.Label label8;
+        public System.Windows.Forms.NumericUpDown RefineEfficiencyInput;
+        public System.Windows.Forms.CheckBox RefineCheckBox;
+        public System.Windows.Forms.CheckBox cbxUndersell;
+        public System.Windows.Forms.CheckBox cbxSell;
+        private System.Windows.Forms.TextBox tbTotalSold;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox tbTotalMedian;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.ListView lvItems;
+        private System.Windows.Forms.ColumnHeader chName;
+        private System.Windows.Forms.ColumnHeader chQuantity;
+        private System.Windows.Forms.ColumnHeader chQuantitySold;
+        private System.Windows.Forms.ColumnHeader chMedianBuy;
+        private System.Windows.Forms.ColumnHeader chStationBuy;
+        private System.Windows.Forms.ColumnHeader chTotalBuy;
+        private System.Windows.Forms.Button bttnTaskValueDump;
+        public System.Windows.Forms.CheckBox chkUpdateMineral;
+        private System.Windows.Forms.Button bttnSaveTask;
+        private System.Windows.Forms.ComboBox cmbXML;
 
 
     }

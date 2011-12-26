@@ -52,6 +52,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\Buy.cs" />
+    <Compile Include="Actions\InvType.cs" />
+    <Compile Include="Actions\ItemCache.cs" />
+    <Compile Include="Actions\ValueDump.cs" />
     <Compile Include="Actions\StateDrop.cs" />
     <Compile Include="Actions\StateGrab.cs" />
     <Compile Include="Actions\StateSell.cs" />
@@ -59,7 +62,9 @@
     <Compile Include="Actions\Grab.cs" />
     <Compile Include="Actions\Drop.cs" />
     <Compile Include="Actions\Sell.cs" />
+    <Compile Include="Actions\ValueDumpState.cs" />
     <Compile Include="ListItems.cs" />
+    <Compile Include="ListViewColumnSorter.cs" />
     <Compile Include="State.cs" />
     <Compile Include="Domains\Category.cs" />
     <Compile Include="Domains\Group.cs" />

@@ -10,6 +10,7 @@ namespace Traveler
         Idle,
         NextAction,
         Traveler,
+        ValueDump,
         MakeShip,
         Drop,
         Grab,

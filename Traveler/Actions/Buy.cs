@@ -21,13 +21,16 @@
 
         private DateTime _lastAction;
 
+        private bool ReturnBuy;
+
+       
+        
        
 
         public void ProcessState()
         {
             var marketWindow = DirectEve.Instance.Windows.OfType<DirectMarketWindow>().FirstOrDefault();
-           
-
+            
             switch (State)
             {
                 case StateBuy.Idle:
@@ -35,11 +38,16 @@
                     break;
 
                 case StateBuy.Begin:
+
+                    // Close the market window if there is one
+                    if (marketWindow != null)
+                        marketWindow.Close();
                     State = StateBuy.OpenMarket;
                     break;
 
                 case StateBuy.OpenMarket:
 
+                    
                     // Close the market window if there is one
                     //if (marketWindow != null)
                     //    marketWindow.Close();
@@ -50,8 +58,10 @@
                          break;
                      }
 
+
                      if (!marketWindow.IsReady)
                          break;
+
 
                     Logging.Log("Buy: Opening Market");
                     State = StateBuy.LoadItem;
@@ -78,16 +88,27 @@
                     if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 5)
                         break;
 
+                        
                         var orders = marketWindow.SellOrders.Where(o => o.StationId == DirectEve.Instance.Session.StationId);
 
                         var order = orders.OrderBy(o => o.Price).FirstOrDefault();
                         if (order != null)
                         {
                             // Calculate how much kernite we still need
-                            order.Buy(Unit, DirectOrderRange.Station);
+                            if (order.VolumeEntered >= Unit)
+                            {
+                                order.Buy(Unit, DirectOrderRange.Station);
+                                State = StateBuy.WaitForItems;
+                            }
+                            else
+                            {
+                                order.Buy(Unit, DirectOrderRange.Station);
+                                 Unit = Unit - order.VolumeEntered;
+                                 Logging.Log("Missing " + Convert.ToString(Unit) + " units");
+                                ReturnBuy = true;
+                                State = StateBuy.WaitForItems;
+                            }
 
-                            // Wait for the order to go through
-                            State = StateBuy.WaitForItems;
                         }
 
                     break;
@@ -100,6 +121,14 @@
                     // Close the market window if there is one
                     if (marketWindow != null)
                         marketWindow.Close();
+
+                    if (ReturnBuy == true)
+                    {
+                        Logging.Log("Buy: Return Buy");
+                        ReturnBuy = false;
+                        State = StateBuy.OpenMarket;
+                        break;
+                    }
 
                         Logging.Log("Buy: Done");
                         State = StateBuy.Done;

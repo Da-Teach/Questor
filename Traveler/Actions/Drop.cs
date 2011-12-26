@@ -128,24 +128,24 @@
 
                     if (Unit == 00)
                     {
-                        var GrabItem = cargo.Items.FirstOrDefault(i => (i.TypeId == Item));
-                        if (GrabItem != null)
+                        var DropItem = cargo.Items.FirstOrDefault(i => (i.TypeId == Item));
+                        if (DropItem != null)
                         {
-                            _hangar.Add(GrabItem, GrabItem.Quantity);
+                            _hangar.Add(DropItem, DropItem.Quantity);
                             Logging.Log("Drop: Moving all the items");
                             _lastAction = DateTime.Now;
-                            State = StateDrop.WaitForItems;
+                            State = StateDrop.WaitForMove;
                         }
                     }
                     else
                     {
-                        var GrabItem = cargo.Items.FirstOrDefault(i => (i.TypeId == Item));
-                        if (GrabItem != null)
+                        var DropItem = cargo.Items.FirstOrDefault(i => (i.TypeId == Item));
+                        if (DropItem != null)
                         {
-                            _hangar.Add(GrabItem, Unit);
+                            _hangar.Add(DropItem, Unit);
                             Logging.Log("Drop: Moving item");
                             _lastAction = DateTime.Now;
-                            State = StateDrop.WaitForItems;
+                            State = StateDrop.WaitForMove;
                         }
                     }
 
@@ -162,28 +162,84 @@
                             _hangar.Add(AllItem);
                             Logging.Log("Drop: Moving item");
                             _lastAction = DateTime.Now;
-                            State = StateDrop.WaitForItems;
+                            State = StateDrop.WaitForMove;
                         }
 
 
                     break;
 
-                case StateDrop.WaitForItems:
+                case StateDrop.WaitForMove:
+                    if (cargo.Items.Count != 0)
+                    {
+                        _lastAction = DateTime.Now;
+                        break;
+                    }
+
                     // Wait 5 seconds after moving
                     if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 5)
                         break;
 
+                    if (DirectEve.Instance.GetLockedItems().Count == 0)
+                    {
+                        
+                        State = StateDrop.StackItemsHangar;
+                        break;
+                    }
+
+                    if (DateTime.Now.Subtract(_lastAction).TotalSeconds > 120)
+                    {
+                        Logging.Log("Drop: Moving items timed out, clearing item locks");
+                        DirectEve.Instance.UnlockItems();
+
+                        
+                        State = StateDrop.StackItemsHangar;
+                        break;
+                    }
+                    break;
+
+                case StateDrop.StackItemsHangar:
+                    // Dont stack until 5 seconds after the cargo has cleared
+                    if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 5)
+                        break;
+
+                    // Stack everything
+                    if (_hangar != null)
+                    {
+                        Logging.Log("Drop: Stacking items");
+                        _hangar.StackAll();
+                        _lastAction = DateTime.Now;
+                    }
+
+                    
+
+                    State = StateDrop.WaitForStacking;
+                    break;
+
+
+                case StateDrop.WaitForStacking:
+                    // Wait 5 seconds after stacking
+                    if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 5)
+                        break;
 
                     if (DirectEve.Instance.GetLockedItems().Count == 0)
                     {
-
                         Logging.Log("Drop: Done");
                         State = StateDrop.Done;
                         break;
                     }
 
+                    if (DateTime.Now.Subtract(_lastAction).TotalSeconds > 120)
+                    {
+                        Logging.Log("Drop: Stacking items timed out, clearing item locks");
+                        DirectEve.Instance.UnlockItems();
 
+                        Logging.Log("Drop: Done");
+                        State = StateDrop.Done;
+                        break;
+                    }
                     break;
+
+                   
 
             }
 

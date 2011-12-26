@@ -19,6 +19,7 @@
         public int Item { get; set; }
         public int Unit { get; set; }
         public string Hangar { get; set; }
+        private double freeCargoCapacity;
 
         private DateTime _lastAction;
 
@@ -29,6 +30,7 @@
             DirectContainer _hangar = null;
 
             var cargo = DirectEve.Instance.GetShipsCargo();
+            
 
             if ("Local Hangar" == Hangar)
                 _hangar = DirectEve.Instance.GetItemHangar();
@@ -112,12 +114,14 @@
                         break;
 
 
-                        Logging.Log("Grab: Opening Cargo Hold");
+                    Logging.Log("Grab: Opening Cargo Hold");
 
-                        if (Item == 00)
-                            State = StateGrab.AllItems;
-                        else
-                            State = StateGrab.MoveItems;
+                    freeCargoCapacity = cargo.Capacity - cargo.UsedCapacity;
+
+                    if (Item == 00)
+                        State = StateGrab.AllItems;
+                    else
+                        State = StateGrab.MoveItems;
 
                     
                     break;
@@ -131,10 +135,20 @@
                         var GrabItem = _hangar.Items.FirstOrDefault(i => (i.TypeId == Item));
                         if (GrabItem != null)
                         {
-                            cargo.Add(GrabItem, GrabItem.Quantity);
-                            Logging.Log("Grab: Moving all the items");
-                            _lastAction = DateTime.Now;
-                            State = StateGrab.WaitForItems;
+                            double totalVolum = GrabItem.Quantity*GrabItem.Volume;
+                            if (freeCargoCapacity >= totalVolum)
+                            {
+                                cargo.Add(GrabItem, GrabItem.Quantity);
+                                freeCargoCapacity -= totalVolum;
+                                Logging.Log("Grab: Moving all the items");
+                                _lastAction = DateTime.Now;
+                                State = StateGrab.WaitForItems;
+                            }
+                            else
+                            {
+                                State = StateGrab.Done;
+                                Logging.Log("Grab: No load capacity");
+                            }
                         }
                     }
                     else
@@ -142,12 +156,22 @@
                         var GrabItem = _hangar.Items.FirstOrDefault(i => (i.TypeId == Item));
                         if (GrabItem != null)
                         {
-                            cargo.Add(GrabItem, Unit);
-                            Logging.Log("Grab: Moving item");
-                            _lastAction = DateTime.Now;
-                            State = StateGrab.WaitForItems;
+                            double totalVolum = Unit*GrabItem.Volume;
+                            if (freeCargoCapacity >= totalVolum)
+                            {
+                                cargo.Add(GrabItem, Unit);
+                                freeCargoCapacity -= totalVolum;
+                                Logging.Log("Grab: Moving item");
+                                _lastAction = DateTime.Now;
+                                State = StateGrab.WaitForItems;
+                            }
+                            else
+                            {
+                                State = StateGrab.Done;
+                                Logging.Log("Grab: No load capacity");
+                            }
                         }
-                    }
+                    } 
 
                     
                      break;
@@ -157,12 +181,22 @@
 
                      if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 2)
                          break;
+
                      var AllItem = _hangar.Items;
                      if (AllItem != null)
                      {
-                      
-                         cargo.Add(AllItem);
-                         Logging.Log("Grab: Moving item");
+                         foreach (var item in AllItem)
+                         {
+                             double totalVolum = item.Quantity*item.Volume;
+
+                             if (freeCargoCapacity >= totalVolum)
+                             {
+                                 cargo.Add(item);
+                                 freeCargoCapacity -= totalVolum;
+                             }
+
+                         }
+                         Logging.Log("Grab: Moving items");
                          _lastAction = DateTime.Now;
                          State = StateGrab.WaitForItems;
                      }
