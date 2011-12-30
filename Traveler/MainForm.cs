@@ -925,6 +925,7 @@ namespace Traveler
                         {
                             ExtractTraveler(((string)Job.Attribute("Name")));
                             listItem.Tag = ExtrDestination;
+                            ExtrDestination = null;
                         }
                         else
                             listItem.Tag = (string)Job.Attribute("Tag");
