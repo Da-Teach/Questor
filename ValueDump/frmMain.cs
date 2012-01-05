@@ -472,5 +472,44 @@ namespace ValueDump
         {
             State = ValueDumpState.CheckMineralPrices;
         }
+
+        private void lvItems_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+
+            ListViewColumnSort oCompare = new ListViewColumnSort();
+
+            if (lvItems.Sorting == SortOrder.Ascending)
+                oCompare.Sorting = SortOrder.Descending;
+            else
+                oCompare.Sorting = SortOrder.Ascending;
+            lvItems.Sorting = oCompare.Sorting;
+            oCompare.ColumnIndex = e.Column;
+
+            switch (e.Column)
+            {
+                case 1:
+                    oCompare.CompararPor = ListViewColumnSort.TipoCompare.Cadena;
+                    break;
+                case 2:
+                    oCompare.CompararPor = ListViewColumnSort.TipoCompare.Numero;
+                    break;
+                case 3:
+                    oCompare.CompararPor = ListViewColumnSort.TipoCompare.Numero;
+                    break;
+                case 4:
+                    oCompare.CompararPor = ListViewColumnSort.TipoCompare.Numero;
+                    break;
+                case 5:
+                    oCompare.CompararPor = ListViewColumnSort.TipoCompare.Numero;
+                    break;
+                case 6:
+                    oCompare.CompararPor = ListViewColumnSort.TipoCompare.Numero;
+                    break;
+
+            }
+
+            lvItems.ListViewItemSorter = oCompare;
+
+        }
     }
 }

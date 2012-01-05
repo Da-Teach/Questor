@@ -244,6 +244,7 @@ namespace Questor
             {
                 watch.Reset();
                 watch.Start();
+                if (ExitSta == false)
                 _defense.ProcessState();
                 watch.Stop();
 
@@ -349,7 +350,7 @@ namespace Questor
                             File.AppendAllText(filename, "Date;Mission;Time;Isk;Loot;LP;\r\n");
 
                         // Build the line
-                        var line = DateTime.Now + ";";
+                        var line = string.Format("{0:dd/MM/yyyy HH:mm:ss}", DateTime.Now) + ";";
                         line += Mission + ";";
                         line += ((int)DateTime.Now.Subtract(Started).TotalMinutes) + ";";
                         line += ((int)(Cache.Instance.DirectEve.Me.Wealth - Wealth)) + ";";
@@ -482,7 +483,6 @@ namespace Questor
                 case QuestorState.WarpOutStation:
 
                     var _bookmark = Cache.Instance.BookmarksByLabel(Settings.Instance.bookmarkWarpOut ?? "").OrderBy(b => b.CreatedOn).FirstOrDefault();
-                        State = QuestorState.GotoMission;
                     var _solarid = Cache.Instance.DirectEve.Session.SolarSystemId ?? -1;
                     if (_bookmark == null)
                     {
@@ -657,8 +657,7 @@ namespace Questor
                     {
                         // Lost drone statistics
                         // (inelegantly located here so as to avoid the necessity to switch to a combat ship after salvaging)
-                        var droneBay = Cache.Instance.DirectEve.GetShipsDroneBay();
-                        if (droneBay.Window == null)
+                        if (Settings.Instance.UseDrones)
                         {
                             var droneBay = Cache.Instance.DirectEve.GetShipsDroneBay();
                             if (droneBay.Window == null)
@@ -673,18 +672,6 @@ namespace Questor
                                 var drone = Cache.Instance.InvTypesById[Settings.Instance.DroneTypeId];
                                 LostDrones = (int)Math.Floor((droneBay.Capacity - droneBay.UsedCapacity) / drone.Volume);
                                 Logging.Log("DroneStats: Logging the number of lost drones: " + LostDrones.ToString());
-                            }
-                            else
-                            {
-                                Logging.Log("DroneStats: Couldn't find the drone TypeID specified in the settings.xml; this shouldn't happen!");
-                            }
-                                var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                                var dronelogfilename = Path.Combine(path, Cache.Instance.FilterPath(CharacterName) + ".dronestats.log");
-                                if (!File.Exists(dronelogfilename))
-                                    File.AppendAllText(dronelogfilename, "Mission;Number of lost drones\r\n");
-                                var droneline = Mission + ";";
-                                droneline += ((int)LostDrones) + ";\r\n";
-                                File.AppendAllText(dronelogfilename, droneline);
                             }
                             else
                             {

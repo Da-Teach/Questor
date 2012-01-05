@@ -142,14 +142,14 @@
             this.txtExtConsole.Name = "txtExtConsole";
             this.txtExtConsole.ReadOnly = true;
             this.txtExtConsole.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtExtConsole.Size = new System.Drawing.Size(1096, 231);
+            this.txtExtConsole.Size = new System.Drawing.Size(871, 231);
             this.txtExtConsole.TabIndex = 23;
             // 
             // txtComand
             // 
             this.txtComand.Location = new System.Drawing.Point(14, 342);
             this.txtComand.Name = "txtComand";
-            this.txtComand.Size = new System.Drawing.Size(1094, 20);
+            this.txtComand.Size = new System.Drawing.Size(869, 20);
             this.txtComand.TabIndex = 24;
             this.txtComand.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtComand_KeyPress);
             // 
