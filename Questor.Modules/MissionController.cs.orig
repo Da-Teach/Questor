@@ -28,7 +28,12 @@ namespace Questor.Modules
         private bool _waiting;
         private DateTime _waitingSince;
         private DateTime _lastAlign;
+<<<<<<< HEAD
+        private readonly Dictionary<long, DateTime> _lastWeaponReload = new Dictionary<long, DateTime>();
+
+=======
     
+>>>>>>> f9c99b1a38ae637af51b37f12d3bdda8ec788b0e
         public long AgentId { get; set; }
 
         public MissionController()
@@ -283,11 +288,19 @@ namespace Questor.Modules
             }
             else if (closest.Distance < 150000)
             {
+<<<<<<< HEAD
+                    // Move to the target
+                    if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
+                    {
+                        Logging.Log("MissionController.Activate: Approaching target [" + closest.Name + "][" + closest.Id + "]");
+                        closest.Approach();
+=======
                 // Move to the target
                 if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
                 {
                     Logging.Log("MissionController.MoveTo: Approaching target [" + closest.Name + "][" + closest.Id + "]");
                     closest.Approach();
+>>>>>>> f9c99b1a38ae637af51b37f12d3bdda8ec788b0e
                 }
             }
             else

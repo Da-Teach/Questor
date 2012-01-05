@@ -41,9 +41,6 @@ namespace Questor.Modules
 
         public bool AutoStart { get; set; }
 
-        public bool SaveLog { get; set; }
-
-        public int maxLineConsole { get; set; }
 
 		public bool waitDecline { get; set; }
 
@@ -77,8 +74,6 @@ namespace Questor.Modules
         public bool UnloadLootAtStation { get; set; }
 
         public string AgentName { get; set; }
-
-        public string bookmarkWarpOut { get; set; }
 
         public string MissionsPath { get; set; }
 
@@ -117,7 +112,21 @@ namespace Questor.Modules
 
         public bool LootEverything { get; set; }
 
-        public bool UseDrones { get; set; }
+        private bool _UseDrones;
+
+        public bool UseDrones
+        {
+            get
+            {
+                if (Cache.Instance.MissionUseDrones != null)
+                    return (bool)Cache.Instance.MissionUseDrones;
+                else return _UseDrones;
+            }
+            set
+            {
+                _UseDrones = value;
+            }
+        }
         public int DroneTypeId { get; set; }
         public int DroneControlRange { get; set; }
         public int DroneMinimumShieldPct { get; set; }
@@ -159,10 +168,6 @@ namespace Questor.Modules
 
                 AutoStart = false;
 
-                SaveLog = false;
-
-                maxLineConsole = 1000;
-
 				waitDecline = false;
 
                 Disable3D = false;
@@ -184,8 +189,6 @@ namespace Questor.Modules
                 AmmoHangar = string.Empty;
 
                 MissionsPath = Path.Combine(path, "Missions");
-
-                bookmarkWarpOut = string.Empty;
 
                 MaximumHighValueTargets = 0;
                 MaximumLowValueTargets = 0;
@@ -242,10 +245,6 @@ namespace Questor.Modules
 
             AutoStart = (bool?) xml.Element("autoStart") ?? false;
 
-            SaveLog = (bool?)xml.Element("saveLog") ?? false;
-
-            maxLineConsole = (int?)xml.Element("maxLineConsole") ?? 1000;
-
             waitDecline = (bool?) xml.Element("waitDecline") ?? false;
 
             Disable3D = (bool?) xml.Element("disable3D") ?? false;
@@ -281,8 +280,6 @@ namespace Questor.Modules
             UnloadLootAtStation = (bool?) xml.Element("unloadLootAtStation") ?? false;
 
             AgentName = (string) xml.Element("agentName");
-
-            bookmarkWarpOut = (string)xml.Element("bookmarkWarpOut");
 
             var missionsPath = (string) xml.Element("missionsPath");
             MissionsPath = !string.IsNullOrEmpty(missionsPath) ? Path.Combine(path, missionsPath) : Path.Combine(path, "Missions");
