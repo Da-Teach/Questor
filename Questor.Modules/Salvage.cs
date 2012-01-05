@@ -265,11 +265,6 @@ namespace Questor.Modules
                     if (!isMissionItem && item.IsContraband)
                         continue;
 
-                    // We never want to pick up metal scraps or cap boosters
-                    if (item.TypeId == 30497 || item.TypeId == 15331 || item.TypeId == 263 || item.TypeId == 264 || item.TypeId == 3552 || item.TypeId == 3554 
-                        || item.TypeId == 11283 || item.TypeId == 11285 || item.TypeId == 11287 || item.TypeId == 11289)
-                        continue;
-
                     // Do we want to loot other items?
                     if (!isMissionItem && !LootEverything)
                         continue;

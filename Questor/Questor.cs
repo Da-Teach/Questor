@@ -77,7 +77,6 @@ namespace Questor
             Cache.Instance.DirectEve = _directEve;
 
             Cache.Instance.StopTimeSpecified = Program.stopTimeSpecified;
-            Cache.Instance.StopTime = Program._stopTime;
 
             _directEve.OnFrame += OnFrame;
         }
@@ -142,8 +141,6 @@ namespace Questor
                 _missionController.AgentId = agent.AgentId;
                 _arm.AgentId = agent.AgentId;
             }
-
-
         }
 
         public void ApplySettings()
@@ -227,6 +224,7 @@ namespace Questor
                         // Yes we know the mission isnt complete, Questor will just redo the mission
                         close |= window.Html.Contains("Please check your mission journal for further information.");
 			            // Lag :/
+                        close |= window.Html.Contains("This gate is locked!");
                         close |= window.Html.Contains("The Zbikoki's Hacker Card");
                         close |= window.Html.Contains(" units free.");
                     }
@@ -246,7 +244,6 @@ namespace Questor
             {
                 watch.Reset();
                 watch.Start();
-                if (ExitSta == false)
                 _defense.ProcessState();
                 watch.Stop();
 
@@ -352,7 +349,7 @@ namespace Questor
                             File.AppendAllText(filename, "Date;Mission;Time;Isk;Loot;LP;\r\n");
 
                         // Build the line
-                        var line = string.Format("{0:dd/MM/yyyy HH:mm:ss}", DateTime.Now) + ";";
+                        var line = DateTime.Now + ";";
                         line += Mission + ";";
                         line += ((int)DateTime.Now.Subtract(Started).TotalMinutes) + ";";
                         line += ((int)(Cache.Instance.DirectEve.Me.Wealth - Wealth)) + ";";
@@ -659,7 +656,8 @@ namespace Questor
                     {
                         // Lost drone statistics
                         // (inelegantly located here so as to avoid the necessity to switch to a combat ship after salvaging)
-                        if (Settings.Instance.UseDrones)
+                        var droneBay = Cache.Instance.DirectEve.GetShipsDroneBay();
+                        if (droneBay.Window == null)
                         {
                             var droneBay = Cache.Instance.DirectEve.GetShipsDroneBay();
                             if (droneBay.Window == null)
@@ -680,6 +678,25 @@ namespace Questor
                                 Logging.Log("DroneStats: Couldn't find the drone TypeID specified in the settings.xml; this shouldn't happen!");
                             }
                         }
+                        if (!droneBay.IsReady)
+                            break;
+                        if (Cache.Instance.InvTypesById.ContainsKey(Settings.Instance.DroneTypeId))
+                        {
+                            var drone = Cache.Instance.InvTypesById[Settings.Instance.DroneTypeId];
+                            LostDrones = (int)Math.Floor((droneBay.Capacity - droneBay.UsedCapacity) / drone.Volume);
+                            Logging.Log("DroneStats: Logging the number of lost drones: " + LostDrones.ToString());
+                            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                            var dronelogfilename = Path.Combine(path, Cache.Instance.FilterPath(CharacterName) + ".dronestats.log");
+                            if (!File.Exists(dronelogfilename))
+                                File.AppendAllText(dronelogfilename, "Mission;Number of lost drones\r\n");
+                            var droneline = Mission + ";";
+                            droneline += ((int)LostDrones) + ";\r\n";
+                            File.AppendAllText(dronelogfilename, droneline);
+                        }
+                        else
+                        {
+                            Logging.Log("DroneStats: Couldn't find the drone TypeID specified in the settings.xml; this shouldn't happen!");
+                        }                   
                         // Lost drone statistics stuff ends here
 
 
@@ -709,7 +726,7 @@ namespace Questor
                         Logging.Log("AgentInteraction: Start Conversation [Complete Mission]");
 
                         _agentInteraction.State = AgentInteractionState.StartConversation;
-                        _agentInteraction.Purpose = AgentInteractionPurpose.CompleteMission;                      
+                        _agentInteraction.Purpose = AgentInteractionPurpose.CompleteMission;
                     }
 
                     _agentInteraction.ProcessState();

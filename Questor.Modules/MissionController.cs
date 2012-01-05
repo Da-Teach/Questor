@@ -81,8 +81,20 @@ namespace Questor.Modules
             // Nothing to loot
             if (Cache.Instance.UnlootedContainers.Count() < Settings.Instance.MinimumWreckCount)
             {
-                Logging.Log("MissionController: Not created bookmarked because the pocket has [" + Cache.Instance.UnlootedContainers.Count() + "] wrecks and the minimum is [" + Settings.Instance.MinimumWreckCount + "]");
-                return;
+                // If Settings.Instance.LootEverything is false we may leave behind a lot of unlooted containers.
+                // This scenario only happens when all wrecks are within tractor range and you have a salvager 
+                // (typically only with a Golem).  Check to see if there are any cargo containers in space.  Cap 
+                // boosters may cause an unneeded salvage trip but that is better than leaving millions in loot behind.  
+                if (!Settings.Instance.LootEverything && Cache.Instance.Containers.Count() < Settings.Instance.MinimumWreckCount)
+                {
+                    Logging.Log("MissionController: No bookmark created because the pocket has [" + Cache.Instance.Containers.Count() + "] wrecks/containers and the minimum is [" + Settings.Instance.MinimumWreckCount + "]");
+                    return;
+                }
+                else if (Settings.Instance.LootEverything)
+                {
+                    Logging.Log("MissionController: No bookmark created because the pocket has [" + Cache.Instance.UnlootedContainers.Count() + "] wrecks/containers and the minimum is [" + Settings.Instance.MinimumWreckCount + "]");
+                    return;
+                }
             }
 
             // Do we already have a bookmark?
@@ -129,9 +141,9 @@ namespace Questor.Modules
                 // Add bookmark (before we activate)
                 if (Settings.Instance.CreateSalvageBookmarks)
                     BookmarkPocketForSalvaging();
-                ReloadAll();
 
-                // Activate it and move to the next Pocket
+                // Reload weapons and activate gate to move to the next pocket
+                ReloadAll();
                 closest.Activate();
 
                 // Do not change actions, if NextPocket gets a timeout (>2 mins) then it reverts to the last action
@@ -271,11 +283,11 @@ namespace Questor.Modules
             }
             else if (closest.Distance < 150000)
             {
-                    // Move to the target
-                    if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
-                    {
-                        Logging.Log("MissionController.Activate: Approaching target [" + closest.Name + "][" + closest.Id + "]");
-                        closest.Approach();
+                // Move to the target
+                if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
+                {
+                    Logging.Log("MissionController.MoveTo: Approaching target [" + closest.Name + "][" + closest.Id + "]");
+                    closest.Approach();
                 }
             }
             else
@@ -537,6 +549,8 @@ namespace Questor.Modules
                     // Add bookmark (before we're done)
                     if (Settings.Instance.CreateSalvageBookmarks)
                         BookmarkPocketForSalvaging();
+
+                    // Reload weapons
                     ReloadAll();
 
                     State = MissionControllerState.Done;
@@ -630,17 +644,8 @@ namespace Questor.Modules
                     foreach (var a in _pocketActions)
                         Logging.Log("MissionController: Action." + a);
 					
-					
 					if (Cache.Instance.OrbitDistance != Settings.Instance.OrbitDistance)
-					{
-						if (Cache.Instance.OrbitDistance == 0)
-						{
-							Cache.Instance.OrbitDistance = Settings.Instance.OrbitDistance;
-							Logging.Log("MissionController: Using default orbit distance: " + Cache.Instance.OrbitDistance + " (as the custom one was 0)");
-						}
-						else
-							Logging.Log("MissionController: Using custom orbit distance: " + Cache.Instance.OrbitDistance);
-					}
+						Logging.Log("MissionController: Using custom orbit distance: " + Cache.Instance.OrbitDistance);
 						
                     // Reset pocket information
                     _currentAction = 0;

@@ -43,6 +43,19 @@ namespace Questor.Modules
             // Check if we still have that ammo in our cargo
             correctAmmo = correctAmmo.Where(a => cargo.Items.Any(i => i.TypeId == a.TypeId && i.Quantity >= Settings.Instance.MinimumAmmoCharges));
 
+            //check if mission specific ammo is defined
+            if (Cache.Instance.missionAmmo.Count() != 0)
+            {
+                correctAmmo = Cache.Instance.missionAmmo.Where(a => a.DamageType == Cache.Instance.DamageType);
+            }
+
+            // Check if we still have that ammo in our cargo
+            correctAmmo = correctAmmo.Where(a => cargo.Items.Any(i => i.TypeId == a.TypeId && i.Quantity >= Settings.Instance.MinimumAmmoCharges));
+            if (Cache.Instance.missionAmmo.Count() != 0)
+            {
+                correctAmmo = Cache.Instance.missionAmmo;
+            }
+
             // We are out of ammo! :(
             if (correctAmmo.Count() == 0)
             {
@@ -245,6 +258,13 @@ namespace Questor.Modules
                     continue;
 
                 var ammo = Settings.Instance.Ammo.FirstOrDefault(a => a.TypeId == weapon.Charge.TypeId);
+
+                //use mission specific ammo
+                if (Cache.Instance.missionAmmo.Count() != 0)
+                {
+                    ammo = Cache.Instance.missionAmmo.FirstOrDefault(a => a.TypeId == weapon.Charge.TypeId);
+                }
+
                 // How can this happen? Someone manually loaded ammo
                 if (ammo == null)
                     continue;
