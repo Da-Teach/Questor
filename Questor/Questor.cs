@@ -656,8 +656,7 @@ namespace Questor
                     {
                         // Lost drone statistics
                         // (inelegantly located here so as to avoid the necessity to switch to a combat ship after salvaging)
-                        var droneBay = Cache.Instance.DirectEve.GetShipsDroneBay();
-                        if (droneBay.Window == null)
+                        if (Settings.Instance.UseDrones)
                         {
                             var droneBay = Cache.Instance.DirectEve.GetShipsDroneBay();
                             if (droneBay.Window == null)
@@ -678,25 +677,6 @@ namespace Questor
                                 Logging.Log("DroneStats: Couldn't find the drone TypeID specified in the settings.xml; this shouldn't happen!");
                             }
                         }
-                        if (!droneBay.IsReady)
-                            break;
-                        if (Cache.Instance.InvTypesById.ContainsKey(Settings.Instance.DroneTypeId))
-                        {
-                            var drone = Cache.Instance.InvTypesById[Settings.Instance.DroneTypeId];
-                            LostDrones = (int)Math.Floor((droneBay.Capacity - droneBay.UsedCapacity) / drone.Volume);
-                            Logging.Log("DroneStats: Logging the number of lost drones: " + LostDrones.ToString());
-                            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                            var dronelogfilename = Path.Combine(path, Cache.Instance.FilterPath(CharacterName) + ".dronestats.log");
-                            if (!File.Exists(dronelogfilename))
-                                File.AppendAllText(dronelogfilename, "Mission;Number of lost drones\r\n");
-                            var droneline = Mission + ";";
-                            droneline += ((int)LostDrones) + ";\r\n";
-                            File.AppendAllText(dronelogfilename, droneline);
-                        }
-                        else
-                        {
-                            Logging.Log("DroneStats: Couldn't find the drone TypeID specified in the settings.xml; this shouldn't happen!");
-                        }                   
                         // Lost drone statistics stuff ends here
 
 

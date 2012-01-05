@@ -204,6 +204,8 @@ namespace Questor.Modules
         /// </summary>
         public bool IsMissionPocketDone { get; set; }
 
+        public string ExtConsole { get; set; }
+
         public long AgentId
         {
             get

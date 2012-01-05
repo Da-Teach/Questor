@@ -16,6 +16,7 @@ namespace Questor
         Start,
         Arm,
         GotoMission,
+        WarpOutStation,
         ExecuteMission,
         DelayedGotoBase,
         GotoBase,
