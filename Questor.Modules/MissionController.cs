@@ -19,7 +19,6 @@ namespace Questor.Modules
         private DateTime? _clearPocketTimeout;
         private int _currentAction;
         private DateTime _lastActivateAction;
-        private readonly Dictionary<long, DateTime> _lastWeaponReload = new Dictionary<long, DateTime>();
         private double _lastX;
         private double _lastY;
         private double _lastZ;
@@ -28,7 +27,8 @@ namespace Questor.Modules
         private bool _waiting;
         private DateTime _waitingSince;
         private DateTime _lastAlign;
-    
+        private readonly Dictionary<long, DateTime> _lastWeaponReload = new Dictionary<long, DateTime>();
+
         public long AgentId { get; set; }
 
         public MissionController()

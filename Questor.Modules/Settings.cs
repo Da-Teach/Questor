@@ -46,7 +46,9 @@ namespace Questor.Modules
 
         public bool Disable3D { get; set; }
 
-        public int MinimumDelay { get; set; }
+        public bool SaveLog { get; set; }
+
+        public int maxLineConsole { get; set; }        public int MinimumDelay { get; set; }
 
         public int RandomDelay { get; set; }
 		public float minStandings { get; set; }
@@ -74,6 +76,8 @@ namespace Questor.Modules
         public bool UnloadLootAtStation { get; set; }
 
         public string AgentName { get; set; }
+
+        public string bookmarkWarpOut { get; set; }
 
         public string MissionsPath { get; set; }
 

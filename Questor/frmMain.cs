@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Reflection;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
 using Questor.Modules;
 
 namespace Questor
@@ -125,7 +127,27 @@ namespace Questor
                 Top = Settings.Instance.WindowYPosition.Value;
                 Settings.Instance.WindowYPosition = null;
             }
+
+
+            if (Cache.Instance.ExtConsole != null)
+            {  
+                if (txtExtConsole.Lines.Count() >= Settings.Instance.maxLineConsole)
+                    txtExtConsole.Text = "";
+
+                if (Settings.Instance.SaveLog)
+                {
+                    string Carpeta = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Log\\" + _questor.CharacterName + "\\";
+                    string filename = Carpeta + string.Format("{0:ddMMyyyy}", DateTime.Today) + ".log";
+
+                    Directory.CreateDirectory(Carpeta);
+                    File.AppendAllText(filename, Cache.Instance.ExtConsole);    
+                }
+                txtExtConsole.AppendText(Cache.Instance.ExtConsole);
+                Cache.Instance.ExtConsole = null;
+            }
+
         }
+
 
         private void DamageTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -157,5 +179,28 @@ namespace Questor
         {
             _questor.Disable3D = Disable3DCheckBox.Checked;
         }
+
+        private void txtComand_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)13)
+            {
+                LavishScript.ExecuteCommand(txtComand.Text);
+            }
+        }
+
+        private void chkShowConsole_CheckedChanged(object sender, EventArgs e)
+        {
+            Form frmMain = new Form();
+            if (chkShowConsole.Checked)
+            {
+                this.Size = new System.Drawing.Size(901, 406);
+            }
+            else
+            {
+                this.Size = new System.Drawing.Size(362, 124);
+            }
+        }
+
+
     }
 }

@@ -42,6 +42,7 @@ namespace Questor
         private DateTime _lastAction;
         private Random _random;
         private int _randomDelay;
+        private bool ExitSta = false;
 
         private double _lastX;
         private double _lastY;
@@ -74,6 +75,8 @@ namespace Questor
 
             _directEve = new DirectEve();
             Cache.Instance.DirectEve = _directEve;
+
+            Cache.Instance.StopTimeSpecified = Program.stopTimeSpecified;
 
             _directEve.OnFrame += OnFrame;
         }
@@ -510,7 +513,7 @@ namespace Questor
                         Logging.Log("WarpOut: No Bookmark in System");
                          State = QuestorState.GotoMission;                   
                     }
-                    break;
+                     break;
 
                 case QuestorState.GotoMission:
                     var missionDestination = _traveler.Destination as MissionBookmarkDestination;
@@ -654,7 +657,8 @@ namespace Questor
                     {
                         // Lost drone statistics
                         // (inelegantly located here so as to avoid the necessity to switch to a combat ship after salvaging)
-                        if (Settings.Instance.UseDrones)
+                        var droneBay = Cache.Instance.DirectEve.GetShipsDroneBay();
+                        if (droneBay.Window == null)
                         {
                             var droneBay = Cache.Instance.DirectEve.GetShipsDroneBay();
                             if (droneBay.Window == null)
@@ -669,6 +673,11 @@ namespace Questor
                                 var drone = Cache.Instance.InvTypesById[Settings.Instance.DroneTypeId];
                                 LostDrones = (int)Math.Floor((droneBay.Capacity - droneBay.UsedCapacity) / drone.Volume);
                                 Logging.Log("DroneStats: Logging the number of lost drones: " + LostDrones.ToString());
+                            }
+                            else
+                            {
+                                Logging.Log("DroneStats: Couldn't find the drone TypeID specified in the settings.xml; this shouldn't happen!");
+                            }
                                 var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                                 var dronelogfilename = Path.Combine(path, Cache.Instance.FilterPath(CharacterName) + ".dronestats.log");
                                 if (!File.Exists(dronelogfilename))

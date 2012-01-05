@@ -11,9 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdateInvTypes", "UpdateInv
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuyLPI", "BuyLPI\BuyLPI.csproj", "{ABCCE619-8340-4BE1-A241-2A7277FC433D}"
 EndProject
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuestorStatistics", "QuestorStatistics\QuestorStatistics.csproj", "{C6FE1C9A-534F-4E7B-B70C-15981B48A46D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Traveler", "Traveler\Traveler.csproj", "{393DE7BE-C792-477A-B884-75F174BAB9B6}"
 EndProject
 Global
@@ -68,14 +65,10 @@ Global
 		{69F44183-8D8B-48A7-B3CA-813A9B57E2A2}.Release|x86.Build.0 = Release|x86
 		{ABCCE619-8340-4BE1-A241-2A7277FC433D}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{ABCCE619-8340-4BE1-A241-2A7277FC433D}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{ABCCE619-8340-4BE1-A241-2A7277FC433D}.Debug|Mixed Platforms.Build.0 = Debug|x86
 		{ABCCE619-8340-4BE1-A241-2A7277FC433D}.Debug|x86.ActiveCfg = Debug|x86
-		{ABCCE619-8340-4BE1-A241-2A7277FC433D}.Debug|x86.Build.0 = Debug|x86
 		{ABCCE619-8340-4BE1-A241-2A7277FC433D}.Release|Any CPU.ActiveCfg = Release|x86
 		{ABCCE619-8340-4BE1-A241-2A7277FC433D}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{ABCCE619-8340-4BE1-A241-2A7277FC433D}.Release|Mixed Platforms.Build.0 = Release|x86
 		{ABCCE619-8340-4BE1-A241-2A7277FC433D}.Release|x86.ActiveCfg = Release|x86
-		{ABCCE619-8340-4BE1-A241-2A7277FC433D}.Release|x86.Build.0 = Release|x86
 		{C6FE1C9A-534F-4E7B-B70C-15981B48A46D}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{C6FE1C9A-534F-4E7B-B70C-15981B48A46D}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{C6FE1C9A-534F-4E7B-B70C-15981B48A46D}.Debug|Mixed Platforms.Build.0 = Debug|x86
