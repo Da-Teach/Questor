@@ -9,6 +9,8 @@
 //-------------------------------------------------------------------------------
 using System;
 using System.Windows.Forms;
+using System.Collections.Generic;
+using Mono.Options;
 
 namespace Questor
 {
@@ -24,6 +26,9 @@ namespace Questor
         private static string _username;
         private static string _password;
         private static string _character;
+        private static string _scriptFile;
+        private static bool   _loginOnly;
+        private static bool   _showHelp;
 
         private static DateTime _lastPulse;
 
@@ -33,12 +38,49 @@ namespace Questor
         [STAThread]
         static void Main(string[] args)
         {
-            if (args.Length == 3 || args.Length == 4)
-            {
-                _username = args[0];
-                _password = args[1];
-                _character = args[2];
+            var p = new OptionSet() {
+                "Usage: questor [OPTIONS]",
+                "Run missions and make uber ISK.",
+                "",
+                "Options:",
+                { "u|user=", "the {USER} we are logging in as.",
+                v => _username = v },
+                { "p|password=", "the user's {PASSWORD}.",
+                v => _password = v },
+                { "c|character=", "the {CHARACTER} to use.",
+                v => _character = v },
+                { "s|script=", "a {SCRIPT} file to execute before login.",
+                v => _scriptFile = v },
+                { "l|login", "login only and exit.",
+                v => _loginOnly = v != null },
+                { "h|help", "show this message and exit",
+                v => _showHelp = v != null },
+                };
 
+            List<string> extra;
+            try
+            {
+                extra = p.Parse(args);
+                //Logging.Log(string.Format("questor: extra = {0}", string.Join(" ", extra.ToArray())));
+            }
+            catch (OptionException e)
+            {
+                Logging.Log("questor: ");
+                Logging.Log(e.Message);
+                Logging.Log("Try `questor --help' for more information.");
+                return;
+            }
+
+            if (_showHelp)
+            {
+                System.IO.StringWriter sw = new System.IO.StringWriter();
+                p.WriteOptionDescriptions(sw);
+                Logging.Log(sw.ToString());
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(_username) && !string.IsNullOrEmpty(_password) && !string.IsNullOrEmpty(_character))
+            {
                 _directEve = new DirectEve();
                 _directEve.OnFrame += OnFrame;
 
@@ -59,7 +101,7 @@ namespace Questor
                 _directEve.Dispose();
 
                 // If the last parameter is false, then we only auto-login
-                if (args.Length == 4 && string.Compare(args[3], "false", true) == 0)
+                if (_loginOnly)
                     return;
             }
 
@@ -108,6 +150,37 @@ namespace Questor
                     _done = true;
                     return;
                 }
+            }
+
+            if (!string.IsNullOrEmpty(_scriptFile))
+            {
+                try
+                {
+                    // Replace this try block with the following once new DirectEve is pushed
+                    // _directEve.RunScript(_scriptFile);
+
+                    System.Reflection.MethodInfo info = _directEve.GetType().GetMethod("RunScript");
+
+                    if (info == null)
+                    {
+                        Logging.Log("DirectEve.RunScript() doesn't exist.  Upgrade DirectEve.dll!");
+                    }
+                    else
+                    {
+                        Logging.Log(string.Format("Running {0}...", _scriptFile));
+                        info.Invoke(_directEve, new Object[] { _scriptFile });
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    Logging.Log(string.Format("Exception {0}...", ex.ToString()));
+                    _done = true;
+                }
+                finally
+                {
+                    _scriptFile = null;
+                }
+                return;
             }
 
             if (_directEve.Login.AtLogin)
