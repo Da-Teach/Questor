@@ -99,6 +99,33 @@
             this.chStationBuy = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chTotalBuy = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.bttnTaskValueDump = new System.Windows.Forms.Button();
+            this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.bttnTaskLPI = new System.Windows.Forms.Button();
+            this.lstItemsRequiered = new System.Windows.Forms.ListView();
+            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.bttnRefreshLPI = new System.Windows.Forms.Button();
+            this.txtSearchLPI = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.lstbuyLPI = new System.Windows.Forms.ListView();
+            this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chkBuyItems = new System.Windows.Forms.CheckBox();
+            this.lblTotal = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.lbliskLPI = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.lblitemisk = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.lblLP = new System.Windows.Forms.Label();
+            this.txtUnitLPI = new System.Windows.Forms.TextBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.txtCmdLine = new System.Windows.Forms.TextBox();
+            this.label17 = new System.Windows.Forms.Label();
+            this.bttnTaskLineCmd = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -109,6 +136,8 @@
             this.groupBox1.SuspendLayout();
             this.tabPage4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.RefineEfficiencyInput)).BeginInit();
+            this.tabPage5.SuspendLayout();
+            this.tabPage6.SuspendLayout();
             this.SuspendLayout();
             // 
             // UpdateSearchResults
@@ -123,6 +152,8 @@
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage4);
+            this.tabControl1.Controls.Add(this.tabPage5);
+            this.tabControl1.Controls.Add(this.tabPage6);
             this.tabControl1.Location = new System.Drawing.Point(1, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -214,6 +245,8 @@
             // BttnStart
             // 
             this.BttnStart.Location = new System.Drawing.Point(10, 216);
+            this.BttnStart.MaximumSize = new System.Drawing.Size(75, 23);
+            this.BttnStart.MinimumSize = new System.Drawing.Size(75, 23);
             this.BttnStart.Name = "BttnStart";
             this.BttnStart.Size = new System.Drawing.Size(75, 23);
             this.BttnStart.TabIndex = 23;
@@ -808,12 +841,270 @@
             this.bttnTaskValueDump.UseVisualStyleBackColor = true;
             this.bttnTaskValueDump.Click += new System.EventHandler(this.bttnTaskValueDump_Click);
             // 
+            // tabPage5
+            // 
+            this.tabPage5.Controls.Add(this.label16);
+            this.tabPage5.Controls.Add(this.txtUnitLPI);
+            this.tabPage5.Controls.Add(this.lblLP);
+            this.tabPage5.Controls.Add(this.label15);
+            this.tabPage5.Controls.Add(this.lblitemisk);
+            this.tabPage5.Controls.Add(this.label14);
+            this.tabPage5.Controls.Add(this.lbliskLPI);
+            this.tabPage5.Controls.Add(this.label13);
+            this.tabPage5.Controls.Add(this.label12);
+            this.tabPage5.Controls.Add(this.lblTotal);
+            this.tabPage5.Controls.Add(this.bttnTaskLPI);
+            this.tabPage5.Controls.Add(this.lstItemsRequiered);
+            this.tabPage5.Controls.Add(this.bttnRefreshLPI);
+            this.tabPage5.Controls.Add(this.txtSearchLPI);
+            this.tabPage5.Controls.Add(this.label11);
+            this.tabPage5.Controls.Add(this.lstbuyLPI);
+            this.tabPage5.Controls.Add(this.chkBuyItems);
+            this.tabPage5.Location = new System.Drawing.Point(4, 22);
+            this.tabPage5.Name = "tabPage5";
+            this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage5.Size = new System.Drawing.Size(648, 245);
+            this.tabPage5.TabIndex = 4;
+            this.tabPage5.Text = "BuyLPI";
+            this.tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // bttnTaskLPI
+            // 
+            this.bttnTaskLPI.Location = new System.Drawing.Point(562, 213);
+            this.bttnTaskLPI.Name = "bttnTaskLPI";
+            this.bttnTaskLPI.Size = new System.Drawing.Size(75, 23);
+            this.bttnTaskLPI.TabIndex = 6;
+            this.bttnTaskLPI.Text = "Add Task";
+            this.bttnTaskLPI.UseVisualStyleBackColor = true;
+            this.bttnTaskLPI.Click += new System.EventHandler(this.bttnTaskLPI_Click);
+            // 
+            // lstItemsRequiered
+            // 
+            this.lstItemsRequiered.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader5,
+            this.columnHeader6,
+            this.columnHeader7});
+            this.lstItemsRequiered.Location = new System.Drawing.Point(359, 9);
+            this.lstItemsRequiered.Name = "lstItemsRequiered";
+            this.lstItemsRequiered.Size = new System.Drawing.Size(278, 141);
+            this.lstItemsRequiered.TabIndex = 5;
+            this.lstItemsRequiered.UseCompatibleStateImageBehavior = false;
+            this.lstItemsRequiered.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Name";
+            this.columnHeader5.Width = 150;
+            // 
+            // columnHeader6
+            // 
+            this.columnHeader6.Text = "Units";
+            this.columnHeader6.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.columnHeader6.Width = 40;
+            // 
+            // columnHeader7
+            // 
+            this.columnHeader7.Text = "Median price";
+            this.columnHeader7.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.columnHeader7.Width = 80;
+            // 
+            // bttnRefreshLPI
+            // 
+            this.bttnRefreshLPI.Location = new System.Drawing.Point(261, 4);
+            this.bttnRefreshLPI.Name = "bttnRefreshLPI";
+            this.bttnRefreshLPI.Size = new System.Drawing.Size(75, 23);
+            this.bttnRefreshLPI.TabIndex = 4;
+            this.bttnRefreshLPI.Text = "Search";
+            this.bttnRefreshLPI.UseVisualStyleBackColor = true;
+            this.bttnRefreshLPI.Click += new System.EventHandler(this.bttnRefreshLPI_Click);
+            // 
+            // txtSearchLPI
+            // 
+            this.txtSearchLPI.Location = new System.Drawing.Point(75, 6);
+            this.txtSearchLPI.Name = "txtSearchLPI";
+            this.txtSearchLPI.Size = new System.Drawing.Size(180, 20);
+            this.txtSearchLPI.TabIndex = 3;
+            this.txtSearchLPI.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtSearchLPI_KeyPress);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(6, 9);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(63, 13);
+            this.label11.TabIndex = 2;
+            this.label11.Text = "Search item";
+            // 
+            // lstbuyLPI
+            // 
+            this.lstbuyLPI.CheckBoxes = true;
+            this.lstbuyLPI.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader8,
+            this.columnHeader9});
+            this.lstbuyLPI.Location = new System.Drawing.Point(3, 29);
+            this.lstbuyLPI.MultiSelect = false;
+            this.lstbuyLPI.Name = "lstbuyLPI";
+            this.lstbuyLPI.Size = new System.Drawing.Size(336, 207);
+            this.lstbuyLPI.TabIndex = 1;
+            this.lstbuyLPI.UseCompatibleStateImageBehavior = false;
+            this.lstbuyLPI.View = System.Windows.Forms.View.Details;
+            this.lstbuyLPI.SelectedIndexChanged += new System.EventHandler(this.lstbuyLPI_SelectedIndexChanged);
+            // 
+            // columnHeader8
+            // 
+            this.columnHeader8.Text = "Name";
+            this.columnHeader8.Width = 250;
+            // 
+            // columnHeader9
+            // 
+            this.columnHeader9.Text = "ID";
+            // 
+            // chkBuyItems
+            // 
+            this.chkBuyItems.AutoSize = true;
+            this.chkBuyItems.Location = new System.Drawing.Point(345, 216);
+            this.chkBuyItems.Name = "chkBuyItems";
+            this.chkBuyItems.Size = new System.Drawing.Size(112, 17);
+            this.chkBuyItems.TabIndex = 0;
+            this.chkBuyItems.Text = "Buy items required";
+            this.chkBuyItems.UseVisualStyleBackColor = true;
+            // 
+            // lblTotal
+            // 
+            this.lblTotal.AutoSize = true;
+            this.lblTotal.Location = new System.Drawing.Point(559, 162);
+            this.lblTotal.Name = "lblTotal";
+            this.lblTotal.Size = new System.Drawing.Size(0, 13);
+            this.lblTotal.TabIndex = 7;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label12.Location = new System.Drawing.Point(492, 162);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(64, 13);
+            this.label12.TabIndex = 8;
+            this.label12.Text = "Total ISK:";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label13.Location = new System.Drawing.Point(351, 162);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(50, 13);
+            this.label13.TabIndex = 9;
+            this.label13.Text = "LPI isk:";
+            // 
+            // lbliskLPI
+            // 
+            this.lbliskLPI.AutoSize = true;
+            this.lbliskLPI.Location = new System.Drawing.Point(399, 162);
+            this.lbliskLPI.Name = "lbliskLPI";
+            this.lbliskLPI.Size = new System.Drawing.Size(0, 13);
+            this.lbliskLPI.TabIndex = 10;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.Location = new System.Drawing.Point(340, 185);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(61, 13);
+            this.label14.TabIndex = 11;
+            this.label14.Text = "Items isk:";
+            // 
+            // lblitemisk
+            // 
+            this.lblitemisk.AutoSize = true;
+            this.lblitemisk.Location = new System.Drawing.Point(399, 185);
+            this.lblitemisk.Name = "lblitemisk";
+            this.lblitemisk.Size = new System.Drawing.Size(0, 13);
+            this.lblitemisk.TabIndex = 12;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label15.Location = new System.Drawing.Point(497, 185);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(63, 13);
+            this.label15.TabIndex = 13;
+            this.label15.Text = "Total LP: ";
+            // 
+            // lblLP
+            // 
+            this.lblLP.AutoSize = true;
+            this.lblLP.Location = new System.Drawing.Point(559, 185);
+            this.lblLP.Name = "lblLP";
+            this.lblLP.Size = new System.Drawing.Size(0, 13);
+            this.lblLP.TabIndex = 14;
+            // 
+            // txtUnitLPI
+            // 
+            this.txtUnitLPI.Location = new System.Drawing.Point(519, 214);
+            this.txtUnitLPI.Name = "txtUnitLPI";
+            this.txtUnitLPI.Size = new System.Drawing.Size(21, 20);
+            this.txtUnitLPI.TabIndex = 15;
+            this.txtUnitLPI.Text = "1";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(472, 217);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(31, 13);
+            this.label16.TabIndex = 16;
+            this.label16.Text = "Units";
+            // 
+            // tabPage6
+            // 
+            this.tabPage6.Controls.Add(this.bttnTaskLineCmd);
+            this.tabPage6.Controls.Add(this.label17);
+            this.tabPage6.Controls.Add(this.txtCmdLine);
+            this.tabPage6.Location = new System.Drawing.Point(4, 22);
+            this.tabPage6.Name = "tabPage6";
+            this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage6.Size = new System.Drawing.Size(648, 245);
+            this.tabPage6.TabIndex = 5;
+            this.tabPage6.Text = "Command Line";
+            this.tabPage6.UseVisualStyleBackColor = true;
+            // 
+            // txtCmdLine
+            // 
+            this.txtCmdLine.Location = new System.Drawing.Point(7, 38);
+            this.txtCmdLine.Name = "txtCmdLine";
+            this.txtCmdLine.Size = new System.Drawing.Size(468, 20);
+            this.txtCmdLine.TabIndex = 0;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label17.Location = new System.Drawing.Point(7, 22);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(158, 13);
+            this.label17.TabIndex = 1;
+            this.label17.Text = "Command Line InnerSpace";
+            // 
+            // bttnTaskLineCmd
+            // 
+            this.bttnTaskLineCmd.Location = new System.Drawing.Point(492, 38);
+            this.bttnTaskLineCmd.Name = "bttnTaskLineCmd";
+            this.bttnTaskLineCmd.Size = new System.Drawing.Size(75, 23);
+            this.bttnTaskLineCmd.TabIndex = 2;
+            this.bttnTaskLineCmd.Text = "Add Task";
+            this.bttnTaskLineCmd.UseVisualStyleBackColor = true;
+            this.bttnTaskLineCmd.Click += new System.EventHandler(this.bttnTaskLineCmd_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(654, 270);
             this.Controls.Add(this.tabControl1);
+            this.MaximizeBox = false;
             this.Name = "MainForm";
             this.Text = "Questor Traveler/Transport";
             this.tabControl1.ResumeLayout(false);
@@ -833,6 +1124,10 @@
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.RefineEfficiencyInput)).EndInit();
+            this.tabPage5.ResumeLayout(false);
+            this.tabPage5.PerformLayout();
+            this.tabPage6.ResumeLayout(false);
+            this.tabPage6.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -909,6 +1204,33 @@
         public System.Windows.Forms.CheckBox chkUpdateMineral;
         private System.Windows.Forms.Button bttnSaveTask;
         private System.Windows.Forms.ComboBox cmbXML;
+        private System.Windows.Forms.TabPage tabPage5;
+        public System.Windows.Forms.CheckBox chkBuyItems;
+        private System.Windows.Forms.Button bttnTaskLPI;
+        private System.Windows.Forms.ListView lstItemsRequiered;
+        private System.Windows.Forms.ColumnHeader columnHeader5;
+        private System.Windows.Forms.ColumnHeader columnHeader6;
+        private System.Windows.Forms.ColumnHeader columnHeader7;
+        private System.Windows.Forms.Button bttnRefreshLPI;
+        private System.Windows.Forms.TextBox txtSearchLPI;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.ListView lstbuyLPI;
+        private System.Windows.Forms.ColumnHeader columnHeader8;
+        private System.Windows.Forms.ColumnHeader columnHeader9;
+        private System.Windows.Forms.Label lblitemisk;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label lbliskLPI;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label lblTotal;
+        private System.Windows.Forms.Label lblLP;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.TextBox txtUnitLPI;
+        private System.Windows.Forms.TabPage tabPage6;
+        private System.Windows.Forms.Button bttnTaskLineCmd;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.TextBox txtCmdLine;
 
 
     }

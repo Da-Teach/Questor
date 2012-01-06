@@ -22,6 +22,7 @@ namespace Traveler
     using global::Traveler.Module;
     using global::Traveler.Actions;
     using DirectEve = global::Traveler.Common.DirectEve;
+    using LavishScriptAPI;
 
     public partial class MainForm : Form
     {
@@ -31,6 +32,8 @@ namespace Traveler
         private bool _changed;
         private bool Paused=false;
         private bool Start=false;
+        private bool lpstoreRe = false;
+        private bool RequiredCom = false;
 
 
         private object _destination;
@@ -47,7 +50,7 @@ namespace Traveler
         public List<ItemCache> ItemsToSell { get; set; }
         public List<ItemCache> ItemsToRefine { get; set; }
         public Dictionary<int, InvType> InvTypesById { get; set; }
-  
+
 
         private Traveler _traveler;
         private Grab _grab;
@@ -55,6 +58,7 @@ namespace Traveler
         private Buy _buy;
         private Sell _sell;
         private ValueDump _valuedump;
+        private BuyLPI _buylpi;
         private ListItems item;
 
         private DateTime _lastAction;
@@ -78,6 +82,7 @@ namespace Traveler
             _buy = new Buy();
             _sell = new Sell();
             _valuedump = new ValueDump(this);
+            _buylpi = new BuyLPI(this);
             _list = new List<ListItems>();
             Items = new List<ItemCache>();
             ItemsToSell = new List<ItemCache>();
@@ -99,7 +104,8 @@ namespace Traveler
                 _list.Add(item);
             }
 
-            RefreshXML();
+            RefreshJobs();
+            
 
             DirectEve.Instance.OnFrame += OnFrame;
         }
@@ -134,6 +140,12 @@ namespace Traveler
                 return;
 
             InitializeTraveler();
+
+            if (lpstoreRe)
+                ResfreshLPI();
+
+            if (RequiredCom)
+                Required();
 
             if (Paused)
                 return;
@@ -174,49 +186,102 @@ namespace Traveler
                          break;
                      }
 
+                     if ("CmdLine" == LstTask.Items[0].Text)
+                     {
+                         LblStatus.Text = LstTask.Items[0].Text + ":-:" + LstTask.Items[0].SubItems[1].Text;
+                         State = State.CmdLine;
+                         break;
+                     }
+
+                     if ("BuyLPI" == LstTask.Items[0].Text)
+                     {
+                         LblStatus.Text = LstTask.Items[0].Text + ":-:" + LstTask.Items[0].SubItems[1].Text;
+                         State = State.BuyLPI;
+                         break;
+                     }
+
                      if ("ValueDump" == LstTask.Items[0].Text)
                      {
-                         LblStatus.Text = LstTask.Items[0].Text + ": Item:" + LstTask.Items[0].SubItems[1].Text;
+                         LblStatus.Text = LstTask.Items[0].Text + ":-:" + LstTask.Items[0].SubItems[1].Text;
                          State = State.ValueDump;
                          break;
                      }
 
                      if ("MakeShip" == LstTask.Items[0].Text)
                      {
-                         LblStatus.Text = LstTask.Items[0].Text + ": Item:" + LstTask.Items[0].SubItems[1].Text;
+                         LblStatus.Text = LstTask.Items[0].Text + ":-:" + LstTask.Items[0].SubItems[1].Text;
                          State = State.MakeShip;
                          break;
                      }
 
                      if ("Drop" == LstTask.Items[0].Text)
                      {
-                         LblStatus.Text = LstTask.Items[0].Text + ": Item:" + LstTask.Items[0].SubItems[1].Text;
+                         LblStatus.Text = LstTask.Items[0].Text + ":-:" + LstTask.Items[0].SubItems[1].Text;
                          State = State.Drop;
                          break;
                      }
 
                      if ("Grab" == LstTask.Items[0].Text)
                      {
-                         LblStatus.Text = LstTask.Items[0].Text + ": Item:" + LstTask.Items[0].SubItems[1].Text;
+                         LblStatus.Text = LstTask.Items[0].Text + ":-:" + LstTask.Items[0].SubItems[1].Text;
                          State = State.Grab;
                          break;
                      }
 
                      if ("Buy" == LstTask.Items[0].Text)
                      {
-                         LblStatus.Text = LstTask.Items[0].Text + ": Item:" + LstTask.Items[0].SubItems[1].Text;
+                         LblStatus.Text = LstTask.Items[0].Text + ":-:" + LstTask.Items[0].SubItems[1].Text;
                          State = State.Buy;
                          break;
                      }
 
                      if ("Sell" == LstTask.Items[0].Text)
                      {
-                         LblStatus.Text = LstTask.Items[0].Text + ": Item:" + LstTask.Items[0].SubItems[1].Text;
+                         LblStatus.Text = LstTask.Items[0].Text + ":-:" + LstTask.Items[0].SubItems[1].Text;
                          State = State.Sell;
                          break;
                      }
 
                      break;
+
+
+                case State.CmdLine:
+
+                     Logging.Log("CmdLine: " + LstTask.Items[0].SubItems[1].Text);
+                     LavishScript.ExecuteCommand(LstTask.Items[0].SubItems[1].Text);
+                     LstTask.Items.Remove(LstTask.Items[0]);
+                     _lastAction = DateTime.Now;
+                     State = State.NextAction;
+                     
+                     break;
+
+
+                case State.BuyLPI:
+
+
+                     if (_buylpi.State == StateBuyLPI.Idle)
+                    {
+                        _buylpi.Item = Convert.ToInt32(LstTask.Items[0].Tag);
+                        _buylpi.Unit = Convert.ToInt32(LstTask.Items[0].SubItems[2].Text);
+                        Logging.Log("BuyLPI: Begin");
+                        _buylpi.State = StateBuyLPI.Begin;
+                    }
+
+
+                     _buylpi.ProcessState();
+
+
+                     if (_buylpi.State == StateBuyLPI.Done)
+                    {
+                        Logging.Log("BuyLPI: Done");
+                        _buylpi.State = StateBuyLPI.Idle;
+                        LstTask.Items.Remove(LstTask.Items[0]);
+                        _lastAction = DateTime.Now;
+                        State = State.NextAction;
+                    } 
+
+                     break;
+
 
                 case State.ValueDump:
 
@@ -240,6 +305,7 @@ namespace Traveler
 
                      if (_valuedump.State == ValueDumpState.Done)
                     {
+                        Logging.Log("ValueDump: Done");
                         _valuedump.State = ValueDumpState.Idle;
                         ProcessItems();
                         LstTask.Items.Remove(LstTask.Items[0]);
@@ -295,6 +361,7 @@ namespace Traveler
 
                      if (_buy.State == StateBuy.Done)
                     {
+                        Logging.Log("Buy: Done");
                         _buy.State = StateBuy.Idle;
                         LstTask.Items.Remove(LstTask.Items[0]);
                         _lastAction = DateTime.Now;
@@ -319,6 +386,7 @@ namespace Traveler
 
                      if (_sell.State == StateSell.Done)
                     {
+                        Logging.Log("Sell: Done");
                         _sell.State = StateSell.Idle;
                         LstTask.Items.Remove(LstTask.Items[0]);
                         _lastAction = DateTime.Now;
@@ -344,6 +412,7 @@ namespace Traveler
 
                      if (_drop.State == StateDrop.Done)
                     {
+                        Logging.Log("Drop: Done");
                         _drop.State = StateDrop.Idle;
                         LstTask.Items.Remove(LstTask.Items[0]);
                         _lastAction = DateTime.Now;
@@ -372,6 +441,7 @@ namespace Traveler
 
                      if (_grab.State == StateGrab.Done)
                      {
+                         Logging.Log("Grab: Done");
                          _grab.State = StateGrab.Idle;
                          LstTask.Items.Remove(LstTask.Items[0]);
                          _lastAction = DateTime.Now;
@@ -544,6 +614,7 @@ namespace Traveler
                 _grab.State = StateGrab.Idle;
                 _sell.State = StateSell.Idle;
                 _valuedump.State = ValueDumpState.Idle;
+                _buylpi.State = StateBuyLPI.Idle;
                 Start = false;
             }
         }
@@ -705,6 +776,8 @@ namespace Traveler
 
             var listItem = new ListViewItem("MakeShip");
             listItem.SubItems.Add(txtNameShip.Text);
+            listItem.SubItems.Add(" ");
+            listItem.SubItems.Add(" ");
             LstTask.Items.Add(listItem);
         }
 
@@ -858,11 +931,11 @@ namespace Traveler
                     XDocument FileXml = new XDocument(xml);
                     FileXml.Save(fic);
                 
-                RefreshXML();
+                RefreshJobs();
             
         }
 
-        private void RefreshXML()
+        private void RefreshJobs()
         {
             cmbXML.Items.Clear();
 
@@ -943,9 +1016,132 @@ namespace Traveler
             ReadXML(fic);
         }
 
-        private void bttnDeleteXML_Click(object sender, EventArgs e)
-        {
 
+        public void ResfreshLPI()
+        {
+            lpstoreRe = false;
+            var lpstore = DirectEve.Instance.Windows.OfType<DirectLoyaltyPointStoreWindow>().FirstOrDefault();
+            if (lpstore == null)
+            {
+                DirectEve.Instance.ExecuteCommand(DirectCmd.OpenLpstore);
+
+                return;
+            }
+
+            lstbuyLPI.Items.Clear();
+            
+                var search = txtSearchLPI.Text.Split(' ');
+                foreach (var offer in lpstore.Offers)
+                {
+                    var name = offer.TypeName;
+                    if (string.IsNullOrEmpty(name))
+                        continue;
+
+                    var found = search.All(t => name.IndexOf(t, StringComparison.OrdinalIgnoreCase) > -1);
+                    if (!found)
+                        continue;
+            
+                    var listItem = new ListViewItem(offer.TypeName);
+                    listItem.SubItems.Add(Convert.ToString(offer.TypeId));
+                    lstbuyLPI.Items.Add(listItem);
+                }
+    
+
+            
+
+        }
+
+        public void Required()
+        {
+            var lpstore = DirectEve.Instance.Windows.OfType<DirectLoyaltyPointStoreWindow>().FirstOrDefault();
+            var invTypes = XDocument.Load(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\InvTypes.xml");
+            var invType = invTypes.Root.Elements("invtype");
+
+            if (lpstore == null)
+            {
+                DirectEve.Instance.ExecuteCommand(DirectCmd.OpenLpstore);
+
+                return;
+            }
+
+            foreach (var offer in lpstore.Offers)
+            {
+
+                if (offer.TypeName == lstbuyLPI.SelectedItems[0].Text)
+                {
+                    double totalISK = 0;
+                    double medianbuy = 0;
+                    lstItemsRequiered.Items.Clear();
+
+                    if (offer.RequiredItems.Count > 0)
+                    {
+
+                        foreach (var requiredItem in offer.RequiredItems)
+                        {
+                            foreach (var item in invType)
+                            {
+                                if ((string)item.Attribute("name") == requiredItem.TypeName)
+                                {
+                                    medianbuy = (double?)item.Attribute("medianbuy") ?? 0;
+                                    var listItemRequired = new ListViewItem(requiredItem.TypeName);
+                                    listItemRequired.SubItems.Add(Convert.ToString(requiredItem.Quantity));
+                                    listItemRequired.SubItems.Add(string.Format("{0:#,#0.00}", medianbuy));
+                                    lstItemsRequiered.Items.Add(listItemRequired);
+                                    totalISK = totalISK + (Convert.ToDouble(requiredItem.Quantity) * medianbuy);
+                                }
+                            }
+                        }
+                    }
+
+                    lblitemisk.Text = string.Format("{0:#,#0.00}",totalISK);
+                    totalISK = totalISK + Convert.ToDouble(offer.IskCost);
+                    lbliskLPI.Text = string.Format("{0:#,#0.00}",offer.IskCost);
+                    lblTotal.Text = string.Format("{0:#,#0.00}",totalISK);
+                    lblLP.Text = string.Format("{0:#,#}", offer.LoyaltyPointCost);
+                }
+            }
+            RequiredCom = false;
+            
+        }
+
+        private void bttnRefreshLPI_Click(object sender, EventArgs e)
+        {
+            lpstoreRe = true;
+        }
+
+        private void lstbuyLPI_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            RequiredCom = true;
+        }
+
+        private void bttnTaskLPI_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in lstbuyLPI.CheckedItems)
+            {
+                var listItem = new ListViewItem("BuyLPI");
+                listItem.SubItems.Add(item.Text);
+                listItem.Tag = item.SubItems[1].Text;
+                listItem.SubItems.Add(txtUnitLPI.Text);
+                listItem.SubItems.Add(" ");
+                LstTask.Items.Add(listItem);
+            }
+        }
+
+        private void bttnTaskLineCmd_Click(object sender, EventArgs e)
+        {
+            var listItem = new ListViewItem("CmdLine");
+            listItem.SubItems.Add(txtCmdLine.Text);
+            listItem.SubItems.Add(" ");
+            listItem.SubItems.Add(" ");
+            LstTask.Items.Add(listItem);
+        }
+
+        private void txtSearchLPI_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)13)
+            {
+                lpstoreRe = true;
+            }
         }
 
     }
