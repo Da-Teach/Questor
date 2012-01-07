@@ -2,7 +2,7 @@ del .\questor\bin\debug\*.* /Q
 del .\questor.modules\bin\debug\*.* /Q
 c:\Windows\Microsoft.NET\Framework\v3.5\msbuild .\gotobm\GoToBM.csproj
 c:\Windows\Microsoft.NET\Framework\v3.5\msbuild .\BuyLPI\BuyLPI.csproj
-c:\Windows\Microsoft.NET\Framework\v3.5\msbuild .\Traveler\Traveler.csproj
+c:\Windows\Microsoft.NET\Framework\v3.5\msbuild .\QuestorManager\QuestorManager.csproj
 c:\Windows\Microsoft.NET\Framework\v3.5\msbuild .\questor\Questor.csproj
 c:\Windows\Microsoft.NET\Framework\v3.5\msbuild .\Questor.Modules\Questor.Modules.csproj
 c:\Windows\Microsoft.NET\Framework\v3.5\msbuild .\updateinvtypes\UpdateInvTypes.csproj
@@ -19,6 +19,6 @@ copy .\questorstatistics\bin\debug\*.exe .\output\*.exe
 copy .\updateinvtypes\bin\debug\*.exe .\output\*.exe
 copy .\valuedump\bin\debug\*.exe .\output\*.exe
 copy .\BuyLPI\bin\debug\*.exe .\output\*.exe
-copy .\Traveler\bin\debug\*.exe .\output\*.exe
+copy .\QuestorManager\bin\debug\*.exe .\output\*.exe
 copy .\QuestorSettings\bin\debug\*.exe .\output\*.exe
 pause
