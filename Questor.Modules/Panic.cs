@@ -125,6 +125,17 @@ namespace Questor.Modules
                 //       and the bot wont go into Panic mode while still "StartPanicking"
                 case PanicState.StartPanicking:
                 case PanicState.Panicking:
+                    // Add any warp scramblers to the priority list
+                    Cache.Instance.AddPriorityTargets(Cache.Instance.TargetedBy.Where(t => t.IsWarpScramblingMe), Priority.WarpScrambler);
+
+                    // Failsafe, in theory would/should never happen
+                    if (State == PanicState.Panicking && Cache.Instance.TargetedBy.Any(t => t.IsWarpScramblingMe))
+                    {
+                        // Resume is the only state that will make Questor revert to combat mode
+                        State = PanicState.Resume;
+                        return;
+                    }
+
                     if (Cache.Instance.InStation)
                     {
                         Logging.Log("Panic: Entered a station, lower panic mode");
