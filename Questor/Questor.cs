@@ -91,6 +91,8 @@ namespace Questor
 
         // Statistics information
         public DateTime Started { get; set; }
+        public DateTime Finished { get; set; }
+
         public string Mission { get; set; }
         public double Wealth { get; set; }
         public double LootValue { get; set; }
@@ -349,11 +351,13 @@ namespace Questor
 
                         // Write the header
                         if (!File.Exists(filename))
-                            File.AppendAllText(filename, "Date;Mission;Time;Isk;Loot;LP;\r\n");
+                            File.AppendAllText(filename, "Mission;TimeMission;TimeSalvage;TotalTime;Isk;Loot;LP;\r\n");
 
                         // Build the line
                         var line = DateTime.Now + ";";
                         line += Mission + ";";
+                        line += ((int)Finished.Subtract(Started).TotalMinutes) + ";";
+                        line += ((int)DateTime.Now.Subtract(Finished).TotalMinutes) + ";";
                         line += ((int)DateTime.Now.Subtract(Started).TotalMinutes) + ";";
                         line += ((int)(Cache.Instance.DirectEve.Me.Wealth - Wealth)) + ";";
                         line += ((int)LootValue) + ";";
@@ -697,6 +701,7 @@ namespace Questor
                     break;
 
                 case QuestorState.BeginAfterMissionSalvaging:
+                    Finished = DateTime.Now;
                     _GatesPresent = false;
                     if (_arm.State == ArmState.Idle)
                         _arm.State = ArmState.SwitchToSalvageShip;
