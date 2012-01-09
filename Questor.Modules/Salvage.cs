@@ -10,6 +10,8 @@
 namespace Questor.Modules
 {
     using System;
+    using System.IO;
+    using System.Reflection;
     using System.Collections.Generic;
     using System.Linq;
     using DirectEve;
@@ -250,6 +252,21 @@ namespace Questor.Modules
 
                 // Build a list of items to loot
                 var lootItems = new List<ItemCache>();
+
+                // Log all items found in the wreck
+                var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                var WreckLootStatisticsFile = Path.Combine(path, "WreckLootStatisticsDump.log");
+                File.AppendAllText(WreckLootStatisticsFile, "TIME: " + string.Format("{0:dd/MM/yyyy HH:mm:ss}", DateTime.Now) + "\n");
+                File.AppendAllText(WreckLootStatisticsFile, "NAME: " + containerEntity.Name + "\n"); 
+                File.AppendAllText(WreckLootStatisticsFile, "ITEMS:" + "\n");
+                foreach (var item in items.OrderBy(i => i.TypeId))
+                {
+                    File.AppendAllText(WreckLootStatisticsFile, "TypeID: " + item.TypeId.ToString() + "\n");
+                    File.AppendAllText(WreckLootStatisticsFile, "Name: " + item.Name + "\n");
+                    File.AppendAllText(WreckLootStatisticsFile, "Quantity: " + item.Quantity.ToString() + "\n");
+                    File.AppendAllText(WreckLootStatisticsFile, "=\n");
+                }
+                File.AppendAllText(WreckLootStatisticsFile, ";" + "\n");
 
                 // Walk through the list of items ordered by highest value item first
                 foreach (var item in items.OrderByDescending(i => i.IskPerM3))
