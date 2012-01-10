@@ -164,6 +164,12 @@ namespace Questor.Modules
         ///   Best orbit distancefor the mission
         /// </summary>
         public int OrbitDistance { get; set; }
+
+        /// <summary>
+        ///   Force Salvaging after mission
+        /// </summary>
+        public bool afterMissionSalvaging { get; set; }
+
 		
 		/// <summary>
         ///   Returns the maximum weapon distance
@@ -590,6 +596,7 @@ namespace Questor.Modules
             {
                 //No mission file but we need to set some cache settings
                 OrbitDistance = Settings.Instance.OrbitDistance;
+                afterMissionSalvaging = Settings.Instance.AfterMissionSalvaging;
                 return new Action[0];
             }
 
@@ -601,7 +608,7 @@ namespace Questor.Modules
                 {
                     if ((int) pocket.Attribute("id") != pocketId)
                         continue;
-
+                    
                     if (pocket.Element("damagetype") != null)
                         DamageType = (DamageType) Enum.Parse(typeof (DamageType), (string) pocket.Element("damagetype"), true);
 
@@ -609,6 +616,9 @@ namespace Questor.Modules
                         OrbitDistance = (int) pocket.Element("orbitdistance");
 					else											//Otherwise, use value defined in charname.xml file
 					OrbitDistance = Settings.Instance.OrbitDistance;
+
+                    if (pocket.Element("afterMissionSalvaging") != null) 	//Load OrbitDistance from mission.xml, if present
+                        afterMissionSalvaging = (bool)pocket.Element("afterMissionSalvaging");
 						
                     var actions = new List<Action>();
                     var elements = pocket.Element("actions");

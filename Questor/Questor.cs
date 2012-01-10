@@ -691,7 +691,7 @@ namespace Questor
                         LootValue += _unloadLoot.LootValue;
 
                         mission = Cache.Instance.GetAgentMission(Cache.Instance.AgentId);
-                        if (_combat.State != CombatState.OutOfAmmo && Settings.Instance.AfterMissionSalvaging && Cache.Instance.BookmarksByLabel(Settings.Instance.BookmarkPrefix + " ").Count > 0 && (mission == null || mission.State == (int)MissionState.Offered))
+                        if (_combat.State != CombatState.OutOfAmmo && Cache.Instance.afterMissionSalvaging  && Cache.Instance.BookmarksByLabel(Settings.Instance.BookmarkPrefix + " ").Count > 0 && (mission == null || mission.State == (int)MissionState.Offered))
                             State = QuestorState.BeginAfterMissionSalvaging;
                         else if (_combat.State == CombatState.OutOfAmmo)
                             State = QuestorState.Start;
