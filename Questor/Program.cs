@@ -29,8 +29,26 @@ namespace Questor
         private static string _scriptFile;
         private static bool   _loginOnly;
         private static bool   _showHelp;
+        private static int _maxRuntime;
 
         private static DateTime _lastPulse;
+        private static DateTime _startTime;
+
+        public static DateTime startTime
+        {
+           get 
+           {
+              return _startTime; 
+           }
+        }
+
+        public static int maxRuntime
+        {
+            get
+            {
+                return _maxRuntime;
+            }
+        }
 
         /// <summary>
         /// The main entry point for the application.
@@ -53,6 +71,8 @@ namespace Questor
                 v => _scriptFile = v },
                 { "l|login", "login only and exit.",
                 v => _loginOnly = v != null },
+                { "r|runtime=", "Quit Questor after {RUNTIME} minutes.",
+                v => _maxRuntime = Int32.Parse(v) },
                 { "h|help", "show this message and exit",
                 v => _showHelp = v != null },
                 };
@@ -104,6 +124,8 @@ namespace Questor
                 if (_loginOnly)
                     return;
             }
+
+            _startTime = DateTime.Now;
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
