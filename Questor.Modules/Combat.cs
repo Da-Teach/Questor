@@ -470,6 +470,8 @@ namespace Questor.Modules
                 else continue;
 
                 target.UnlockTarget();
+                //More human behaviour
+                System.Threading.Thread.Sleep(333);
                 combatTargets.RemoveAt(i);
             }
 
