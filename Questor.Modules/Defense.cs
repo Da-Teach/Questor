@@ -35,6 +35,8 @@ namespace Questor.Modules
                     continue;
 
                 module.Click();
+                //More human behaviour
+                System.Threading.Thread.Sleep(333);
             }
         }
 
@@ -55,9 +57,17 @@ namespace Questor.Modules
 
                 var inCombat = Cache.Instance.TargetedBy.Count() > 0;
                 if (!module.IsActive && ((inCombat && perc < Settings.Instance.ActivateRepairModules) || (!inCombat && perc < Settings.Instance.DeactivateRepairModules && Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage > Settings.Instance.SafeCapacitorPct)))
+                {
                     module.Click();
+                    //More human behaviour
+                    System.Threading.Thread.Sleep(333);
+                }
                 else if (module.IsActive && perc >= Settings.Instance.DeactivateRepairModules)
+                {
                     module.Click();
+                    //More human behaviour
+                    System.Threading.Thread.Sleep(333);
+                }
             }
         }
 
@@ -96,9 +106,17 @@ namespace Questor.Modules
                 deactivate |= Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage < Settings.Instance.MinimumPropulsionModuleCapacitor;
 
                 if (activate)
+                {
                     module.Click();
+                    //More human behaviour
+                    System.Threading.Thread.Sleep(333);
+                }
                 else if (deactivate)
+                {
                     module.Click();
+                    //More human behaviour
+                    System.Threading.Thread.Sleep(333);
+                }
             }
         }
 

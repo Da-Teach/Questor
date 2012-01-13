@@ -305,6 +305,8 @@ namespace Questor.Modules
                 {
                     Logging.Log("Combat: Activating weapon [" + weapon.ItemId + "] on [" + target.Name + "][" + target.Id + "]");
                     weapon.Activate(target.Id);
+                    //More human behaviour
+                    System.Threading.Thread.Sleep(333);
                 }
             }
         }

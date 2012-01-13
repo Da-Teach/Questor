@@ -88,6 +88,10 @@ namespace Questor.Modules
                 tractorBeam.Activate(wreck.Id);
 
                 Logging.Log("Salvage: Activating tractorbeam [" + tractorBeam.ItemId + "] on [" + wreck.Name + "][" + wreck.Id + "]");
+                //More human behaviour
+                System.Threading.Thread.Sleep(333);
+
+
             }
         }
 
@@ -118,6 +122,8 @@ namespace Questor.Modules
 
                 Logging.Log("Salvage: Activating salvager [" + salvager.ItemId + "] on [" + wreck.Name + "][" + wreck.Id + "]");
                 salvager.Activate(wreck.Id);
+                //More human behaviour
+                System.Threading.Thread.Sleep(333);
             }
         }
 
