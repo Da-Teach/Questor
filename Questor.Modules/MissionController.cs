@@ -56,6 +56,9 @@ namespace Questor.Modules
 
             foreach (var weapon in weapons)
             {
+                // Reloading energy weapons prematurely just results in unnecessary error messages, so let's not do that
+                if (weapon.IsEnergyWeapon)
+                    return;
 
                 if (weapon.CurrentCharges >= weapon.MaxCharges)
                     return;

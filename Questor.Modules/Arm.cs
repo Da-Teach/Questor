@@ -97,7 +97,6 @@ namespace Questor.Modules
                     var shipName = State == ArmState.ActivateCombatShip
                                        ? Settings.Instance.CombatShipName.ToLower()
                                        : Settings.Instance.SalvageShipName.ToLower();
-
                     if (!Cache.Instance.ArmLoadedCache)
                     {
                         _missionItemMoved = false;
