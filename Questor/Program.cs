@@ -253,7 +253,7 @@ namespace Questor
             {
                 Logging.Log("[Startup] Login account [" + _username + "]");
                 _directEve.Login.Login(_username, _password);
-                _pulsedelay = 15;
+                _pulsedelay = 20;
                 return;
             }
 
@@ -269,7 +269,7 @@ namespace Questor
                     return;
                 }
 
-                Logging.Log("[Startup] Character id/name [" + _character + "] not found, retrying in 10 seconds");
+                Logging.Log("[Startup] Character id/name [" + _character + "] not found, retrying in 20 seconds");
             }
         }
 
