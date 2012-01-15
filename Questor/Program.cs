@@ -56,6 +56,7 @@ namespace Questor
         [STAThread]
         static void Main(string[] args)
         {
+            _maxRuntime = Int32.MaxValue;
             var p = new OptionSet() {
                 "Usage: questor [OPTIONS]",
                 "Run missions and make uber ISK.",
