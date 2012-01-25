@@ -1,4 +1,5 @@
-﻿// ------------------------------------------------------------------------------
+﻿using System.Windows.Forms;
+// ------------------------------------------------------------------------------
 //   <copyright from='2010' to='2015' company='THEHACKERWITHIN.COM'>
 //     Copyright (c) TheHackerWithin.COM. All Rights Reserved.
 // 
@@ -300,6 +301,13 @@ namespace Questor
                         _lastAction = DateTime.Now;
                         State = QuestorState.DelayedGotoBase;
                         break;
+                    }
+
+                    if (DateTime.Now.Subtract(Program.startTime).Minutes > Program.maxRuntime)
+                    {
+                        // quit questor
+                        Logging.Log("Questor: Maximum runtime exceeded.  Quiting...");
+                        Application.Exit();
                     }
                     
                     mission = Cache.Instance.GetAgentMission(Cache.Instance.AgentId);
