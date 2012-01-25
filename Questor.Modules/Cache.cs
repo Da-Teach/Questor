@@ -123,6 +123,12 @@ namespace Questor.Modules
             LootedContainers = new HashSet<long>();
             IgnoreTargets = new HashSet<string>();
             MissionItems = new List<string>();
+            ChangeMissionShipFittings = false;
+            UseMissionShip = false;
+            ArmLoadedCache = false;
+            missionAmmo = new List<Ammo>();
+            MissionUseDrones = null;
+
         }
 
         /// <summary>
@@ -155,6 +161,11 @@ namespace Questor.Modules
         public DamageType DamageType { get; set; }
 
         /// <summary>
+        ///   Best orbit distancefor the mission
+        /// </summary>
+        public int OrbitDistance { get; set; }
+		
+		/// <summary>
         ///   Returns the maximum weapon distance
         /// </summary>
         public int WeaponRange
@@ -169,9 +180,9 @@ namespace Questor.Modules
                 if (cargo.IsReady)
                     ammo = ammo.Where(a => cargo.Items.Any(i => a.TypeId == i.TypeId && i.Quantity >= Settings.Instance.MinimumAmmoCharges));
 
-                // Return 0 if there's no ammo left
+                // Return ship range if there's no ammo left
                 if (ammo.Count() == 0)
-                    return 0;
+                    return System.Convert.ToInt32(Cache.Instance.DirectEve.ActiveShip.MaxTargetRange);
 
                 // Return max range
                 return ammo.Max(a => a.Range);
@@ -237,7 +248,12 @@ namespace Questor.Modules
 
         public IEnumerable<ModuleCache> Weapons
         {
-            get { return Modules.Where(m => m.GroupId == Settings.Instance.WeaponGroupId); }
+            get
+            { 
+                if(Cache.Instance.MissionWeaponGroupId != 0)
+                    return Modules.Where(m => m.GroupId == Cache.Instance.MissionWeaponGroupId); 
+                else return Modules.Where(m => m.GroupId == Settings.Instance.WeaponGroupId); 
+            }
         }
 
         public IEnumerable<EntityCache> Containers
@@ -366,7 +382,7 @@ namespace Questor.Modules
             get
             {
                 _priorityTargets.RemoveAll(pt => pt.Entity == null);
-                return _priorityTargets.OrderBy(pt => pt.Priority).ThenBy(pt => pt.Entity.Distance).Select(pt => pt.Entity);
+                return _priorityTargets.OrderBy(pt => pt.Priority).ThenBy(pt => (pt.Entity.ShieldPct + pt.Entity.ArmorPct + pt.Entity.StructurePct)).ThenBy(pt => pt.Entity.Distance).Select(pt => pt.Entity);
             }
         }
 
@@ -417,6 +433,24 @@ namespace Questor.Modules
         /// </summary>
         /// <returns></returns>
         public string BringMissionItem { get; private set; }
+
+
+
+        public string Fitting { get; set; } // stores name of the final fitting we want to use
+        public string MissionShip { get; set; } //stores name of mission specific ship
+        public string DefaultFitting { get; set; } //stores name of the default fitting
+        public string currentFit { get; set; }
+        public string factionFit { get; set; }
+        public string factionName { get; set; }
+        public bool ArmLoadedCache { get; set; } // flags whether arm has already loaded the mission
+        public bool UseMissionShip { get; set; } // flags whether we're using a mission specific ship
+        public bool ChangeMissionShipFittings { get; set; } // used for situations in which missionShip's specified, but no faction or mission fittings are; prevents default
+                                                            // fitting from being loaded in arm.cs
+        public List<Ammo> missionAmmo;
+        public int MissionWeaponGroupId = 0;
+        public bool? MissionUseDrones;
+        public bool StopTimeSpecified { get; set; }
+        public DateTime StopTime { get; set; }
 
         public DirectWindow GetWindowByCaption(string caption)
         {
@@ -553,7 +587,11 @@ namespace Questor.Modules
             var missionName = FilterPath(mission.Name);
             var missionXmlPath = Path.Combine(Settings.Instance.MissionsPath, missionName + ".xml");
             if (!File.Exists(missionXmlPath))
+            {
+                //No mission file but we need to set some cache settings
+                OrbitDistance = Settings.Instance.OrbitDistance;
                 return new Action[0];
+            }
 
             try
             {
@@ -567,6 +605,11 @@ namespace Questor.Modules
                     if (pocket.Element("damagetype") != null)
                         DamageType = (DamageType) Enum.Parse(typeof (DamageType), (string) pocket.Element("damagetype"), true);
 
+					if (pocket.Element("orbitdistance") != null) 	//Load OrbitDistance from mission.xml, if present
+                        OrbitDistance = (int) pocket.Element("orbitdistance");
+					else											//Otherwise, use value defined in charname.xml file
+					OrbitDistance = Settings.Instance.OrbitDistance;
+						
                     var actions = new List<Action>();
                     var elements = pocket.Element("actions");
                     if (elements != null)
@@ -604,6 +647,46 @@ namespace Questor.Modules
             var mission = GetAgentMission(agentId);
             if (mission == null)
                 return;
+            if (factionName == null || factionName == "")
+                factionName = "Default";
+
+            if (Settings.Instance.FittingsDefined)
+            {
+                //Set fitting to default
+                DefaultFitting = (string)Settings.Instance.DefaultFitting.Fitting;
+                Fitting = DefaultFitting;
+                MissionShip = "";
+                ChangeMissionShipFittings = false;
+                if (Settings.Instance.MissionFitting.Any(m => m.Mission.ToLower() == mission.Name.ToLower())) //priority goes to mission-specific fittings
+                {
+                    string _missionFit;
+                    string _missionShip;
+                    MissionFitting _missionFitting;
+
+                    // if we've got multiple copies of the same mission, find the one with the matching faction
+                    if (Settings.Instance.MissionFitting.Any(m => m.Faction.ToLower() == factionName.ToLower() && (m.Mission.ToLower() == mission.Name.ToLower())))
+                        _missionFitting = Settings.Instance.MissionFitting.FirstOrDefault(m => m.Faction.ToLower() == factionName.ToLower() && (m.Mission.ToLower() == mission.Name.ToLower()));
+                    else //otherwise just use the first copy of that mission
+                        _missionFitting = Settings.Instance.MissionFitting.FirstOrDefault(m => m.Mission.ToLower() == mission.Name.ToLower());
+
+                    _missionFit = (string)_missionFitting.Fitting;
+                    _missionShip = (string)_missionFitting.Ship;
+                    if (!(_missionFit == "" && !(_missionShip == ""))) // if we've both specified a mission specific ship and a fitting, then apply that fitting to the ship
+                    {
+                        ChangeMissionShipFittings = true;
+                        Fitting = _missionFit;
+                    }
+                    else if (!((factionFit == null) || (factionFit == "")))
+                        Fitting = factionFit;
+                    Logging.Log("Cache: Mission: " + _missionFitting.Mission + " - Faction: " + factionName + " - Fitting: " + _missionFit + " - Ship: " + _missionShip + " - ChangeMissionShipFittings: " + ChangeMissionShipFittings);
+                    MissionShip = _missionShip;
+                }
+                else if (!((factionFit == null) || (factionFit == ""))) // if no mission fittings defined, try to match by faction
+                    Fitting = factionFit;
+
+                if (Fitting == "") // otherwise use the default
+                    Fitting = DefaultFitting;
+            }
 
             var missionName = FilterPath(mission.Name);
             var missionXmlPath = Path.Combine(Settings.Instance.MissionsPath, missionName + ".xml");
@@ -618,6 +701,9 @@ namespace Questor.Modules
 
                 BringMissionItem = (string) xdoc.Root.Element("bring") ?? string.Empty;
                 BringMissionItem = BringMissionItem.ToLower();
+
+                //load fitting setting from the mission file
+                //Fitting = (string)xdoc.Root.Element("fitting") ?? "default";  
             }
             catch (Exception ex)
             {

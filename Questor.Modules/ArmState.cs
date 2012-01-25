@@ -26,5 +26,10 @@ namespace Questor.Modules
         SwitchToSalvageShip,
         ActivateSalvageShip,
         NotEnoughAmmo,
+        WaitForFitting,
+        OpenFittingWindow,
+        WaitForFittingWindow,
+        ChoseFitting,
+
     }
 }

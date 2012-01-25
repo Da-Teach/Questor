@@ -222,7 +222,7 @@ namespace ValueDump
                     ItemsToSell.RemoveAt(0);
 
                     // Dont sell containers
-                    if (_currentItem.GroupId == 448)
+                    if (_currentItem.GroupId == 448 || _currentItem.GroupId == 649)
                     {
                         Log("Skipping " + _currentItem.Name);
                         break;

@@ -1,4 +1,4 @@
-﻿// ------------------------------------------------------------------------------
+﻿﻿// ------------------------------------------------------------------------------
 //   <copyright from='2010' to='2015' company='THEHACKERWITHIN.COM'>
 //     Copyright (c) TheHackerWithin.COM. All Rights Reserved.
 // 
@@ -39,11 +39,11 @@ namespace Questor.Modules
                         _lastNormalZ = Cache.Instance.DirectEve.ActiveShip.Entity.Z;
                     }
 
-                    if (Cache.Instance.DirectEve.ActiveShip.GroupId == (int) Group.Capsule)
+                    if (Cache.Instance.DirectEve.ActiveShip.GroupId == (int)Group.Capsule)
                     {
                         Logging.Log("Panic: You are in a Capsule, you must have died :(");
                         State = PanicState.StartPanicking;
-                    } 
+                    }
                     else if (InMission && Cache.Instance.InSpace && Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage < Settings.Instance.MinimumCapacitorPct)
                     {
                         // Only check for cap-panic while in a mission, not while doing anything else
@@ -62,7 +62,7 @@ namespace Questor.Modules
                     }
 
                     _delayedResume = false;
-                    if(InMission)
+                    if (InMission)
                     {
                         var frigates = Cache.Instance.Entities.Count(e => e.IsFrigate && e.IsPlayer);
                         var cruisers = Cache.Instance.Entities.Count(e => e.IsCruiser && e.IsPlayer);
@@ -184,7 +184,7 @@ namespace Questor.Modules
 
                 case PanicState.Panic:
                     // Do not resume until your no longer in a capsule
-                    if (Cache.Instance.DirectEve.ActiveShip.GroupId == (int) Group.Capsule)
+                    if (Cache.Instance.DirectEve.ActiveShip.GroupId == (int)Group.Capsule)
                         break;
 
                     if (Cache.Instance.InStation)

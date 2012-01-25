@@ -43,6 +43,19 @@ namespace Questor.Modules
             // Check if we still have that ammo in our cargo
             correctAmmo = correctAmmo.Where(a => cargo.Items.Any(i => i.TypeId == a.TypeId && i.Quantity >= Settings.Instance.MinimumAmmoCharges));
 
+            //check if mission specific ammo is defined
+            if (Cache.Instance.missionAmmo.Count() != 0)
+            {
+                correctAmmo = Cache.Instance.missionAmmo.Where(a => a.DamageType == Cache.Instance.DamageType);
+            }
+
+            // Check if we still have that ammo in our cargo
+            correctAmmo = correctAmmo.Where(a => cargo.Items.Any(i => i.TypeId == a.TypeId && i.Quantity >= Settings.Instance.MinimumAmmoCharges));
+            if (Cache.Instance.missionAmmo.Count() != 0)
+            {
+                correctAmmo = Cache.Instance.missionAmmo;
+            }
+
             // We are out of ammo! :(
             if (correctAmmo.Count() == 0)
             {
@@ -228,7 +241,7 @@ namespace Questor.Modules
         {
             // Enable speed tank
             if (Cache.Instance.Approaching == null && Settings.Instance.SpeedTank)
-                target.Orbit(Settings.Instance.OrbitDistance);
+                target.Orbit(Cache.Instance.OrbitDistance);
 
             // Get the weapons
             var weapons = Cache.Instance.Weapons;
@@ -245,6 +258,13 @@ namespace Questor.Modules
                     continue;
 
                 var ammo = Settings.Instance.Ammo.FirstOrDefault(a => a.TypeId == weapon.Charge.TypeId);
+
+                //use mission specific ammo
+                if (Cache.Instance.missionAmmo.Count() != 0)
+                {
+                    ammo = Cache.Instance.missionAmmo.FirstOrDefault(a => a.TypeId == weapon.Charge.TypeId);
+                }
+
                 // How can this happen? Someone manually loaded ammo
                 if (ammo == null)
                     continue;
@@ -321,8 +341,49 @@ namespace Questor.Modules
             }
         }
 
+
         /// <summary>
-        ///   Activate target painters
+        ///   Activate Nos
+        /// </summary>
+        public void ActivateNos(EntityCache target)
+        {
+            var noses = Cache.Instance.Modules.Where(m => m.GroupId == (int)Group.nos).ToList();
+            //Logging.Log("Combat: we have " + noses.Count.ToString() + " Nos modules");
+            // Find the first active weapon
+            // Assist this weapon
+            foreach (var nos in noses)
+            {
+                // Are we on the right target?
+                if (nos.IsActive)
+                {
+                    if (nos.TargetId != target.Id)
+                        nos.Deactivate();
+
+                    continue;
+                }
+
+                // Are we deactivating?
+                if (nos.IsDeactivating)
+                    continue;
+                //Logging.Log("Combat: Distances Target[ " + target.Distance + " Optimal[" + nos.OptimalRange.ToString()+"]");
+                // Target is out of Nos range
+                if (target.Distance >= Settings.Instance.NosDistance)
+                    continue;
+
+                if (CanActivate(nos, target, false))
+                {
+                    Logging.Log("Combat: Nos  [" + nos.ItemId + "] on [" + target.Name + "][" + target.Id + "]");
+                    nos.Activate(target.Id);
+                }
+                else
+                {
+                    Logging.Log("Combat: Cannot Activate Nos [" + nos.ItemId + "] on [" + target.Name + "][" + target.Id + "]");
+                }
+            }
+        }
+
+        /// <summary>
+        ///   Activate StasisWeb
         /// </summary>
         public void ActivateStasisWeb(EntityCache target)
         {
@@ -524,6 +585,7 @@ namespace Questor.Modules
                         ActivateWeapons(target);
                         ActivateTargetPainters(target);
                         ActivateStasisWeb(target);
+                        ActivateNos(target);
                     }
                     break;
 

@@ -31,14 +31,26 @@
             _agentBlacklist = new List<long>();
 
             _storylines = new Dictionary<string, IStoryline>();
+            //_storylines.Add("__", new GenericCombatStoryline());
             _storylines.Add("Materials For War Preparation", new MaterialsForWarPreparation());
             _storylines.Add("Shipyard Theft", new GenericCombatStoryline());
             _storylines.Add("Evolution", new GenericCombatStoryline());
             _storylines.Add("Record Cleaning", new GenericCombatStoryline());
             _storylines.Add("Covering Your Tracks", new GenericCombatStoryline());
             _storylines.Add("Crowd Control", new GenericCombatStoryline());
+            _storylines.Add("A Force to Be Reckoned With", new GenericCombatStoryline());
+            _storylines.Add("Kidnappers Strike - Ambush In The Dark (1 of 10)", new GenericCombatStoryline());
+            _storylines.Add("Kidnappers Strike - The Kidnapping (3 of 10)", new GenericCombatStoryline());
+            _storylines.Add("Kidnappers Strike - Incriminating Evidence (5 of 10)", new GenericCombatStoryline());
+            _storylines.Add("Kidnappers Strike - The Secret Meeting (7 of 10)", new GenericCombatStoryline());
+            _storylines.Add("Kidnappers Strike - Defend the Civilian Convoy (8 of 10)", new GenericCombatStoryline());
+            _storylines.Add("Kidnappers Strike - Retrieve the Prisoners (9 of 10)", new GenericCombatStoryline());
+            _storylines.Add("Kidnappers Strike - The Final Battle (10 of 10)", new GenericCombatStoryline());
+            _storylines.Add("Whispers in the Dark - First Contact (1 of 4)", new GenericCombatStoryline());
+            _storylines.Add("Whispers in the Dark - Lay and Pray (2 of 4)", new GenericCombatStoryline());
+            _storylines.Add("Whispers in the Dark - The Outpost (4 of 4)", new GenericCombatStoryline());
             _storylines.Add("Transaction Data Delivery", new TransactionDataDelivery());
-            _storylines.Add("Innocents in the Crossfire", new GenericCombatStoryline());
+            _storylines.Add("Innocents in the Crossfire", new GenericCombatStoryline());				
         }
 
         public void Reset()

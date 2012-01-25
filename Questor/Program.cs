@@ -8,8 +8,14 @@
 //  </copyright>
 //-------------------------------------------------------------------------------
 using System;
-using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
+using System.Xml.XPath;
+using System.Reflection;
+using System.Xml.Linq;
+using System.IO;
+using System.Timers;
 using Mono.Options;
 
 namespace Questor
@@ -22,6 +28,8 @@ namespace Questor
     {
         private static bool _done;
         private static DirectEve _directEve;
+        public static List<CharSchedule> CharSchedules { get; private set; }
+        private static int _pulsedelay = 10;
 
         private static string _username;
         private static string _password;
@@ -30,6 +38,12 @@ namespace Questor
         private static bool   _loginOnly;
         private static bool   _showHelp;
         private static int _maxRuntime;
+
+        private static bool _readyToStart;
+
+        static System.Timers.Timer _timer = new System.Timers.Timer();
+        private static Random _r = new Random();
+        public static bool stopTimeSpecified = false;
 
         private static DateTime _lastPulse;
         private static DateTime _startTime;
@@ -91,6 +105,7 @@ namespace Questor
                 Logging.Log("Try `questor --help' for more information.");
                 return;
             }
+                _readyToStart = true;
 
             if (_showHelp)
             {
@@ -111,12 +126,6 @@ namespace Questor
                 while (!_done)
                 {
                     System.Threading.Thread.Sleep(50);
-
-                    if (DateTime.Now.Subtract(started).TotalSeconds > 180)
-                    {
-                        Logging.Log("auto login timed out after 3 minutes");
-                        break;
-                    }
                 }
 
                 _directEve.Dispose();
@@ -135,44 +144,67 @@ namespace Questor
 
         static void OnFrame(object sender, EventArgs e)
         {
-            if (DateTime.Now.Subtract(_lastPulse).TotalSeconds < 10)
+            if (!_readyToStart)
                 return;
+
+            if (DateTime.Now.Subtract(_lastPulse).TotalSeconds < _pulsedelay)
+                return;
+
             _lastPulse = DateTime.Now;
 
             // If the session is ready, then we are done :)
             if (_directEve.Session.IsReady)
             {
-                Logging.Log("We've successfully logged in");
+                Logging.Log("[Startup] We've successfully logged in");
                 _done = true;
                 return;
             }
-
-            // We are not ready, lets wait
-            if (_directEve.Login.IsConnecting || _directEve.Login.IsLoading)
-                return;
-
-            // Are we at the login or character selection screen?
-            if (!_directEve.Login.AtLogin && !_directEve.Login.AtCharacterSelection)
-                return;
 
             // We shouldn't get any window
             if (_directEve.Windows.Count != 0)
             {
                 foreach(var window in _directEve.Windows)
                 {
+                    if (window.Name == "telecom")
+                    {
+                        Logging.Log("Questor: Closing telecom message...");
+                        Logging.Log("Questor: Content of telecom window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
+                        window.Close();
+                        continue;
+                    }
+
+                    // Modal windows must be closed
+                    // But lets only close known modal windows
+                    if (window.Name == "modal")
+                    {
+                        bool close = false;
+                        if (!string.IsNullOrEmpty(window.Html))
+                        {
+                            // Server going down
+                            close |= window.Html.Contains("Please make sure your characters are out of harms way");
+                            close |= window.Html.Contains("The socket was closed");
+                            close |= window.Html.Contains("accepting connections");
+                            close |= window.Html.Contains("Could not connect");
+                            _pulsedelay = 60;
+                        }
+
+                        if (close)
+                        {
+                            Logging.Log("Questor: Closing modal window...");
+                            Logging.Log("Questor: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
+                            window.Close();
+                            continue;
+                        }
+                    }
+
                     if (string.IsNullOrEmpty(window.Html))
                         continue;
 
-                    if (window.Html.Contains("Please make sure your characters are out of harms way"))
-                        continue;
-
-                    if (window.Name == "telecom")
-                        continue;
-
-                    Logging.Log("We've got an unexpected window, auto login halted.");
+                    Logging.Log("[Startup] We've got an unexpected window, auto login halted.");
                     _done = true;
                     return;
                 }
+                return;
             }
 
             if (!string.IsNullOrEmpty(_scriptFile))
@@ -208,8 +240,9 @@ namespace Questor
 
             if (_directEve.Login.AtLogin)
             {
-                Logging.Log("Login account [" + _username + "]");
+                Logging.Log("[Startup] Login account [" + _username + "]");
                 _directEve.Login.Login(_username, _password);
+                _pulsedelay = 10;
                 return;
             }
 
@@ -220,13 +253,21 @@ namespace Questor
                     if (slot.CharId.ToString() != _character && string.Compare(slot.CharName, _character, true) != 0)
                         continue;
 
-                    Logging.Log("Activating character [" + slot.CharName + "]");
+                    Logging.Log("[Startup] Activating character [" + slot.CharName + "]");
                     slot.Activate();
                     return;
                 }
 
-                Logging.Log("Character id/name [" + _character + "] not found, retrying in 3 seconds");
+                Logging.Log("[Startup] Character id/name [" + _character + "] not found, retrying in 10 seconds");
             }
         }
+
+        static void TimerEventProcessor(Object myObject, EventArgs myEventArgs)
+        {
+            _timer.Stop();
+            Logging.Log("[Startup] Timer elapsed.  Starting now.");
+            _readyToStart = true;
+        }
+    
     }
 }

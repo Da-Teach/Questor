@@ -35,8 +35,9 @@ namespace Questor.Modules
         EmpireInsigniaDrops = 409,
 
         StasisWeb = 65,
+        nos = 68,
         TargetPainter = 379,
-
+        
         EnergyWeapon = 53,
         ProjectileWeapon = 55,
         HybridWeapon = 74,

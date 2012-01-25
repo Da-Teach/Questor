@@ -26,7 +26,7 @@ namespace Questor
             foreach (var text in Enum.GetNames(typeof(QuestorState)))
                 QuestorStateComboBox.Items.Add(text);
 
-            _questor = new Questor();
+            _questor = new Questor(this);
 
             LavishScript.Commands.AddCommand("SetAutoStart", SetAutoStart);
             LavishScript.Commands.AddCommand("SetDisable3D", SetDisable3D);
@@ -84,6 +84,7 @@ namespace Questor
             }
 
             return 0;
+
         }
 
         private void tUpdateUI_Tick(object sender, EventArgs e)
