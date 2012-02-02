@@ -396,6 +396,7 @@ namespace Questor
                     if (DateTime.Now.Subtract(_lastAction).TotalSeconds < _randomDelay)
                         break;
 
+                    _storyline.Reset();
                     State = QuestorState.Start;
                     break;
 
