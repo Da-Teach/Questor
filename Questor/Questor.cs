@@ -208,7 +208,7 @@ namespace Questor
                     if (!string.IsNullOrEmpty(window.Html))
                     {
                         // Server going down
-                        close |= window.Html.Contains("Please make sure your characters are out of harms way");
+                        close |= window.Html.Contains("Please make sure your characters are out of harm");
                         // In space "shit"
                         close |= window.Html.Contains("Item cannot be moved back to a loot container.");
                         close |= window.Html.Contains("you do not have the cargo space");
