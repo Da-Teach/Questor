@@ -1,5 +1,4 @@
-﻿using System.Windows.Forms;
-// ------------------------------------------------------------------------------
+﻿// ------------------------------------------------------------------------------
 //   <copyright from='2010' to='2015' company='THEHACKERWITHIN.COM'>
 //     Copyright (c) TheHackerWithin.COM. All Rights Reserved.
 // 
@@ -19,6 +18,7 @@ namespace Questor
     using global::Questor.Modules;
     using global::Questor.Storylines;
     using LavishScriptAPI;
+    using System.Windows.Forms;
 
     public class Questor
     {
@@ -194,7 +194,7 @@ namespace Questor
                     if (!string.IsNullOrEmpty(window.Html))
                     {
                         // Server going down
-                        close |= window.Html.Contains("Please make sure your characters are out of harms way");
+                        close |= window.Html.Contains("Please make sure your characters are out of harm");
                         // In space "shit"
                         close |= window.Html.Contains("Item cannot be moved back to a loot container.");
                         close |= window.Html.Contains("you do not have the cargo space");
