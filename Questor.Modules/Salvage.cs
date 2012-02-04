@@ -274,7 +274,7 @@ namespace Questor.Modules
                     // We never want to pick up a cap booster
                     if (item.GroupID == (int) Group.CapacitorGroupCharge)
                         continue;
-
+                    
                     // We pick up loot depending on isk per m3
                     var isMissionItem = Cache.Instance.MissionItems.Contains((item.Name ?? string.Empty).ToLower());
 
@@ -285,6 +285,10 @@ namespace Questor.Modules
                     // Do we want to loot other items?
                     if (!isMissionItem && !LootEverything)
                         continue;
+                    
+                    // Do not pick up items that cannot enter in a freighter container (unless its the mission item)
+                    if (!isMissionItem && item.Id == 25373 || item.Id == 3715 || item.Id == 3777)
+                    	continue;
 
                     // We are at our max, either make room or skip the item
                     if ((freeCargoCapacity - item.TotalVolume) <= (isMissionItem ? 0 : ReserveCargoCapacity))
