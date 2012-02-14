@@ -208,6 +208,7 @@ namespace Questor
 			            // Lag :/
                         close |= window.Html.Contains("The Zbikoki's Hacker Card");
                         close |= window.Html.Contains(" units free.");
+                        close |= window.Html.Contains("already full");
                     }
 
                     if (close)
