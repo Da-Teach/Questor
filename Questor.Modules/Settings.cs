@@ -317,10 +317,7 @@ namespace Questor.Modules
 
                 MyWalletBalance = 0;
                 lastKnownGoodConnectedTime = DateTime.Now;
-                walletbalancechangelogoffdelay = 30;
-
                 totalMegaBytesOfMemoryUsed = 0;
-                EVEProcessMemoryCeiling = 900;
 
                 missionName = null;
                 newlyretrievedmissionExpiresOn = (DateTime.Now.AddHours(-96));
