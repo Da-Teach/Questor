@@ -19,6 +19,7 @@ namespace Questor.Modules
         private DateTime _nextAction;
 
         public TravelerState State { get; set; }
+        public DirectBookmark UndockBookmark { get; set; }
 
         public TravelerDestination Destination
         {
@@ -39,6 +40,9 @@ namespace Questor.Modules
             if (_nextAction > DateTime.Now)
                 return;
 
+			var undockBookmark = UndockBookmark;
+			UndockBookmark = undockBookmark;
+
             var destination = Cache.Instance.DirectEve.Navigation.GetDestinationPath();
             if (destination.Count == 0 || !destination.Any(d => d == solarSystemId))
             {
@@ -46,12 +50,12 @@ namespace Questor.Modules
                 var location = Cache.Instance.DirectEve.Navigation.GetLocation(solarSystemId);
                 if (location.IsValid)
                 {
-                    Logging.Log("Traveler: Setting destination to [" + location.Name + "]");
+                    Logging.Log("Traveler: (traveler.cs) Setting destination to [" + location.Name + "]");
                     location.SetDestination();
                 }
                 else
                 {
-                    Logging.Log("Traveler: Error setting solar system destination [" + solarSystemId + "]");
+                    Logging.Log("Traveler: (traveler.cs) Error setting solar system destination [" + solarSystemId + "]");
                     State = TravelerState.Error;
                 }
 
@@ -64,7 +68,7 @@ namespace Questor.Modules
                     if (Cache.Instance.InStation)
                     {
                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdExitStation);
-                        _nextAction = DateTime.Now.AddSeconds(30);
+                        _nextAction = DateTime.Now.AddSeconds(25);
                     }
 
                     // We are not yet in space, wait for it
@@ -82,7 +86,7 @@ namespace Questor.Modules
                 if (entities.Count() == 0)
                 {
                     // not found, that cant be true?!?!?!?!
-                    Logging.Log("Traveler: Error [Stargate (" + locationName + ")] not found, most likely lag waiting 15 seconds.");
+                    Logging.Log("Traveler: (traveler.cs) Error [Stargate (" + locationName + ")] not found, most likely lag waiting 15 seconds.");
                     _nextAction = DateTime.Now.AddSeconds(15);
                     return;
                 }
@@ -91,7 +95,7 @@ namespace Questor.Modules
                 var entity = entities.First();
                 if (entity.Distance < 2500)
                 {
-                    Logging.Log("Traveler: Jumping to [" + locationName + "]");
+                    Logging.Log("Traveler: (traveler.cs) Jumping to [" + locationName + "]");
                     entity.Jump();
 
                     _nextAction = DateTime.Now.AddSeconds(15);
@@ -100,7 +104,7 @@ namespace Questor.Modules
                     entity.Approach();
                 else
                 {
-                    Logging.Log("Traveler: Warping to [Stargate (" + locationName + ")]");
+                    Logging.Log("Traveler: (traveler.cs) Warping to [Stargate (" + locationName + ")]");
                     entity.WarpTo();
 
                     _nextAction = DateTime.Now.AddSeconds(5);
