@@ -360,13 +360,13 @@ namespace Questor.Modules
 
             EnableStorylines = (bool?) xml.Element("enableStorylines") ?? false;
 
-			UndockDelay = (int) xml.Element("undockdelay");
-			UndockPrefix = (string) xml.Element("undockprefix");
-            WindowXPosition = (int?) xml.Element("windowXPosition");
-            WindowYPosition = (int?) xml.Element("windowYPosition");
+			UndockDelay = (int?)xml.Element("undockdelay") ?? 10;
+			UndockPrefix = (string) xml.Element("undockprefix") ?? "Insta";
+            WindowXPosition = (int?) xml.Element("windowXPosition") ?? 1600;
+            WindowYPosition = (int?) xml.Element("windowYPosition") ?? 1050;
 
-            CombatShipName = (string) xml.Element("combatShipName");
-            SalvageShipName = (string) xml.Element("salvageShipName");
+            CombatShipName = (string) xml.Element("combatShipName") ?? "raven";
+            SalvageShipName = (string) xml.Element("salvageShipName") ?? "noctis";
 
             LootHangar = (string) xml.Element("lootHangar");
             AmmoHangar = (string) xml.Element("ammoHangar");
@@ -381,7 +381,7 @@ namespace Questor.Modules
 
             AgentName = (string) xml.Element("agentName");
 
-            bookmarkWarpOut = (string)xml.Element("bookmarkWarpOut");
+            bookmarkWarpOut = (string)xml.Element("bookmarkWarpOut") ?? "insta";
 
             EVEProcessMemoryCieling = (int?)xml.Element("EVEProcessMemoryCieling") ?? 900;
 
