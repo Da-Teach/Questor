@@ -55,6 +55,17 @@ namespace Questor.Modules
             }
         }
 
+        public int TypeId
+        {
+            get
+            {
+                if(_directEntity != null)
+                    return _directEntity.TypeId;
+
+                return 0;
+            }
+        }
+
         public long FollowId
         {
             get
