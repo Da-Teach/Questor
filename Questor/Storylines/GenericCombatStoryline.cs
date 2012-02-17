@@ -128,7 +128,10 @@
                 if (_agentInteraction.Agent.Window != null)
                     _agentInteraction.Agent.Window.Close();
 
-                throw new Exception("Low security systems");
+                // No, black list the agent in this Questor session (note we will never decline storylines!)
+                //StorylineState = StorylineState.BlacklistAgent;
+
+                //throw new Exception("Low security systems");
             }
 
             if (_agentInteraction.State == AgentInteractionState.Done)
