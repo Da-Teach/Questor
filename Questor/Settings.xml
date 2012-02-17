@@ -4,8 +4,19 @@
   <autoStart>true</autoStart>
   <!-- Save Log Console -->
   <saveLog>true</saveLog>
-   
-   <!-- Maximum number of lines in the external console -->
+  <!-- debugStates: creates more verbose logging: use for debugging purposes only -->
+  <debugStates>false</debugStates>
+  <!-- debugPerformance: creates more verbose logging: use for debugging purposes only -->
+  <debugPerformance>false</debugPerformance>
+  <!-- CharacterMode: DPS or Salvage -->
+  <CharacterMode>dps</CharacterMode>
+  <!-- EVEProcessMemoryCieling: If this instance of EVE consumes more than the stated MB of Memory close eve when in station between missions-->
+  <EVEProcessMemoryCieling>950</EVEProcessMemoryCieling>
+  <!-- walletbalancechangelogoffdelay: If your characters wallet ballance does not change within this many minutes exit eve, the assumption is your toon is stuck or disconnected -->
+  <walletbalancechangelogoffdelay>30</walletbalancechangelogoffdelay>
+  
+  
+  <!-- Maximum number of lines in the external console -->
   <maxLineConsole>1000</maxLineConsole>
 
   <!-- disable 3d rendering -->

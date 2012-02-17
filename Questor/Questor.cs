@@ -588,9 +588,9 @@ namespace Questor
                     Settings.Instance.totalMegaBytesOfMemoryUsed = ((currentProcess.WorkingSet64 / 1024) / 1024);
                     Logging.Log("Questor: EVE instance: totalMegaBytesOfMemoryUsed - " + Settings.Instance.totalMegaBytesOfMemoryUsed);
 
-                    if (Settings.Instance.totalMegaBytesOfMemoryUsed > Settings.Instance.EVEProcessMemoryCieling)
+                    if (Settings.Instance.totalMegaBytesOfMemoryUsed > Settings.Instance.EVEProcessMemoryCeiling)
                     {
-                        Logging.Log("Questor: Memory usage is above the EVEProcessMemoryCieling threshold. EVE instance: totalMegaBytesOfMemoryUsed - " + Settings.Instance.totalMegaBytesOfMemoryUsed + " MB");
+                        Logging.Log("Questor: Memory usage is above the EVEProcessMemoryCeiling threshold. EVE instance: totalMegaBytesOfMemoryUsed - " + Settings.Instance.totalMegaBytesOfMemoryUsed + " MB");
                         Logging.Log("Questor: Setting QuestorState to GotoBase.");
                         State = QuestorState.GotoBase;
                         break;
@@ -980,9 +980,9 @@ namespace Questor
                         _traveler.ProcessState();
                         if (_traveler.State == TravelerState.AtDestination)
                         {
-                            if (Settings.Instance.totalMegaBytesOfMemoryUsed > (Settings.Instance.EVEProcessMemoryCieling - 50))
+                            if (Settings.Instance.totalMegaBytesOfMemoryUsed > (Settings.Instance.EVEProcessMemoryCeiling - 50))
                             {
-                                Logging.Log("Questor: Memory usage is above the EVEProcessMemoryCieling threshold. EVE instance: totalMegaBytesOfMemoryUsed - " + Settings.Instance.totalMegaBytesOfMemoryUsed + " MB");
+                                Logging.Log("Questor: Memory usage is above the EVEProcessMemoryCeiling threshold. EVE instance: totalMegaBytesOfMemoryUsed - " + Settings.Instance.totalMegaBytesOfMemoryUsed + " MB");
                                     Logging.Log("Questor: We are in station: Exiting eve.");
                                     //System.Threading.Thread.Sleep(33333); //33 second pause before closing questor
                                     Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);

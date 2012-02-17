@@ -121,7 +121,7 @@ namespace Questor.Modules
         public double MyWalletBalance { get; set; }
         
         public long totalMegaBytesOfMemoryUsed { get; set; }
-        public Int64 EVEProcessMemoryCieling { get; set; }
+        public Int64 EVEProcessMemoryCeiling { get; set; }
 
 
         public DateTime newlyretrievedmissionExpiresOn { get; set; }
@@ -320,7 +320,7 @@ namespace Questor.Modules
                 walletbalancechangelogoffdelay = 30;
 
                 totalMegaBytesOfMemoryUsed = 0;
-                EVEProcessMemoryCieling = 900;
+                EVEProcessMemoryCeiling = 900;
 
                 missionName = null;
                 newlyretrievedmissionExpiresOn = (DateTime.Now.AddHours(-96));
@@ -334,7 +334,7 @@ namespace Questor.Modules
             DebugStates = (bool?) xml.Element("debugStates") ?? false;
             DebugPerformance = (bool?) xml.Element("debugPerformance") ?? false;
 
-            CharacterMode = (string) xml.Element("characterMode") ?? "dps";
+            CharacterMode = (string) xml.Element("characterMode") ?? "dps"; //other option is "salvage"
 
             AutoStart = (bool?) xml.Element("autoStart") ?? false;
 
@@ -383,7 +383,8 @@ namespace Questor.Modules
 
             bookmarkWarpOut = (string)xml.Element("bookmarkWarpOut") ?? "insta";
 
-            EVEProcessMemoryCieling = (int?)xml.Element("EVEProcessMemoryCieling") ?? 900;
+            EVEProcessMemoryCeiling = (int?)xml.Element("EVEProcessMemoryCeiling") ?? 900;
+            walletbalancechangelogoffdelay = (int?)xml.Element("walletbalancechangelogoffdelay") ?? 30;
 
             var missionsPath = (string) xml.Element("missionsPath");
             MissionsPath = !string.IsNullOrEmpty(missionsPath) ? Path.Combine(path, missionsPath) : Path.Combine(path, "Missions");
