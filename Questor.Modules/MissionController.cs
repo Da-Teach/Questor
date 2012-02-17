@@ -210,7 +210,8 @@ namespace Questor.Modules
                 //
                 if (closest.Distance < -10100)
 				{
-					closest.Orbit(-9000);
+					//closest.Orbit(-9000);
+                    closest.Orbit(0);
 				}
 				Logging.Log("MissionController: distance " + closest.Distance);
 				if (closest.Distance >= -10100)
