@@ -11,6 +11,7 @@ namespace Questor.Modules
 {
     using System;
     using System.Xml.Linq;
+    using System.Globalization;
 
     public class InvType
     {
@@ -26,6 +27,8 @@ namespace Questor.Modules
             MedianBuy = (double?) element.Attribute("medianbuy");
             MedianSell = (double?) element.Attribute("mediansell");
             MedianAll = (double?) element.Attribute("medianall");
+            MinSell = (double?)element.Attribute("minsell");
+            MaxBuy = (double?)element.Attribute("maxbuy");
             LastUpdate = (DateTime?) element.Attribute("lastupdate");
         }
 
@@ -47,6 +50,8 @@ namespace Questor.Modules
         public double? MedianSell { get; set; }
         public double? MedianBuy { get; set; }
         public double? MedianAll { get; set; }
+        public double? MinSell { get; set; }
+        public double? MaxBuy { get; set; }
         public DateTime? LastUpdate { get; set; }
 
         public XElement Save()
@@ -59,9 +64,16 @@ namespace Questor.Modules
             element.SetAttributeValue("volume", Volume);
             element.SetAttributeValue("capacity", Capacity);
             element.SetAttributeValue("portionsize", PortionSize);
-            element.SetAttributeValue("medianbuy", MedianBuy);
-            element.SetAttributeValue("mediansell", MedianSell);
-            element.SetAttributeValue("medianall", MedianAll);
+            if(MedianBuy.HasValue && MedianBuy.Value > 0)
+                element.SetAttributeValue("medianbuy", MedianBuy.Value.ToString("0.00", CultureInfo.InvariantCulture));
+            if(MedianSell.HasValue && MedianSell.Value > 0)
+                element.SetAttributeValue("mediansell", MedianSell.Value.ToString("0.00", CultureInfo.InvariantCulture));
+            if(MedianAll.HasValue && MedianAll.Value > 0)
+                element.SetAttributeValue("medianall", MedianAll.Value.ToString("0.00", CultureInfo.InvariantCulture));
+            if(MinSell.HasValue && MinSell.Value > 0)
+                element.SetAttributeValue("minsell", MinSell.Value.ToString("0.00", CultureInfo.InvariantCulture));
+            if(MaxBuy.HasValue && MaxBuy.Value > 0)
+                element.SetAttributeValue("maxbuy", MaxBuy.Value.ToString("0.00", CultureInfo.InvariantCulture));
             element.SetAttributeValue("lastupdate", LastUpdate);
             return element;
         }
