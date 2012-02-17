@@ -27,8 +27,7 @@ namespace Questor.Modules
 
         private int MaxCharges { get; set; }
 
-        /// <summary>
-        ///   Reload correct (tm) ammo for the NPC
+        /// <summary> Reload correct (tm) ammo for the NPC
         /// </summary>
         /// <param name = "weapon"></param>
         /// <param name = "entity"></param>
@@ -55,6 +54,7 @@ namespace Questor.Modules
             {
                 correctAmmo = Cache.Instance.missionAmmo;
             }
+
 
             // We are out of ammo! :(
             if (correctAmmo.Count() == 0)
@@ -158,8 +158,7 @@ namespace Questor.Modules
             return false;
         }
 
-        /// <summary>
-        ///   Reload correct (tm) ammo for the NPC
+        /// <summary> Reload correct (tm) ammo for the NPC
         /// </summary>
         /// <param name = "weapon"></param>
         /// <param name = "entity"></param>
@@ -180,8 +179,43 @@ namespace Questor.Modules
             return weapon.IsEnergyWeapon ? ReloadEnergyWeaponAmmo(weapon, entity) : ReloadNormalAmmo(weapon, entity);
         }
 
-        /// <summary>
-        ///   Returns true if it can activate the weapon on the target
+        private void ReloadAll()
+        {
+            var weapons = Cache.Instance.Weapons;
+            var cargo = Cache.Instance.DirectEve.GetShipsCargo();
+            var correctAmmo1 = Settings.Instance.Ammo.Where(a => a.DamageType == Cache.Instance.DamageType);
+
+            correctAmmo1 = correctAmmo1.Where(a => cargo.Items.Any(i => i.TypeId == a.TypeId));
+
+            if (correctAmmo1.Count() == 0)
+                return;
+
+            var ammo = correctAmmo1.Where(a => a.Range > 1).OrderBy(a => a.Range).FirstOrDefault();
+            var charge = cargo.Items.FirstOrDefault(i => i.TypeId == ammo.TypeId);
+
+            if (ammo == null)
+                return;
+
+            foreach (var weapon in weapons)
+            {
+                if (weapon.CurrentCharges >= weapon.MaxCharges)
+                    return;
+
+                if (_lastWeaponReload.ContainsKey(weapon.ItemId) && DateTime.Now < _lastWeaponReload[weapon.ItemId].AddSeconds(22))
+                    return;
+                _lastWeaponReload[weapon.ItemId] = DateTime.Now;
+
+                if (weapon.Charge.TypeId == charge.TypeId)
+                {
+                    Logging.Log("MissionController: Reloading All [" + weapon.ItemId + "] with [" + charge.TypeName + "][" + charge.TypeId + "]");
+                    weapon.ReloadAmmo(charge);
+                }
+
+            }
+            return;
+        }
+
+        /// <summary> Returns true if it can activate the weapon on the target
         /// </summary>
         /// <remarks>
         ///   The idea behind this function is that a target that explodes isnt being fired on within 5 seconds
@@ -214,8 +248,7 @@ namespace Questor.Modules
             return false;
         }
 
-        /// <summary>
-        ///   Returns the target we need to activate everything on
+        /// <summary> Returns the target we need to activate everything on
         /// </summary>
         /// <returns></returns>
         private EntityCache GetTarget()
@@ -234,8 +267,7 @@ namespace Questor.Modules
             return Cache.Instance.GetBestTarget(weaponTarget, Cache.Instance.WeaponRange, false);
         }
 
-        /// <summary>
-        ///   Activate weapons
+        /// <summary> Activate weapons
         /// </summary>
         private void ActivateWeapons(EntityCache target)
         {
@@ -250,6 +282,15 @@ namespace Questor.Modules
             // Get distance of the target and compare that with the ammo currently loaded
             foreach (var weapon in weapons)
             {
+                // dont waste ammo on small target if you use autocannon or siege i hope you use drone
+                //if(Settings.Instance.WeaponGroupId == 55 || Settings.Instance.WeaponGroupId == 508 || Settings.Instance.WeaponGroupId == 506)
+                //{
+                //    if (target.Distance <= 9000 && !target.TargetValue.HasValue)
+                //    {
+                //        weapon.Deactivate();
+                //    }
+                //}
+
                 if (!weapon.IsActive)
                     continue;
 
@@ -306,13 +347,16 @@ namespace Questor.Modules
                     Logging.Log("Combat: Activating weapon [" + weapon.ItemId + "] on [" + target.Name + "][" + target.Id + "]");
                     weapon.Activate(target.Id);
                     //More human behaviour
-                    System.Threading.Thread.Sleep(333);
+                    //System.Threading.Thread.Sleep(333);
+
+					//we know we are connected if we were able to get this far - update the lastknownGoodConnectedTime
+                    Settings.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                    Settings.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
                 }
             }
         }
 
-        /// <summary>
-        ///   Activate target painters
+        /// <summary> Activate target painters
         /// </summary>
         public void ActivateTargetPainters(EntityCache target)
         {
@@ -343,9 +387,7 @@ namespace Questor.Modules
             }
         }
 
-
-        /// <summary>
-        ///   Activate Nos
+        /// <summary> Activate Nos
         /// </summary>
         public void ActivateNos(EntityCache target)
         {
@@ -384,8 +426,7 @@ namespace Questor.Modules
             }
         }
 
-        /// <summary>
-        ///   Activate StasisWeb
+        /// <summary> Activate StasisWeb
         /// </summary>
         public void ActivateStasisWeb(EntityCache target)
         {
@@ -420,8 +461,7 @@ namespace Questor.Modules
             }
         }
 
-        /// <summary>
-        ///   Target combatants
+        /// <summary> Target combatants
         /// </summary>
         /// <remarks>
         ///   This only targets ships that are targeting you
@@ -445,6 +485,10 @@ namespace Questor.Modules
                 Logging.Log("Combat: We are no longer jammed, retargeting");
             }
             _isJammed = false;
+            
+            //
+            // ???bounty tracking code goes here???
+            //
 
             // Whats the range that we can target at
             var maxRange = Math.Min(Cache.Instance.DirectEve.ActiveShip.MaxTargetRange, Cache.Instance.WeaponRange);
@@ -471,7 +515,7 @@ namespace Questor.Modules
 
                 target.UnlockTarget();
                 //More human behaviour
-                System.Threading.Thread.Sleep(333);
+                //System.Threading.Thread.Sleep(333);
                 combatTargets.RemoveAt(i);
             }
 
