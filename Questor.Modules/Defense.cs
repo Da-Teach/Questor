@@ -9,8 +9,10 @@
 // -------------------------------------------------------------------------------
 namespace Questor.Modules
 {
+    using System;
     using System.Linq;
-
+    using System.Diagnostics;
+    
     public class Defense
     {
         private void ActivateOnce()
@@ -36,12 +38,13 @@ namespace Questor.Modules
 
                 module.Click();
                 //More human behaviour
-                System.Threading.Thread.Sleep(333);
+                //System.Threading.Thread.Sleep(333);
             }
         }
 
         private void ActivateRepairModules()
         {
+            var watch = new Stopwatch();
             foreach (var module in Cache.Instance.Modules)
             {
                 if (module.InLimboState)
@@ -49,24 +52,62 @@ namespace Questor.Modules
 
                 double perc;
                 if (module.GroupId == (int) Group.ShieldBoosters)
+                {   
                     perc = Cache.Instance.DirectEve.ActiveShip.ShieldPercentage;
+                }
                 else if (module.GroupId == (int) Group.ArmorRepairer)
+                {
                     perc = Cache.Instance.DirectEve.ActiveShip.ArmorPercentage;
+                }
                 else
                     continue;
+				
+				var inCombat = Cache.Instance.TargetedBy.Count() > 0;
 
-                var inCombat = Cache.Instance.TargetedBy.Count() > 0;
                 if (!module.IsActive && ((inCombat && perc < Settings.Instance.ActivateRepairModules) || (!inCombat && perc < Settings.Instance.DeactivateRepairModules && Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage > Settings.Instance.SafeCapacitorPct)))
                 {
-                    module.Click();
+                    if (Cache.Instance.DirectEve.ActiveShip.ShieldPercentage < Settings.Instance.lowest_shield_percentage_this_pocket)
+                    {
+                        Settings.Instance.lowest_shield_percentage_this_pocket = Cache.Instance.DirectEve.ActiveShip.ShieldPercentage;
+                        Settings.Instance.lowest_shield_percentage_this_mission = Cache.Instance.DirectEve.ActiveShip.ShieldPercentage;
+                        Settings.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                    }
+                    if (Cache.Instance.DirectEve.ActiveShip.ArmorPercentage < Settings.Instance.lowest_armor_percentage_this_pocket)
+                    {
+                        Settings.Instance.lowest_armor_percentage_this_pocket = Cache.Instance.DirectEve.ActiveShip.ArmorPercentage;
+                        Settings.Instance.lowest_armor_percentage_this_mission = Cache.Instance.DirectEve.ActiveShip.ArmorPercentage;
+                        Settings.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                    }
+                    if (Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage < Settings.Instance.lowest_capacitor_percentage_this_pocket)
+                    {
+                        Settings.Instance.lowest_capacitor_percentage_this_pocket = Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage;
+                        Settings.Instance.lowest_capacitor_percentage_this_mission = Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage;
+                        Settings.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                    }
                     //More human behaviour
-                    System.Threading.Thread.Sleep(333);
+                    //System.Threading.Thread.Sleep(333);
+                    module.Click();
+					
+
+                    Settings.Instance.StartedBoosting = DateTime.Now;
+                 
+                    //Logging.Log("LowestShieldPercentage(pocket) [ " + Settings.Instance.lowest_shield_percentage_this_pocket + " ] ");
+					//Logging.Log("LowestArmorPercentage(pocket) [ " + Settings.Instance.lowest_armor_percentage_this_pocket + " ] ");
+					//Logging.Log("LowestCapacitorPercentage(pocket) [ " + Settings.Instance.lowest_capacitor_percentage_this_pocket + " ] ");
+					//Logging.Log("LowestShieldPercentage(mission) [ " + Settings.Instance.lowest_shield_percentage_this_mission + " ] ");
+					//Logging.Log("LowestArmorPercentage(mission) [ " + Settings.Instance.lowest_armor_percentage_this_mission + " ] ");
+					//Logging.Log("LowestCapacitorPercentage(mission) [ " + Settings.Instance.lowest_capacitor_percentage_this_mission + " ] ");
                 }
                 else if (module.IsActive && perc >= Settings.Instance.DeactivateRepairModules)
                 {
-                    module.Click();
                     //More human behaviour
-                    System.Threading.Thread.Sleep(333);
+                    //System.Threading.Thread.Sleep(333);
+                    module.Click();
+					Settings.Instance.repair_cycle_time_this_pocket = Settings.Instance.repair_cycle_time_this_pocket + ((int)DateTime.Now.Subtract(Settings.Instance.StartedBoosting).TotalSeconds);
+                    Settings.Instance.repair_cycle_time_this_mission = Settings.Instance.repair_cycle_time_this_mission + ((int)DateTime.Now.Subtract(Settings.Instance.StartedBoosting).TotalSeconds);
+                    Settings.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                    //Settings.Instance.repair_cycle_time_this_pocket = Settings.Instance.repair_cycle_time_this_pocket + ((int)watch.Elapsed);
+                    //Settings.Instance.repair_cycle_time_this_mission = Settings.Instance.repair_cycle_time_this_mission + watch.Elapsed.TotalMinutes;
                 }
             }
         }
@@ -95,28 +136,35 @@ namespace Questor.Modules
                 // This only applies when not speed tanking
                 if (!Settings.Instance.SpeedTank && Cache.Instance.Approaching != null)
                 {
-                    // Activate if target is far enough
-                    activate &= Cache.Instance.Approaching.Distance > Settings.Instance.MinimumPropulsionModuleDistance;
-                    // Deactivate if target is too close
-                    deactivate |= Cache.Instance.Approaching.Distance <  Settings.Instance.MinimumPropulsionModuleDistance;
+                    //Logging.Log("Defense: Distance from target [" + Cache.Instance.Approaching.Distance + "]" + "Settings: MinimumPropulsionModuleDistance [" + Settings.Instance.MinimumPropulsionModuleDistance + "]");              
+					// If we have less then x% cap, do not activate or deactivate the module
+					if (Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage < Settings.Instance.MinimumPropulsionModuleCapacitor)
+					{
+						activate = false;
+						if (module.IsActive && !module.IsDeactivating)
+							deactivate = true;
+						else
+							deactivate = false;
+					}
                 }
 
                 // If we have less then x% cap, do not activate or deactivate the module
+                //Logging.Log("Defense: Current Cap [" + Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage + "]" + "Settings: minimumPropulsionModuleCapacitor [" + Settings.Instance.MinimumPropulsionModuleCapacitor + "]");              
                 activate &= Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage > Settings.Instance.MinimumPropulsionModuleCapacitor;
                 deactivate |= Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage < Settings.Instance.MinimumPropulsionModuleCapacitor;
 
                 if (activate)
                 {
-                    module.Click();
                     //More human behaviour
-                    System.Threading.Thread.Sleep(333);
-                }
-                else if (deactivate)
-                {
+                    //System.Threading.Thread.Sleep(333); 
                     module.Click();
+				}
+                else if (deactivate && module.IsActive)
+				{
                     //More human behaviour
-                    System.Threading.Thread.Sleep(333);
-                }
+                    //System.Threading.Thread.Sleep(333); 
+                    module.Click();
+				}
             }
         }
 
