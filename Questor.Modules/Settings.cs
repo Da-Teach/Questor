@@ -1,5 +1,5 @@
 ﻿// ------------------------------------------------------------------------------
-//   <copyright from='2010' to='2015' company='THEHACKERWITHIN.COM'> 
+//   <copyright from='2010' to='2015' company='THEHACKERWITHIN.COM'>
 //     Copyright (c) TheHackerWithin.COM. All Rights Reserved.
 // 
 //     Please look in the accompanying license.htm file for the license that 
@@ -11,6 +11,7 @@ namespace Questor.Modules
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Reflection;
     using System.Xml.Linq;
@@ -24,10 +25,19 @@ namespace Questor.Modules
 
         private string _characterName;
         private DateTime _lastModifiedDate;
+        private Random ramdom = new Random();
+
+        public int ramdom_number()
+        {
+            return ramdom.Next(4, 7);
+        }
 
         public Settings()
         {
             Ammo = new List<Ammo>();
+            ItemsBlackList = new List<int>();
+            WreckBlackList = new List<int>();
+            //AgentsList = new List<AgentsList>();
             FactionFitting = new List<FactionFitting>();
             MissionFitting = new List<MissionFitting>();
             Blacklist = new List<string>();
@@ -36,11 +46,18 @@ namespace Questor.Modules
             DefaultFitting = new FactionFitting();
         }
 
+        public bool AtLoginScreen { get; set; }
+        
         public bool DebugStates { get; set; }
         public bool DebugPerformance { get; set; }
 
+        public string CharacterMode { get; set; }
+
         public bool AutoStart { get; set; }
 
+        public bool SaveLog { get; set; }
+
+        public int maxLineConsole { get; set; }
 
 		public bool waitDecline { get; set; }
 
@@ -66,21 +83,58 @@ namespace Questor.Modules
 
         public string LootHangar { get; set; }
         public string AmmoHangar { get; set; }
+        public string BookmarkHangar { get; set; }
+		public string LootContainer { get; set; }
 
         public bool CreateSalvageBookmarks { get; set; }
         public string BookmarkPrefix { get; set; }
+        public string UndockPrefix { get; set; }
+        public int UndockDelay { get; set; }
         public int MinimumWreckCount { get; set; }
         public bool AfterMissionSalvaging { get; set; }
         public bool UnloadLootAtStation { get; set; }
 
         public string AgentName { get; set; }
 
+        public string bookmarkWarpOut { get; set; }
+
         public string MissionsPath { get; set; }
+        
+        public string LogPath1 { get; set; }
+        public string LogPath2 { get; set; }
+        public string LogName { get; set; }
+        
+        public int panic_attempts_this_mission { get; set; }
+		public double lowest_shield_percentage_this_pocket { get; set; }
+        public double lowest_armor_percentage_this_pocket { get; set; }
+        public double lowest_capacitor_percentage_this_pocket { get; set; }
+        public int repair_cycle_time_this_pocket { get; set; }
+        public int panic_attempts_this_pocket { get; set; }
+        public double lowest_shield_percentage_this_mission { get; set; }
+        public double lowest_armor_percentage_this_mission { get; set; }
+        public double lowest_capacitor_percentage_this_mission { get; set; }
+        public DateTime StartedBoosting { get; set; }
+        public int repair_cycle_time_this_mission { get; set; }
+
+        public int walletbalancechangelogoffdelay { get; set; }
+        public DateTime lastKnownGoodConnectedTime { get; set; }
+        public double MyWalletBalance { get; set; }
+        
+        public long totalMegaBytesOfMemoryUsed { get; set; }
+        public Int64 EVEProcessMemoryCieling { get; set; }
+
+
+        public DateTime newlyretrievedmissionExpiresOn { get; set; }
+        public DateTime alreadyinprogressmissionExpiresOn { get; set; }
+        public int missionbookmarktoagentloops { get; set; }
+        public string missionName { get; set; }
 
         public int MaximumHighValueTargets { get; set; }
         public int MaximumLowValueTargets { get; set; }
 
         public List<Ammo> Ammo { get; private set; }
+        public List<int> ItemsBlackList { get; set; }
+        public List<int> WreckBlackList { get; set; }
         public List<FactionFitting> FactionFitting { get; private set; }
         public List<MissionFitting> MissionFitting { get; private set; }
         public bool FittingsDefined { get; set; }
@@ -109,7 +163,7 @@ namespace Questor.Modules
         public int SafeShieldPct { get; set; }
         public int SafeArmorPct { get; set; }
         public int SafeCapacitorPct { get; set; }
-
+        
         public bool LootEverything { get; set; }
 
         private bool _UseDrones;
@@ -139,6 +193,9 @@ namespace Questor.Modules
         public int LongRangeDroneRecallArmorPct { get; set; }
         public int LongRangeDroneRecallCapacitorPct { get; set; }
 
+        public int MaterialsForWarOreID { get; set; }
+        public int MaterialsForWarOreQty { get; set; }
+
         public List<string> Blacklist { get; private set; }
         public List<string> FactionBlacklist { get; private set; }
 
@@ -150,6 +207,8 @@ namespace Questor.Modules
         {
             var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var settingsPath = Path.Combine(path, Cache.Instance.FilterPath(_characterName) + ".xml");
+
+            var repairstopwatch = new Stopwatch();
 
             var reloadSettings = _characterName != Cache.Instance.DirectEve.Me.Name;
             if (File.Exists(settingsPath))
@@ -164,36 +223,48 @@ namespace Questor.Modules
             if (!File.Exists(settingsPath))
             {
                 // Clear settings
+                AtLoginScreen = true;
+
                 AgentName = string.Empty;
+
+                CharacterMode = "dps";
 
                 AutoStart = false;
 
-				waitDecline = false;
+                SaveLog = false;
+
+                maxLineConsole = 1000;
+
+                waitDecline = false;
 
                 Disable3D = false;
 
                 RandomDelay = 0;
 
-			    minStandings = 10;
+                minStandings = 10;
 
                 MinimumDelay = 0;
 
-                MinimumDelay = 0;
-				minStandings = 10;
-
+                minStandings = 10;
 
                 WindowXPosition = null;
                 WindowYPosition = null;
 
                 LootHangar = string.Empty;
                 AmmoHangar = string.Empty;
+                BookmarkHangar = string.Empty;
+				LootContainer = string.Empty;
 
                 MissionsPath = Path.Combine(path, "Missions");
+
+                bookmarkWarpOut = string.Empty;
 
                 MaximumHighValueTargets = 0;
                 MaximumLowValueTargets = 0;
 
                 Ammo.Clear();
+                ItemsBlackList.Clear();
+                WreckBlackList.Clear();
                 FactionFitting.Clear();
                 MissionFitting.Clear();
 
@@ -208,8 +279,8 @@ namespace Questor.Modules
                 SpeedTank = false;
                 OrbitDistance = 0;
                 NosDistance = 38000;
-                MinimumPropulsionModuleDistance = 0;
-                MinimumPropulsionModuleCapacitor = 0;
+                MinimumPropulsionModuleDistance = 3000;
+                MinimumPropulsionModuleCapacitor = 35;
 
                 ActivateRepairModules = 0;
                 DeactivateRepairModules = 0;
@@ -233,8 +304,28 @@ namespace Questor.Modules
                 UseGatesInSalvage = false;
 
                 Blacklist.Clear();
-				FactionBlacklist.Clear();
+                FactionBlacklist.Clear();
 
+                panic_attempts_this_pocket = 0;
+				lowest_shield_percentage_this_pocket = 100;
+				lowest_armor_percentage_this_pocket = 100;
+				lowest_capacitor_percentage_this_pocket = 100;
+                panic_attempts_this_mission = 0;
+                lowest_shield_percentage_this_mission = 100;
+				lowest_armor_percentage_this_mission = 100;
+				lowest_capacitor_percentage_this_mission = 100;
+
+                MyWalletBalance = 0;
+                lastKnownGoodConnectedTime = DateTime.Now;
+                walletbalancechangelogoffdelay = 30;
+
+                totalMegaBytesOfMemoryUsed = 0;
+                EVEProcessMemoryCieling = 900;
+
+                missionName = null;
+                newlyretrievedmissionExpiresOn = (DateTime.Now.AddHours(-96));
+                alreadyinprogressmissionExpiresOn = (DateTime.Now.AddHours(-96));
+                missionbookmarktoagentloops = 0;
                 return;
             }
 
@@ -243,11 +334,16 @@ namespace Questor.Modules
             DebugStates = (bool?) xml.Element("debugStates") ?? false;
             DebugPerformance = (bool?) xml.Element("debugPerformance") ?? false;
 
+            CharacterMode = (string) xml.Element("characterMode") ?? "dps";
+
             AutoStart = (bool?) xml.Element("autoStart") ?? false;
 
+            SaveLog = (bool?)xml.Element("saveLog") ?? false;
+
+            maxLineConsole = (int?)xml.Element("maxLineConsole") ?? 1000;
             waitDecline = (bool?) xml.Element("waitDecline") ?? false;
 
-            Disable3D = (bool?) xml.Element("disable3D") ?? false;
+            Disable3D = (bool?)xml.Element("disable3D") ?? true;
 
             RandomDelay = (int?) xml.Element("randomDelay") ?? 0;
             MinimumDelay = (int?)xml.Element("minimumDelay") ?? 0;
@@ -264,6 +360,8 @@ namespace Questor.Modules
 
             EnableStorylines = (bool?) xml.Element("enableStorylines") ?? false;
 
+			UndockDelay = (int) xml.Element("undockdelay");
+			UndockPrefix = (string) xml.Element("undockprefix");
             WindowXPosition = (int?) xml.Element("windowXPosition");
             WindowYPosition = (int?) xml.Element("windowYPosition");
 
@@ -272,6 +370,8 @@ namespace Questor.Modules
 
             LootHangar = (string) xml.Element("lootHangar");
             AmmoHangar = (string) xml.Element("ammoHangar");
+            BookmarkHangar = (string)xml.Element("bookmarkHangar");
+			LootContainer = (string)xml.Element("lootContainer");
 
             CreateSalvageBookmarks = (bool?) xml.Element("createSalvageBookmarks") ?? false;
             BookmarkPrefix = (string) xml.Element("bookmarkPrefix") ?? "Salvage:";
@@ -280,6 +380,10 @@ namespace Questor.Modules
             UnloadLootAtStation = (bool?) xml.Element("unloadLootAtStation") ?? false;
 
             AgentName = (string) xml.Element("agentName");
+
+            bookmarkWarpOut = (string)xml.Element("bookmarkWarpOut");
+
+            EVEProcessMemoryCieling = (int?)xml.Element("EVEProcessMemoryCieling") ?? 900;
 
             var missionsPath = (string) xml.Element("missionsPath");
             MissionsPath = !string.IsNullOrEmpty(missionsPath) ? Path.Combine(path, missionsPath) : Path.Combine(path, "Missions");
@@ -358,6 +462,9 @@ namespace Questor.Modules
             LongRangeDroneRecallArmorPct = (int?) xml.Element("longRangeDroneRecallArmorPct") ?? 0;
             LongRangeDroneRecallCapacitorPct = (int?) xml.Element("longRangeDroneRecallCapacitorPct") ?? 0;
 
+            MaterialsForWarOreID = (int?)xml.Element("MaterialsForWarOreID") ?? 20;
+            MaterialsForWarOreQty = (int?)xml.Element("MaterialsForWarOreQty") ?? 8000;
+
             Blacklist.Clear();
             var blacklist = xml.Element("blacklist");
             if (blacklist != null)
@@ -369,6 +476,32 @@ namespace Questor.Modules
             if (factionblacklist != null)
                 foreach (var faction in factionblacklist.Elements("faction"))
                     FactionBlacklist.Add((string) faction);
+
+            //list of small wreck
+            //WreckBlackList.Add(26557);
+            //WreckBlackList.Add(26561);
+            //WreckBlackList.Add(26564);
+            //WreckBlackList.Add(26567);
+            //WreckBlackList.Add(26570);
+            //WreckBlackList.Add(26573);
+            //WreckBlackList.Add(26576);
+            //WreckBlackList.Add(26579);
+            //WreckBlackList.Add(26582);
+            //WreckBlackList.Add(26585);
+            //WreckBlackList.Add(26588);
+            //WreckBlackList.Add(26591);
+            //WreckBlackList.Add(26594);
+            //WreckBlackList.Add(26935);
+
+            //list of medium wreck
+            //WreckBlackList.Add(26558);
+            //WreckBlackList.Add(26562);
+            //WreckBlackList.Add(26568);
+            //WreckBlackList.Add(26574);
+            //WreckBlackList.Add(26580);
+            //WreckBlackList.Add(26586);
+            //WreckBlackList.Add(26592);
+            //WreckBlackList.Add(26934);
 
             if (SettingsLoaded != null)
                 SettingsLoaded(this, new EventArgs());

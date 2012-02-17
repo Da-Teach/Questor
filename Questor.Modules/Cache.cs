@@ -48,7 +48,7 @@ namespace Questor.Modules
         ///   Returns all non-empty wrecks and all containers
         /// </summary>
         private List<EntityCache> _containers;
-
+        
         /// <summary>
         ///   Entities cache (all entities within 256km)
         /// </summary>
@@ -99,6 +99,8 @@ namespace Questor.Modules
         /// </summary>
         private List<EntityCache> _unlootedContainers;
 
+        private List<EntityCache> _unlootedWrecksAndSecureCans;
+        
         private List<DirectWindow> _windows;
 
         public Cache()
@@ -146,6 +148,40 @@ namespace Questor.Modules
             get { return _instance; }
         }
 
+        public bool ExitSta = false;
+
+        public bool LootAlreadyUnloaded = false;
+
+        public bool MissionLoot = false;
+
+        public bool SalvageAll = false;
+
+        public double Wealth { get; set; }
+
+        public bool Local_safe(int max_bad, float stand) {
+            int number = 0;
+            DirectChatWindow Local = (DirectChatWindow)GetWindowByName("Local");
+            foreach(var LocalMember in Local.Members)
+            {
+                float[] alliance = {DirectEve.Standings.GetPersonalRelationship(LocalMember.AllianceId), DirectEve.Standings.GetCorporationRelationship(LocalMember.AllianceId), DirectEve.Standings.GetAllianceRelationship(LocalMember.AllianceId)};
+                float[] corporation = {DirectEve.Standings.GetPersonalRelationship(LocalMember.CorporationId), DirectEve.Standings.GetCorporationRelationship(LocalMember.CorporationId), DirectEve.Standings.GetAllianceRelationship(LocalMember.CorporationId)};
+                float[] personal = {DirectEve.Standings.GetPersonalRelationship(LocalMember.CharacterId), DirectEve.Standings.GetCorporationRelationship(LocalMember.CharacterId), DirectEve.Standings.GetAllianceRelationship(LocalMember.CharacterId)};
+
+
+                if(alliance.Min() <= stand || corporation.Min() <= stand || personal.Min() <= stand)
+                {
+                    Logging.Log("Cache.WatchLocal: Bad guy detecting: " + LocalMember.Name);
+                    number++;
+                }
+                if(number > max_bad)
+                {
+                    Logging.Log("Cache.WatchLocal: Bad guys maybe attack you, We stay in station");
+                    return false;
+                }
+            }
+            return true;
+        }
+
         public DirectEve DirectEve { get; set; }
 
         public Dictionary<int, InvType> InvTypesById { get; private set; }
@@ -164,8 +200,8 @@ namespace Questor.Modules
         ///   Best orbit distancefor the mission
         /// </summary>
         public int OrbitDistance { get; set; }
-
-        /// <summary>
+		
+		/// <summary>
         ///   Force Salvaging after mission
         /// </summary>
         public bool afterMissionSalvaging { get; set; }
@@ -210,6 +246,8 @@ namespace Questor.Modules
         /// </summary>
         public bool IsMissionPocketDone { get; set; }
 
+        public string ExtConsole { get; set; }
+
         public long AgentId
         {
             get
@@ -225,6 +263,23 @@ namespace Questor.Modules
         }
 
         public DirectAgent Agent
+        {
+            get
+            {
+                if (!_agentId.HasValue)
+                {
+                    _agent = DirectEve.GetAgentByName(Settings.Instance.AgentName);
+                    _agentId = _agent.AgentId;
+                }
+
+                if (_agent == null)
+                    _agent = DirectEve.GetAgentById(_agentId.Value);
+
+                return _agent;
+            }
+        }
+
+        public DirectAgent MissionName
         {
             get
             {
@@ -267,7 +322,22 @@ namespace Questor.Modules
             get
             {
                 if (_containers == null)
-                    _containers = Entities.Where(e => e.IsContainer && e.HaveLootRights && (e.GroupId != (int) Group.Wreck || !e.IsWreckEmpty)).ToList();
+				
+				//
+				// edit 12-18-2011
+				//
+                    _containers = Entities.Where(e => e.IsContainer && e.HaveLootRights && (e.GroupId != (int) Group.Wreck || !e.IsWreckEmpty) && (e.Name != (String) "Abandoned Container")).ToList();
+
+                return _containers;
+            }
+        }
+
+        public IEnumerable<EntityCache> Wrecks
+        {
+            get
+            {
+                if (_containers == null)
+                    _containers = Entities.Where(e => (e.GroupId != (int)Group.Wreck)).ToList();
 
                 return _containers;
             }
@@ -284,6 +354,19 @@ namespace Questor.Modules
             }
         }
 
+        //This needs to include items you can steal from (thus gain aggro)
+        public IEnumerable<EntityCache> UnlootedWrecksAndSecureCans
+        {
+            get
+            {
+                if (_unlootedWrecksAndSecureCans == null)
+                    _unlootedWrecksAndSecureCans = Entities.Where(e => (e.GroupId == (int)Group.Wreck || e.GroupId == (int)Group.SecureContainer || e.GroupId == (int)Group.AuditLogSecureContainer || e.GroupId == (int)Group.FreightContainer) && !e.IsWreckEmpty).OrderBy(e => e.Distance).ToList();
+
+                return _unlootedWrecksAndSecureCans;
+            }
+        }
+        
+        
         public IEnumerable<EntityCache> Targets
         {
             get
@@ -584,10 +667,10 @@ namespace Questor.Modules
         /// <param name = "agentId"></param>
         /// <param name = "pocketId"></param>
         /// <returns></returns>
-        public IEnumerable<Action> LoadMissionActions(long agentId, int pocketId)
+        public IEnumerable<Action> LoadMissionActions(long agentId, int pocketId, bool mission_mode)
         {
             var mission = GetAgentMission(agentId);
-            if (mission == null)
+            if(mission == null && mission_mode)
                 return new Action[0];
 
             var missionName = FilterPath(mission.Name);
@@ -608,17 +691,26 @@ namespace Questor.Modules
                 {
                     if ((int) pocket.Attribute("id") != pocketId)
                         continue;
-                    
+
                     if (pocket.Element("damagetype") != null)
                         DamageType = (DamageType) Enum.Parse(typeof (DamageType), (string) pocket.Element("damagetype"), true);
 
 					if (pocket.Element("orbitdistance") != null) 	//Load OrbitDistance from mission.xml, if present
+                    {
+                        
                         OrbitDistance = (int) pocket.Element("orbitdistance");
+                        Logging.Log(string.Format("Cache: Using Mission Orbit distance {0}",OrbitDistance));
+                    }
 					else											//Otherwise, use value defined in charname.xml file
-					OrbitDistance = Settings.Instance.OrbitDistance;
+                    {
+						OrbitDistance = Settings.Instance.OrbitDistance;
+                        Logging.Log(string.Format("Cache: Using Settings Orbit distance {0}",OrbitDistance));
+                    }
+					if (pocket.Element("afterMissionSalvaging") != null) 	//Load afterMissionSalvaging setting from mission.xml, if present
+                    {
+    					afterMissionSalvaging = (bool)pocket.Element("afterMissionSalvaging");
+					}
 
-                    if (pocket.Element("afterMissionSalvaging") != null) 	//Load OrbitDistance from mission.xml, if present
-                        afterMissionSalvaging = (bool)pocket.Element("afterMissionSalvaging");
 						
                     var actions = new List<Action>();
                     var elements = pocket.Element("actions");
@@ -628,13 +720,25 @@ namespace Questor.Modules
                         {
                             var action = new Action();
                             action.State = (ActionState) Enum.Parse(typeof (ActionState), (string) element.Attribute("name"), true);
+                            if ((string)element.Attribute("name").Value == "ClearPocket")
+                            {
+                                action.AddParameter("", "");
+                            }
+                            else
+                            {
                             foreach (var parameter in element.Elements("parameter"))
                                 action.AddParameter((string) parameter.Attribute("name"), (string) parameter.Attribute("value"));
+                            }
                             actions.Add(action);
                         }
                     }
                     return actions;
                 }
+
+                // if we reach this code there is no mission XML file, so we set some things -- Assail
+
+                OrbitDistance = Settings.Instance.OrbitDistance;
+                Logging.Log(string.Format("Cache: Using Settings Orbit distance {0}", OrbitDistance));
 
                 return new Action[0];
             }
@@ -817,7 +921,14 @@ namespace Questor.Modules
             var highValueTarget = targets.Where(t => t.TargetValue.HasValue && t.Distance < distance).OrderByDescending(t => t.TargetValue.Value).ThenBy(OrderByLowestHealth()).ThenBy(t => t.Distance).FirstOrDefault();
             // Get the closest low value target
             var lowValueTarget = targets.Where(t => !t.TargetValue.HasValue && t.Distance < distance).OrderBy(OrderByLowestHealth()).ThenBy(t => t.Distance).FirstOrDefault();
-
+            /*
+            if (Cache.Instance.MissionWeaponGroupId == 55 || Cache.Instance.MissionWeaponGroupId == 508)
+            {
+                if (lowValueTarget != null && !lowValueFirst && lowValueTarget.Distance > 12000)
+                    return targets.Where(t => !t.TargetValue.HasValue && t.Distance > 12000 && t.Distance < distance).OrderByDescending(t => t.Distance).FirstOrDefault();
+                if (lowValueTarget != null && !lowValueFirst && lowValueTarget.Distance < 12000)
+                    lowValueTarget = null;
+            }*/
             if (lowValueFirst && lowValueTarget != null)
                 return lowValueTarget;
             if (!lowValueFirst && highValueTarget != null)
