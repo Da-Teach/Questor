@@ -96,6 +96,13 @@ namespace Questor.Modules
             if (_lastTarget == target.Id && DateTime.Now.Subtract(_lastEngageCommand).TotalSeconds < 15)
                 return;
 
+            // Are we still actively shooting at the target?
+            var mustEngage = false;
+            foreach (var drone in Cache.Instance.ActiveDrones)
+                mustEngage |= drone.FollowId != target.Id;
+            if (!mustEngage)
+                return;
+
             // Is the last target our current activetarget?
             if (target.IsActiveTarget)
             {
