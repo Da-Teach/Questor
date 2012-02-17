@@ -91,6 +91,8 @@
   <ship name="Strategic Cruiser" groupid="963" targetvalue="2" />
   <ship name="Strategic Cruiser Blueprints" groupid="996" targetvalue="2" />
   <ship name="Mission Faction Cruiser" groupid="1006" targetvalue="2" />
+  <ship name="Sentry" groupid="383" targetvalue="1" />
+  <!--
   <ship name="Asteroid Angel Cartel Destroyer" groupid="575" targetvalue="1" />
   <ship name="Asteroid Blood Raiders Destroyer" groupid="577" targetvalue="1" />
   <ship name="Asteroid Guristas Destroyer" groupid="579" targetvalue="1" />
@@ -118,4 +120,32 @@
   <ship name="Mission Thukker Destroyer" groupid="825" targetvalue="1" />
   <ship name="Mission Generic Destroyers" groupid="829" targetvalue="1" />
   <ship name="Asteroid Rogue Drone Commander Destroyer" groupid="846" targetvalue="1" />
+  <ship name="asteroid angel cartel frigate" groupid="550" targevalue="0" />
+  <ship name="asteroid blood raiders frigate" groupid="557" targevalue="0" />
+  <ship name="asteroid guristas frigate" groupid="562" targevalue="0" />
+  <ship name="asteroid sansha's nation frigate" groupid="567" targevalue="0" />
+  <ship name="asteroid serpentis frigate" groupid="572" targevalue="0" />
+  <ship name="deadspace angel cartel frigate" groupid="597" targevalue="0" />
+  <ship name="deadspace blood raiders frigate" groupid="606" targevalue="0" />
+  <ship name="deadspace guristas frigate" groupid="615" targevalue="0" />
+  <ship name="deadspace sansha's nation frigate" groupid="624" targevalue="0" />
+  <ship name="deadspace serpentis frigate" groupid="633" targevalue="0" />
+  <ship name="mission amarr empire frigate" groupid="665" targevalue="0" />
+  <ship name="mission caldari state frigate" groupid="671" targevalue="0" />
+  <ship name="mission gallente federation frigate" groupid="677" targevalue="0" />
+  <ship name="mission minmatar republic frigate" groupid="683" targevalue="0" />
+  <ship name="mission khanid frigate" groupid="687" targevalue="0" />
+  <ship name="mission concord frigate" groupid="693" targevalue="0" />
+  <ship name="mission mordu frigate" groupid="699" targevalue="0" />
+  <ship name="asteroid rouge drone frigate" groupid="759" targevalue="0" />
+  <ship name="asteroid angel cartel commander frigate" groupid="789" targevalue="0" />
+  <ship name="asteroid blood raiders commander frigate" groupid="792" targevalue="0" />
+  <ship name="asteroid guristas commander frigate" groupid="800" targevalue="0" />
+  <ship name="asteroid rouge drone frigate" groupid="805" targevalue="0" />
+  <ship name="asteroid sansha's nation commander frigate" groupid="810" targevalue="0" />
+  <ship name="asteroid serpentis commander frigate" groupid="814" targevalue="0" />
+  <ship name="mission generic frigates" groupid="818" targevalue="0" />
+  <ship name="mission thukker frigate" groupid="826" targevalue="0" />
+  <ship name="asteroid rouge drone commander frigate" groupid="847" targevalue="0" />
+  -->
 </ships>
