@@ -2,6 +2,11 @@
 <settings>
   <!-- Auto start when Questor is loaded -->
   <autoStart>true</autoStart>
+  <!-- Save Log Console -->
+  <saveLog>true</saveLog>
+   
+   <!-- Maximum number of lines in the external console -->
+  <maxLineConsole>1000</maxLineConsole>
 
   <!-- Random delay between missions -->
   <randomDelay>60</randomDelay>
@@ -29,9 +34,15 @@
 
   <!-- Y Position of Questor Window -->
   <windowYPosition>1050</windowYPosition>
+  
+  <!-- Create Bookmark to the output line from the station to more than 500km -->
+  <bookmarkWarpOut>instaundock</bookmarkWarpOut>
 
-  <!-- The agent that you are running missions for -->
-  <agentName></agentName>
+    <!-- The agents List that you are running missions for -->
+  <agentsList>
+	<agentList name="" priority="0" />
+	<!-- <agentList name="" priority="1" /> -->
+  </agentsList>
 
   <!-- List of factions which the bot will try to avoid -->
   <factionblacklist>
@@ -51,6 +62,9 @@
     <factionfitting faction="Default" fitting="Default" />
   </factionfittings>
 
+ <missionfittings>
+  <!-- <missionfitting mission="Cargo Delivery" fitting="cargo" dronetype="2185" /> -->
+</missionfittings>
 
   <!-- Wait for mission decline timer to expire before declining again -->
   <waitDecline>true</waitDecline>
