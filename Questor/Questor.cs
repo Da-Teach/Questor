@@ -462,7 +462,7 @@ namespace Questor
 
                         // Write the header
                         if (!File.Exists(filename))
-                            File.AppendAllText(filename, "Mission;TimeMission;TimeSalvage;TotalTime;Isk;Loot;LP;\r\n");
+                            File.AppendAllText(filename, "Date;Mission;TimeMission;TimeSalvage;TotalTime;Isk;Loot;LP;\r\n");
 
                         // Build the line
                         var line = DateTime.Now + ";";
