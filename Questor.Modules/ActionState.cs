@@ -12,10 +12,15 @@ namespace Questor.Modules
     public enum ActionState
     {
         MoveTo,
+		MoveToBackground,
         Activate,
         WaitUntilTargeted,
         ClearPocket,
+		AggroOnly,
         Kill,
+        KillOnce,
+        AttackClosestByName,
+        AttackClosest,
         Ignore,
         Loot,
         LootItem,

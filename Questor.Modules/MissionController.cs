@@ -11,7 +11,9 @@ namespace Questor.Modules
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
+    using System.Reflection;
     using DirectEve;
 
     public class MissionController
@@ -28,7 +30,6 @@ namespace Questor.Modules
         private bool _waiting;
         private DateTime _waitingSince;
         private DateTime _lastAlign;
-    
         public long AgentId { get; set; }
 
         public MissionController()
@@ -37,12 +38,69 @@ namespace Questor.Modules
         }
 
         public MissionControllerState State { get; set; }
+        // Statistics information
+        public DateTime Started { get; set; }
+        public DateTime StartedPocket { get; set; }
+        public string Mission { get; set; }
+        public double Wealth { get; set; }
+        public double LootValue { get; set; }
+        public int LoyaltyPoints { get; set; }
+        public int LostDrones { get; set; }
+        
+        private void LogStatistics()
+        {
+            // We arent suppose to create bookmarks
+            //if (!Settings.Instance.LogBounties)
+            //    return;
+            var mission = Cache.Instance.GetAgentMission(AgentId);
+            var currentPocketName = Cache.Instance.FilterPath(mission.Name);
+            // Get the path
+            
+                        
+			var CharacterName = Cache.Instance.DirectEve.Me.Name;
+			string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Log\\" + CharacterName + "\\pocketstats\\";
+
+            Logging.Log("MissionController: This is the ending stats stats for mission pocket: " + _pocket);
+            //
+            // this is writing down stats from the PREVIOUS pocket (if any?!)
+            //
+            var pocketstats_file = Path.Combine(path, Cache.Instance.FilterPath(CharacterName) + " - " + currentPocketName + " - " + _pocket + " - PocketStatistics.csv");
+
+            // Write the header
+            if (!File.Exists(pocketstats_file))
+                File.AppendAllText(pocketstats_file, "Date and Time;Mission Name and Pocket;Time to complete;Isk;panics;LowestShields;LowestArmor;LowestCapacitor;RepairCycles\r\n");
+
+            // Build the line
+            var pocketstats_line = DateTime.Now + ";";
+            pocketstats_line += currentPocketName + ";" + "pocket" + (_pocket) + ";";
+            pocketstats_line += ((int)DateTime.Now.Subtract(StartedPocket).TotalMinutes) + ";";
+            pocketstats_line += ((long)(Cache.Instance.DirectEve.Me.Wealth - Wealth)) + ";";
+            pocketstats_line += ((int)Settings.Instance.panic_attempts_this_pocket) + ";";
+            pocketstats_line += ((int)Settings.Instance.lowest_shield_percentage_this_pocket) + ";";
+            pocketstats_line += ((int)Settings.Instance.lowest_armor_percentage_this_pocket) + ";";
+            pocketstats_line += ((int)Settings.Instance.lowest_capacitor_percentage_this_pocket) + ";";
+            pocketstats_line += ((int)Settings.Instance.repair_cycle_time_this_pocket) + ";\r\n";            
+            
+                // The old pocket is finished
+                File.AppendAllText(pocketstats_file, pocketstats_line);
+
+                // Update statistic values for next pocket stats
+                Wealth = Cache.Instance.DirectEve.Me.Wealth;
+                StartedPocket = DateTime.Now;
+                Settings.Instance.panic_attempts_this_pocket = 0;
+                Settings.Instance.lowest_shield_percentage_this_pocket = 101;
+                Settings.Instance.lowest_armor_percentage_this_pocket = 101;
+                Settings.Instance.lowest_capacitor_percentage_this_pocket = 101;
+                Settings.Instance.repair_cycle_time_this_pocket = 0;
+                LostDrones = 0;
+        }
 
         private void ReloadAll()
         {
             var weapons = Cache.Instance.Weapons;
             var cargo = Cache.Instance.DirectEve.GetShipsCargo();
             var correctAmmo1 = Settings.Instance.Ammo.Where(a => a.DamageType == Cache.Instance.DamageType);
+
             correctAmmo1 = correctAmmo1.Where(a => cargo.Items.Any(i => i.TypeId == a.TypeId));
 
             if (correctAmmo1.Count() == 0)
@@ -65,13 +123,11 @@ namespace Questor.Modules
 
                 if (_lastWeaponReload.ContainsKey(weapon.ItemId) && DateTime.Now < _lastWeaponReload[weapon.ItemId].AddSeconds(22))
                     return;
-
                 _lastWeaponReload[weapon.ItemId] = DateTime.Now;
 
                 if (weapon.Charge.TypeId == charge.TypeId)
                 {
                     Logging.Log("MissionController: Reloading All [" + weapon.ItemId + "] with [" + charge.TypeName + "][" + charge.TypeId + "]");
-
                     weapon.ReloadAmmo(charge);
                 }
 
@@ -132,7 +188,7 @@ namespace Questor.Modules
             }
 
             var closest = targets.OrderBy(t => t.Distance).First();
-            if (closest.Distance < 2500)
+            if (closest.Distance < 2300)
             {
                 // Tell the drones module to retract drones
                 Cache.Instance.IsMissionPocketDone = true;
@@ -145,15 +201,34 @@ namespace Questor.Modules
                 if (Settings.Instance.CreateSalvageBookmarks)
                     BookmarkPocketForSalvaging();
 
-                // Reload weapons and activate gate to move to the next pocket
-                ReloadAll();
-                closest.Activate();
-
-                // Do not change actions, if NextPocket gets a timeout (>2 mins) then it reverts to the last action
-                Logging.Log("MissionController.Activate: Activate [" + closest.Name + "] and change state to 'NextPocket'");
-
-                State = MissionControllerState.NextPocket;
-                _lastActivateAction = DateTime.Now;
+               // Reload weapons and activate gate to move to the next pocket
+				ReloadAll();
+                //
+                // this is a bad idea for a speed tank, we ought to somehow cache the object they are orbiting/approaching, etc
+                // this seemingly slowed down the exit from cetain missions for me for 2-3min as it had a command to orbit some random object
+                // after the "done" command
+                //
+                if (closest.Distance < -10100)
+				{
+					closest.Orbit(-9000);
+				}
+				Logging.Log("MissionController: distance " + closest.Distance);
+				if (closest.Distance >= -10100)
+				{
+					// Add bookmark (before we activate)
+					if (Settings.Instance.CreateSalvageBookmarks)
+						BookmarkPocketForSalvaging();
+					
+                    // Reload weapons and activate gate to move to the next pocket
+                    ReloadAll();
+					closest.Activate();
+				 
+					// Do not change actions, if NextPocket gets a timeout (>2 mins) then it reverts to the last action
+					Logging.Log("MissionController.Activate: Activate [" + closest.Name + "] and change state to 'NextPocket'");
+				 
+					_lastActivateAction = DateTime.Now;
+					State = MissionControllerState.NextPocket;
+				}
             }
             else if (closest.Distance < 150000)
             {
@@ -204,7 +279,7 @@ namespace Questor.Modules
             }
 
             // Is there a priority target out of range?
-            var target = Cache.Instance.PriorityTargets.OrderBy(t => t.Distance).Where(t => !Cache.Instance.IgnoreTargets.Contains(t.Name.Trim())).FirstOrDefault();
+            var target = Cache.Instance.PriorityTargets.OrderBy(t => t.Distance).Where(t => !(Cache.Instance.IgnoreTargets.Contains(t.Name.Trim()) && !Cache.Instance.TargetedBy.Any(w => w.IsWarpScramblingMe))).FirstOrDefault();
             // Or is there a target out of range that is targeting us?
             target = target ?? Cache.Instance.TargetedBy.Where(t => !t.IsSentry && !t.IsContainer && t.IsNpc && t.CategoryId == (int)CategoryID.Entity && t.GroupId != (int)Group.LargeCollidableStructure && !Cache.Instance.IgnoreTargets.Contains(t.Name.Trim())).OrderBy(t => t.Distance).FirstOrDefault();
             // Or is there any target out of range?
@@ -256,7 +331,7 @@ namespace Questor.Modules
             _clearPocketTimeout = null;
         }
 
-        private void MoveToAction(Action action)
+        private void MoveToBackgroundAction(Action action)
         {
             var target = action.GetParameterValue("target");
 
@@ -284,21 +359,68 @@ namespace Questor.Modules
                     Cache.Instance.Approaching = null;
                 }
             }
-            else if (closest.Distance < 150000)
+            else
             {
                 // Move to the target
                 if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
                 {
                     Logging.Log("MissionController.MoveTo: Approaching target [" + closest.Name + "][" + closest.Id + "]");
                     closest.Approach();
+					 _currentAction++;
                 }
+            }
+        }
+
+		private void MoveToAction(Action action)
+        {
+            var target = action.GetParameterValue("target");
+
+            // No parameter? Although we shouldnt really allow it, assume its the acceleration gate :)
+            if (string.IsNullOrEmpty(target))
+                target = "Acceleration Gate";
+
+            var targets = Cache.Instance.EntitiesByName(target);
+            if (targets == null || targets.Count() == 0)
+            {
+                // Unlike activate, no target just means next action
+                _currentAction++;
+                return;
+            }
+
+            var closest = targets.OrderBy(t => t.Distance).First();
+            if (closest.Distance < 2300)
+            {
+                // We are close enough to whatever we needed to move to
+                _currentAction++;
+
+                if (Cache.Instance.Approaching != null)
+                {
+                    Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                    Cache.Instance.Approaching = null;
+                }
+            }
+            else if (closest.Distance < 150000)
+            {
+                    // Move to the target
+                    if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
+                    {
+                        Logging.Log("MissionController.Activate: Approaching target [" + closest.Name + "][" + closest.Id + "]");
+                        closest.Approach();
+                        //_lastApproach = DateTime.Now;
+                    }
             }
             else
             {
+                //// Move to the target
+                //if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
+                //{
+                //    Logging.Log("MissionController.MoveTo: Approaching target [" + closest.Name + "][" + closest.Id + "]");
+                //    closest.Approach();
+                //}
                 // We cant warp if we have drones out
                 if (Cache.Instance.ActiveDrones.Count() > 0)
                     return;
-
+                
                 if (DateTime.Now.Subtract(_lastAlign ).TotalMinutes > 2)
                 {
                 // Probably never happens
@@ -427,10 +549,213 @@ namespace Questor.Modules
             }
         }
 
+        private void KillOnceAction(Action action)
+        {
+            bool ignoreAttackers;
+            if (!bool.TryParse(action.GetParameterValue("ignoreattackers"), out ignoreAttackers))
+                ignoreAttackers = false;
+
+            bool breakOnAttackers;
+            if (!bool.TryParse(action.GetParameterValue("breakonattackers"), out breakOnAttackers))
+                breakOnAttackers = false;
+
+            var targetNames = action.GetParameterValues("target");
+            // No parameter? Ignore kill action
+            if (targetNames.Count == 0)
+            {
+                Logging.Log("MissionController.KillOnce: No targets defined!");
+
+                _currentAction++;
+                return;
+            }
+
+            //var targets = Cache.Instance.Entities.Where(e => targetNames.Contains(e.Name));
+            var target = Cache.Instance.Entities.Where(e => targetNames.Contains(e.Name)).OrderBy(t => t.Distance).First(); 
+            if (target.HasExploded)
+            {
+                Logging.Log("MissionController.KillOnce: All targets killed, has exploded ");
+
+                // We killed it/them !?!?!? :)
+                _currentAction++;
+                return;
+            }
+            if (target.IsValid)
+            {
+                Logging.Log("MissionController.KillOnce: All targets killed, not valid anymore ");
+
+                // We killed it/them !?!?!? :)
+                _currentAction++;
+                return;
+            }
+
+            if (!ignoreAttackers || breakOnAttackers)
+            {
+                // Apparently we are busy, wait for combat to clear attackers first
+                var targetedBy = Cache.Instance.TargetedBy;
+                if (targetedBy != null && targetedBy.Count(t => !t.IsSentry && t.Distance < Cache.Instance.WeaponRange) > 0)
+                    return;
+            }
+
+
+            if (target.Distance < Cache.Instance.WeaponRange)
+            {
+                if (!Cache.Instance.PriorityTargets.Any(pt => pt.Id == target.Id))
+                {
+                    Logging.Log("MissionController.KillOnce: Adding [" + target.Name + "][" + target.Id + "] as a priority target");
+                    Cache.Instance.AddPriorityTargets(new[] { target }, Priority.PriorityKillTarget);
+                }
+
+                if (Cache.Instance.Approaching != null && !Settings.Instance.SpeedTank)
+                {
+                    //Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                    //Cache.Instance.Approaching = null;
+                }
+            }
+            else
+            {
+                // Move within 80% max distance
+                if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id)
+                {
+                    Logging.Log("MissionController.KillOnce: Approaching target [" + target.Name + "][" + target.Id + "]");
+
+                    if (Settings.Instance.SpeedTank)
+                        target.Orbit(Cache.Instance.OrbitDistance);
+                    else
+                        target.Approach((int)(Cache.Instance.WeaponRange * 0.8d));
+                }
+            }
+        }
+
+        private void AttackClosestByNameAction(Action action)
+        {
+            var targetNames = action.GetParameterValues("target");
+            // No parameter? Ignore kill action
+            if (targetNames.Count == 0)
+            {
+                Logging.Log("MissionController.AttackClosestByName: No targets defined!");
+
+                _currentAction++;
+                return;
+            }
+
+            //var targets = Cache.Instance.Entities.Where(e => targetNames.Contains(e.Name));
+            var target = Cache.Instance.Entities.Where(e => targetNames.Contains(e.Name)).OrderBy(t => t.Distance).First();
+            if (target.IsTargetedBy)
+            {
+                Logging.Log("MissionController.AttackNearest: Unlocking [" + target.Name + "][" + target.Id + "] due to targeting targeting us: aggro only");
+                target.UnlockTarget();
+                // We successfully aggro'd our target
+                _currentAction++;
+                return;
+            }
+            if (!target.IsValid)
+            {
+                Logging.Log("MissionController.AttackClosestByName: All targets killed, not valid anymore ");
+
+                // We killed it/them !?!?!? :)
+                _currentAction++;
+                return;
+            }
+
+            if (target.Distance < Cache.Instance.WeaponRange)
+            {
+                if (!Cache.Instance.PriorityTargets.Any(pt => pt.Id == target.Id))
+                {
+                    Logging.Log("MissionController.AttackClosestByName: Adding [" + target.Name + "][" + target.Id + "] as a priority target");
+                    Cache.Instance.AddPriorityTargets(new[] { target }, Priority.PriorityKillTarget);
+                }
+
+                if (Cache.Instance.Approaching != null && !Settings.Instance.SpeedTank)
+                {
+                    //Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                    //Cache.Instance.Approaching = null;
+                }
+            }
+            else
+            {
+                // Move within 80% max distance
+                if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id)
+                {
+                    Logging.Log("MissionController.AttackClosestByName: Approaching target [" + target.Name + "][" + target.Id + "]");
+
+                    if (Settings.Instance.SpeedTank)
+                        target.Orbit(Cache.Instance.OrbitDistance);
+                    else
+                        target.Approach((int)(Cache.Instance.WeaponRange * 0.8d));
+                }
+            }
+        }
+
+        private void AttackClosestAction(Action action)
+        {
+            var targetNames = action.GetParameterValues("target");
+            // No parameter? Ignore kill action
+            if (targetNames.Count == 0)
+            {
+                Logging.Log("MissionController.AttackClosest: No targets defined!");
+
+                _currentAction++;
+                return;
+            }
+
+            //var targets = Cache.Instance.Entities.Where(e => targetNames.Contains(e.Name));
+            var target = Cache.Instance.Entities.OrderBy(t => t.Distance).First();
+            if (target.IsTargetedBy)
+            {
+                Logging.Log("MissionController.AttackNearest: Unlocking [" + target.Name + "][" + target.Id + "] due to the target targeting us (aggro only)");
+                target.UnlockTarget();
+                // We successfully aggro'd our target
+                _currentAction++;
+                return;
+            }
+            if (!target.IsValid)
+            {
+                Logging.Log("MissionController.AttackClosest: All targets killed, not valid anymore ");
+
+                // We killed it/them !?!?!? :)
+                _currentAction++;
+                return;
+            }
+
+            if (target.Distance < Cache.Instance.WeaponRange)
+            {
+                if (!Cache.Instance.PriorityTargets.Any(pt => pt.Id == target.Id))
+                {
+                    Logging.Log("MissionController.AttackClosest: Adding [" + target.Name + "][" + target.Id + "] as a priority target");
+                    Cache.Instance.AddPriorityTargets(new[] { target }, Priority.PriorityKillTarget);
+                    //Cache.Instance.RemovePriorityTargets(target);
+
+                }
+
+                if (Cache.Instance.Approaching != null && !Settings.Instance.SpeedTank)
+                {
+                    //Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                    //Cache.Instance.Approaching = null;
+                }
+            }
+            else
+            {
+                // Move within 80% max distance
+                if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id)
+                {
+                    Logging.Log("MissionController.AttackClosest: Approaching target [" + target.Name + "][" + target.Id + "]");
+
+                    if (Settings.Instance.SpeedTank)
+                        target.Orbit(Cache.Instance.OrbitDistance);
+                    else
+                        target.Approach((int)(Cache.Instance.WeaponRange * 0.8d));
+                }
+            }
+        }
+
         private void LootItemAction(Action action)
         {
             var items = action.GetParameterValues("item");
             var targetNames = action.GetParameterValues("target");
+
+            int quantity;
+            if (!int.TryParse(action.GetParameterValue("quantity"), out quantity))
+                quantity = 1;
 
             var done = items.Count == 0;
             if (!done)
@@ -438,7 +763,7 @@ namespace Questor.Modules
                 var cargo = Cache.Instance.DirectEve.GetShipsCargo();
                 // We assume that the ship's cargo will be opened somewhere else
                 if (cargo.IsReady)
-                    done |= cargo.Items.Any(i => items.Contains(i.TypeName));
+                    done |= cargo.Items.Any(i => (items.Contains(i.TypeName) && (i.Quantity >= quantity)));
             }
             if (done)
             {
@@ -488,10 +813,14 @@ namespace Questor.Modules
                     return;
                 }
             }
+            // unlock targets count
+            Cache.Instance.MissionLoot = true;
 
             var containers = Cache.Instance.Containers.Where(e => !Cache.Instance.LootedContainers.Contains(e.Id)).OrderBy(e => e.Distance);
             if (containers.Count() == 0)
             {
+                // lock targets count
+                Cache.Instance.MissionLoot = false;
                 Logging.Log("MissionController.Loot: We are done looting");
 
                 _currentAction++;
@@ -562,10 +891,26 @@ namespace Questor.Modules
                     KillAction(action);
                     break;
 
+                case ActionState.KillOnce:
+                    KillOnceAction(action);
+                    break;
+
+                case ActionState.AttackClosestByName:
+                    AttackClosestByNameAction(action);
+                    break;
+
+                case ActionState.AttackClosest:
+                    AttackClosestAction(action);
+                    break;
+
                 case ActionState.MoveTo:
                     MoveToAction(action);
                     break;
-
+				
+				case ActionState.MoveToBackground:
+                    MoveToBackgroundAction(action);
+                    break;
+					
                 case ActionState.Loot:
                     LootAction(action);
                     break;
@@ -593,12 +938,19 @@ namespace Questor.Modules
             switch (State)
             {
                 case MissionControllerState.Idle:
+                    break;
                 case MissionControllerState.Done:
+                    LogStatistics();
+					Cache.Instance.IgnoreTargets.Clear();
+                    break;
                 case MissionControllerState.Error:
                     break;
 
                 case MissionControllerState.Start:
                     _pocket = 0;
+                    // Update statistic values
+                    Wealth = Cache.Instance.DirectEve.Me.Wealth;
+                    StartedPocket = DateTime.Now;
 
                     // Reload the items needed for this mission from the XML file
                     Cache.Instance.RefreshMissionItems(AgentId);
@@ -613,8 +965,11 @@ namespace Questor.Modules
 
                 case MissionControllerState.LoadPocket:
                     _pocketActions.Clear();
-                    _pocketActions.AddRange(Cache.Instance.LoadMissionActions(AgentId, _pocket));
+                    _pocketActions.AddRange(Cache.Instance.LoadMissionActions(AgentId, _pocket, true));
 
+                    //
+                    // LogStatistics();
+                    //
                     if (_pocketActions.Count == 0)
                     {
                         // No Pocket action, load default actions
@@ -645,10 +1000,19 @@ namespace Questor.Modules
                     Logging.Log("MissionController: Pocket loaded, executing the following actions");
                     foreach (var a in _pocketActions)
                         Logging.Log("MissionController: Action." + a);
-					
-					if (Cache.Instance.OrbitDistance != Settings.Instance.OrbitDistance)
-						Logging.Log("MissionController: Using custom orbit distance: " + Cache.Instance.OrbitDistance);
-						
+
+                    
+                    if (Cache.Instance.OrbitDistance != Settings.Instance.OrbitDistance)
+                    {
+                        if (Cache.Instance.OrbitDistance == 0)
+                        {
+                            Cache.Instance.OrbitDistance = Settings.Instance.OrbitDistance;
+                            Logging.Log("MissionController: Using default orbit distance: " + Cache.Instance.OrbitDistance + " (as the custom one was 0)");
+                        }
+                        else
+                            Logging.Log("MissionController: Using custom orbit distance: " + Cache.Instance.OrbitDistance);
+                    }
+
                     // Reset pocket information
                     _currentAction = 0;
                     Cache.Instance.IsMissionPocketDone = false;
@@ -695,6 +1059,8 @@ namespace Questor.Modules
                         // If we moved more then 100km, assume next Pocket
                         _pocket++;
                         State = MissionControllerState.LoadPocket;
+                        LogStatistics();
+                        
                     }
                     else if (DateTime.Now.Subtract(_lastActivateAction).TotalMinutes > 2)
                     {
