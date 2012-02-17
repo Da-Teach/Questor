@@ -17,7 +17,7 @@ namespace Questor.Modules
 
         public ScanInteractionState State { get; set; }
 
-        public List<DirectScanResult> Result;
+        //public List<DirectScanResult> Result;
 
         public void ProcessState()
         {
@@ -49,8 +49,8 @@ namespace Questor.Modules
                         return;
 
                     //Not Finish don't use
-                    ScannerWindow.SelectByIdx(0);
-                    Result = ScannerWindow.ScanResults;
+                    //ScannerWindow.SelectByIdx(0);
+                    //Result = ScannerWindow.ScanResults;
 
                     //State = ScanInteractionState.Done;
 
