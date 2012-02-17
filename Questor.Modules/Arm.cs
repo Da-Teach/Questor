@@ -58,6 +58,16 @@ namespace Questor.Modules
                 case ArmState.Done:
                     break;
 
+                case ArmState.NotEnoughDrones:
+                    //Logging.Log("Arm: Armstate.NotEnoughDrones");
+                    //State = ArmState.Idle;
+                    break;
+                
+                case ArmState.NotEnoughAmmo:
+                    //Logging.Log("Arm: Armstate.NotEnoughAmmo");
+                    //State = ArmState.Idle;
+                    break;
+
                 case ArmState.Begin:
                     //DefaultFittingChecked = false; //flag to check for the correct default fitting before using the fitting manager
                     //DefaultFittingFound = true; //Did we find the default fitting?
@@ -92,19 +102,44 @@ namespace Questor.Modules
                     }
                     break;
 
-                case ArmState.ActivateCombatShip:
                 case ArmState.ActivateSalvageShip:
-                    var shipName = State == ArmState.ActivateCombatShip
-                                       ? Settings.Instance.CombatShipName.ToLower()
-                                       : Settings.Instance.SalvageShipName.ToLower();
+                    var salvageshipName = Settings.Instance.SalvageShipName.ToLower();
+					
+                    if ((!string.IsNullOrEmpty(salvageshipName) && Cache.Instance.DirectEve.ActiveShip.GivenName.ToLower() != salvageshipName))
+                    {
+                        if (DateTime.Now.Subtract(_lastAction).TotalSeconds > 15)
+                        {
+                            var ships = Cache.Instance.DirectEve.GetShipHangar().Items;
+                            foreach (var ship in ships.Where(ship => ship.GivenName.ToLower() == salvageshipName))
+                            {
+                                Logging.Log("Arm: Making [" + ship.GivenName + "] active");
+
+                                ship.ActivateShip();
+                                _lastAction = DateTime.Now;
+                            }
+                            return;
+                        }
+                        return;
+                    }
+					if (DateTime.Now.Subtract(_lastAction).TotalSeconds > 10)
+                    {
+						Logging.Log("Arm: Done");
+						State = ArmState.Done;
+						return;
+                    }
+					break;
+				case ArmState.ActivateCombatShip:
+                    var shipName = Settings.Instance.CombatShipName.ToLower();
+                                   
                     if (!Cache.Instance.ArmLoadedCache)
                     {
                         _missionItemMoved = false;
                         Cache.Instance.RefreshMissionItems(AgentId);
                         Cache.Instance.ArmLoadedCache = true;
                     }
-
-                    // If we've got a mission-specific ship defined, switch to it
+					
+					                   
+					// If we've got a mission-specific ship defined, switch to it
                     if ((State == ArmState.ActivateCombatShip) && !(Cache.Instance.MissionShip == "" || Cache.Instance.MissionShip == null) && TryMissionShip)
                         shipName = Cache.Instance.MissionShip.ToLower();
 
@@ -147,12 +182,12 @@ namespace Questor.Modules
                     else if (TryMissionShip)
                         UseMissionShip = true;
 
-                    if (State == ArmState.ActivateSalvageShip)
-                    {
-                        Logging.Log("Arm: Done");
-                        State = ArmState.Done;
-                        return;
-                    }
+                    //if (State == ArmState.ActivateSalvageShip)
+                    //{
+                    //    Logging.Log("Arm: Done");
+                    //    State = ArmState.Done;
+                    //    return;
+                    //}
 
                     //_missionItemMoved = false;
                     //Cache.Instance.RefreshMissionItems(AgentId);
@@ -174,6 +209,7 @@ namespace Questor.Modules
                     {
                         // No, command it to open
                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenHangarFloor);
+						_lastAction = DateTime.Now;
                         break;
                     }
 
@@ -251,6 +287,7 @@ namespace Questor.Modules
                         State = ArmState.WaitForFittingWindow;
                     }
                     break;
+
                 case ArmState.WaitForFittingWindow:
 
                     var fittingMgr = Cache.Instance.DirectEve.Windows.OfType<DirectFittingManagerWindow>().FirstOrDefault();
@@ -266,6 +303,7 @@ namespace Questor.Modules
                         State = ArmState.ChoseFitting;
                     }
                     break;
+
                 case ArmState.ChoseFitting:
                     fittingMgr = Cache.Instance.DirectEve.Windows.OfType<DirectFittingManagerWindow>().FirstOrDefault();
                     bool found = false;
@@ -366,7 +404,7 @@ namespace Questor.Modules
                     if (drone == null || drone.Stacksize < 1)
                     {
                         Logging.Log("Arm: Out of drones");
-                        State = ArmState.NotEnoughAmmo;
+                        State = ArmState.NotEnoughDrones;
                         break;
                     }
  
@@ -413,7 +451,6 @@ namespace Questor.Modules
                     if (Cache.Instance.missionAmmo.Count() != 0)
                     {
                         AmmoToLoad = new List<Ammo>(Cache.Instance.missionAmmo);
-
                     }
                     foreach (var item in ammoHangar.Items.OrderBy(i => i.Quantity))
                     {
@@ -451,7 +488,9 @@ namespace Questor.Modules
                     {
                         if (AmmoToLoad.Count > 0)
                             foreach (var ammo in AmmoToLoad)
+                            {
                                 Logging.Log("Arm: Missing ammo with TypeId [" + ammo.TypeId + "]");
+                            }
 
                         if (!_missionItemMoved)
                             Logging.Log("Arm: Missing mission item [" + bringItem + "]");
