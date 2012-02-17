@@ -8,9 +8,18 @@
    <!-- Maximum number of lines in the external console -->
   <maxLineConsole>1000</maxLineConsole>
 
+  <!-- disable 3d rendering -->
+  <disable3D>false</disable3D>
+  
   <!-- Random delay between missions -->
-  <randomDelay>60</randomDelay>
-  <minimumDelay>15</minimumDelay>
+  <randomDelay>45</randomDelay>
+  <minimumDelay>20</minimumDelay>
+
+  <!-- X Position of Questor Window -->
+  <windowXPosition>1600</windowXPosition>
+
+  <!-- Y Position of Questor Window -->
+  <windowYPosition>1050</windowYPosition>
 
   <!-- Invasion resume delay -->
   <invasionRandomDelay>300</invasionRandomDelay>
@@ -24,40 +33,28 @@
 
   <!-- Propulsion mod settings, do not activate AB/MWD unless these settings are matched -->
   <minimumPropulsionModuleDistance>5000</minimumPropulsionModuleDistance>
-  <minimumPropulsionModuleCapacitor>30</minimumPropulsionModuleCapacitor>
+  <minimumPropulsionModuleCapacitor>55</minimumPropulsionModuleCapacitor>
+  <!-- The agent that you are running missions for -->
+  <agentName></agentName>
+  
   
   <!-- Enable storyline botting (experimental) -->
   <enableStorylines>false</enableStorylines>
 
-  <!-- X Position of Questor Window -->
-  <windowXPosition>1600</windowXPosition>
+  <!-- undock delay -->
+  <undockdelay>11</undockdelay>
 
-  <!-- Y Position of Questor Window -->
-  <windowYPosition>1050</windowYPosition>
+  <bookmarkWarpOut>Insta</bookmarkWarpOut>
   
-  <!-- Create Bookmark to the output line from the station to more than 500km -->
-  <bookmarkWarpOut>instaundock</bookmarkWarpOut>
+  <!-- prefix for undock bookmarks -->
+  <undockprefix>Insta</undockprefix>
 
-    <!-- The agents List that you are running missions for -->
-  <agentsList>
-	<agentList name="" priority="0" />
-	<!-- <agentList name="" priority="1" /> -->
-  </agentsList>
+  <!-- Wait for mission decline timer to expire before declining again -->
+  <waitDecline>true</waitDecline>
 
-  <!-- List of factions which the bot will try to avoid -->
-  <factionblacklist>
-    <faction>Caldari State</faction>
-    <faction>Minmatar Republic</faction>
-    <faction>Amarr Empire</faction>
-    <faction>Gallente Federation</faction>
-    <faction>CONCORD Assembly</faction>
-    <faction>Ammatar Mandate</faction>
-    <faction>Khanid Kingdom</faction>
-    <faction>Mordu's Legion Command</faction>
-    <faction>Thukker Tribe</faction>
-  </factionblacklist>
-  
-  <!-- List of Faction fittings -->
+  <minStandings>5.0</minStandings>
+
+  <!-- Faction specific fittings listed here -->
   <factionfittings>
     <factionfitting faction="Default" fitting="Default" />
   </factionfittings>
@@ -66,17 +63,23 @@
   <!-- <missionfitting mission="Cargo Delivery" fitting="cargo" dronetype="2185" /> -->
 </missionfittings>
 
-  <!-- Wait for mission decline timer to expire before declining again -->
-  <waitDecline>true</waitDecline>
+  <!-- List of factions which the bot will try to avoid -->
+  <factionblacklist>
+    <faction>Amarr Empire</faction>
+	<faction>Caldari State</faction>
+    <faction>Minmatar Republic</faction>
+  </factionblacklist>
 
-  <!-- Minimum standings to decline missions while the decline timer is active -->
-  <minStandings>4.50</minStandings>
+  <useGatesInSalvage>True</useGatesInSalvage>
 
   <!-- List of missions which the bot will always decline -->
   <blacklist>
     <mission>Enemies Abound (1 of 5)</mission>
   </blacklist>
 
+  <MaterialsForWarOreID>20</MaterialsForWarOreID>
+  <MaterialsForWarOreQty>8000</MaterialsForWarOreQty>
+  
   <!-- missionsPath is the sub-directory where the mission xml's are located -->
   <missionsPath>Caldari Missions</missionsPath>
 
@@ -92,15 +95,12 @@
   <!-- Ship used for after mission salvaging, empty means current ship -->
   <salvageShipName></salvageShipName>
 
-  <!-- Ship used for courier missions, empty means current ship NOT IMPLIMENTED -->
-  <haulerShipName></haulerShipName>
-
   <!-- Create salvage bookmarks once a pocket has been cleared and there are wrecks/cans left
        Note: All salvage bookmarks will be in this naming format:  BookmarkPrefix [time]
        Note: It will check all salvage bookmarks to see if the current spot has to be bookmarked 
        Warning: The bot could become slow with a lot of salvage-bookmarks, make sure that
                 after mission salvaging is enabled or that you manually delete bookmarks! -->
-  <createSalvageBookmarks>true</createSalvageBookmarks>
+  <createSalvageBookmarks>True</createSalvageBookmarks>
 
   <!-- All salvage bookmarks will be prefixed by this string, default: Salvage: -->
   <bookmarkPrefix>Salvage:</bookmarkPrefix>
