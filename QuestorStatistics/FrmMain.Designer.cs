@@ -1,4 +1,4 @@
-﻿namespace WindowsFormsApplication1
+﻿namespace QuestorStatistics
 {
     partial class FrmMain
     {
@@ -41,6 +41,12 @@
             this.TabPage1 = new System.Windows.Forms.TabPage();
             this.Lst1 = new System.Windows.Forms.ListView();
             this.TabPage2 = new System.Windows.Forms.TabPage();
+            this.lblDayAmmoValue = new System.Windows.Forms.Label();
+            this.lblDayAmmoConsu = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.lblDaylostDrones = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
             this.lbmediatotal = new System.Windows.Forms.Label();
             this.Label6 = new System.Windows.Forms.Label();
             this.LBGanacia = new System.Windows.Forms.Label();
@@ -73,6 +79,12 @@
             this.TabPage4 = new System.Windows.Forms.TabPage();
             this.LstMision = new System.Windows.Forms.ListView();
             this.cmb1 = new System.Windows.Forms.ComboBox();
+            this.lblMonthAmmovalue = new System.Windows.Forms.Label();
+            this.lblMonthAmmoConsu = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.lblMonthLostDrones = new System.Windows.Forms.Label();
+            this.label21 = new System.Windows.Forms.Label();
             this.Tab1.SuspendLayout();
             this.TabPage1.SuspendLayout();
             this.TabPage2.SuspendLayout();
@@ -120,6 +132,12 @@
             // 
             // TabPage2
             // 
+            this.TabPage2.Controls.Add(this.lblDayAmmoValue);
+            this.TabPage2.Controls.Add(this.lblDayAmmoConsu);
+            this.TabPage2.Controls.Add(this.label15);
+            this.TabPage2.Controls.Add(this.label14);
+            this.TabPage2.Controls.Add(this.lblDaylostDrones);
+            this.TabPage2.Controls.Add(this.label13);
             this.TabPage2.Controls.Add(this.lbmediatotal);
             this.TabPage2.Controls.Add(this.Label6);
             this.TabPage2.Controls.Add(this.LBGanacia);
@@ -141,6 +159,57 @@
             this.TabPage2.TabIndex = 1;
             this.TabPage2.Text = "Day";
             this.TabPage2.UseVisualStyleBackColor = true;
+            // 
+            // lblDayAmmoValue
+            // 
+            this.lblDayAmmoValue.AutoSize = true;
+            this.lblDayAmmoValue.Location = new System.Drawing.Point(89, 274);
+            this.lblDayAmmoValue.Name = "lblDayAmmoValue";
+            this.lblDayAmmoValue.Size = new System.Drawing.Size(0, 13);
+            this.lblDayAmmoValue.TabIndex = 19;
+            // 
+            // lblDayAmmoConsu
+            // 
+            this.lblDayAmmoConsu.AutoSize = true;
+            this.lblDayAmmoConsu.Location = new System.Drawing.Point(130, 242);
+            this.lblDayAmmoConsu.Name = "lblDayAmmoConsu";
+            this.lblDayAmmoConsu.Size = new System.Drawing.Size(0, 13);
+            this.lblDayAmmoConsu.TabIndex = 18;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(3, 274);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(69, 13);
+            this.label15.TabIndex = 17;
+            this.label15.Text = "Ammo Value:";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(3, 246);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(106, 13);
+            this.label14.TabIndex = 16;
+            this.label14.Text = "Ammo Consumption: ";
+            // 
+            // lblDaylostDrones
+            // 
+            this.lblDaylostDrones.AutoSize = true;
+            this.lblDaylostDrones.Location = new System.Drawing.Point(89, 217);
+            this.lblDaylostDrones.Name = "lblDaylostDrones";
+            this.lblDaylostDrones.Size = new System.Drawing.Size(0, 13);
+            this.lblDaylostDrones.TabIndex = 15;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(3, 217);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(70, 13);
+            this.label13.TabIndex = 14;
+            this.label13.Text = "Lost Drones: ";
             // 
             // lbmediatotal
             // 
@@ -184,7 +253,7 @@
             legend1.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
             legend1.Name = "Legend1";
             this.CHDia.Legends.Add(legend1);
-            this.CHDia.Location = new System.Drawing.Point(165, 3);
+            this.CHDia.Location = new System.Drawing.Point(171, 9);
             this.CHDia.Name = "CHDia";
             series1.ChartArea = "ChartArea1";
             series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
@@ -280,6 +349,12 @@
             // 
             // TabPage3
             // 
+            this.TabPage3.Controls.Add(this.lblMonthAmmovalue);
+            this.TabPage3.Controls.Add(this.lblMonthAmmoConsu);
+            this.TabPage3.Controls.Add(this.label18);
+            this.TabPage3.Controls.Add(this.label19);
+            this.TabPage3.Controls.Add(this.lblMonthLostDrones);
+            this.TabPage3.Controls.Add(this.label21);
             this.TabPage3.Controls.Add(this.LbttMmedia);
             this.TabPage3.Controls.Add(this.lbttMganancia);
             this.TabPage3.Controls.Add(this.LbttMnmision);
@@ -358,7 +433,7 @@
             legend2.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
             legend2.Name = "Legend1";
             this.CHMes.Legends.Add(legend2);
-            this.CHMes.Location = new System.Drawing.Point(164, 3);
+            this.CHMes.Location = new System.Drawing.Point(167, 3);
             this.CHMes.Name = "CHMes";
             series3.ChartArea = "ChartArea1";
             series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
@@ -463,6 +538,57 @@
             this.cmb1.Text = "Select Char";
             this.cmb1.SelectedIndexChanged += new System.EventHandler(this.cmb1_SelectedIndexChanged);
             // 
+            // lblMonthAmmovalue
+            // 
+            this.lblMonthAmmovalue.AutoSize = true;
+            this.lblMonthAmmovalue.Location = new System.Drawing.Point(89, 267);
+            this.lblMonthAmmovalue.Name = "lblMonthAmmovalue";
+            this.lblMonthAmmovalue.Size = new System.Drawing.Size(0, 13);
+            this.lblMonthAmmovalue.TabIndex = 32;
+            // 
+            // lblMonthAmmoConsu
+            // 
+            this.lblMonthAmmoConsu.AutoSize = true;
+            this.lblMonthAmmoConsu.Location = new System.Drawing.Point(130, 239);
+            this.lblMonthAmmoConsu.Name = "lblMonthAmmoConsu";
+            this.lblMonthAmmoConsu.Size = new System.Drawing.Size(0, 13);
+            this.lblMonthAmmoConsu.TabIndex = 31;
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(3, 267);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(69, 13);
+            this.label18.TabIndex = 30;
+            this.label18.Text = "Ammo Value:";
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(3, 239);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(106, 13);
+            this.label19.TabIndex = 29;
+            this.label19.Text = "Ammo Consumption: ";
+            // 
+            // lblMonthLostDrones
+            // 
+            this.lblMonthLostDrones.AutoSize = true;
+            this.lblMonthLostDrones.Location = new System.Drawing.Point(89, 210);
+            this.lblMonthLostDrones.Name = "lblMonthLostDrones";
+            this.lblMonthLostDrones.Size = new System.Drawing.Size(0, 13);
+            this.lblMonthLostDrones.TabIndex = 28;
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(3, 210);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(70, 13);
+            this.label21.TabIndex = 27;
+            this.label21.Text = "Lost Drones: ";
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -525,6 +651,18 @@
         internal System.Windows.Forms.TabPage TabPage4;
         internal System.Windows.Forms.ListView LstMision;
         internal System.Windows.Forms.ComboBox cmb1;
+        private System.Windows.Forms.Label lblDayAmmoValue;
+        private System.Windows.Forms.Label lblDayAmmoConsu;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label lblDaylostDrones;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label lblMonthAmmovalue;
+        private System.Windows.Forms.Label lblMonthAmmoConsu;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Label lblMonthLostDrones;
+        private System.Windows.Forms.Label label21;
     }
 }
 
