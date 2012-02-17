@@ -22,6 +22,7 @@ namespace Questor.Modules
         {
             Faction = (string)factionfitting.Attribute("faction") ?? "";
             Fitting = (string)factionfitting.Attribute("fitting") ?? "";
+            Settings.Instance.DroneTypeId = (int?)factionfitting.Attribute("dronetype") ?? Settings.Instance.DroneTypeId;
         }
 
         public string Faction { get; private set; }
