@@ -318,6 +318,7 @@ namespace Questor.Modules
                 return;
 
             Logging.Log("AgentInteraction: Saying [Accept]");
+            Cache.Instance.Wealth = Cache.Instance.DirectEve.Me.Wealth;
             accept.Say();
 
             Logging.Log("AgentInteraction: Closing conversation");

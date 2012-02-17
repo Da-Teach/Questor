@@ -44,7 +44,7 @@ namespace Questor.Modules
             }
             else
             {
-                //Logging.Log("[CharSchedule] No start time specified. Starting now.");
+                Logging.Log("[CharSchedule] No start time specified. Starting now.");
                 _startTime = DateTime.Now.AddSeconds(20);
             }
             Start = _startTime;
@@ -61,7 +61,7 @@ namespace Questor.Modules
             }
             else
             {
-                //Logging.Log("[CharSchedule] No stop time specified.");
+                Logging.Log("[CharSchedule] No stop time specified.");
                 _stopTime = DateTime.Now.AddHours(24);
             }
             Stop = _stopTime;
