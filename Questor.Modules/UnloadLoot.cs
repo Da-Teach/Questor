@@ -10,6 +10,7 @@
 namespace Questor.Modules
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using DirectEve;
 
@@ -34,6 +35,10 @@ namespace Questor.Modules
             DirectContainer corpLootHangar = null;
             if (!string.IsNullOrEmpty(Settings.Instance.LootHangar))
                 corpLootHangar = Cache.Instance.DirectEve.GetCorporationHangar(Settings.Instance.LootHangar);
+
+            DirectContainer corpBookmarkHangar = null;
+            if (!string.IsNullOrEmpty(Settings.Instance.BookmarkHangar))
+                corpBookmarkHangar = Cache.Instance.DirectEve.GetCorporationHangar(Settings.Instance.BookmarkHangar);
 
             switch (State)
             {
@@ -103,6 +108,17 @@ namespace Questor.Modules
                             break;
                     }
 
+                    Logging.Log("UnloadLoot: Moving CommonMissionCompletionitems");
+                    State = UnloadLootState.MoveCommonMissionCompletionitems;
+                    break;
+                
+                case UnloadLootState.MoveCommonMissionCompletionitems:
+                    var CommonMissionCompletionItemHangar = hangar;
+                    //
+                    // how do we get IsMissionItem to work for us here? (see ItemCache)
+                    // Zbikoki's Hacker Card 28260, Reports 3814, Gate Key 2076, Militants 25373, Marines 3810
+                    //
+                    
                     Logging.Log("UnloadLoot: Moving loot");
                     State = UnloadLootState.MoveLoot;
                     break;
@@ -126,6 +142,29 @@ namespace Questor.Modules
                     _lastAction = DateTime.Now;
 
                     Logging.Log("UnloadLoot: Loot was worth an estimated [" + LootValue.ToString("#,##0") + "] isk in buy-orders");
+
+                    //Move bookmarks to the bookmarks hangar
+                    if (!string.IsNullOrEmpty(Settings.Instance.BookmarkHangar) && Settings.Instance.CreateSalvageBookmarks == true)
+                    {
+                        Logging.Log("UnloadLoot: Creating salvage bookmarks in hangar");
+                        var bookmarks = Cache.Instance.BookmarksByLabel(Settings.Instance.BookmarkPrefix + " ");
+                        List<long> salvageBMs = new List<long>();
+                        foreach (DirectBookmark bookmark in bookmarks)
+                        {
+                            salvageBMs.Add((long)bookmark.BookmarkId);
+                            if (salvageBMs.Count == 5)
+                            {
+                                hangar.AddBookmarks(salvageBMs);
+                                salvageBMs.Clear();
+                            }
+                        }
+                        if (salvageBMs.Count > 0)
+                        {
+                            hangar.AddBookmarks(salvageBMs);
+                            salvageBMs.Clear();
+                        }
+                    }
+
                     Logging.Log("UnloadLoot: Moving ammo");
                     State = UnloadLootState.MoveAmmo;
                     break;
@@ -158,6 +197,12 @@ namespace Questor.Modules
 
                     if (Cache.Instance.DirectEve.GetLockedItems().Count == 0)
                     {
+                        if (corpBookmarkHangar != null && Settings.Instance.CreateSalvageBookmarks)
+                        {
+                            Logging.Log("UnloadLoot: Moving salvage bookmarks to corp hangar");
+                            corpBookmarkHangar.Add(hangar.Items.Where(i => i.TypeId == 51));
+                        }
+
                         Logging.Log("UnloadLoot: Stacking items");
                         State = UnloadLootState.StackItemsHangar;
                         break;
@@ -178,6 +223,7 @@ namespace Questor.Modules
                     // Dont stack until 5 seconds after the cargo has cleared
                     if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 5)
                         break;
+
 
                     // Stack everything
                     if (corpAmmoHangar == null || corpLootHangar == null) // Only stack if we moved something
