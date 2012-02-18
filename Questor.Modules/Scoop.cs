@@ -206,7 +206,7 @@ namespace Questor.Modules
                         continue;
                 }
 
-                Logging.Log("Salvage: Locking [" + wreck.Name + "][" + wreck.Id + "]");
+                Logging.Log("Salvage: Locking [" + wreck.Name + "][" + wreck.Id + "] - Distance [" + wreck.Distance + "]");
 
                 wreck.LockTarget();
                 wreckTargets.Add(wreck);

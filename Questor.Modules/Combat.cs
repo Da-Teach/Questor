@@ -505,11 +505,11 @@ namespace Questor.Modules
                 var target = combatTargets[i];
                 if (target.Distance > maxRange*1.5d)
                 {
-                    Logging.Log("Combat: Target [" + target.Name + "][" + target.Id + "] out of range");
+                    Logging.Log("Combat: Target [" + target.Name + "][" + target.Id + "] out of range - Distance [" + target.Distance + "]");
                 }
                 else if (Cache.Instance.IgnoreTargets.Contains(target.Name.Trim()))
                 {
-                    Logging.Log("Combat: Target [" + target.Name + "][" + target.Id + "] on ignore list");
+                    Logging.Log("Combat: Target [" + target.Name + "][" + target.Id + "] on ignore list - Distance [" + target.Distance + "]");
                 }
                 else continue;
 
@@ -566,7 +566,7 @@ namespace Questor.Modules
                 if (highValueTargets.Count >= maxHighValueTarget)
                     break;
 
-                Logging.Log("Combat: Targeting priority target [" + entity.Name + "][" + entity.Id + "]{" + highValueTargets.Count + "}");
+                Logging.Log("Combat: Targeting priority target [" + entity.Name + "][" + entity.Id + "]{" + highValueTargets.Count + "} - Distance [" + entity.Distance + "]");
                 entity.LockTarget();
                 highValueTargets.Add(entity);
             }
@@ -577,7 +577,7 @@ namespace Questor.Modules
                 if (highValueTargets.Count >= maxHighValueTarget)
                     break;
 
-                Logging.Log("Combat: Targeting high value target [" + entity.Name + "][" + entity.Id + "]{" + highValueTargets.Count + "}");
+                Logging.Log("Combat: Targeting high value target [" + entity.Name + "][" + entity.Id + "]{" + highValueTargets.Count + "} - Distance [" + entity.Distance + "]");
                 entity.LockTarget();
                 highValueTargets.Add(entity);
             }
@@ -588,7 +588,7 @@ namespace Questor.Modules
                 if (lowValueTargets.Count >= maxLowValueTarget)
                     break;
 
-                Logging.Log("Combat: Targeting low value target [" + entity.Name + "][" + entity.Id + "]{" + lowValueTargets.Count + "}");
+                Logging.Log("Combat: Targeting low value target [" + entity.Name + "][" + entity.Id + "]{" + lowValueTargets.Count + "} - Distance [" + entity.Distance + "]");
                 entity.LockTarget();
                 lowValueTargets.Add(entity);
             }

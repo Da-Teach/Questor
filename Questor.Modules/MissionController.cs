@@ -21,6 +21,8 @@ namespace Questor.Modules
         private DateTime? _clearPocketTimeout;
         private int _currentAction;
         private DateTime _lastActivateAction;
+        private DateTime _lastApproachAction;
+        private DateTime _lastLogMessage;
         private readonly Dictionary<long, DateTime> _lastWeaponReload = new Dictionary<long, DateTime>();
         private double _lastX;
         private double _lastY;
@@ -144,16 +146,22 @@ namespace Questor.Modules
                 // This scenario only happens when all wrecks are within tractor range and you have a salvager 
                 // (typically only with a Golem).  Check to see if there are any cargo containers in space.  Cap 
                 // boosters may cause an unneeded salvage trip but that is better than leaving millions in loot behind.  
+                if (DateTime.Now.Subtract(_lastLogMessage).TotalSeconds > 20)
+                {
                 if (!Settings.Instance.LootEverything && Cache.Instance.Containers.Count() < Settings.Instance.MinimumWreckCount)
                 {
                     Logging.Log("MissionController: No bookmark created because the pocket has [" + Cache.Instance.Containers.Count() + "] wrecks/containers and the minimum is [" + Settings.Instance.MinimumWreckCount + "]");
+                        _lastLogMessage = DateTime.Now; 
                     return;
                 }
                 else if (Settings.Instance.LootEverything)
                 {
                     Logging.Log("MissionController: No bookmark created because the pocket has [" + Cache.Instance.UnlootedContainers.Count() + "] wrecks/containers and the minimum is [" + Settings.Instance.MinimumWreckCount + "]");
+                        _lastLogMessage = DateTime.Now;
                     return;
                 }
+            }
+
             }
 
             // Do we already have a bookmark?
@@ -213,7 +221,7 @@ namespace Questor.Modules
 					//closest.Orbit(-9000);
                     closest.Orbit(1000);
 				}
-				Logging.Log("MissionController: distance " + closest.Distance);
+				//Logging.Log("MissionController: distance " + closest.Distance);
 				if (closest.Distance >= -10100)
 				{
 					// Add bookmark (before we activate)
@@ -236,8 +244,13 @@ namespace Questor.Modules
                 // Move to the target
                 if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
                 {
+                    if (DateTime.Now.Subtract(_lastApproachAction).TotalSeconds > 2)
+                    {
                     Logging.Log("MissionController.Activate: Approaching target [" + closest.Name + "][" + closest.Id + "]");
+                        _lastApproachAction = DateTime.Now;
                     closest.Approach();
+                }
+                    
                 }
             }
             else
@@ -296,7 +309,7 @@ namespace Questor.Modules
                 {
                     if (Cache.Instance.DirectEve.ActiveShip.MaxLockedTargets > 0)
                     {
-                        Logging.Log("MissionController.ClearPocket: Targeting [" + target.Name + "][" + target.Id + "]");
+                        Logging.Log("MissionController.ClearPocket: Targeting [" + target.Name + "][" + target.Id + "] - Distance [" + target.Distance + "]");
                         target.LockTarget();
                     }
                     return;

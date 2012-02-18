@@ -215,7 +215,7 @@ namespace Questor.Modules
                 {
                     if (Cache.Instance.DirectEve.ActiveShip.MaxLockedTargets > 0)
                     {
-                        Logging.Log("AnomalyController.ClearPocket: Targeting [" + target.Name + "][" + target.Id + "]");
+                        Logging.Log("AnomalyController.ClearPocket: Targeting [" + target.Name + "][" + target.Id + "] - Distance [" + target.Distance + "]");
                         target.LockTarget();
                     }
                     return;
