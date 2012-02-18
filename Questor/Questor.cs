@@ -230,7 +230,7 @@ namespace Questor
                     if (!string.IsNullOrEmpty(window.Html))
                     {
                         // Server going down
-                        close |= window.Html.Contains("Please make sure your characters are out of harms way");
+                        close |= window.Html.Contains("Please make sure your characters are out of harm");
                         if (window.Html.Contains("The socket was closed"))
                         {
                             Logging.Log("Questor: This window indicates we are disconnected: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
@@ -255,6 +255,7 @@ namespace Questor
                         close |= window.Html.Contains("This gate is locked!");
                         close |= window.Html.Contains("The Zbikoki's Hacker Card");
                         close |= window.Html.Contains(" units free.");
+						close |= window.Html.Contains("already full");
 						//
 						// restart the client if these are encountered
 						//

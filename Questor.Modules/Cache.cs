@@ -893,12 +893,17 @@ namespace Questor.Modules
         /// <returns></returns>
         public EntityCache GetBestTarget(EntityCache currentTarget, double distance, bool lowValueFirst)
         {
+            // Do we have a 'current target' and if so, is it an actual target?
+            // If not, clear current target
+            if (currentTarget != null && !currentTarget.IsTarget)
+                currentTarget = null;
+
             // Is our current target a warp scrambling priority target?
-            if (currentTarget != null && PriorityTargets.Any(pt => pt.Id == currentTarget.Id && pt.IsWarpScramblingMe))
+            if (currentTarget != null && PriorityTargets.Any(pt => pt.Id == currentTarget.Id && pt.IsWarpScramblingMe && pt.IsTarget))
                 return currentTarget;
 
             // Get the closest warp scrambling priority target
-            var target = PriorityTargets.OrderBy(OrderByLowestHealth()).ThenBy(t => t.Distance).FirstOrDefault(pt => pt.Distance < distance && pt.IsWarpScramblingMe && Targets.Any(t => t.Id == pt.Id));
+            var target = PriorityTargets.OrderBy(OrderByLowestHealth()).ThenBy(t => t.Distance).FirstOrDefault(pt => pt.Distance < distance && pt.IsWarpScramblingMe && pt.IsTarget);
             if (target != null)
                 return target;
 
@@ -907,7 +912,7 @@ namespace Questor.Modules
                 return currentTarget;
 
             // Get the closest priority target
-            target = PriorityTargets.OrderBy(OrderByLowestHealth()).ThenBy(t => t.Distance).FirstOrDefault(pt => pt.Distance < distance && Targets.Any(t => t.Id == pt.Id));
+            target = PriorityTargets.OrderBy(OrderByLowestHealth()).ThenBy(t => t.Distance).FirstOrDefault(pt => pt.Distance < distance && pt.IsTarget);
             if (target != null)
                 return target;
 
