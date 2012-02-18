@@ -104,8 +104,8 @@ namespace Questor
         public string CharacterName { get; set; }
 
         // Statistics information
-        public DateTime Started { get; set; }
-        public DateTime Finished { get; set; }
+        public DateTime StartedTask { get; set; }
+        public DateTime FinishedTask { get; set; }
 
         public string Mission { get; set; }
         public double LootValue { get; set; }
@@ -467,9 +467,9 @@ namespace Questor
                         // Build the line
                         var line = DateTime.Now + ";";
                         line += Mission + ";";
-                        line += ((int)Finished.Subtract(Started).TotalMinutes) + ";";
-                        line += ((int)DateTime.Now.Subtract(Finished).TotalMinutes) + ";";
-                        line += ((int)DateTime.Now.Subtract(Started).TotalMinutes) + ";";
+                        line += ((int)FinishedTask.Subtract(StartedTask).TotalMinutes) + ";";
+                        line += ((int)DateTime.Now.Subtract(FinishedTask).TotalMinutes) + ";";
+                        line += ((int)DateTime.Now.Subtract(StartedTask).TotalMinutes) + ";";
                         line += ((int)(Cache.Instance.DirectEve.Me.Wealth - Cache.Instance.Wealth)) + ";";
                         line += ((int)LootValue) + ";";
                         line += (Cache.Instance.Agent.LoyaltyPoints - LoyaltyPoints) + ";\r\n";
@@ -488,7 +488,7 @@ namespace Questor
                         // Build the line
                         var line2 = string.Format("{0:MM/dd/yyyy HH:mm:ss}", DateTime.Now) + ";";
                         line2 += Mission + ";";
-                        line2 += ((int)DateTime.Now.Subtract(Started).TotalMinutes) + ";";
+                        line2 += ((int)DateTime.Now.Subtract(StartedTask).TotalMinutes) + ";";
                         line2 += ((int)(Cache.Instance.DirectEve.Me.Wealth - Cache.Instance.Wealth)) + ";";
                         line2 += ((int)LootValue) + ";";
                         line2 += (Cache.Instance.Agent.LoyaltyPoints - LoyaltyPoints) + ";";
@@ -510,7 +510,7 @@ namespace Questor
                         // Build the line
                         var line3 = DateTime.Now + ";";
                         line3 += Mission + ";";
-                        line3 += ((int)DateTime.Now.Subtract(Started).TotalMinutes) + ";";
+                        line3 += ((int)DateTime.Now.Subtract(StartedTask).TotalMinutes) + ";";
                         line3 += ((long)(Cache.Instance.DirectEve.Me.Wealth - Cache.Instance.Wealth)) + ";";
                         line3 += ((long)LootValue) + ";";
                         line3 += ((long)Cache.Instance.Agent.LoyaltyPoints - LoyaltyPoints) + ";";
@@ -637,7 +637,8 @@ namespace Questor
                         Cache.Instance.Wealth = Cache.Instance.DirectEve.Me.Wealth;
                         LootValue = 0;
                         LoyaltyPoints = Cache.Instance.Agent.LoyaltyPoints;
-                        Started = DateTime.Now;
+                        StartedTask = DateTime.Now;
+                        FinishedTask = DateTime.MaxValue;
                         Mission = string.Empty;
                         LostDrones = 0;
                         AmmoConsumption = 0;
@@ -1174,16 +1175,23 @@ namespace Questor
 
                         mission = Cache.Instance.GetAgentMission(Cache.Instance.AgentId);
                         if (_combat.State != CombatState.OutOfAmmo && Settings.Instance.AfterMissionSalvaging && Cache.Instance.BookmarksByLabel(Settings.Instance.BookmarkPrefix + " ").Count > 0 && (mission == null || mission.State == (int)MissionState.Offered))
+                        {
                             State = QuestorState.BeginAfterMissionSalvaging;
+                        }
                         else if (_combat.State == CombatState.OutOfAmmo)
+                        {
                             State = QuestorState.Start;
+                        }
                         else
+                        {
+                            FinishedTask = DateTime.Now;
                             State = QuestorState.Idle;
+                    }
                     }
                     break;
 
                 case QuestorState.BeginAfterMissionSalvaging:
-                    Finished = DateTime.Now;
+                    FinishedTask = DateTime.Now;
                     _GatesPresent = false;
                     if (_arm.State == ArmState.Idle)
                         _arm.State = ArmState.SwitchToSalvageShip;

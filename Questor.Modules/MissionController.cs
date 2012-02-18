@@ -39,7 +39,7 @@ namespace Questor.Modules
 
         public MissionControllerState State { get; set; }
         // Statistics information
-        public DateTime Started { get; set; }
+        //public DateTime Started { get; set; }
         public DateTime StartedPocket { get; set; }
         public string Mission { get; set; }
         public double Wealth { get; set; }
