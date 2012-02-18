@@ -753,7 +753,12 @@ namespace Questor.Modules
         {
             var items = action.GetParameterValues("item");
             var targetNames = action.GetParameterValues("target");
-
+            if (Settings.Instance.LootEverything = false)
+            {
+                // if we arent generally looting we need to re-enable the opening of wrecks to
+                // find this LootItems we are looking for
+                Cache.Instance.OpenWrecks = true;
+            }
             int quantity;
             if (!int.TryParse(action.GetParameterValue("quantity"), out quantity))
                 quantity = 1;
@@ -769,7 +774,11 @@ namespace Questor.Modules
             if (done)
             {
                 Logging.Log("MissionController.LootItem: We are done looting");
-
+                if (Settings.Instance.LootEverything = false)
+                {
+                    // now that we've completed this action revert OpenWrecks to false
+                    Cache.Instance.OpenWrecks = false;
+                }
                 _currentAction++;
                 return;
             }
@@ -795,7 +804,12 @@ namespace Questor.Modules
         {
             var items = action.GetParameterValues("item");
             var targetNames = action.GetParameterValues("target");
-
+            if (Settings.Instance.LootEverything = false)
+            {
+                // if we arent generally looting we need to re-enable the opening of wrecks to
+                // find this LootItems we are looking for
+                Cache.Instance.OpenWrecks = true;
+            }
             if (!Settings.Instance.LootEverything)
             {
                 var done = items.Count == 0;
@@ -809,7 +823,11 @@ namespace Questor.Modules
                 if (done)
                 {
                     Logging.Log("MissionController.Loot: We are done looting");
-
+                    if (Settings.Instance.LootEverything = false)
+                    {
+                        // now that we are done with this action revert OpenWrecks to false
+                        Cache.Instance.OpenWrecks = false;
+                    }
                     _currentAction++;
                     return;
                 }

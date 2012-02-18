@@ -157,6 +157,7 @@ namespace Questor.Modules
         public bool SalvageAll = false;
 
         public double Wealth { get; set; }
+        public bool OpenWrecks = false;
 
         public bool Local_safe(int max_bad, float stand) {
             int number = 0;
