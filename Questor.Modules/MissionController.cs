@@ -518,7 +518,7 @@ namespace Questor.Modules
 
                 foreach (var target in Cache.Instance.Targets.Where(e => targets.Any(t => t.Id == e.Id)))
                 {
-                    Logging.Log("MissionController.Kill: Unlocking [" + target.Name + "][" + target.Id + "] due to kill order being put on hold");
+                    Logging.Log("MissionController.Kill: Unlocking [" + target.Name + "][" + target.Id + "] Distance [" + target.Distance + "] due to kill order being put on hold");
                     target.UnlockTarget();
                 }
 
@@ -654,14 +654,6 @@ namespace Questor.Modules
 
             //var targets = Cache.Instance.Entities.Where(e => targetNames.Contains(e.Name));
             var target = Cache.Instance.Entities.Where(e => targetNames.Contains(e.Name)).OrderBy(t => t.Distance).First();
-            if (target.IsTargetedBy)
-            {
-                Logging.Log("MissionController.AttackNearest: Unlocking [" + target.Name + "][" + target.Id + "] due to targeting targeting us: aggro only");
-                target.UnlockTarget();
-                // We successfully aggro'd our target
-                _currentAction++;
-                return;
-            }
             if (!target.IsValid)
             {
                 Logging.Log("MissionController.AttackClosestByName: All targets killed, not valid anymore ");
@@ -714,14 +706,6 @@ namespace Questor.Modules
 
             //var targets = Cache.Instance.Entities.Where(e => targetNames.Contains(e.Name));
             var target = Cache.Instance.Entities.OrderBy(t => t.Distance).First();
-            if (target.IsTargetedBy)
-            {
-                Logging.Log("MissionController.AttackNearest: Unlocking [" + target.Name + "][" + target.Id + "] due to the target targeting us (aggro only)");
-                target.UnlockTarget();
-                // We successfully aggro'd our target
-                _currentAction++;
-                return;
-            }
             if (!target.IsValid)
             {
                 Logging.Log("MissionController.AttackClosest: All targets killed, not valid anymore ");
