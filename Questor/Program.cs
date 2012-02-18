@@ -16,7 +16,7 @@ using System.Reflection;
 using System.Xml.Linq;
 using System.IO;
 using System.Timers;
-//using Questor.Modules;
+using Mono.Options;
 
 namespace Questor
 {
@@ -34,6 +34,10 @@ namespace Questor
         private static string _username;
         private static string _password;
         private static string _character;
+        private static string _scriptFile;
+        private static bool   _loginOnly;
+        private static bool   _showHelp;
+        private static bool _chantlingScheduler;
 
         private static DateTime _startTime;
         public static DateTime _stopTime;
@@ -56,11 +60,60 @@ namespace Questor
         [STAThread]
         static void Main(string[] args)
         {
-            if (args.Length == 1)
-            {
-                _character = args[0];
+            var p = new OptionSet() {
+                "Usage: questor [OPTIONS]",
+                "Run missions and make uber ISK.",
+                "",
+                "Options:",
+                { "u|user=", "the {USER} we are logging in as.",
+                v => _username = v },
+                { "p|password=", "the user's {PASSWORD}.",
+                v => _password = v },
+                { "c|character=", "the {CHARACTER} to use.",
+                v => _character = v },
+                { "s|script=", "a {SCRIPT} file to execute before login.",
+                v => _scriptFile = v },
+                { "l|login", "login only and exit.",
+                v => _loginOnly = v != null },
+                { "x|chantling", "use chantling's scheduler",
+                v => _chantlingScheduler = v != null },
+                { "h|help", "show this message and exit",
+                v => _showHelp = v != null },
+                };
 
+            List<string> extra;
+            try
+            {
+                extra = p.Parse(args);
+                //Logging.Log(string.Format("questor: extra = {0}", string.Join(" ", extra.ToArray())));
+            }
+            catch (OptionException e)
+            {
+                Logging.Log("questor: ");
+                Logging.Log(e.Message);
+                Logging.Log("Try `questor --help' for more information.");
+                return;
+            }
+                _readyToStart = true;
+
+            if (_showHelp)
+            {
+                System.IO.StringWriter sw = new System.IO.StringWriter();
+                p.WriteOptionDescriptions(sw);
+                Logging.Log(sw.ToString());
+                return;
+            }
+
+            if (_chantlingScheduler && string.IsNullOrEmpty(_character))
+            {
+                Logging.Log("Error: to use chantling's scheduler, you also need to provide a character name!");
+                return;
+            }
+
+            if (_chantlingScheduler && !string.IsNullOrEmpty(_character))
+            {
                 var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                _character = _character.Replace("\"", "");  // strip quotation marks if any are present
 
                 CharSchedules = new List<CharSchedule>();
                 var values = XDocument.Load(Path.Combine(path, "Schedules.xml"));
@@ -162,11 +215,9 @@ namespace Questor
 
                 _directEve.Dispose();
             }
-            else if (args.Length == 3 || args.Length == 4)
+
+            if (!string.IsNullOrEmpty(_username) && !string.IsNullOrEmpty(_password) && !string.IsNullOrEmpty(_character))
             {
-                _username = args[0];
-                _password = args[1];
-                _character = args[2];
                 _readyToStart = true;
 
                 _directEve = new DirectEve();
@@ -183,7 +234,7 @@ namespace Questor
                 _directEve.Dispose();
 
                 // If the last parameter is false, then we only auto-login
-                if (args.Length == 4 && string.Compare(args[3], "false", true) == 0)
+                if (_loginOnly)
                     return;
             }
 
@@ -195,6 +246,9 @@ namespace Questor
         static void OnFrame(object sender, EventArgs e)
         {
             if (!_readyToStart)
+                return;
+
+            if (_chantlingScheduler && !string.IsNullOrEmpty(_character) && !_readyToStarta)
                 return;
 
             if (DateTime.Now.Subtract(_lastPulse).TotalSeconds < _pulsedelay)
@@ -310,22 +364,44 @@ namespace Questor
                 return;
             }
 
-            // We are not ready, lets wait
-            if (_directEve.Login.IsConnecting || _directEve.Login.IsLoading)
-                return;
+            if (!string.IsNullOrEmpty(_scriptFile))
+            {
+                try
+                {
+                    // Replace this try block with the following once new DirectEve is pushed
+                    // _directEve.RunScript(_scriptFile);
 
-            // Are we at the login or character selection screen?
-            if (!_directEve.Login.AtLogin && !_directEve.Login.AtCharacterSelection)
-                return;
+                    System.Reflection.MethodInfo info = _directEve.GetType().GetMethod("RunScript");
 
+                    if (info == null)
+                    {
+                        Logging.Log("DirectEve.RunScript() doesn't exist.  Upgrade DirectEve.dll!");
+                    }
+                    else
+                    {
+                        Logging.Log(string.Format("Running {0}...", _scriptFile));
+                        info.Invoke(_directEve, new Object[] { _scriptFile });
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    Logging.Log(string.Format("Exception {0}...", ex.ToString()));
+                    _done = true;
+                }
+                finally
+                {
+                    _scriptFile = null;
+                }
+                return;
+            }
 
             if (_directEve.Login.AtLogin)
             {
-                Logging.Log("[Startup] Login account [" + _username + "]");
-                System.Threading.Thread.Sleep(1000);
-                _directEve.Login.Login(_username, _password);
-                Logging.Log("[Startup] Waiting 5 Seconds for Character Selection Screen");
+                Logging.Log("[Startup] Waiting 5 seconds then Logging in account [" + _username + "]");
                 System.Threading.Thread.Sleep(5000);
+                _directEve.Login.Login(_username, _password);
+                Logging.Log("[Startup] Waiting 7 Seconds for Character Selection Screen");
+                System.Threading.Thread.Sleep(7000);
                 _pulsedelay = 10;
                 return;
             }
@@ -351,6 +427,7 @@ namespace Questor
             _timer.Stop();
             Logging.Log("[Startup] Timer elapsed.  Starting now.");
             _readyToStart = true;
+            _readyToStarta = true;
         }
     
     }
