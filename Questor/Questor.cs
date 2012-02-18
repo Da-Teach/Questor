@@ -48,7 +48,6 @@ namespace Questor
         private DateTime _lastAction;
         private Random _random;
         private int _randomDelay;
-        private bool ExitSta = false;
         
         private double _lastX;
         private double _lastY;
@@ -353,7 +352,7 @@ namespace Questor
             {
                 watch.Reset();
                 watch.Start();
-                if (ExitSta == false)
+                if (!Cache.Instance.ExitSta)
                 _defense.ProcessState();
                 watch.Stop();
 
@@ -805,14 +804,14 @@ namespace Questor
                         {
                             Logging.Log("WarpOut: Warp at " + _bookmark.Title);
                             _traveler.Destination = new BookmarkDestination(_bookmark);
-                            ExitSta = true;
+                            Cache.Instance.ExitSta = true;
                         }
 
                         _traveler.ProcessState();
                         if (_traveler.State == TravelerState.AtDestination)
                         {
                             Logging.Log("WarpOut: Safe!");
-                            ExitSta = false;
+                            Cache.Instance.ExitSta = false;
                             State = QuestorState.GotoMission;
                             _traveler.Destination = null;
                         }
