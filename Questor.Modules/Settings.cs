@@ -123,9 +123,8 @@ namespace Questor.Modules
         public long totalMegaBytesOfMemoryUsed { get; set; }
         public Int64 EVEProcessMemoryCeiling { get; set; }
 
+        public bool OpenWrecks { get; set; }
 
-        public DateTime newlyretrievedmissionExpiresOn { get; set; }
-        public DateTime alreadyinprogressmissionExpiresOn { get; set; }
         public int missionbookmarktoagentloops { get; set; }
         public string missionName { get; set; }
 
@@ -320,8 +319,6 @@ namespace Questor.Modules
                 totalMegaBytesOfMemoryUsed = 0;
 
                 missionName = null;
-                newlyretrievedmissionExpiresOn = (DateTime.Now.AddHours(-96));
-                alreadyinprogressmissionExpiresOn = (DateTime.Now.AddHours(-96));
                 missionbookmarktoagentloops = 0;
                 return;
             }

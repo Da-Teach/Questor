@@ -467,6 +467,9 @@ namespace Questor.Modules
                 if (_openedContainers.ContainsKey(containerEntity.Id) && DateTime.Now.Subtract(_openedContainers[containerEntity.Id]).TotalSeconds < 10)
                     continue;
 
+                if (Settings.Instance.LootEverything == false && Cache.Instance.OpenWrecks == false)
+                    continue;
+
                 // Open the container
                 Logging.Log("Salvage: Opening container [" + containerEntity.Name + "][" + containerEntity.Id + "]");
                 containerEntity.OpenCargo();
