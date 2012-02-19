@@ -132,7 +132,6 @@ namespace Questor.Modules
 
                 if (closest.Distance < -10100)
                 {
-                    //closest.Orbit(-9000);
                     closest.Orbit(1000);
                 }
                 Logging.Log(" dist " + closest.Distance);

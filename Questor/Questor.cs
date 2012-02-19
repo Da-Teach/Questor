@@ -793,14 +793,8 @@ namespace Questor
                     break;
 
                 case QuestorState.WarpOutStation:
-                    //Logging.Log("WarpOut: " + "bookmarkWarpout is [ " + Settings.Instance.bookmarkWarpOut + "] ");
-                    //var _bookmark = Cache.Instance.BookmarksByLabel("HomeStation-Insta").OrderBy(b => b.CreatedOn).FirstOrDefault();
-                    // var _bookmark = Cache.Instance.BookmarksByLabel(Settings.Instance.bookmarkWarpOut + "-" + Cache.Instance.AgentCurrent ?? "").OrderBy(b => b.CreatedOn).FirstOrDefault();
-					var _bookmark = Cache.Instance.BookmarksByLabel(Settings.Instance.bookmarkWarpOut ?? "").OrderBy(b => b.CreatedOn).FirstOrDefault();
+                    var _bookmark = Cache.Instance.BookmarksByLabel(Settings.Instance.bookmarkWarpOut ?? "").OrderByDescending(b => b.CreatedOn).Where(b => b.LocationId == Cache.Instance.DirectEve.Session.SolarSystemId).FirstOrDefault();
                     var _solarid = Cache.Instance.DirectEve.Session.SolarSystemId ?? -1;
-                    //Logging.Log("WarpOut: " + "_bookmark is [ " + _bookmark.Title + " ] ");
-                    //Logging.Log("WarpOut: " + "_bookmark is [ " + _bookmark.LocationId + " ] ");
-                    //Logging.Log("WarpOut: " + "_solarid is  [ " + _solarid + " ] ");
 
                     if (_bookmark == null)
                     {
@@ -884,7 +878,7 @@ namespace Questor
                     _combat.ProcessState();
                     _drones.ProcessState();
                     _salvage.ProcessState();
-                    //_localwatch.ProcessState();
+                    _localwatch.ProcessState();
                     break;
 
                 case QuestorState.ExecuteMission:
