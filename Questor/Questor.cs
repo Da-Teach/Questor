@@ -766,8 +766,10 @@ namespace Questor
 
                 case QuestorState.LocalWatch:
                     if(Cache.Instance.Local_safe(Settings.Instance.LocalBadStandingPilotsToTolerate, Settings.Instance.LocalBadStandingLevelToConsiderBad))
+                    {
                         Logging.Log("Questor.LocalWatch: local is clear");
                         State = QuestorState.WarpOutStation;
+                    }
                     else
                     {
                         Logging.Log("Questor.LocalWatch: Bad standings pilots in local: We will stay 5 minutes in the station and then we will check if it is clear again");
