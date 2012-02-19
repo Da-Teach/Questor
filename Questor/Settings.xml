@@ -32,6 +32,10 @@
   <!-- Y Position of Questor Window -->
   <windowYPosition>1050</windowYPosition>
 
+  <!-- Local Watch Settings -->
+  <LocalBadStandingPilotsToTolerate>1</LocalBadStandingPilotsToTolerate> <!--  minimum is 1 -->
+  <LocalBadStandingLevelToConsiderBad>-0.1</LocalBadStandingLevelToConsiderBad> <!--  from -10 to 10, I recommend -0.1 so that all negative standings will cause alarm -->
+			
   <!-- Invasion resume delay -->
   <invasionRandomDelay>300</invasionRandomDelay>
   <invasionMinimumDelay>15</invasionMinimumDelay>

@@ -77,11 +77,11 @@ namespace Questor.Modules
             pocketstats_line += currentPocketName + ";" + "pocket" + (_pocket) + ";";
             pocketstats_line += ((int)DateTime.Now.Subtract(StartedPocket).TotalMinutes) + ";";
             pocketstats_line += ((long)(Cache.Instance.DirectEve.Me.Wealth - Wealth)) + ";";
-            pocketstats_line += ((int)Settings.Instance.panic_attempts_this_pocket) + ";";
-            pocketstats_line += ((int)Settings.Instance.lowest_shield_percentage_this_pocket) + ";";
-            pocketstats_line += ((int)Settings.Instance.lowest_armor_percentage_this_pocket) + ";";
-            pocketstats_line += ((int)Settings.Instance.lowest_capacitor_percentage_this_pocket) + ";";
-            pocketstats_line += ((int)Settings.Instance.repair_cycle_time_this_pocket) + ";\r\n";            
+            pocketstats_line += ((int)Cache.Instance.panic_attempts_this_pocket) + ";";
+            pocketstats_line += ((int)Cache.Instance.lowest_shield_percentage_this_pocket) + ";";
+            pocketstats_line += ((int)Cache.Instance.lowest_armor_percentage_this_pocket) + ";";
+            pocketstats_line += ((int)Cache.Instance.lowest_capacitor_percentage_this_pocket) + ";";
+            pocketstats_line += ((int)Cache.Instance.repair_cycle_time_this_pocket) + ";\r\n";            
             
                 // The old pocket is finished
                 File.AppendAllText(pocketstats_file, pocketstats_line);
@@ -89,11 +89,11 @@ namespace Questor.Modules
                 // Update statistic values for next pocket stats
                 Wealth = Cache.Instance.DirectEve.Me.Wealth;
                 StartedPocket = DateTime.Now;
-                Settings.Instance.panic_attempts_this_pocket = 0;
-                Settings.Instance.lowest_shield_percentage_this_pocket = 101;
-                Settings.Instance.lowest_armor_percentage_this_pocket = 101;
-                Settings.Instance.lowest_capacitor_percentage_this_pocket = 101;
-                Settings.Instance.repair_cycle_time_this_pocket = 0;
+                Cache.Instance.panic_attempts_this_pocket = 0;
+                Cache.Instance.lowest_shield_percentage_this_pocket = 101;
+                Cache.Instance.lowest_armor_percentage_this_pocket = 101;
+                Cache.Instance.lowest_capacitor_percentage_this_pocket = 101;
+                Cache.Instance.repair_cycle_time_this_pocket = 0;
                 LostDrones = 0;
         }
 

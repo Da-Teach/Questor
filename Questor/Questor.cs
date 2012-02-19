@@ -193,7 +193,6 @@ namespace Questor
             // Update settings (settings only load if character name changed)
             Settings.Instance.LoadSettings();
             CharacterName = Cache.Instance.DirectEve.Me.Name;
-            Settings.Instance.AtLoginScreen = false;
 
             // Check 3D rendering
             if (Cache.Instance.DirectEve.Session.IsInSpace && Cache.Instance.DirectEve.Rendering3D != !Disable3D)
@@ -290,51 +289,51 @@ namespace Questor
             }
             //Logging.Log("[Questor] Wallet Balance Debug Info: lastknowngoodconnectedtime = " + Settings.Instance.lastKnownGoodConnectedTime);
             //Logging.Log("[Questor] Wallet Balance Debug Info: DateTime.Now - lastknowngoodconnectedtime = " + DateTime.Now.Subtract(Settings.Instance.lastKnownGoodConnectedTime).TotalSeconds);
-            if (Math.Round(DateTime.Now.Subtract(Settings.Instance.lastKnownGoodConnectedTime).TotalMinutes) == 1)
+            if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) == 1)
             {
 				//Logging.Log("[Questor] Wallet Balance Has Not Changed in [ " + "1" + " ] min");
 			}
-			if (Math.Round(DateTime.Now.Subtract(Settings.Instance.lastKnownGoodConnectedTime).TotalMinutes) == 5)
+            if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) == 5)
             {
 				//Logging.Log("[Questor] Wallet Balance Has Not Changed in [ " + "5" + " ] min");
 			}
-			if (Math.Round(DateTime.Now.Subtract(Settings.Instance.lastKnownGoodConnectedTime).TotalMinutes) == 10)
+            if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) == 10)
             {
 				//Logging.Log("[Questor] Wallet Balance Has Not Changed in [ " + "10" + " ] min");
 			}
-			if (Math.Round(DateTime.Now.Subtract(Settings.Instance.lastKnownGoodConnectedTime).TotalMinutes) == 15)
+            if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) == 15)
             {
 				Logging.Log("[Questor] Wallet Balance Has Not Changed in [ " + "15" + " ] min");
 			}
-			if (Math.Round(DateTime.Now.Subtract(Settings.Instance.lastKnownGoodConnectedTime).TotalMinutes) == 20)
+            if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) == 20)
             {
 				Logging.Log("[Questor] Wallet Balance Has Not Changed in [ " + "20" + " ] min");
 			}
-			if (Math.Round(DateTime.Now.Subtract(Settings.Instance.lastKnownGoodConnectedTime).TotalMinutes) == 25)
+            if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) == 25)
             {
 				Logging.Log("[Questor] Wallet Balance Has Not Changed in [ " + "25" + " ] min");
 			}
-			if (Math.Round(DateTime.Now.Subtract(Settings.Instance.lastKnownGoodConnectedTime).TotalMinutes) == 30)
+            if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) == 30)
             {
 				Logging.Log("[Questor] Wallet Balance Has Not Changed in [ " + "30" + " ] min");
 			}
-			if (Math.Round(DateTime.Now.Subtract(Settings.Instance.lastKnownGoodConnectedTime).TotalMinutes) == 35)
+            if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) == 35)
             {
 				Logging.Log("[Questor] Wallet Balance Has Not Changed in [ " + "35" + " ] min");
 			}
-            if (Math.Round(DateTime.Now.Subtract(Settings.Instance.lastKnownGoodConnectedTime).TotalMinutes) < Settings.Instance.walletbalancechangelogoffdelay)
+            if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) < Settings.Instance.walletbalancechangelogoffdelay)
             {
                 if (State == QuestorState.Salvage)
                 {
-                    Settings.Instance.lastKnownGoodConnectedTime = DateTime.Now;
-                    Settings.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
+                    Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                    Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
                 }
                 else
                 {
-                    if (Settings.Instance.MyWalletBalance != Cache.Instance.DirectEve.Me.Wealth)
+                    if (Cache.Instance.MyWalletBalance != Cache.Instance.DirectEve.Me.Wealth)
                     {
-                        Settings.Instance.lastKnownGoodConnectedTime = DateTime.Now;
-                        Settings.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
+                        Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                        Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
                     }
                 }
             }
@@ -364,8 +363,8 @@ namespace Questor
             // Defense is more important then pause, rest (even panic) isnt!
             if (Paused)
             {
-                Settings.Instance.lastKnownGoodConnectedTime = DateTime.Now;
-                Settings.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
+                Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
                 return;
             }
 
@@ -517,11 +516,11 @@ namespace Questor
                         line3 += ((int)LostDrones) + ";";
                         line3 += ((int)AmmoConsumption) + ";";
                         line3 += ((int)AmmoValue) + ";";
-                        line3 += ((int)Settings.Instance.panic_attempts_this_mission) + ";";
-                        line3 += ((int)Settings.Instance.lowest_shield_percentage_this_mission) + ";";
-                        line3 += ((int)Settings.Instance.lowest_armor_percentage_this_mission) + ";";
-                        line3 += ((int)Settings.Instance.lowest_capacitor_percentage_this_mission) + ";";
-                        line3 += ((int)Settings.Instance.repair_cycle_time_this_mission) + ";\r\n";
+                        line3 += ((int)Cache.Instance.panic_attempts_this_mission) + ";";
+                        line3 += ((int)Cache.Instance.lowest_shield_percentage_this_mission) + ";";
+                        line3 += ((int)Cache.Instance.lowest_armor_percentage_this_mission) + ";";
+                        line3 += ((int)Cache.Instance.lowest_capacitor_percentage_this_mission) + ";";
+                        line3 += ((int)Cache.Instance.repair_cycle_time_this_mission) + ";\r\n";
                         
                         // The mission is finished
                         File.AppendAllText(filename3, line3);
@@ -585,12 +584,12 @@ namespace Questor
                     Process currentProcess = System.Diagnostics.Process.GetCurrentProcess();
 
                     // get the physical mem usage (this only runs between missions)
-                    Settings.Instance.totalMegaBytesOfMemoryUsed = ((currentProcess.WorkingSet64 / 1024) / 1024);
-                    Logging.Log("Questor: EVE instance: totalMegaBytesOfMemoryUsed - " + Settings.Instance.totalMegaBytesOfMemoryUsed);
+                    Cache.Instance.totalMegaBytesOfMemoryUsed = ((currentProcess.WorkingSet64 / 1024) / 1024);
+                    Logging.Log("Questor: EVE instance: totalMegaBytesOfMemoryUsed - " + Cache.Instance.totalMegaBytesOfMemoryUsed + " MB");
 
-                    if (Settings.Instance.totalMegaBytesOfMemoryUsed > Settings.Instance.EVEProcessMemoryCeiling)
+                    if (Cache.Instance.totalMegaBytesOfMemoryUsed > Settings.Instance.EVEProcessMemoryCeiling)
                     {
-                        Logging.Log("Questor: Memory usage is above the EVEProcessMemoryCeiling threshold. EVE instance: totalMegaBytesOfMemoryUsed - " + Settings.Instance.totalMegaBytesOfMemoryUsed + " MB");
+                        Logging.Log("Questor: Memory usage is above the EVEProcessMemoryCeiling threshold. EVE instance: totalMegaBytesOfMemoryUsed - " + Cache.Instance.totalMegaBytesOfMemoryUsed + " MB");
                         Logging.Log("Questor: Setting QuestorState to GotoBase.");
                         State = QuestorState.GotoBase;
                         break;
@@ -644,11 +643,11 @@ namespace Questor
                         AmmoConsumption = 0;
                         AmmoValue = 0;
 
-                        Settings.Instance.panic_attempts_this_mission = 0;
-                        Settings.Instance.lowest_shield_percentage_this_mission = 101;
-                        Settings.Instance.lowest_armor_percentage_this_mission = 101;
-                        Settings.Instance.lowest_capacitor_percentage_this_mission = 101;
-                        Settings.Instance.repair_cycle_time_this_mission = 0;
+                        Cache.Instance.panic_attempts_this_mission = 0;
+                        Cache.Instance.lowest_shield_percentage_this_mission = 101;
+                        Cache.Instance.lowest_armor_percentage_this_mission = 101;
+                        Cache.Instance.lowest_capacitor_percentage_this_mission = 101;
+                        Cache.Instance.repair_cycle_time_this_mission = 0;
                     }
 
                     _agentInteraction.ProcessState();
@@ -736,8 +735,8 @@ namespace Questor
                     {
                         // we know we are connected if we were able to arm the ship - update the lastknownGoodConnectedTime
                         // we may be out of drones/ammo but disconnecting/reconnecting will not fix that so update the timestamp
-                        Settings.Instance.lastKnownGoodConnectedTime = DateTime.Now;
-                        Settings.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
+                        Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                        Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
                         Logging.Log("Arm: Armstate.NotEnoughAmmo");
                         _arm.State = ArmState.Idle;
                         State = QuestorState.Error;
@@ -747,8 +746,8 @@ namespace Questor
                     {
                         // we know we are connected if we were able to arm the ship - update the lastknownGoodConnectedTime
                         // we may be out of drones/ammo but disconnecting/reconnecting will not fix that so update the timestamp
-                        Settings.Instance.lastKnownGoodConnectedTime = DateTime.Now;
-                        Settings.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
+                        Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                        Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
                         Logging.Log("Arm: Armstate.NotEnoughDrones");
                         _arm.State = ArmState.Idle;
                         State = QuestorState.Error;
@@ -757,8 +756,8 @@ namespace Questor
                     if (_arm.State == ArmState.Done)
                     {
 					    //we know we are connected if we were able to arm the ship - update the lastknownGoodConnectedTime
-						Settings.Instance.lastKnownGoodConnectedTime = DateTime.Now;
-                        Settings.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;	
+                        Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                        Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;	
                         _arm.State = ArmState.Idle;
                         State = QuestorState.LocalWatch;
                     }
@@ -766,17 +765,22 @@ namespace Questor
                     break;
 
                 case QuestorState.LocalWatch:
-                    //if(Cache.Instance.Local_safe(1, -1))
+                    if(Cache.Instance.Local_safe(Settings.Instance.LocalBadStandingPilotsToTolerate, Settings.Instance.LocalBadStandingLevelToConsiderBad))
+                        Logging.Log("Questor.LocalWatch: local is clear");
                         State = QuestorState.WarpOutStation;
-                    //else
-                    //{
-                    //    Logging.Log("Questor.LocalWatch: We stay 5 minutes inside station and then we check again");
-                    //    State = QuestorState.WaitingBadGuyGoAway;
-                    //}
-
+                    else
+                    {
+                        Logging.Log("Questor.LocalWatch: Bad standings pilots in local: We will stay 5 minutes in the station and then we will check if it is clear again");
+						Logging.Log("Questor.LocalWatch: debugging: exiting station anyway...");
+                        //State = QuestorState.WaitingforBadGuytoGoAway;
+                        State = QuestorState.WarpOutStation;
+						Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                        Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
+                    }
+                        State = QuestorState.WarpOutStation;
                     break;
 
-                case QuestorState.WaitingBadGuyGoAway:
+                case QuestorState.WaitingforBadGuytoGoAway:
                     _lastAction = DateTime.Now;
                     if(DateTime.Now.Subtract(_lastAction).Minutes < 5)
                         break;
@@ -981,9 +985,9 @@ namespace Questor
                         _traveler.ProcessState();
                         if (_traveler.State == TravelerState.AtDestination)
                         {
-                            if (Settings.Instance.totalMegaBytesOfMemoryUsed > (Settings.Instance.EVEProcessMemoryCeiling - 50))
+                            if (Cache.Instance.totalMegaBytesOfMemoryUsed > (Settings.Instance.EVEProcessMemoryCeiling - 50))
                             {
-                                Logging.Log("Questor: Memory usage is above the EVEProcessMemoryCeiling threshold. EVE instance: totalMegaBytesOfMemoryUsed - " + Settings.Instance.totalMegaBytesOfMemoryUsed + " MB");
+                                Logging.Log("Questor: Memory usage is above the EVEProcessMemoryCeiling threshold. EVE instance: totalMegaBytesOfMemoryUsed - " + Cache.Instance.totalMegaBytesOfMemoryUsed + " MB");
                                     Logging.Log("Questor: We are in station: Exiting eve.");
                                     //System.Threading.Thread.Sleep(33333); //33 second pause before closing questor
                                     Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
@@ -1220,8 +1224,8 @@ namespace Questor
                     if (_traveler.State == TravelerState.AtDestination || GateInSalvage())
                     {
                         //we know we are connected if we were able to arm the ship - update the lastknownGoodConnectedTime
-                        Settings.Instance.lastKnownGoodConnectedTime = DateTime.Now;
-                        Settings.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
+                        Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                        Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
 
                         State = QuestorState.Salvage;
                         _traveler.Destination = null;
@@ -1473,8 +1477,8 @@ namespace Questor
                     if (distance > 100000)
                     {
                         //we know we are connected if we were able to arm the ship - update the lastknownGoodConnectedTime
-                        Settings.Instance.lastKnownGoodConnectedTime = DateTime.Now;
-                        Settings.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
+                        Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                        Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
 
                         Logging.Log("Salvage: We've moved to the next Pocket [" + distance + "]");
 
@@ -1694,8 +1698,8 @@ namespace Questor
                         _traveler.ProcessState();
                         //we know we are connected if we were able to arm the ship - update the lastknownGoodConnectedTime
                         //we also assume you are connected during a manul set of questor into travel mode (safe assumption considering someone is at the kb)
-                        Settings.Instance.lastKnownGoodConnectedTime = DateTime.Now;
-                        Settings.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
+                        Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                        Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
 
                         if (_traveler.State == TravelerState.AtDestination)
                         {

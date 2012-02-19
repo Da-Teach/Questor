@@ -350,8 +350,8 @@ namespace Questor.Modules
                     //System.Threading.Thread.Sleep(333);
 
 					//we know we are connected if we were able to get this far - update the lastknownGoodConnectedTime
-                    Settings.Instance.lastKnownGoodConnectedTime = DateTime.Now;
-                    Settings.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
+                    Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                    Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
                 }
             }
         }

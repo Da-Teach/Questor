@@ -18,7 +18,7 @@ namespace Questor
         Switch,
         Arm,
         LocalWatch,
-        WaitingBadGuyGoAway,
+        WaitingforBadGuytoGoAway,
         WarpOutStation,
         GotoMission,
         ExecuteMission,

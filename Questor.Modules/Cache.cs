@@ -131,6 +131,15 @@ namespace Questor.Modules
             missionAmmo = new List<Ammo>();
             MissionUseDrones = null;
 
+            panic_attempts_this_pocket = 0;
+            lowest_shield_percentage_this_pocket = 100;
+            lowest_armor_percentage_this_pocket = 100;
+            lowest_capacitor_percentage_this_pocket = 100;
+            panic_attempts_this_mission = 0;
+            lowest_shield_percentage_this_mission = 100;
+            lowest_armor_percentage_this_mission = 100;
+            lowest_capacitor_percentage_this_mission = 100;
+            lastKnownGoodConnectedTime = DateTime.Now;
         }
 
         /// <summary>
@@ -159,7 +168,7 @@ namespace Questor.Modules
         public double Wealth { get; set; }
         public bool OpenWrecks = false;
 
-        public bool Local_safe(int max_bad, float stand) {
+        public bool Local_safe(int max_bad, double stand) {
             int number = 0;
             DirectChatWindow Local = (DirectChatWindow)GetWindowByName("Local");
             foreach(var LocalMember in Local.Members)
@@ -171,12 +180,12 @@ namespace Questor.Modules
 
                 if(alliance.Min() <= stand || corporation.Min() <= stand || personal.Min() <= stand)
                 {
-                    Logging.Log("Cache.WatchLocal: Bad guy detecting: " + LocalMember.Name);
+                    Logging.Log("Cache.WatchLocal: Bad Standing Pilot Detected: [ " + LocalMember.Name + "] " + " [ " + number + " ] so far... of [ " + max_bad + " ] allowed");
                     number++;
                 }
                 if(number > max_bad)
                 {
-                    Logging.Log("Cache.WatchLocal: Bad guys maybe attack you, We stay in station");
+                    Logging.Log("Cache.WatchLocal: [" + number + "] Bad Standing pilots in local, We should stay in station");
                     return false;
                 }
             }
@@ -248,6 +257,23 @@ namespace Questor.Modules
         public bool IsMissionPocketDone { get; set; }
 
         public string ExtConsole { get; set; }
+
+        public DateTime _lastModuleActivation;
+        public int panic_attempts_this_mission { get; set; }
+        public double lowest_shield_percentage_this_pocket { get; set; }
+        public double lowest_armor_percentage_this_pocket { get; set; }
+        public double lowest_capacitor_percentage_this_pocket { get; set; }
+        public int repair_cycle_time_this_pocket { get; set; }
+        public int panic_attempts_this_pocket { get; set; }
+        public double lowest_shield_percentage_this_mission { get; set; }
+        public double lowest_armor_percentage_this_mission { get; set; }
+        public double lowest_capacitor_percentage_this_mission { get; set; }
+        public DateTime StartedBoosting { get; set; }
+        public int repair_cycle_time_this_mission { get; set; }
+        public DateTime lastKnownGoodConnectedTime { get; set; }
+        public long totalMegaBytesOfMemoryUsed { get; set; }
+        //public bool OpenWrecks { get; set; }
+        public double MyWalletBalance { get; set; }
 
         public long AgentId
         {

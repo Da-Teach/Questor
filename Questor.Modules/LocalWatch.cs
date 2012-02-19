@@ -1,5 +1,4 @@
-﻿//NOT FINISH DON'T USE
-namespace Questor.Modules
+﻿namespace Questor.Modules
 {
     using System;
     using System.Linq;
@@ -23,7 +22,11 @@ namespace Questor.Modules
                     break;
 
                 case LocalWatchState.CheckLocal:
-                    Cache.Instance.Local_safe(0,0);
+                    //
+                    // this ought to cache the name of the system, and the number of ppl in local (or similar)
+                    // and only query everyone in local for standings changes if something has changed...
+                    //
+                    Cache.Instance.Local_safe(Settings.Instance.LocalBadStandingPilotsToTolerate,Settings.Instance.LocalBadStandingLevelToConsiderBad);
                     State = LocalWatchState.Done;
                     break;
 

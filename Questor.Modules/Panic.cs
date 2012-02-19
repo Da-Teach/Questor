@@ -49,22 +49,22 @@ namespace Questor.Modules
                         // Only check for cap-panic while in a mission, not while doing anything else
                         Logging.Log("Panic: Start panicking, capacitor [" + Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage + "%] below [" + Settings.Instance.MinimumCapacitorPct + "%]");
                         //Questor.panic_attempts_this_mission;
-                        Settings.Instance.panic_attempts_this_mission = (Settings.Instance.panic_attempts_this_mission + 1);
-                        Settings.Instance.panic_attempts_this_pocket = (Settings.Instance.panic_attempts_this_pocket + 1);
+                        Cache.Instance.panic_attempts_this_mission = (Cache.Instance.panic_attempts_this_mission + 1);
+                        Cache.Instance.panic_attempts_this_pocket = (Cache.Instance.panic_attempts_this_pocket + 1);
                         State = PanicState.StartPanicking;
                     }
                     else if (Cache.Instance.InSpace && Cache.Instance.DirectEve.ActiveShip.ShieldPercentage < Settings.Instance.MinimumShieldPct)
                     {
                         Logging.Log("Panic: Start panicking, shield [" + Cache.Instance.DirectEve.ActiveShip.ShieldPercentage + "%] below [" + Settings.Instance.MinimumShieldPct + "%]");
-                        Settings.Instance.panic_attempts_this_mission = (Settings.Instance.panic_attempts_this_mission + 1);
-                        Settings.Instance.panic_attempts_this_pocket = (Settings.Instance.panic_attempts_this_pocket + 1);
+                        Cache.Instance.panic_attempts_this_mission = (Cache.Instance.panic_attempts_this_mission + 1);
+                        Cache.Instance.panic_attempts_this_pocket = (Cache.Instance.panic_attempts_this_pocket + 1);
                         State = PanicState.StartPanicking;
                     }
                     else if (Cache.Instance.InSpace && Cache.Instance.DirectEve.ActiveShip.ArmorPercentage < Settings.Instance.MinimumArmorPct)
                     {
                         Logging.Log("Panic: Start panicking, armor [" + Cache.Instance.DirectEve.ActiveShip.ArmorPercentage + "%] below [" + Settings.Instance.MinimumArmorPct + "%]");
-                        Settings.Instance.panic_attempts_this_mission = (Settings.Instance.panic_attempts_this_mission + 1);
-                        Settings.Instance.panic_attempts_this_pocket = (Settings.Instance.panic_attempts_this_pocket + 1);
+                        Cache.Instance.panic_attempts_this_mission = (Cache.Instance.panic_attempts_this_mission + 1);
+                        Cache.Instance.panic_attempts_this_pocket = (Cache.Instance.panic_attempts_this_pocket + 1);
                         State = PanicState.StartPanicking;
                     }
 
@@ -80,8 +80,8 @@ namespace Questor.Modules
                         {
                             _delayedResume = true;
 
-                            Settings.Instance.panic_attempts_this_mission = (Settings.Instance.panic_attempts_this_mission + 1);
-                            Settings.Instance.panic_attempts_this_pocket = (Settings.Instance.panic_attempts_this_pocket + 1);
+                            Cache.Instance.panic_attempts_this_mission = (Cache.Instance.panic_attempts_this_mission + 1);
+                            Cache.Instance.panic_attempts_this_pocket = (Cache.Instance.panic_attempts_this_pocket + 1);
                             State = PanicState.StartPanicking;
                             Logging.Log("Panic: Start panicking, mission invaded by [" + frigates + "] frigates");
                         }
@@ -90,8 +90,8 @@ namespace Questor.Modules
                         {
                             _delayedResume = true;
 
-                            Settings.Instance.panic_attempts_this_mission = (Settings.Instance.panic_attempts_this_mission + 1);
-                            Settings.Instance.panic_attempts_this_pocket = (Settings.Instance.panic_attempts_this_pocket + 1);
+                            Cache.Instance.panic_attempts_this_mission = (Cache.Instance.panic_attempts_this_mission + 1);
+                            Cache.Instance.panic_attempts_this_pocket = (Cache.Instance.panic_attempts_this_pocket + 1);
                             State = PanicState.StartPanicking;
                             Logging.Log("Panic: Start panicking, mission invaded by [" + cruisers + "] cruisers");
                         }
@@ -100,8 +100,8 @@ namespace Questor.Modules
                         {
                             _delayedResume = true;
 
-                            Settings.Instance.panic_attempts_this_mission = (Settings.Instance.panic_attempts_this_mission + 1);
-                            Settings.Instance.panic_attempts_this_pocket = (Settings.Instance.panic_attempts_this_pocket + 1);
+                            Cache.Instance.panic_attempts_this_mission = (Cache.Instance.panic_attempts_this_mission + 1);
+                            Cache.Instance.panic_attempts_this_pocket = (Cache.Instance.panic_attempts_this_pocket + 1);
                             State = PanicState.StartPanicking;
                             Logging.Log("Panic: Start panicking, mission invaded by [" + battlecruisers + "] battlecruisers");
                         }
@@ -110,8 +110,8 @@ namespace Questor.Modules
                         {
                             _delayedResume = true;
 
-                            Settings.Instance.panic_attempts_this_mission = (Settings.Instance.panic_attempts_this_mission + 1);
-                            Settings.Instance.panic_attempts_this_pocket = (Settings.Instance.panic_attempts_this_pocket + 1);
+                            Cache.Instance.panic_attempts_this_mission = (Cache.Instance.panic_attempts_this_mission + 1);
+                            Cache.Instance.panic_attempts_this_pocket = (Cache.Instance.panic_attempts_this_pocket + 1);
                             State = PanicState.StartPanicking;
                             Logging.Log("Panic: Start panicking, mission invaded by [" + battleships + "] battleships");
                         }

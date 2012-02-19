@@ -69,6 +69,9 @@ namespace Questor.Modules
 		public float minStandings { get; set; }
         public bool UseGatesInSalvage { get; set; }
 
+        public int LocalBadStandingPilotsToTolerate { get; set; }
+        public double LocalBadStandingLevelToConsiderBad { get; set; }
+
         public int BattleshipInvasionLimit { get; set; }
         public int BattlecruiserInvasionLimit { get; set; }
         public int CruiserInvasionLimit { get; set; }
@@ -100,32 +103,11 @@ namespace Questor.Modules
 
         public string MissionsPath { get; set; }
         
-        public string LogPath1 { get; set; }
-        public string LogPath2 { get; set; }
-        public string LogName { get; set; }
-        
-        public int panic_attempts_this_mission { get; set; }
-		public double lowest_shield_percentage_this_pocket { get; set; }
-        public double lowest_armor_percentage_this_pocket { get; set; }
-        public double lowest_capacitor_percentage_this_pocket { get; set; }
-        public int repair_cycle_time_this_pocket { get; set; }
-        public int panic_attempts_this_pocket { get; set; }
-        public double lowest_shield_percentage_this_mission { get; set; }
-        public double lowest_armor_percentage_this_mission { get; set; }
-        public double lowest_capacitor_percentage_this_mission { get; set; }
-        public DateTime StartedBoosting { get; set; }
-        public int repair_cycle_time_this_mission { get; set; }
-
         public int walletbalancechangelogoffdelay { get; set; }
-        public DateTime lastKnownGoodConnectedTime { get; set; }
-        public double MyWalletBalance { get; set; }
         
-        public long totalMegaBytesOfMemoryUsed { get; set; }
         public Int64 EVEProcessMemoryCeiling { get; set; }
 
-        public bool OpenWrecks { get; set; }
-
-        public int missionbookmarktoagentloops { get; set; }
+        //public int missionbookmarktoagentloops { get; set; }  //not yet used - although it is likely a good ide to fix it so it is used - it would eliminate going back and fourth to the same mission over and over
         public string missionName { get; set; }
 
         public int MaximumHighValueTargets { get; set; }
@@ -222,8 +204,6 @@ namespace Questor.Modules
             if (!File.Exists(settingsPath))
             {
                 // Clear settings
-                AtLoginScreen = true;
-
                 AgentName = string.Empty;
 
                 CharacterMode = "dps";
@@ -305,21 +285,8 @@ namespace Questor.Modules
                 Blacklist.Clear();
                 FactionBlacklist.Clear();
 
-                panic_attempts_this_pocket = 0;
-				lowest_shield_percentage_this_pocket = 100;
-				lowest_armor_percentage_this_pocket = 100;
-				lowest_capacitor_percentage_this_pocket = 100;
-                panic_attempts_this_mission = 0;
-                lowest_shield_percentage_this_mission = 100;
-				lowest_armor_percentage_this_mission = 100;
-				lowest_capacitor_percentage_this_mission = 100;
-
-                MyWalletBalance = 0;
-                lastKnownGoodConnectedTime = DateTime.Now;
-                totalMegaBytesOfMemoryUsed = 0;
-
                 missionName = null;
-                missionbookmarktoagentloops = 0;
+                //missionbookmarktoagentloops = 0;
                 return;
             }
 
@@ -344,6 +311,9 @@ namespace Questor.Modules
 			minStandings = (float?) xml.Element("minStandings") ?? 10;
 
             UseGatesInSalvage = (bool?)xml.Element("useGatesInSalvage") ?? false;
+            
+            LocalBadStandingPilotsToTolerate = (int?)xml.Element("LocalBadStandingPilotsToTolerate") ?? 1;
+            LocalBadStandingLevelToConsiderBad = (double?)xml.Element("LocalBadStandingLevelToConsiderBad") ?? -0.1;
 
             BattleshipInvasionLimit = (int?)xml.Element("battleshipInvasionLimit") ?? 0;
             BattlecruiserInvasionLimit = (int?)xml.Element("battlecruiserInvasionLimit") ?? 0;
@@ -472,6 +442,10 @@ namespace Questor.Modules
                 foreach (var faction in factionblacklist.Elements("faction"))
                     FactionBlacklist.Add((string) faction);
 
+
+            //
+            // if enabled the following would keep you from looting (or salvaging?) small wrecks
+            //
             //list of small wreck
             //WreckBlackList.Add(26557);
             //WreckBlackList.Add(26561);
@@ -488,6 +462,9 @@ namespace Questor.Modules
             //WreckBlackList.Add(26594);
             //WreckBlackList.Add(26935);
 
+            //
+            // if enabled the following would keep you from looting (or salvaging?) medium wrecks
+            //
             //list of medium wreck
             //WreckBlackList.Add(26558);
             //WreckBlackList.Add(26562);

@@ -64,50 +64,50 @@ namespace Questor.Modules
 				
 				var inCombat = Cache.Instance.TargetedBy.Count() > 0;
 
+
                 if (!module.IsActive && ((inCombat && perc < Settings.Instance.ActivateRepairModules) || (!inCombat && perc < Settings.Instance.DeactivateRepairModules && Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage > Settings.Instance.SafeCapacitorPct)))
                 {
-                    if (Cache.Instance.DirectEve.ActiveShip.ShieldPercentage < Settings.Instance.lowest_shield_percentage_this_pocket)
+                    if (Cache.Instance.DirectEve.ActiveShip.ShieldPercentage < Cache.Instance.lowest_shield_percentage_this_pocket)
                     {
-                        Settings.Instance.lowest_shield_percentage_this_pocket = Cache.Instance.DirectEve.ActiveShip.ShieldPercentage;
-                        Settings.Instance.lowest_shield_percentage_this_mission = Cache.Instance.DirectEve.ActiveShip.ShieldPercentage;
-                        Settings.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                        Cache.Instance.lowest_shield_percentage_this_pocket = Cache.Instance.DirectEve.ActiveShip.ShieldPercentage;
+                        Cache.Instance.lowest_shield_percentage_this_mission = Cache.Instance.DirectEve.ActiveShip.ShieldPercentage;
+                        Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
                     }
-                    if (Cache.Instance.DirectEve.ActiveShip.ArmorPercentage < Settings.Instance.lowest_armor_percentage_this_pocket)
+                    if (Cache.Instance.DirectEve.ActiveShip.ArmorPercentage < Cache.Instance.lowest_armor_percentage_this_pocket)
                     {
-                        Settings.Instance.lowest_armor_percentage_this_pocket = Cache.Instance.DirectEve.ActiveShip.ArmorPercentage;
-                        Settings.Instance.lowest_armor_percentage_this_mission = Cache.Instance.DirectEve.ActiveShip.ArmorPercentage;
-                        Settings.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                        Cache.Instance.lowest_armor_percentage_this_pocket = Cache.Instance.DirectEve.ActiveShip.ArmorPercentage;
+                        Cache.Instance.lowest_armor_percentage_this_mission = Cache.Instance.DirectEve.ActiveShip.ArmorPercentage;
+                        Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
                     }
-                    if (Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage < Settings.Instance.lowest_capacitor_percentage_this_pocket)
+                    if (Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage < Cache.Instance.lowest_capacitor_percentage_this_pocket)
                     {
-                        Settings.Instance.lowest_capacitor_percentage_this_pocket = Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage;
-                        Settings.Instance.lowest_capacitor_percentage_this_mission = Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage;
-                        Settings.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                        Cache.Instance.lowest_capacitor_percentage_this_pocket = Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage;
+                        Cache.Instance.lowest_capacitor_percentage_this_mission = Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage;
+                        Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
                     }
                     //More human behaviour
                     //System.Threading.Thread.Sleep(333);
                     module.Click();
+                    Cache.Instance.StartedBoosting = DateTime.Now;
 					
-
-                    Settings.Instance.StartedBoosting = DateTime.Now;
-                 
-                    //Logging.Log("LowestShieldPercentage(pocket) [ " + Settings.Instance.lowest_shield_percentage_this_pocket + " ] ");
-					//Logging.Log("LowestArmorPercentage(pocket) [ " + Settings.Instance.lowest_armor_percentage_this_pocket + " ] ");
-					//Logging.Log("LowestCapacitorPercentage(pocket) [ " + Settings.Instance.lowest_capacitor_percentage_this_pocket + " ] ");
-					//Logging.Log("LowestShieldPercentage(mission) [ " + Settings.Instance.lowest_shield_percentage_this_mission + " ] ");
-					//Logging.Log("LowestArmorPercentage(mission) [ " + Settings.Instance.lowest_armor_percentage_this_mission + " ] ");
-					//Logging.Log("LowestCapacitorPercentage(mission) [ " + Settings.Instance.lowest_capacitor_percentage_this_mission + " ] ");
+                    //Logging.Log("LowestShieldPercentage(pocket) [ " + Cache.Instance.lowest_shield_percentage_this_pocket + " ] ");
+					//Logging.Log("LowestArmorPercentage(pocket) [ " + Cache.Instance.lowest_armor_percentage_this_pocket + " ] ");
+					//Logging.Log("LowestCapacitorPercentage(pocket) [ " + Cache.Instance.lowest_capacitor_percentage_this_pocket + " ] ");
+					//Logging.Log("LowestShieldPercentage(mission) [ " + Cache.Instance.lowest_shield_percentage_this_mission + " ] ");
+					//Logging.Log("LowestArmorPercentage(mission) [ " + Cache.Instance.lowest_armor_percentage_this_mission + " ] ");
+					//Logging.Log("LowestCapacitorPercentage(mission) [ " + Cache.Instance.lowest_capacitor_percentage_this_mission + " ] ");
                 }
                 else if (module.IsActive && perc >= Settings.Instance.DeactivateRepairModules)
                 {
                     //More human behaviour
                     //System.Threading.Thread.Sleep(333);
                     module.Click();
-					Settings.Instance.repair_cycle_time_this_pocket = Settings.Instance.repair_cycle_time_this_pocket + ((int)DateTime.Now.Subtract(Settings.Instance.StartedBoosting).TotalSeconds);
-                    Settings.Instance.repair_cycle_time_this_mission = Settings.Instance.repair_cycle_time_this_mission + ((int)DateTime.Now.Subtract(Settings.Instance.StartedBoosting).TotalSeconds);
-                    Settings.Instance.lastKnownGoodConnectedTime = DateTime.Now;
-                    //Settings.Instance.repair_cycle_time_this_pocket = Settings.Instance.repair_cycle_time_this_pocket + ((int)watch.Elapsed);
-                    //Settings.Instance.repair_cycle_time_this_mission = Settings.Instance.repair_cycle_time_this_mission + watch.Elapsed.TotalMinutes;
+                    Cache.Instance._lastModuleActivation = DateTime.Now;
+					Cache.Instance.repair_cycle_time_this_pocket = Cache.Instance.repair_cycle_time_this_pocket + ((int)DateTime.Now.Subtract(Cache.Instance.StartedBoosting).TotalSeconds);
+                    Cache.Instance.repair_cycle_time_this_mission = Cache.Instance.repair_cycle_time_this_mission + ((int)DateTime.Now.Subtract(Cache.Instance.StartedBoosting).TotalSeconds);
+                    Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                    //Cache.Instance.repair_cycle_time_this_pocket = Cache.Instance.repair_cycle_time_this_pocket + ((int)watch.Elapsed);
+                    //Cache.Instance.repair_cycle_time_this_mission = Cache.Instance.repair_cycle_time_this_mission + watch.Elapsed.TotalMinutes;
                 }
             }
         }
