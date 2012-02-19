@@ -397,12 +397,9 @@ namespace Questor
 
             if (_directEve.Login.AtLogin)
             {
-                Logging.Log("[Startup] Waiting 5 seconds then Logging in account [" + _username + "]");
-                System.Threading.Thread.Sleep(5000);
+                Logging.Log("[Startup] Logging in account [" + _username + "]");
                 _directEve.Login.Login(_username, _password);
-                Logging.Log("[Startup] Waiting 7 Seconds for Character Selection Screen");
-                System.Threading.Thread.Sleep(7000);
-                _pulsedelay = 10;
+                _pulsedelay = 40;
                 return;
             }
 
