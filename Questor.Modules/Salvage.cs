@@ -342,12 +342,12 @@ namespace Questor.Modules
                     if (!isMissionItem && !LootEverything)
                         continue;
 
-                    // This would preclude us from picking up extra marines, militants and possibly other items
-                    // that we would like to have extra of (they are mission completion items that we dont always pickup) 
-                    //
                     // Do not pick up items that cannot enter in a freighter container (unless its the mission item)
-                    //if (!isMissionItem && item.IsAliveandWontFitInContainers)
-                    //continue;
+                    // Note: some mission items that are alive have been allowed to be 
+                    //       scooped because unloadlootstate.MoveCommonMissionCompletionitems 
+                    //       will move them into the hangar floor not the loot location
+                    if (!isMissionItem && item.IsAliveandWontFitInContainers)
+                    continue;
 
                     // We are at our max, either make room or skip the item
                     if ((freeCargoCapacity - item.TotalVolume) <= (isMissionItem ? 0 : ReserveCargoCapacity))

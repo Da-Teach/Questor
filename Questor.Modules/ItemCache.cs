@@ -84,14 +84,14 @@ namespace Questor.Modules
                 if (TypeId == 3804) return true;    // VIPs
                 if (TypeId == 3806) return true;    // Refugees
                 if (TypeId == 3808) return true;    // Prisioners
-                if (TypeId == 3810) return true;    // Marines **Common Mission Completion Item
+                //if (TypeId == 3810) return true;    // Marines **Common Mission Completion Item
                 if (TypeId == 12865) return true;   // Quafe Ultra
                 if (TypeId == 13267) return true;   // Janitor
                 if (TypeId == 17765) return true;   // Exotic Dancers
                 if (TypeId == 22208) return true;   // Prostitute
                 if (TypeId == 22209) return true;   // Refugee
                 if (TypeId == 22210) return true;   // Cloned SOE officer
-                if (TypeId == 25373) return true;   // Militants **Common Mission Completion Item
+                //if (TypeId == 25373) return true;   // Militants **Common Mission Completion Item
                 // people (all the different kinds - ugh?)
                 return false;
             }

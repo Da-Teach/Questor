@@ -118,6 +118,9 @@ namespace Questor.Modules
                     // how do we get IsMissionItem to work for us here? (see ItemCache)
                     // Zbikoki's Hacker Card 28260, Reports 3814, Gate Key 2076, Militants 25373, Marines 3810
                     //
+                    var ItemsToMove = cargo.Items.Where(i => i.TypeId == 17192 || i.TypeId == 2076 || i.TypeId == 3814 || i.TypeId == 17206 || i.TypeId == 28260 || i.GroupId == 283);
+                    CommonMissionCompletionItemHangar.Add(ItemsToMove);
+                    _lastAction = DateTime.Now;
                     
                     Logging.Log("UnloadLoot: Moving loot");
                     State = UnloadLootState.MoveLoot;
