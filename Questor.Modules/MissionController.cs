@@ -61,6 +61,7 @@ namespace Questor.Modules
                         
 			var CharacterName = Cache.Instance.DirectEve.Me.Name;
 			string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Log\\" + CharacterName + "\\pocketstats\\";
+            Directory.CreateDirectory(path);
 
             Logging.Log("MissionController: This is the ending stats stats for mission pocket: " + _pocket);
             //
