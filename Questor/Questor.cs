@@ -827,6 +827,7 @@ namespace Questor
                      break;
 
                 case QuestorState.GotoMission:
+                    Cache.Instance.OpenWrecks = false;
                     var missionDestination = _traveler.Destination as MissionBookmarkDestination;
                     if (missionDestination == null || missionDestination.AgentId != Cache.Instance.AgentId) // We assume that this will always work "correctly" (tm)
                         _traveler.Destination = new MissionBookmarkDestination(Cache.Instance.GetMissionBookmark(Cache.Instance.AgentId, "Encounter"));
@@ -882,6 +883,7 @@ namespace Questor
                     break;
 
                 case QuestorState.ExecuteMission:
+                    Cache.Instance.OpenWrecks = false;
                     watch.Reset();
                     watch.Start();
                     _combat.ProcessState();
@@ -1194,6 +1196,7 @@ namespace Questor
                 case QuestorState.BeginAfterMissionSalvaging:
                     FinishedTask = DateTime.Now;
                     _GatesPresent = false;
+                    Cache.Instance.OpenWrecks = true;
                     if (_arm.State == ArmState.Idle)
                         _arm.State = ArmState.SwitchToSalvageShip;
 
@@ -1235,6 +1238,7 @@ namespace Questor
                 case QuestorState.Salvage:
                     var SalvageCargo = Cache.Instance.DirectEve.GetShipsCargo();
                     Cache.Instance.SalvageAll = true;
+                    Cache.Instance.OpenWrecks = true;
 
                     // Is our cargo window open?
                     if (SalvageCargo.Window == null)
@@ -1425,6 +1429,7 @@ namespace Questor
                     break;
 
                 case QuestorState.SalvageUseGate:
+                    Cache.Instance.OpenWrecks = true;
 
                     target = "Acceleration Gate";
 
@@ -1471,6 +1476,7 @@ namespace Questor
                     break;
 
                 case QuestorState.SalvageNextPocket:
+                    Cache.Instance.OpenWrecks = true;
                     var distance = Cache.Instance.DistanceFromMe(_lastX, _lastY, _lastZ);
                     if (distance > 100000)
                     {
@@ -1492,6 +1498,7 @@ namespace Questor
                     break;
 
                 case QuestorState.Storyline:
+                    Cache.Instance.OpenWrecks = false;
                     _storyline.ProcessState();
 
                     if (_storyline.State == StorylineState.Done)
@@ -1538,6 +1545,7 @@ namespace Questor
                     break;
     
                 case QuestorState.SalvageOnly:
+                    Cache.Instance.OpenWrecks = true;
                     var SalvageOnlyCargo = Cache.Instance.DirectEve.GetShipsCargo();
 
                     // Is our cargo window open?
@@ -1670,6 +1678,7 @@ namespace Questor
                     break;
 
                 case QuestorState.Traveler:
+                    Cache.Instance.OpenWrecks = false;
                     var destination = Cache.Instance.DirectEve.Navigation.GetDestinationPath();
                     if (destination == null || destination.Count == 0)
                     {
