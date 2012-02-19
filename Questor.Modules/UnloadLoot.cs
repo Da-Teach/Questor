@@ -87,8 +87,8 @@ namespace Questor.Modules
                     }
                     else
                     {
-                        Logging.Log("UnloadLoot: Moving items");
-                        State = UnloadLootState.MoveLoot;
+                        Logging.Log("UnloadLoot: CommonMissionCompletionitems");
+                        State = UnloadLootState.MoveCommonMissionCompletionitems;
                     }
                     break;
 
