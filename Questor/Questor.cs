@@ -230,6 +230,7 @@ namespace Questor
                     {
                         // Server going down
                         close |= window.Html.Contains("Please make sure your characters are out of harm");
+                        close |= window.Html.Contains("the servers are down for 30 minutes each day for maintenance and updates");
                         if (window.Html.Contains("The socket was closed"))
                         {
                             Logging.Log("Questor: This window indicates we are disconnected: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
