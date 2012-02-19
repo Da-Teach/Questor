@@ -311,13 +311,13 @@ namespace ValueDump
                         ItemsToRefine.Clear();
                         if (cbxUndersell.Checked)
 #if manual
-                            ItemsToSell.AddRange(Items.Where(i => i.InvType != null && i.MarketGroupId > 0 && i.GroupId != 18));
+                            ItemsToSell.AddRange(Items.Where(i => i.InvType != null && i.MarketGroupId > 0));
 #else
                             ItemsToSell.AddRange(Items.Where(i => i.InvType != null && i.MarketGroupId > 0));
 #endif
                         else
 #if manual
-                            ItemsToSell.AddRange(Items.Where(i => i.InvType != null && i.MarketGroupId > 0 && i.InvType.MedianBuy.HasValue && i.GroupId != 18));
+                            ItemsToSell.AddRange(Items.Where(i => i.InvType != null && i.MarketGroupId > 0 && i.InvType.MedianBuy.HasValue));
 #else
                             ItemsToSell.AddRange(Items.Where(i => i.InvType != null && i.MarketGroupId > 0 && i.InvType.MedianBuy.HasValue));
 #endif
