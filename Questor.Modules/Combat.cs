@@ -272,8 +272,15 @@ namespace Questor.Modules
         private void ActivateWeapons(EntityCache target)
         {
             // Enable speed tank
-            if (Cache.Instance.Approaching == null && Settings.Instance.SpeedTank)
+            if (Cache.Instance.Approaching == null)
+                if(Settings.Instance.SpeedTank)
                 target.Orbit(Cache.Instance.OrbitDistance);
+                else
+                {
+                    if(target.Distance > Cache.Instance.OrbitDistance + 5000)
+                        target.Approach(Cache.Instance.OrbitDistance);
+                }
+
 
             // Get the weapons
             var weapons = Cache.Instance.Weapons;

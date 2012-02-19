@@ -36,6 +36,13 @@ namespace Questor.Modules
             if (!string.IsNullOrEmpty(Settings.Instance.LootHangar))
                 corpLootHangar = Cache.Instance.DirectEve.GetCorporationHangar(Settings.Instance.LootHangar);
 
+            DirectContainer lootContainer = null;
+            if(!string.IsNullOrEmpty(Settings.Instance.LootContainer))
+            {
+                long lootContainerID = hangar.Items.FirstOrDefault(i => i.GivenName != null && i.GivenName == Settings.Instance.LootContainer).ItemId;
+                lootContainer = Cache.Instance.DirectEve.GetContainer(lootContainerID);
+            }
+
             DirectContainer corpBookmarkHangar = null;
             if (!string.IsNullOrEmpty(Settings.Instance.BookmarkHangar))
                 corpBookmarkHangar = Cache.Instance.DirectEve.GetCorporationHangar(Settings.Instance.BookmarkHangar);
@@ -119,6 +126,7 @@ namespace Questor.Modules
                     // Zbikoki's Hacker Card 28260, Reports 3814, Gate Key 2076, Militants 25373, Marines 3810
                     //
                     var ItemsToMove = cargo.Items.Where(i => i.TypeId == 17192 || i.TypeId == 2076 || i.TypeId == 3814 || i.TypeId == 17206 || i.TypeId == 28260 || i.GroupId == 283);
+                    
                     CommonMissionCompletionItemHangar.Add(ItemsToMove);
                     _lastAction = DateTime.Now;
                     
@@ -127,7 +135,7 @@ namespace Questor.Modules
                     break;
 
                 case UnloadLootState.MoveLoot:
-                    var lootHangar = corpLootHangar ?? hangar;
+                    var lootHangar = corpLootHangar ?? lootContainer ?? hangar;
 
                     var lootToMove = cargo.Items.Where(i => (i.TypeName ?? string.Empty).ToLower() != Cache.Instance.BringMissionItem && !Settings.Instance.Ammo.Any(a => a.TypeId == i.TypeId));
                     LootValue = 0;
@@ -229,7 +237,7 @@ namespace Questor.Modules
 
 
                     // Stack everything
-                    if (corpAmmoHangar == null || corpLootHangar == null) // Only stack if we moved something
+                    if(corpAmmoHangar == null || corpLootHangar == null || lootContainer == null) // Only stack if we moved something
                     {
                         hangar.StackAll();
                         _lastAction = DateTime.Now;

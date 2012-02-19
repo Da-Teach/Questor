@@ -1240,6 +1240,7 @@ namespace Questor
 
                 case QuestorState.Salvage:
                     var SalvageCargo = Cache.Instance.DirectEve.GetShipsCargo();
+                    Cache.Instance.SalvageAll = true;
 
                     // Is our cargo window open?
                     if (SalvageCargo.Window == null)

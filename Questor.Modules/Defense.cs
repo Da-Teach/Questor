@@ -136,16 +136,10 @@ namespace Questor.Modules
                 // This only applies when not speed tanking
                 if (!Settings.Instance.SpeedTank && Cache.Instance.Approaching != null)
                 {
-                    //Logging.Log("Defense: Distance from target [" + Cache.Instance.Approaching.Distance + "]" + "Settings: MinimumPropulsionModuleDistance [" + Settings.Instance.MinimumPropulsionModuleDistance + "]");              
-					// If we have less then x% cap, do not activate or deactivate the module
-					if (Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage < Settings.Instance.MinimumPropulsionModuleCapacitor)
-					{
-						activate = false;
-						if (module.IsActive && !module.IsDeactivating)
-							deactivate = true;
-						else
-							deactivate = false;
-					}
+                    // Activate if target is far enough
+                    activate &= Cache.Instance.Approaching.Distance > Settings.Instance.MinimumPropulsionModuleDistance;
+                    // Deactivate if target is too close
+                    deactivate |= Cache.Instance.Approaching.Distance <  Settings.Instance.MinimumPropulsionModuleDistance;
                 }
 
                 // If we have less then x% cap, do not activate or deactivate the module

@@ -148,12 +148,12 @@ namespace Questor
 						_scheduledstopTime = _schedule.Stop;
 						_stopTime = _schedule.Stop;
 						
-						if ((DateTime.Now > _scheduledstopTime))
-						{
-							_startTime = _startTime.AddDays(1); //otherwise, start tomorrow at start time
-							_readyToStarta = false;
-						}
-						else if ((DateTime.Now > _startTime))
+						//if ((DateTime.Now > _scheduledstopTime))
+						//{
+						//	_startTime = _startTime.AddDays(1); //otherwise, start tomorrow at start time
+						//	_readyToStarta = false;
+						//}
+						if ((DateTime.Now > _startTime))
 						{
 							if ((DateTime.Now.Subtract( _startTime).TotalMinutes < 1200 )) //if we're less than x hours past start time, start now
 							{

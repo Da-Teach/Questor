@@ -180,9 +180,9 @@ namespace Questor.Modules
         {
             get
             {
-                if (InvType.MedianBuy == null)
+                if (InvType.MaxBuy == null)
                 {
-					if (InvType.MedianSell == null)
+                    if (InvType.MinSell == null)
 					{
 						return null;
 					}
