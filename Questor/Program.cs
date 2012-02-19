@@ -155,7 +155,7 @@ namespace Questor
 						}
 						else if ((DateTime.Now > _startTime))
 						{
-							if ((DateTime.Now.Subtract( _startTime).TotalMinutes < 720 )) //if we're less than x hours past start time, start now
+							if ((DateTime.Now.Subtract( _startTime).TotalMinutes < 1200 )) //if we're less than x hours past start time, start now
 							{
 								_startTime = DateTime.Now;
 								_readyToStarta = true;
@@ -164,7 +164,7 @@ namespace Questor
 								_startTime = _startTime.AddDays(1); //otherwise, start tomorrow at start time
 						}
 						else
-							if ((_startTime.Subtract(DateTime.Now).TotalMinutes > 720)) //if we're more than x hours shy of start time, start now
+							if ((_startTime.Subtract(DateTime.Now).TotalMinutes > 1200)) //if we're more than x hours shy of start time, start now
 							{
 								_startTime = DateTime.Now;
 								_readyToStarta = true;
