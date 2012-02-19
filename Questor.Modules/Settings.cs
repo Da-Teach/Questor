@@ -116,6 +116,8 @@ namespace Questor.Modules
         public List<Ammo> Ammo { get; private set; }
         public List<int> ItemsBlackList { get; set; }
         public List<int> WreckBlackList { get; set; }
+        public bool WreckBlackListSmallWrecks { get; set; }
+        public bool WreckBlackListMediumWrecks { get; set; }
         public List<FactionFitting> FactionFitting { get; private set; }
         public List<MissionFitting> MissionFitting { get; private set; }
         public bool FittingsDefined { get; set; }
@@ -441,39 +443,47 @@ namespace Questor.Modules
             if (factionblacklist != null)
                 foreach (var faction in factionblacklist.Elements("faction"))
                     FactionBlacklist.Add((string) faction);
+            WreckBlackListSmallWrecks = (bool?) xml.Element("WreckBlackListSmallWrecks") ?? false;
+            WreckBlackListMediumWrecks = (bool?) xml.Element("WreckBlackListMediumWrecks") ?? false;
 
 
             //
             // if enabled the following would keep you from looting (or salvaging?) small wrecks
             //
             //list of small wreck
-            //WreckBlackList.Add(26557);
-            //WreckBlackList.Add(26561);
-            //WreckBlackList.Add(26564);
-            //WreckBlackList.Add(26567);
-            //WreckBlackList.Add(26570);
-            //WreckBlackList.Add(26573);
-            //WreckBlackList.Add(26576);
-            //WreckBlackList.Add(26579);
-            //WreckBlackList.Add(26582);
-            //WreckBlackList.Add(26585);
-            //WreckBlackList.Add(26588);
-            //WreckBlackList.Add(26591);
-            //WreckBlackList.Add(26594);
-            //WreckBlackList.Add(26935);
+            if (WreckBlackListSmallWrecks)
+            {
+                WreckBlackList.Add(26557);
+                WreckBlackList.Add(26561);
+                WreckBlackList.Add(26564);
+                WreckBlackList.Add(26567);
+                WreckBlackList.Add(26570);
+                WreckBlackList.Add(26573);
+                WreckBlackList.Add(26576);
+                WreckBlackList.Add(26579);
+                WreckBlackList.Add(26582);
+                WreckBlackList.Add(26585);
+                WreckBlackList.Add(26588);
+                WreckBlackList.Add(26591);
+                WreckBlackList.Add(26594);
+                WreckBlackList.Add(26935);
+            }
 
             //
             // if enabled the following would keep you from looting (or salvaging?) medium wrecks
             //
             //list of medium wreck
-            //WreckBlackList.Add(26558);
-            //WreckBlackList.Add(26562);
-            //WreckBlackList.Add(26568);
-            //WreckBlackList.Add(26574);
-            //WreckBlackList.Add(26580);
-            //WreckBlackList.Add(26586);
-            //WreckBlackList.Add(26592);
-            //WreckBlackList.Add(26934);
+            if (WreckBlackListMediumWrecks)
+            {
+                WreckBlackList.Add(26558);
+                WreckBlackList.Add(26562);
+                WreckBlackList.Add(26568);
+                WreckBlackList.Add(26574);
+                WreckBlackList.Add(26580);
+                WreckBlackList.Add(26586);
+                WreckBlackList.Add(26592);
+                WreckBlackList.Add(26934);
+            }
 
             if (SettingsLoaded != null)
                 SettingsLoaded(this, new EventArgs());

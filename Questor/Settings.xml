@@ -1,36 +1,36 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <settings>
   <!-- Auto start when Questor is loaded -->
-  <autoStart>true</autoStart>
+  <autoStart>true</autoStart>  <!-- default is true -->
   <!-- Save Log Console -->
-  <saveLog>true</saveLog>
+  <saveLog>true</saveLog>  <!-- default is true -->
   <!-- debugStates: creates more verbose logging: use for debugging purposes only -->
-  <debugStates>false</debugStates>
+  <debugStates>false</debugStates>  <!-- default is false -->
   <!-- debugPerformance: creates more verbose logging: use for debugging purposes only -->
-  <debugPerformance>false</debugPerformance>
+  <debugPerformance>false</debugPerformance>  <!-- default is false -->
   <!-- CharacterMode: DPS or Salvage -->
-  <CharacterMode>dps</CharacterMode>
+  <CharacterMode>dps</CharacterMode>  <!-- default is dps -->
   <!-- EVEProcessMemoryCieling: If this instance of EVE consumes more than the stated MB of Memory close eve when in station between missions-->
-  <EVEProcessMemoryCieling>950</EVEProcessMemoryCieling>
+  <EVEProcessMemoryCieling>950</EVEProcessMemoryCieling>  <!-- default is 950-->
   <!-- walletbalancechangelogoffdelay: If your characters wallet ballance does not change within this many minutes exit eve, the assumption is your toon is stuck or disconnected -->
-  <walletbalancechangelogoffdelay>30</walletbalancechangelogoffdelay>
+  <walletbalancechangelogoffdelay>30</walletbalancechangelogoffdelay>  <!-- default is 30 -->
   
   
   <!-- Maximum number of lines in the external console -->
-  <maxLineConsole>1000</maxLineConsole>
+  <maxLineConsole>1000</maxLineConsole>  <!-- default is 1000 -->
 
   <!-- disable 3d rendering -->
-  <disable3D>false</disable3D>
+  <disable3D>false</disable3D>  <!-- default is false -->
   
   <!-- Random delay between missions -->
   <randomDelay>45</randomDelay>
   <minimumDelay>20</minimumDelay>
 
   <!-- X Position of Questor Window -->
-  <windowXPosition>1600</windowXPosition>
+  <windowXPosition>1600</windowXPosition>  <!-- needs to be customized -->
 
   <!-- Y Position of Questor Window -->
-  <windowYPosition>1050</windowYPosition>
+  <windowYPosition>1050</windowYPosition> <!-- needs to be customized -->
 
   <!-- Local Watch Settings -->
   <LocalBadStandingPilotsToTolerate>1</LocalBadStandingPilotsToTolerate> <!--  minimum is 1 -->
@@ -50,11 +50,11 @@
   <minimumPropulsionModuleDistance>5000</minimumPropulsionModuleDistance>
   <minimumPropulsionModuleCapacitor>55</minimumPropulsionModuleCapacitor>
   <!-- The agent that you are running missions for -->
-  <agentName></agentName>
+  <agentName></agentName>  <!-- needs to be customized -->
   
   
   <!-- Enable storyline botting (experimental) -->
-  <enableStorylines>false</enableStorylines>
+  <enableStorylines>false</enableStorylines>  <!-- default is false -->
 
   <!-- undock delay -->
   <undockdelay>11</undockdelay>
@@ -85,7 +85,7 @@
     <faction>Minmatar Republic</faction>
   </factionblacklist>
 
-  <useGatesInSalvage>True</useGatesInSalvage>
+  <useGatesInSalvage>True</useGatesInSalvage> <!-- default is true -->
 
   <!-- List of missions which the bot will always decline -->
   <blacklist>
@@ -96,45 +96,52 @@
   <MaterialsForWarOreQty>8000</MaterialsForWarOreQty>
   
   <!-- missionsPath is the sub-directory where the mission xml's are located -->
-  <missionsPath>Caldari Missions</missionsPath>
+  <missionsPath>Caldari Missions</missionsPath>  <!-- needs to be customized -->
 
   <!-- Corporation hangar to use for loot (empty is personal hangar) -->
-  <lootHangar></lootHangar>
+  <lootHangar></lootHangar>  <!-- default is no value -->
 
   <!-- Corporation hangar to use for ammo (empty is personal hangar) -->
-  <ammoHangar></ammoHangar>
+  <ammoHangar></ammoHangar>  <!-- default is: no value -->
 
   <!-- Ship used for combat missions, empty means current ship -->
-  <combatShipName></combatShipName>
+  <combatShipName></combatShipName>  <!-- needs to be customized -->
 
   <!-- Ship used for after mission salvaging, empty means current ship -->
-  <salvageShipName></salvageShipName>
+  <salvageShipName></salvageShipName>  <!-- needs to be customized-->
 
   <!-- Create salvage bookmarks once a pocket has been cleared and there are wrecks/cans left
        Note: All salvage bookmarks will be in this naming format:  BookmarkPrefix [time]
        Note: It will check all salvage bookmarks to see if the current spot has to be bookmarked 
        Warning: The bot could become slow with a lot of salvage-bookmarks, make sure that
                 after mission salvaging is enabled or that you manually delete bookmarks! -->
-  <createSalvageBookmarks>True</createSalvageBookmarks>
+  <createSalvageBookmarks>True</createSalvageBookmarks>  <!-- default is true -->
 
   <!-- All salvage bookmarks will be prefixed by this string, default: Salvage: -->
-  <bookmarkPrefix>Salvage:</bookmarkPrefix>
+  <bookmarkPrefix>Salvage:</bookmarkPrefix>  <!-- default is salvage: -->
 
   <!-- Minimum amount of wrecks / unlooted containers needed for a bookmark to be created -->
-  <minimumWreckCount>5</minimumWreckCount>
+  <minimumWreckCount>5</minimumWreckCount>  <!-- default is 5 -->
+
+  <!-- If enabled this would blacklist all Small wrecks from being salvaged or looted -->
+  <WreckBlackListSmallWrecks>false</WreckBlackListSmallWrecks> <!-- default is false -->
+
+  <!-- If enabled this would blacklist all Medium wrecks from being salvaged or looted -->
+  <WreckBlackListMediumWrecks>false</WreckBlackListMediumWrecks> <!-- default is false -->
+
 
   <!-- After-mission salvaging, this will cause the bot to visit all salvage bookmarks 
        with the salvage ship and pickup loot / salvage wrecks 
        Note: After mission salvaging will *only* take place if there are *no* accepted missions left ! -->
-  <afterMissionSalvaging>false</afterMissionSalvaging>
+  <afterMissionSalvaging>false</afterMissionSalvaging>  <!-- default is false -->
 
   <!-- Unload loot at station when doing after-mission salvaging (*only* when doing after-mission salvaging)
        Note: If this is disabled then the bot will use the isk/m3 algorithm used in missions to dump low-value loot -->
-  <unloadLootAtStation>false</unloadLootAtStation>
+  <unloadLootAtStation>false</unloadLootAtStation>  <!-- default is false -->
 
   <!-- Maximum number of targets per value -->
-  <maximumHighValueTargets>4</maximumHighValueTargets>
-  <maximumLowValueTargets>3</maximumLowValueTargets>
+  <maximumHighValueTargets>4</maximumHighValueTargets>  <!-- default is 4 -->
+  <maximumLowValueTargets>3</maximumLowValueTargets>  <!-- default is 3 -->
 
   <!-- When defining ammo here, do NOT define them by the damage that the ammo does 
        but define them based on the ammo you want to use when the bot faces rats weak 
