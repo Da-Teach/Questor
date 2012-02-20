@@ -63,7 +63,6 @@ namespace Questor.Modules
 			string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Log\\" + CharacterName + "\\pocketstats\\";
             Directory.CreateDirectory(path);
 
-            Logging.Log("MissionController: This is the ending stats stats for mission pocket: " + _pocket);
             //
             // this is writing down stats from the PREVIOUS pocket (if any?!)
             //
@@ -85,6 +84,7 @@ namespace Questor.Modules
             pocketstats_line += ((int)Cache.Instance.repair_cycle_time_this_pocket) + ";\r\n";            
             
                 // The old pocket is finished
+                Logging.Log("Logging: (MissionController.cs) Writing pocket statistics to [ " + pocketstats_file + "and clearing stats for next pocket");        
                 File.AppendAllText(pocketstats_file, pocketstats_line);
 
                 // Update statistic values for next pocket stats
@@ -840,6 +840,8 @@ namespace Questor.Modules
                 // lock targets count
                 Cache.Instance.MissionLoot = false;
                 Logging.Log("MissionController.Loot: We are done looting");
+                // now that we are done with this action revert OpenWrecks to false
+                Cache.Instance.OpenWrecks = false;
 
                 _currentAction++;
                 return;

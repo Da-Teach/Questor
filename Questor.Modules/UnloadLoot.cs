@@ -130,7 +130,7 @@ namespace Questor.Modules
                     CommonMissionCompletionItemHangar.Add(ItemsToMove);
                     _lastAction = DateTime.Now;
                     
-                    Logging.Log("UnloadLoot: Moving loot");
+                    Logging.Log("UnloadLoot: Moving Common Mission Completion Items to Local hangar");
                     State = UnloadLootState.MoveLoot;
                     break;
 
