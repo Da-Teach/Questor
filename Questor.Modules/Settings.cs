@@ -104,8 +104,10 @@ namespace Questor.Modules
         public string MissionsPath { get; set; }
         
         public int walletbalancechangelogoffdelay { get; set; }
+        public string walletbalancechangelogoffdelayLogofforExit { get; set; }
         
         public Int64 EVEProcessMemoryCeiling { get; set; }
+        public string EVEProcessMemoryCielingLogofforExit { get; set; }
 
         //public int missionbookmarktoagentloops { get; set; }  //not yet used - although it is likely a good ide to fix it so it is used - it would eliminate going back and fourth to the same mission over and over
         public string missionName { get; set; }
@@ -350,7 +352,10 @@ namespace Questor.Modules
             bookmarkWarpOut = (string)xml.Element("bookmarkWarpOut") ?? "insta";
 
             EVEProcessMemoryCeiling = (int?)xml.Element("EVEProcessMemoryCeiling") ?? 900;
+            EVEProcessMemoryCielingLogofforExit = (string)xml.Element("EVEProcessMemoryCielingLogofforExit") ?? "exit";
+            
             walletbalancechangelogoffdelay = (int?)xml.Element("walletbalancechangelogoffdelay") ?? 30;
+            walletbalancechangelogoffdelayLogofforExit = (string)xml.Element("walletbalancechangelogoffdelayLogofforExit") ?? "exit";
 
             var missionsPath = (string) xml.Element("missionsPath");
             MissionsPath = !string.IsNullOrEmpty(missionsPath) ? Path.Combine(path, missionsPath) : Path.Combine(path, "Missions");

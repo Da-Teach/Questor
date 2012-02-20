@@ -342,8 +342,17 @@ namespace Questor
             {
 
                 Logging.Log("[Questor] Wallet Balance Has Not Changed in [ " + Settings.Instance.walletbalancechangelogoffdelay + " ] minutes. Quitting game.");
+                if (Settings.Instance.walletbalancechangelogoffdelayLogofforExit == "logoff")
+                {
+                    Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdLogOff);
+                    return;
+                }
+                if (Settings.Instance.walletbalancechangelogoffdelayLogofforExit == "exit")
+                {
                 Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
-                //Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdLogOff); 
+                    return;
+                }
+                Logging.Log("[Questor] walletbalancechangelogoffdelayLogofforExit was not set to exit or logoff - doing nothing ");
                 return;
             }
 
@@ -990,13 +999,22 @@ namespace Questor
                             if (Cache.Instance.totalMegaBytesOfMemoryUsed > (Settings.Instance.EVEProcessMemoryCeiling - 50))
                             {
                                 Logging.Log("Questor: Memory usage is above the EVEProcessMemoryCeiling threshold. EVE instance: totalMegaBytesOfMemoryUsed - " + Cache.Instance.totalMegaBytesOfMemoryUsed + " MB");
+                                if (Settings.Instance.walletbalancechangelogoffdelayLogofforExit == "logoff")
+                                {
                                     Logging.Log("Questor: We are in station: Exiting eve.");
-                                    //System.Threading.Thread.Sleep(33333); //33 second pause before closing questor
-                                    Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
-                                    //Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdLogOff); 
-                                    //System.Threading.Thread.Sleep(3333); //3 second pause AFTER closing questor - this really should not be necessary
+                                    Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdLogOff);
                                     Logging.Log("Questor: has not yet closed...");
-                                    break;
+                                    return;
+                                }
+                                if (Settings.Instance.walletbalancechangelogoffdelayLogofforExit == "exit")
+                                {
+                                    Logging.Log("Questor: We are in station: Exiting eve.");
+                                    Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
+                                    Logging.Log("Questor: has not yet closed...");
+                                    return;
+                                }
+                                Logging.Log("[Questor] EVEProcessMemoryCeilingLogofforExit was not set to exit or logoff - doing nothing ");
+                                return;
                             }
                             else
                             {

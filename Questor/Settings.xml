@@ -10,11 +10,16 @@
   <debugPerformance>false</debugPerformance>  <!-- default is false -->
   <!-- CharacterMode: DPS or Salvage -->
   <CharacterMode>dps</CharacterMode>  <!-- default is dps -->
-  <!-- EVEProcessMemoryCieling: If this instance of EVE consumes more than the stated MB of Memory close eve when in station between missions-->
-  <EVEProcessMemoryCieling>950</EVEProcessMemoryCieling>  <!-- default is 950-->
-  <!-- walletbalancechangelogoffdelay: If your characters wallet ballance does not change within this many minutes exit eve, the assumption is your toon is stuck or disconnected -->
-  <walletbalancechangelogoffdelay>30</walletbalancechangelogoffdelay>  <!-- default is 30 -->
   
+  <!-- EVEProcessMemoryCieling: If this instance of EVE consumes more than the stated MB of Memory close eve when in station between missions-->
+  <EVEProcessMemoryCieling>1150</EVEProcessMemoryCieling>  <!-- default is 1150-->
+  <!-- this defaults to exit because of issues with the questor window disappearing and occessionally the eve process getting 'hung' when using logoff -->
+  <EVEProcessMemoryCielingLogofforExit>exit</EVEProcessMemoryCielingLogofforExit> <!-- default is exit, other option is: logoff -->
+  
+  <!-- walletbalancechangelogoffdelay: If your characters wallet ballance does not change within this many minutes exit eve, the assumption is your toon is stuck or disconnected -->
+  <walletbalancechangelogoffdelay>40</walletbalancechangelogoffdelay>  <!-- default is 40 -->
+  <!-- this defaults to exit because of issues with the questor window disappearing and occessionally the eve process getting 'hung' when using logoff -->
+  <walletbalancechangelogoffdelayLogofforExit>exit</walletbalancechangelogoffdelayLogofforExit>  <!-- default is exit, other option is: logoff -->
   
   <!-- Maximum number of lines in the external console -->
   <maxLineConsole>1000</maxLineConsole>  <!-- default is 1000 -->
