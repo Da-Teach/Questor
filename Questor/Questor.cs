@@ -476,6 +476,7 @@ namespace Questor
 
                         // The mission is finished
                         File.AppendAllText(filename, line);
+                        Logging.Log("Logging: (questor.cs) Writing to [ " + filename);
 
                         // Get the path
                         //string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Log\\" + _questor.CharacterName + "\\missionstats\\";
@@ -497,6 +498,7 @@ namespace Questor
                         line2 += ((int)AmmoValue) + ";\r\n";
 
                         // The mission is finished
+                        Logging.Log("Logging: (questor.cs) Writing to [ " + filename2);
                         File.AppendAllText(filename2, line2);
 
                         // Get the path
@@ -524,6 +526,7 @@ namespace Questor
                         line3 += ((int)Cache.Instance.repair_cycle_time_this_mission) + ";\r\n";
                         
                         // The mission is finished
+                        Logging.Log("Logging: (questor.cs) Writing to [ " + filename3);
                         File.AppendAllText(filename3, line3);
 
                         // Disable next log line

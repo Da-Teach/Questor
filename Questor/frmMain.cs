@@ -17,6 +17,7 @@ namespace Questor
     public partial class frmMain : Form
     {
         private Questor _questor;
+        private bool LogOpened = false;
 
         public frmMain()
         {
@@ -140,6 +141,11 @@ namespace Questor
                     string filename = Carpeta + string.Format("{0:MM-dd-yyyy}", DateTime.Today) + _questor.CharacterName + "console" + ".log";
 
                     Directory.CreateDirectory(Carpeta);
+                    if (!LogOpened)
+                    {
+                        Logging.Log("Logging: (frmMain.cs) Opening Daily Console Log " + filename);
+                        LogOpened = true;
+                    }
                     File.AppendAllText(filename, Cache.Instance.ExtConsole);
                 }
 
