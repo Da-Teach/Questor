@@ -56,21 +56,17 @@ namespace Questor.Modules
             //    return;
             var mission = Cache.Instance.GetAgentMission(AgentId);
             var currentPocketName = Cache.Instance.FilterPath(mission.Name);
-            // Get the path
+            Settings.Instance.PocketStatisticsFile = Path.Combine(Settings.Instance.PocketStatisticsPath, Cache.Instance.FilterPath(Cache.Instance.DirectEve.Me.Name) + " - " + currentPocketName + " - " + _pocket + " - PocketStatistics.csv");
             
-                        
-			var CharacterName = Cache.Instance.DirectEve.Me.Name;
-			string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Log\\" + CharacterName + "\\pocketstats\\";
-            Directory.CreateDirectory(path);
+			Directory.CreateDirectory(Settings.Instance.PocketStatisticsPath);
 
             //
             // this is writing down stats from the PREVIOUS pocket (if any?!)
             //
-            var pocketstats_file = Path.Combine(path, Cache.Instance.FilterPath(CharacterName) + " - " + currentPocketName + " - " + _pocket + " - PocketStatistics.csv");
 
             // Write the header
-            if (!File.Exists(pocketstats_file))
-                File.AppendAllText(pocketstats_file, "Date and Time;Mission Name and Pocket;Time to complete;Isk;panics;LowestShields;LowestArmor;LowestCapacitor;RepairCycles\r\n");
+            if (!File.Exists(Settings.Instance.PocketStatisticsFile))
+                File.AppendAllText(Settings.Instance.PocketStatisticsFile, "Date and Time;Mission Name and Pocket;Time to complete;Isk;panics;LowestShields;LowestArmor;LowestCapacitor;RepairCycles\r\n");
 
             // Build the line
             var pocketstats_line = DateTime.Now + ";";
@@ -84,8 +80,8 @@ namespace Questor.Modules
             pocketstats_line += ((int)Cache.Instance.repair_cycle_time_this_pocket) + ";\r\n";            
             
                 // The old pocket is finished
-                Logging.Log("Logging: (MissionController.cs) Writing pocket statistics to [ " + pocketstats_file + "and clearing stats for next pocket");        
-                File.AppendAllText(pocketstats_file, pocketstats_line);
+            Logging.Log("MissionController: Writing pocket statistics to [ " + Settings.Instance.PocketStatisticsFile + "and clearing stats for next pocket");
+            File.AppendAllText(Settings.Instance.PocketStatisticsFile, pocketstats_line);
 
                 // Update statistic values for next pocket stats
                 Wealth = Cache.Instance.DirectEve.Me.Wealth;
@@ -219,7 +215,6 @@ namespace Questor.Modules
                 //
                 if (closest.Distance < -10100)
 				{
-					//closest.Orbit(-9000);
                     closest.Orbit(1000);
 				}
 				//Logging.Log("MissionController: distance " + closest.Distance);

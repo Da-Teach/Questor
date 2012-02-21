@@ -120,6 +120,30 @@ namespace Questor.Modules
         public List<int> WreckBlackList { get; set; }
         public bool WreckBlackListSmallWrecks { get; set; }
         public bool WreckBlackListMediumWrecks { get; set; }
+
+
+        //public string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        //public string logpath = Path.Combine(path, "\\log\\");
+        //public string logpath = Path.Combine(logpath, Cache.Instance.FilterPath(_characterName));
+        //public string logpath = Path.Combine(logpath, "\\");
+
+        public string logpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+        public string SessionsLogPath { get; set; }
+        public string SessionsLogFile { get; set; }
+        public string DroneStatsLogPath { get; set; }
+        public string DroneStatslogFile { get; set; }
+        public string WreckLootStatisticsPath { get; set; }
+        public string WreckLootStatisticsFile { get; set; }
+        public string MissionStats1LogPath { get; set; }
+        public string MissionStats1LogFile { get; set; }
+        public string MissionStats2LogPath { get; set; }
+        public string MissionStats2LogFile { get; set; }
+        public string MissionStats3LogPath { get; set; }
+        public string MissionStats3LogFile { get; set; }
+        public string PocketStatisticsPath { get; set; }
+        public string PocketStatisticsFile { get; set; }
+
         public List<FactionFitting> FactionFitting { get; private set; }
         public List<MissionFitting> MissionFitting { get; private set; }
         public bool FittingsDefined { get; set; }

@@ -13,6 +13,7 @@ namespace Questor.Modules
     using System.Collections.Generic;
     using System.Linq;
     using DirectEve;
+    using System.IO;
 
     public class Salvage
     {
@@ -290,19 +291,17 @@ namespace Questor.Modules
                 var lootItems = new List<ItemCache>();
 				
                 // Log all items found in the wreck
-                //var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                //var WreckLootStatisticsFile = Path.Combine(path, "WreckLootStatisticsDump.log");
-                //File.AppendAllText(WreckLootStatisticsFile, "TIME: " + string.Format("{0:dd/MM/yyyy HH:mm:ss}", DateTime.Now) + "\n");
-                //File.AppendAllText(WreckLootStatisticsFile, "NAME: " + containerEntity.Name + "\n"); 
-                //File.AppendAllText(WreckLootStatisticsFile, "ITEMS:" + "\n");
-                //foreach (var item in items.OrderBy(i => i.TypeId))
-                //{
-                //    File.AppendAllText(WreckLootStatisticsFile, "TypeID: " + item.TypeId.ToString() + "\n");
-                //    File.AppendAllText(WreckLootStatisticsFile, "Name: " + item.Name + "\n");
-                //    File.AppendAllText(WreckLootStatisticsFile, "Quantity: " + item.Quantity.ToString() + "\n");
-                //    File.AppendAllText(WreckLootStatisticsFile, "=\n");
-                //}
-                //File.AppendAllText(WreckLootStatisticsFile, ";" + "\n");
+                File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, "TIME: " + string.Format("{0:dd/MM/yyyy HH:mm:ss}", DateTime.Now) + "\n");
+                File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, "NAME: " + containerEntity.Name + "\n");
+                File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, "ITEMS:" + "\n");
+                foreach (var item in items.OrderBy(i => i.TypeId))
+                {
+                    File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, "TypeID: " + item.TypeId.ToString() + "\n");
+                    File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, "Name: " + item.Name + "\n");
+                    File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, "Quantity: " + item.Quantity.ToString() + "\n");
+                    File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, "=\n");
+                }
+                File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, ";" + "\n");
 				
 				//if (freeCargoCapacity < 1000) //this should allow BSs to dump scrapmetal but haulers and noctus' to hold onto it
 				//{

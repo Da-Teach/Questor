@@ -101,6 +101,7 @@ namespace Questor
         public bool Disable3D { get; set; }
         public bool ValidSettings { get; set; }
         public bool ExitWhenIdle { get; set; }
+        public bool LogPathsNotSetupYet = true;
 
         public string CharacterName { get; set; }
 
@@ -199,6 +200,28 @@ namespace Questor
             if (Cache.Instance.DirectEve.Session.IsInSpace && Cache.Instance.DirectEve.Rendering3D != !Disable3D)
                 Cache.Instance.DirectEve.Rendering3D = !Disable3D;
             
+            if (DateTime.Now.Subtract(_questorStarted).TotalSeconds < 10)
+            {   
+                if (LogPathsNotSetupYet == true)
+                {
+                    Settings.Instance.logpath = (Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\log\\" + Cache.Instance.DirectEve.Me.Name + "\\");
+                    Settings.Instance.SessionsLogPath = Settings.Instance.logpath;
+                    Settings.Instance.SessionsLogFile = (Settings.Instance.logpath + Cache.Instance.DirectEve.Me.Name + ".Sessions.log");
+                    Settings.Instance.DroneStatsLogPath = Settings.Instance.logpath;
+                    Settings.Instance.DroneStatslogFile = (Settings.Instance.logpath + Cache.Instance.DirectEve.Me.Name + ".DroneStats.log");
+                    Settings.Instance.WreckLootStatisticsPath = Settings.Instance.logpath;
+                    Settings.Instance.WreckLootStatisticsFile = (Settings.Instance.logpath + Cache.Instance.DirectEve.Me.Name + ".WreckLootStatisticsDump.log");
+                    Settings.Instance.MissionStats1LogPath = Path.Combine(Settings.Instance.logpath, "missionstats\\");
+                    Settings.Instance.MissionStats1LogFile = (Settings.Instance.MissionStats1LogPath + Cache.Instance.DirectEve.Me.Name + ".Statistics.log");
+                    Settings.Instance.MissionStats2LogPath = Path.Combine(Settings.Instance.logpath, "missionstats\\");
+                    Settings.Instance.MissionStats2LogFile = (Settings.Instance.MissionStats2LogPath + Cache.Instance.DirectEve.Me.Name + ".DatedStatistics.log");
+                    Settings.Instance.MissionStats3LogPath = Path.Combine(Settings.Instance.logpath, "missionstats\\");
+                    Settings.Instance.MissionStats3LogFile = (Settings.Instance.MissionStats3LogPath + Cache.Instance.DirectEve.Me.Name + ".CustomDatedStatistics.csv");
+                    Settings.Instance.PocketStatisticsPath = Path.Combine(Settings.Instance.logpath, "pocketstats\\");
+                    Settings.Instance.PocketStatisticsFile = Path.Combine(Settings.Instance.PocketStatisticsPath, "pocketstats - generic");
+                    LogPathsNotSetupYet = false;
+                }
+            }
             // Invalid settings, quit while we're ahead
             if (!ValidSettings)
             {
@@ -238,14 +261,12 @@ namespace Questor
                     //
 
                     // Get the path
-                    string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Log\\" + CharacterName + "\\";
-                    string filename = (path + Cache.Instance.FilterPath(CharacterName) + ".sessions.log");
 
-                    Directory.CreateDirectory(path);
+                    Directory.CreateDirectory(Settings.Instance.SessionsLogPath);
 
                     // Write the header
-                    if (!File.Exists(filename))
-                        File.AppendAllText(filename, "Date;RunningTime;SessionState;LastMission;WalletBalance;MemoryUsage;Reason;IskGenerated;LootGenerated;LPGenerated;Isk/Hr;Loot/Hr;LP/HR;Total/HR;\r\n");
+                    if (!File.Exists(Settings.Instance.SessionsLogFile))
+                        File.AppendAllText(Settings.Instance.SessionsLogFile, "Date;RunningTime;SessionState;LastMission;WalletBalance;MemoryUsage;Reason;IskGenerated;LootGenerated;LPGenerated;Isk/Hr;Loot/Hr;LP/HR;Total/HR;\r\n");
 
                     // Build the line
                     var line = DateTime.Now + ";";
@@ -264,11 +285,11 @@ namespace Questor
                     line += "n/a" + ";\r\n";
 
                     // The mission is finished
-                    File.AppendAllText(filename, line);
+                    File.AppendAllText(Settings.Instance.SessionsLogFile, line);
 
                     Cache.Instance.SessionState = "";
 
-                    Logging.Log("Questor: Writing session data to [ " + filename);
+                    Logging.Log("Questor: Writing session data to [ " + Settings.Instance.SessionsLogFile);
                 }
             }
 
@@ -359,18 +380,6 @@ namespace Questor
             }
             //Logging.Log("[Questor] Wallet Balance Debug Info: lastknowngoodconnectedtime = " + Settings.Instance.lastKnownGoodConnectedTime);
             //Logging.Log("[Questor] Wallet Balance Debug Info: DateTime.Now - lastknowngoodconnectedtime = " + DateTime.Now.Subtract(Settings.Instance.lastKnownGoodConnectedTime).TotalSeconds);
-            if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) == 1)
-            {
-				//Logging.Log("[Questor] Wallet Balance Has Not Changed in [ " + "1" + " ] min");
-			}
-            if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) == 5)
-            {
-				//Logging.Log("[Questor] Wallet Balance Has Not Changed in [ " + "5" + " ] min");
-			}
-            if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) == 10)
-            {
-				//Logging.Log("[Questor] Wallet Balance Has Not Changed in [ " + "10" + " ] min");
-			}
             if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) == 15)
             {
 				Logging.Log("[Questor] Wallet Balance Has Not Changed in [ " + "15" + " ] min");
@@ -544,15 +553,11 @@ namespace Questor
                         Cache.Instance.SessionLootGenerated = (Cache.Instance.SessionLootGenerated + (int)LootValue);
                         Cache.Instance.SessionLPGenerated = (Cache.Instance.SessionLPGenerated + (Cache.Instance.Agent.LoyaltyPoints - LoyaltyPoints));
 
-                        // Get the path
-                        string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Log\\" + CharacterName + "\\missionstats\\";
-                        string filename = (path + Cache.Instance.FilterPath(CharacterName) + ".statistics.log");
-
-                        Directory.CreateDirectory(path);
+                        Directory.CreateDirectory(Settings.Instance.MissionStats1LogPath);
 
                         // Write the header
-                        if (!File.Exists(filename))
-                            File.AppendAllText(filename, "Date;Mission;TimeMission;TimeSalvage;TotalTime;Isk;Loot;LP;\r\n");
+                        if (!File.Exists(Settings.Instance.MissionStats1LogFile))
+                            File.AppendAllText(Settings.Instance.MissionStats1LogFile, "Date;Mission;TimeMission;TimeSalvage;TotalTime;Isk;Loot;LP;\r\n");
 
                         // Build the line
                         var line = DateTime.Now + ";";
@@ -565,16 +570,14 @@ namespace Questor
                         line += (Cache.Instance.Agent.LoyaltyPoints - LoyaltyPoints) + ";\r\n";
 
                         // The mission is finished
-                        File.AppendAllText(filename, line);
-                        Logging.Log("Logging: (questor.cs) Writing to [ " + filename);
+                        File.AppendAllText(Settings.Instance.MissionStats1LogFile, line);
+                        Logging.Log("Questor: is writing mission log1 to  [ " + Settings.Instance.MissionStats1LogFile);
 
-                        // Get the path
-                        //string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Log\\" + _questor.CharacterName + "\\missionstats\\";
-                        string filename2 = (path + Cache.Instance.FilterPath(CharacterName) + ".datedstatistics.log");
+                        Directory.CreateDirectory(Settings.Instance.MissionStats2LogPath);
 
                         // Write the header
-                        if (!File.Exists(filename2))
-                            File.AppendAllText(filename2, "Date;Mission;Time;Isk;Loot;LP;LostDrones;AmmoConsumption;AmmoValue\r\n");
+                        if (!File.Exists(Settings.Instance.MissionStats2LogFile))
+                            File.AppendAllText(Settings.Instance.MissionStats2LogFile, "Date;Mission;Time;Isk;Loot;LP;LostDrones;AmmoConsumption;AmmoValue\r\n");
 
                         // Build the line
                         var line2 = string.Format("{0:MM/dd/yyyy HH:mm:ss}", DateTime.Now) + ";";
@@ -588,16 +591,14 @@ namespace Questor
                         line2 += ((int)AmmoValue) + ";\r\n";
 
                         // The mission is finished
-                        Logging.Log("Logging: (questor.cs) Writing to [ " + filename2);
-                        File.AppendAllText(filename2, line2);
+                        Logging.Log("Questor: is writing mission log2 to [ " + Settings.Instance.MissionStats2LogFile);
+                        File.AppendAllText(Settings.Instance.MissionStats2LogFile, line2);
 
-                        // Get the path
-                        //string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Log\\" + _questor.CharacterName + "\\missionstats\\";
-                        string filename3 = (path + Cache.Instance.FilterPath(CharacterName) + ".customdatedstatistics.csv");
+                        Directory.CreateDirectory(Settings.Instance.MissionStats3LogPath);
 
                         // Write the header
-                        if (!File.Exists(filename3))
-                            File.AppendAllText(filename3, "Date;Mission;Time;Isk;Loot;LP;LostDrones;AmmoConsumption;AmmoValue;Panics;LowestShield;LowestArmor;LowestCap;RepairCycles\r\n");
+                        if (!File.Exists(Settings.Instance.MissionStats3LogFile))
+                            File.AppendAllText(Settings.Instance.MissionStats3LogFile, "Date;Mission;Time;Isk;Loot;LP;LostDrones;AmmoConsumption;AmmoValue;Panics;LowestShield;LowestArmor;LowestCap;RepairCycles\r\n");
 
                         // Build the line
                         var line3 = DateTime.Now + ";";
@@ -616,8 +617,8 @@ namespace Questor
                         line3 += ((int)Cache.Instance.repair_cycle_time_this_mission) + ";\r\n";
                         
                         // The mission is finished
-                        Logging.Log("Logging: (questor.cs) Writing to [ " + filename3);
-                        File.AppendAllText(filename3, line3);
+                        Logging.Log("Questor: is writing mission log3 to  [ " + Settings.Instance.MissionStats3LogFile);
+                        File.AppendAllText(Settings.Instance.MissionStats3LogFile, line3);
 
                         // Disable next log line
                         Mission = null;
@@ -1174,7 +1175,7 @@ namespace Questor
                         // The mission is finished
                         File.AppendAllText(filename, line);
 
-                        Logging.Log("Questor: Writing to [ " + filename);
+                        Logging.Log("Questor: Writing to session log [ " + filename);
 
                         if (Cache.Instance.CloseQuestorCMDLogoff == true)
                     {
@@ -1225,13 +1226,12 @@ namespace Questor
                                 var drone = Cache.Instance.InvTypesById[Settings.Instance.DroneTypeId];
                                 LostDrones = (int)Math.Floor((droneBay.Capacity - droneBay.UsedCapacity) / drone.Volume);
                                 Logging.Log("DroneStats: Logging the number of lost drones: " + LostDrones.ToString());
-                                var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                                var dronelogfilename = Path.Combine(path, Cache.Instance.FilterPath(CharacterName) + ".dronestats.log");
-                                if (!File.Exists(dronelogfilename))
-                                    File.AppendAllText(dronelogfilename, "Mission;Number of lost drones\r\n");
+                                                       
+                                if (!File.Exists(Settings.Instance.DroneStatslogFile))
+                                    File.AppendAllText(Settings.Instance.DroneStatslogFile, "Mission;Number of lost drones\r\n");
                                 var droneline = Mission + ";";
                                 droneline += ((int)LostDrones) + ";\r\n";
-                                File.AppendAllText(dronelogfilename, droneline);
+                                File.AppendAllText(Settings.Instance.DroneStatslogFile, droneline);
                             }
                             else
                             {
