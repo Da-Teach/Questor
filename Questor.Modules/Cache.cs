@@ -272,7 +272,6 @@ namespace Questor.Modules
         public int repair_cycle_time_this_mission { get; set; }
         public DateTime lastKnownGoodConnectedTime { get; set; }
         public long totalMegaBytesOfMemoryUsed { get; set; }
-        //public bool OpenWrecks { get; set; }
         public double MyWalletBalance { get; set; }
 
         public long AgentId
@@ -567,6 +566,19 @@ namespace Questor.Modules
         public bool? MissionUseDrones;
         public bool StopTimeSpecified { get; set; }
         public DateTime StopTime { get; set; }
+        public bool CloseQuestorCMDLogoff = false;
+        public bool CloseQuestorCMDExitGame = false;
+        public string ReasonToStopQuestor { get; set; }
+        public string SessionState { get; set; }
+        public double SessionIskGenerated { get; set; }
+        public double SessionLootGenerated { get; set; }
+        public double SessionLPGenerated { get; set; }
+        public int SessionRunningTime { get; set; }
+        public double SessionIskPerHrGenerated { get; set; }
+        public double SessionLootPerHrGenerated { get; set; }
+        public double SessionLPPerHrGenerated { get; set; }
+        public double SessionTotalPerHrGenerated { get; set; }
+        public bool QuestorJustStarted = true;
 
         public DirectWindow GetWindowByCaption(string caption)
         {

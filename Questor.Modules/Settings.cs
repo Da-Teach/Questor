@@ -150,6 +150,7 @@ namespace Questor.Modules
         public int SafeCapacitorPct { get; set; }
         
         public bool LootEverything { get; set; }
+        public double IskPerLP { get; set; }
 
         private bool _UseDrones;
 
@@ -327,6 +328,7 @@ namespace Questor.Modules
             InvasionMinimumDelay = (int?)xml.Element("invasionMinimumDelay") ?? 0;
 
             EnableStorylines = (bool?) xml.Element("enableStorylines") ?? false;
+            IskPerLP = (double?)xml.Element("IskPerLP") ?? 600;
 
 			UndockDelay = (int?)xml.Element("undockdelay") ?? 10;
 			UndockPrefix = (string) xml.Element("undockprefix") ?? "Insta";

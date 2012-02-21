@@ -46,6 +46,7 @@ namespace Questor
         private UnloadLoot _unloadLoot;
 
         private DateTime _lastAction;
+        private DateTime _questorStarted;
         private Random _random;
         private int _randomDelay;
         
@@ -89,6 +90,7 @@ namespace Questor
 
             Cache.Instance.StopTimeSpecified = Program.stopTimeSpecified;
             Cache.Instance.StopTime = Program._stopTime;
+            _questorStarted = DateTime.Now;
 
             _directEve.OnFrame += OnFrame;
         }
@@ -210,6 +212,67 @@ namespace Questor
                 return;
             }
 
+            if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 15)
+            {
+                Cache.Instance.SessionRunningTime = (int)DateTime.Now.Subtract(_questorStarted).TotalMinutes;
+                _lastAction = DateTime.Now;
+            }
+
+            if (DateTime.Now.Subtract(_questorStarted).TotalSeconds < 60)
+            {
+                if (Cache.Instance.QuestorJustStarted)
+                {
+                    Cache.Instance.QuestorJustStarted = false;
+                    Cache.Instance.SessionState = "Starting Up";
+
+                    // get the current process
+                    Process currentProcess = System.Diagnostics.Process.GetCurrentProcess();
+
+                    // get the physical mem usage
+                    Cache.Instance.totalMegaBytesOfMemoryUsed = ((currentProcess.WorkingSet64 / 1024) / 1024);
+                    Logging.Log("Questor: EVE instance: totalMegaBytesOfMemoryUsed - " + Cache.Instance.totalMegaBytesOfMemoryUsed + " MB");
+                    Cache.Instance.SessionIskGenerated = 0;
+                    Cache.Instance.SessionLootGenerated = 0;
+                    Cache.Instance.SessionLPGenerated = 0;
+                    //
+                    // prepare the Questor Session Log - keeps track of starts, restarts and exits, and hopefully the reasons
+                    //
+
+                    // Get the path
+                    string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Log\\" + CharacterName + "\\";
+                    string filename = (path + Cache.Instance.FilterPath(CharacterName) + ".sessions.log");
+
+                    Directory.CreateDirectory(path);
+
+                    // Write the header
+                    if (!File.Exists(filename))
+                        File.AppendAllText(filename, "Date;RunningTime;SessionState;LastMission;WalletBalance;MemoryUsage;Reason;IskGenerated;LootGenerated;LPGenerated;Isk/Hr;Loot/Hr;LP/HR;Total/HR;\r\n");
+
+                    // Build the line
+                    var line = DateTime.Now + ";";
+                    line += "0" + ";";
+                    line += Cache.Instance.SessionState + ";";
+                    line += "n/a" + ";";
+                    line += Cache.Instance.DirectEve.Me.Wealth + ";";
+                    line += Cache.Instance.totalMegaBytesOfMemoryUsed + ";";
+                    line += "Starting" + ";";
+                    line += "n/a" + ";";
+                    line += "n/a" + ";";
+                    line += "n/a" + ";";
+                    line += "n/a" + ";";
+                    line += "n/a" + ";";
+                    line += "n/a" + ";";
+                    line += "n/a" + ";\r\n";
+
+                    // The mission is finished
+                    File.AppendAllText(filename, line);
+
+                    Cache.Instance.SessionState = "";
+
+                    Logging.Log("Logging: (questor.cs) Writing to [ " + filename);
+                }
+            }
+
             foreach (var window in Cache.Instance.Windows)
             {
                 // Telecom messages are generally mission info messages
@@ -235,7 +298,11 @@ namespace Questor
                         {
                             Logging.Log("Questor: This window indicates we are disconnected: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
                             //Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdLogOff); //this causes the questor window to not re-appear
-                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
+                            Cache.Instance.CloseQuestorCMDLogoff = false;
+                            Cache.Instance.CloseQuestorCMDExitGame = true;
+                            Cache.Instance.ReasonToStopQuestor = "The socket was closed";
+                            Cache.Instance.SessionState = "Quitting"; 
+                            State = QuestorState.CloseQuestor;
                             break;
                         }
 						
@@ -282,8 +349,11 @@ namespace Questor
                     {
                         Logging.Log("Questor: Restarting eve...");
                         Logging.Log("Questor: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
-                        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
-						//Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdLogOff);
+                        Cache.Instance.CloseQuestorCMDLogoff = false;
+                        Cache.Instance.CloseQuestorCMDExitGame = true;
+                        Cache.Instance.ReasonToStopQuestor = "A message from ccp indicated we were disonnected";
+                        Cache.Instance.SessionState = "Quitting - lag"; 
+                        State = QuestorState.CloseQuestor;
                         continue;
                     }
                 }
@@ -342,17 +412,21 @@ namespace Questor
             {
 
                 Logging.Log("[Questor] Wallet Balance Has Not Changed in [ " + Settings.Instance.walletbalancechangelogoffdelay + " ] minutes. Quitting game.");
+                Cache.Instance.ReasonToStopQuestor = "Wallet Balance did not change for over " + Settings.Instance.walletbalancechangelogoffdelay + "min";
+                
                 if (Settings.Instance.walletbalancechangelogoffdelayLogofforExit == "logoff")
                 {
-                    Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdLogOff);
-                    return;
+                    Cache.Instance.CloseQuestorCMDLogoff = true;
+                    Cache.Instance.CloseQuestorCMDExitGame = false;
+                    Cache.Instance.SessionState = "LoggingOff";
                 }
                 if (Settings.Instance.walletbalancechangelogoffdelayLogofforExit == "exit")
                 {
-                Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
-                    return;
+                    Cache.Instance.CloseQuestorCMDLogoff = false;
+                    Cache.Instance.CloseQuestorCMDExitGame = true;
+                    Cache.Instance.SessionState = "Exiting";
                 }
-                Logging.Log("[Questor] walletbalancechangelogoffdelayLogofforExit was not set to exit or logoff - doing nothing ");
+                State = QuestorState.CloseQuestor;
                 return;
             }
 
@@ -440,7 +514,11 @@ namespace Questor
                         if (DateTime.Now >= Cache.Instance.StopTime)
                         {
                             Logging.Log("Questor: Time to stop.  Quitting game.");
-                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
+                            Cache.Instance.ReasonToStopQuestor = "StopTimeSpecified and reached.";
+                            Cache.Instance.CloseQuestorCMDLogoff = false;
+                            Cache.Instance.CloseQuestorCMDExitGame = true;
+                            Cache.Instance.SessionState = "Exiting";
+                            State = QuestorState.CloseQuestor;
                             return;
                         }
                     }
@@ -462,6 +540,10 @@ namespace Questor
                         // Seeing as we completed a mission, we will have loyalty points for this agent
                         if (Cache.Instance.Agent.LoyaltyPoints == -1)
                             return;
+
+                        Cache.Instance.SessionIskGenerated = (Cache.Instance.SessionIskGenerated + (Cache.Instance.DirectEve.Me.Wealth - Cache.Instance.Wealth));
+                        Cache.Instance.SessionLootGenerated = (Cache.Instance.SessionLootGenerated + (int)LootValue);
+                        Cache.Instance.SessionLPGenerated = (Cache.Instance.SessionLPGenerated + (Cache.Instance.Agent.LoyaltyPoints - LoyaltyPoints));
 
                         // Get the path
                         string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Log\\" + CharacterName + "\\missionstats\\";
@@ -999,18 +1081,21 @@ namespace Questor
                             if (Cache.Instance.totalMegaBytesOfMemoryUsed > (Settings.Instance.EVEProcessMemoryCeiling - 50))
                             {
                                 Logging.Log("Questor: Memory usage is above the EVEProcessMemoryCeiling threshold. EVE instance: totalMegaBytesOfMemoryUsed - " + Cache.Instance.totalMegaBytesOfMemoryUsed + " MB");
-                                if (Settings.Instance.walletbalancechangelogoffdelayLogofforExit == "logoff")
+                                Cache.Instance.ReasonToStopQuestor = "Memory usage is above the EVEProcessMemoryCeiling threshold. EVE instance: totalMegaBytesOfMemoryUsed - " + Cache.Instance.totalMegaBytesOfMemoryUsed + " MB";
+                                if (Settings.Instance.EVEProcessMemoryCielingLogofforExit == "logoff")
                                 {
-                                    Logging.Log("Questor: We are in station: Exiting eve.");
-                                    Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdLogOff);
-                                    Logging.Log("Questor: has not yet closed...");
+                                    Cache.Instance.CloseQuestorCMDLogoff = true;
+                                    Cache.Instance.CloseQuestorCMDExitGame = false;
+                                    Cache.Instance.SessionState = "LoggingOff";
+                                    State = QuestorState.CloseQuestor;
                                     return;
                                 }
-                                if (Settings.Instance.walletbalancechangelogoffdelayLogofforExit == "exit")
+                                if (Settings.Instance.EVEProcessMemoryCielingLogofforExit == "exit")
                                 {
-                                    Logging.Log("Questor: We are in station: Exiting eve.");
-                                    Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
-                                    Logging.Log("Questor: has not yet closed...");
+                                    Cache.Instance.CloseQuestorCMDLogoff = false;
+                                    Cache.Instance.CloseQuestorCMDExitGame = true;
+                                    Cache.Instance.SessionState = "Exiting";
+                                    State = QuestorState.CloseQuestor;
                                     return;
                                 }
                                 Logging.Log("[Questor] EVEProcessMemoryCeilingLogofforExit was not set to exit or logoff - doing nothing ");
@@ -1035,8 +1120,10 @@ namespace Questor
                     }
                     break;
 
-                case QuestorState.CloseQuestorCmdQuitGame:
-
+                case QuestorState.CloseQuestor:
+                    //
+                    // make sure we are docked at base, then Quit EVE
+                    //
                         var baseDestination2 = _traveler.Destination as StationDestination;
                         if (baseDestination2 == null || baseDestination2.StationId != Cache.Instance.Agent.StationId)
                             _traveler.Destination = new StationDestination(Cache.Instance.Agent.SolarSystemId, Cache.Instance.Agent.StationId, Cache.Instance.DirectEve.GetLocationName(Cache.Instance.Agent.StationId));
@@ -1050,47 +1137,66 @@ namespace Questor
                         _traveler.ProcessState();
                         if (_traveler.State == TravelerState.AtDestination)
                         {
-                            Logging.Log("Questor: QuestorState.CloseQuestor: We are in station: Exiting eve with DirectCmd.CmdQuitGame.");
-                            //System.Threading.Thread.Sleep(33333); //33 second pause before closing questor
-                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
-                            //Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdLogOff);
-                            //System.Threading.Thread.Sleep(3333); //3 second pause AFTER closing questor - this really should not be necessary
-                            Logging.Log("Questor: has not yet closed...");
-                            //System.Threading.Thread.Sleep(3333); //3 second pause AFTER closing questor - this really should not be necessary
-                            //Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
-                            Logging.Log("Questor: has not yet closed...");
+                        //
+                        // prepare the Questor Session Log - keeps track of starts, restarts and exits, and hopefully the reasons
+                        //
                             
-                            break;
+                        // Get the path
+                        string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Log\\" + CharacterName + "\\";
+                        string filename = (path + Cache.Instance.FilterPath(CharacterName) + ".sessions.log");
                             
-                        }
+                        Directory.CreateDirectory(path);
 
-                        if (Settings.Instance.DebugStates)
-                            Logging.Log("Traveler.State = " + _traveler.State);
-                    break;
+                        Cache.Instance.SessionIskPerHrGenerated = (Cache.Instance.SessionIskGenerated / (Cache.Instance.SessionRunningTime / 60));
+                        Cache.Instance.SessionLootPerHrGenerated = (Cache.Instance.SessionLootGenerated / (Cache.Instance.SessionRunningTime / 60));
+                        Cache.Instance.SessionLPPerHrGenerated = ((Cache.Instance.SessionLPGenerated * Settings.Instance.IskPerLP) / (Cache.Instance.SessionRunningTime / 60));
+                        Cache.Instance.SessionTotalPerHrGenerated = (Cache.Instance.SessionIskPerHrGenerated + Cache.Instance.SessionLootPerHrGenerated + Cache.Instance.SessionLPPerHrGenerated);
                 
-                case QuestorState.CloseQuestorCmdLogOff:
+                        // Write the header
+                        if (!File.Exists(filename))
+                            File.AppendAllText(filename, "Date;RunningTime;SessionState;LastMission;WalletBalance;MemoryUsage;Reason;IskGenerated;LootGenerated;LPGenerated;Isk/Hr;Loot/Hr;LP/HR;Total/HR;\r\n");
 
-                    var baseDestination3 = _traveler.Destination as StationDestination;
-                    if (baseDestination3 == null || baseDestination3.StationId != Cache.Instance.Agent.StationId)
-                        _traveler.Destination = new StationDestination(Cache.Instance.Agent.SolarSystemId, Cache.Instance.Agent.StationId, Cache.Instance.DirectEve.GetLocationName(Cache.Instance.Agent.StationId));
+                        // Build the line
+                        var line = DateTime.Now + ";";
+                        line += Cache.Instance.SessionRunningTime + ";";
+                        line += Cache.Instance.SessionState + ";";
+                        line += Mission + ";";
+                        line += ((int)Cache.Instance.DirectEve.Me.Wealth + ";");
+                        line += ((int)Cache.Instance.totalMegaBytesOfMemoryUsed + ";");
+                        line += Cache.Instance.ReasonToStopQuestor + ";";
+                        line += Cache.Instance.SessionIskGenerated + ";";
+                        line += Cache.Instance.SessionLootGenerated + ";";
+                        line += Cache.Instance.SessionLPGenerated + ";";
+                        line += Cache.Instance.SessionIskPerHrGenerated + ";";
+                        line += Cache.Instance.SessionLootPerHrGenerated + ";";
+                        line += Cache.Instance.SessionLPPerHrGenerated + ";";
+                        line += Cache.Instance.SessionTotalPerHrGenerated + ";\r\n";
 
-                    if (Cache.Instance.PriorityTargets.Any(pt => pt != null && pt.IsValid))
+                        // The mission is finished
+                        File.AppendAllText(filename, line);
+
+                        Logging.Log("Logging: (questor.cs) Writing to [ " + filename);
+
+                        if (Cache.Instance.CloseQuestorCMDLogoff == true)
                     {
-                        Logging.Log("GotoBase: Priority targets found, engaging!");
-                        _combat.ProcessState();
-                    }
-
-                    _traveler.ProcessState();
-                    if (_traveler.State == TravelerState.AtDestination)
-                    {
-                        Logging.Log("Questor: QuestorState.CloseQuestor: We are in station: Exiting eve with DirectCmd.CmdLogOff.");
-                            //System.Threading.Thread.Sleep(33333); //33 second pause before closing questor
-                            //Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
+                            Logging.Log("Questor: We are in station: Logging Off eve.");
                             Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdLogOff);
-                            //System.Threading.Thread.Sleep(3333); //3 second pause AFTER closing questor - this really should not be necessary
-                            Logging.Log("Questor: has not yet closed...");
-                            //System.Threading.Thread.Sleep(3333); //3 second pause AFTER closing questor - this really should not be necessary
-                            //Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
+                            return;
+                        }
+                        if (Cache.Instance.CloseQuestorCMDExitGame == true)
+                        {
+                            Logging.Log("Questor: We are in station: Exiting eve.");
+                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
+                            return;
+                        }
+                        if ((Cache.Instance.CloseQuestorCMDExitGame == false) & (Cache.Instance.CloseQuestorCMDLogoff == false)) 
+                        {
+                            Logging.Log("Neither Quit or Logoff were set to true: Stopping EVE with quit command");
+                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
+                            return;
+                        }
+                        Logging.Log("Questor: QuestorState.CloseQuestor: We are in station: Exiting eve with quit command......");
+                        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
                             Logging.Log("Questor: has not yet closed...");
                         break;
 
@@ -1099,6 +1205,7 @@ namespace Questor
                     if (Settings.Instance.DebugStates)
                         Logging.Log("Traveler.State = " + _traveler.State);
                     break;
+                
                 case QuestorState.CompleteMission:
                     if (_agentInteraction.State == AgentInteractionState.Idle)
                     {
