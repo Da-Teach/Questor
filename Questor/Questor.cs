@@ -38,14 +38,13 @@ namespace Questor
         private Panic _panic;
         private Storyline _storyline;
 
-        private DebugModule _debugmodule;
-
-        private Scoop _scoop;
+        //private Scoop _scoop;
         private Salvage _salvage;
         private Traveler _traveler;
         private UnloadLoot _unloadLoot;
 
         private DateTime _lastAction;
+        private DateTime _lastupdateofSessionRunningTime;
         private DateTime _questorStarted;
         private Random _random;
         private int _randomDelay;
@@ -63,9 +62,9 @@ namespace Questor
 
             _random = new Random();
 
-            _debugmodule = new DebugModule();
+            //_debugmodule = new DebugModule();
 
-            _scoop = new Scoop();
+            //_scoop = new Scoop();
             _salvage = new Salvage();
             _defense = new Defense();
             _localwatch = new LocalWatch();
@@ -212,10 +211,10 @@ namespace Questor
                 return;
             }
 
-            if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 15)
+            if (DateTime.Now.Subtract(_lastupdateofSessionRunningTime).TotalSeconds < 15)
             {
                 Cache.Instance.SessionRunningTime = (int)DateTime.Now.Subtract(_questorStarted).TotalMinutes;
-                _lastAction = DateTime.Now;
+                _lastupdateofSessionRunningTime = DateTime.Now;
             }
 
             if (DateTime.Now.Subtract(_questorStarted).TotalSeconds < 60)
@@ -269,7 +268,7 @@ namespace Questor
 
                     Cache.Instance.SessionState = "";
 
-                    Logging.Log("Logging: (questor.cs) Writing to [ " + filename);
+                    Logging.Log("Questor: Writing session data to [ " + filename);
                 }
             }
 
@@ -1098,7 +1097,7 @@ namespace Questor
                                     State = QuestorState.CloseQuestor;
                                     return;
                                 }
-                                Logging.Log("[Questor] EVEProcessMemoryCeilingLogofforExit was not set to exit or logoff - doing nothing ");
+                                Logging.Log("Questor: EVEProcessMemoryCeilingLogofforExit was not set to exit or logoff - doing nothing ");
                                 return;
                             }
                             else
@@ -1175,7 +1174,7 @@ namespace Questor
                         // The mission is finished
                         File.AppendAllText(filename, line);
 
-                        Logging.Log("Logging: (questor.cs) Writing to [ " + filename);
+                        Logging.Log("Questor: Writing to [ " + filename);
 
                         if (Cache.Instance.CloseQuestorCMDLogoff == true)
                     {
@@ -1463,98 +1462,98 @@ namespace Questor
                     }
                     break;
 
-                case QuestorState.ScoopStep1SetupBookmarkLocation:
-                    //if (_arm.State == ArmState.Idle)
-                    //    _arm.State = ArmState.SwitchToLootWrecksShip;
-                    //_arm.ProcessState();
-                    //if (_arm.State == ArmState.Done)
+                //case QuestorState.ScoopStep1SetupBookmarkLocation:
+                //    //if (_arm.State == ArmState.Idle)
+                //    //    _arm.State = ArmState.SwitchToLootWrecksShip;
+                //    //_arm.ProcessState();
+                //    //if (_arm.State == ArmState.Done)
+                //    //{
+                //    _arm.State = ArmState.Idle;
+                //    var Scoopbookmark = Cache.Instance.BookmarksByLabel("ScoopSpot").OrderBy(b => b.CreatedOn).FirstOrDefault();
+                //    if (Scoopbookmark == null)
                     //{
-                    _arm.State = ArmState.Idle;
-                    var Scoopbookmark = Cache.Instance.BookmarksByLabel("ScoopSpot").OrderBy(b => b.CreatedOn).FirstOrDefault();
-                    if (Scoopbookmark == null)
-                    {
-                        Logging.Log("Bookmark named [ ScoopSpot ] not found");
-                        State = QuestorState.Idle;
-                        break;
-                    }
-
-                    State = QuestorState.ScoopStep2GotoScoopBookmark;
-                    _traveler.Destination = new BookmarkDestination(Scoopbookmark);
-
+                //        Logging.Log("Bookmark named [ ScoopSpot ] not found");
+                //        State = QuestorState.Idle;
+                //        break;
                     //}
-                    break;
-
-                case QuestorState.ScoopStep2GotoScoopBookmark:
-
-
-                    _traveler.ProcessState();
-                    if (_traveler.State == TravelerState.AtDestination)
-                    {
-                        State = QuestorState.ScoopStep3WaitForWrecks;
-                        _scoop.State = ScoopState.LootHostileWrecks;
-                        _traveler.Destination = null;
-                    }
-
-                    if (Settings.Instance.DebugStates)
-                        Logging.Log("Traveler.State = " + _traveler.State);
-                    break;
-
-                case QuestorState.ScoopStep3WaitForWrecks:
-                    // We are not in space yet, wait...
-                    if (!Cache.Instance.InSpace)
-                        break;
-
                     //
-                    // Loot All wrecks on grid of 'here'
+                //    State = QuestorState.ScoopStep2GotoScoopBookmark;
+                //    _traveler.Destination = new BookmarkDestination(Scoopbookmark);
                     //
-                    var MyScoopshipCargo = Cache.Instance.DirectEve.GetShipsCargo();
+                //    //}
+                //    break;
 
-                    // Is our cargo window open?
-                    if (MyScoopshipCargo.Window == null)
-                    {
-                        // No, command it to open
-                        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenCargoHoldOfActiveShip);
-                        break;
-                    }
-
-                    //if (MyScoopshipCargo.IsReady && (MyScoopshipCargo.Capacity - MyScoopshipCargo.UsedCapacity) < 3500)
+                //case QuestorState.ScoopStep2GotoScoopBookmark:
+                //
+                //
+                //    _traveler.ProcessState();
+                //    if (_traveler.State == TravelerState.AtDestination)
+                //    {
+                //        State = QuestorState.ScoopStep3WaitForWrecks;
+                //        _scoop.State = ScoopState.LootHostileWrecks;
+                //        _traveler.Destination = null;
+                //    }
+                //
+                //    if (Settings.Instance.DebugStates)
+                //        Logging.Log("Traveler.State = " + _traveler.State);
+                //    break;
+                //
+                //case QuestorState.ScoopStep3WaitForWrecks:
+                //    // We are not in space yet, wait...
+                //    if (!Cache.Instance.InSpace)
+                //        break;
+                //
+                //    //
+                //    // Loot All wrecks on grid of 'here'
+                //    //
+                //    var MyScoopshipCargo = Cache.Instance.DirectEve.GetShipsCargo();
+                //
+                //    // Is our cargo window open?
+                //    if (MyScoopshipCargo.Window == null)
                     //{
-                    //Logging.Log("Salvage: We are full, goto base to unload");
-                    //this needs to be changed to dock at the closest station
-                    //State = QuestorState . DockAtNearestStation;
+                //        // No, command it to open
+                //        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenCargoHoldOfActiveShip);
                     //    break;
                     //}
-
-                    if (Cache.Instance.UnlootedContainers.Count() == 0)
-                    {
-                        break;
-                    }
-                    var closestWreck2 = Cache.Instance.UnlootedWrecksAndSecureCans.First();
-                    if (closestWreck2.Distance > 2500 && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closestWreck2.Id))
-                    {
-                        if (closestWreck2.Distance > 15300)
-                        {
-                            closestWreck2.WarpTo();
-                            break;
-                        }
-                        else
-                            closestWreck2.Approach();
-                    }
-                    else if (closestWreck2.Distance <= 2500 && Cache.Instance.Approaching != null)
-                        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
-
-                    try
-                    {
-                        // Overwrite settings, as the 'normal' settings do not apply
-                        _scoop.MaximumWreckTargets = Math.Min(Cache.Instance.DirectEve.ActiveShip.MaxLockedTargets, Cache.Instance.DirectEve.Me.MaxLockedTargets);
-                        _scoop.ReserveCargoCapacity = 5;
-                        _scoop.ProcessState();
-                    }
-                    finally
-                    {
-                        ApplySettings();
-                    }
-                    break;
+                //
+                //    //if (MyScoopshipCargo.IsReady && (MyScoopshipCargo.Capacity - MyScoopshipCargo.UsedCapacity) < 3500)
+                //    //{
+                //    //Logging.Log("Salvage: We are full, goto base to unload");
+                //    //this needs to be changed to dock at the closest station
+                //    //State = QuestorState . DockAtNearestStation;
+                //    //    break;
+                //    //}
+                //
+                //    if (Cache.Instance.UnlootedContainers.Count() == 0)
+                //    {
+                //        break;
+                //    }
+                //    var closestWreck2 = Cache.Instance.UnlootedWrecksAndSecureCans.First();
+                //    if (closestWreck2.Distance > 2500 && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closestWreck2.Id))
+                //    {
+                //        if (closestWreck2.Distance > 15300)
+                //        {
+                //            closestWreck2.WarpTo();
+                //            break;
+                //        }
+                //        else
+                //            closestWreck2.Approach();
+                //    }
+                //    else if (closestWreck2.Distance <= 2500 && Cache.Instance.Approaching != null)
+                //        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                //
+                //    try
+                //    {
+                //        // Overwrite settings, as the 'normal' settings do not apply
+                //        _scoop.MaximumWreckTargets = Math.Min(Cache.Instance.DirectEve.ActiveShip.MaxLockedTargets, Cache.Instance.DirectEve.Me.MaxLockedTargets);
+                //        _scoop.ReserveCargoCapacity = 5;
+                //        _scoop.ProcessState();
+                //    }
+                //    finally
+                //    {
+                //        ApplySettings();
+                //    }
+                //    break;
 
                 case QuestorState.SalvageUseGate:
                     Cache.Instance.OpenWrecks = true;
@@ -1639,7 +1638,6 @@ namespace Questor
                     break;
 
                 case QuestorState.Debug_WindowNames:
-                    //_debugmodule.ProcessState();
                     var windows = new List<DirectWindow>();
             
                     foreach (var window in windows)
@@ -1651,7 +1649,6 @@ namespace Questor
                     
                     
                case QuestorState.Debug_WindowCaptions:
-                    //_debugmodule.ProcessState();
                     var windows2 = new List<DirectWindow>();
             
                     foreach (var window in windows2)
@@ -1662,7 +1659,6 @@ namespace Questor
                     break;
 
                case QuestorState.Debug_WindowTypes:
-                    //_debugmodule.ProcessState();
                     var windows3 = new List<DirectWindow>();
 
                     foreach (var window in windows3)

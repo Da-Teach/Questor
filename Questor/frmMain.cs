@@ -138,12 +138,12 @@ namespace Questor
                 if (Settings.Instance.SaveLog)
                 {
                     string Carpeta = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Log\\" + _questor.CharacterName + "\\console\\";
-                    string filename = Carpeta + string.Format("{0:MM-dd-yyyy}", DateTime.Today) + _questor.CharacterName + "console" + ".log";
+                    string filename = Carpeta + string.Format("{0:MM-dd-yyyy}", DateTime.Today) + "-" + _questor.CharacterName + "-"+ "console" + ".log";
 
                     Directory.CreateDirectory(Carpeta);
                     if (!LogOpened)
                     {
-                        Logging.Log("Logging: (frmMain.cs) Opening Daily Console Log " + filename);
+                        Logging.Log("Questor: Writing to Daily Console Log " + filename);
                         LogOpened = true;
                     }
                     File.AppendAllText(filename, Cache.Instance.ExtConsole);
