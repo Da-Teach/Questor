@@ -120,6 +120,9 @@ namespace Questor.Modules
                 if (weapon.CurrentCharges >= weapon.MaxCharges)
                     return;
 
+                if (weapon.IsReloadingAmmo || weapon.IsDeactivating || weapon.IsChangingAmmo)
+                    return;
+
                 if (_lastWeaponReload.ContainsKey(weapon.ItemId) && DateTime.Now < _lastWeaponReload[weapon.ItemId].AddSeconds(22))
                     return;
                 _lastWeaponReload[weapon.ItemId] = DateTime.Now;
