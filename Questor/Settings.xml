@@ -19,6 +19,12 @@
   <!-- this defaults to exit because of issues with the questor window disappearing and occessionally the eve process getting 'hung' when using logoff -->
   <walletbalancechangelogoffdelayLogofforExit>exit</walletbalancechangelogoffdelayLogofforExit>  <!-- default is exit, other option is: logoff -->
   
+  <!-- These two options are mutually exclusive: choose ONE: -->
+  <!-- When questor has to quit (walletbalance or eveprocessmemoryceiling or <insert reason here> questor will try to initiate a timedcommand to the innerspace uplink to restart the session -->
+  <!-- it needs to know if you want to launch the session using the innerspace profile or the ISBoxer Character Set-->
+  <CloseQuestorCMDUplinkInnerspaceProfile>true</CloseQuestorCMDUplinkInnerspaceProfile>  <!-- default is: true -->
+  <CloseQuestorCMDUplinkIsboxerCharacterSet>false</CloseQuestorCMDUplinkIsboxerCharacterSet>  <!-- default is: false -->
+  
   <!-- Maximum number of lines in the external console -->
   <maxLineConsole>1000</maxLineConsole>  <!-- default is 1000 -->
 

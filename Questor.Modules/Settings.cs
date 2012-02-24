@@ -109,6 +109,9 @@ namespace Questor.Modules
         public Int64 EVEProcessMemoryCeiling { get; set; }
         public string EVEProcessMemoryCeilingLogofforExit { get; set; }
 
+        public bool CloseQuestorCMDUplinkInnerspaceProfile { get; set; }
+        public bool CloseQuestorCMDUplinkIsboxerCharacterSet { get; set; }
+
         //public int missionbookmarktoagentloops { get; set; }  //not yet used - although it is likely a good ide to fix it so it is used - it would eliminate going back and fourth to the same mission over and over
         public string missionName { get; set; }
 
@@ -390,6 +393,10 @@ namespace Questor.Modules
             EVEProcessMemoryCeiling = (int?)xml.Element("EVEProcessMemoryCeiling") ?? 900;
             EVEProcessMemoryCeilingLogofforExit = (string)xml.Element("EVEProcessMemoryCeilingLogofforExit") ?? "exit";
             
+            //Assume InnerspaceProfile
+            CloseQuestorCMDUplinkInnerspaceProfile = (bool?)xml.Element("CloseQuestorCMDUplinkInnerspaceProfile") ?? true;
+            CloseQuestorCMDUplinkIsboxerCharacterSet = (bool?)xml.Element("CloseQuestorCMDUplinkIsboxerProfile") ?? false;
+
             walletbalancechangelogoffdelay = (int?)xml.Element("walletbalancechangelogoffdelay") ?? 30;
             walletbalancechangelogoffdelayLogofforExit = (string)xml.Element("walletbalancechangelogoffdelayLogofforExit") ?? "exit";
 

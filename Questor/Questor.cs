@@ -102,6 +102,9 @@ namespace Questor
         public bool ValidSettings { get; set; }
         public bool ExitWhenIdle { get; set; }
         public bool LogPathsNotSetupYet = true;
+        public bool CloseQuestorCMDUplink = true;
+        public bool CloseQuestorCMDLogoffflag = true;
+        public DateTime _CloseQuestorDelay { get; set; }
 
         public string CharacterName { get; set; }
 
@@ -1125,40 +1128,47 @@ namespace Questor
                     break;
 
                 case QuestorState.CloseQuestor:
-                    //
-                    // make sure we are docked at base, then Quit EVE
-                    //
+                    if (!Cache.Instance.CloseQuestorCMDLogoff && !Cache.Instance.CloseQuestorCMDExitGame)
+                    {
+                        Cache.Instance.CloseQuestorCMDExitGame = true;
+                    }
+                    if (_traveler.State == TravelerState.Idle)
+                    {
+                        Logging.Log("QuestorState.CloseQuestor: Entered Traveler - making sure we will be docked at Home Station");
+                    }
                         var baseDestination2 = _traveler.Destination as StationDestination;
                         if (baseDestination2 == null || baseDestination2.StationId != Cache.Instance.Agent.StationId)
                             _traveler.Destination = new StationDestination(Cache.Instance.Agent.SolarSystemId, Cache.Instance.Agent.StationId, Cache.Instance.DirectEve.GetLocationName(Cache.Instance.Agent.StationId));
 
                         if (Cache.Instance.PriorityTargets.Any(pt => pt != null && pt.IsValid))
                         {
-                            Logging.Log("GotoBase: Priority targets found, engaging!");
+                        Logging.Log("QuestorState.CloseQuestor: GoToBase: Priority targets found, engaging!");
                             _combat.ProcessState();
                         }
 
                         _traveler.ProcessState();
                         if (_traveler.State == TravelerState.AtDestination)
                         {
+                        //Logging.Log("QuestorState.CloseQuestor: At Station: Docked");
+                        if (Settings.Instance.SessionsLog) // if false we do not write a sessionlog, doubles as a flag so we dont write the sessionlog more than once
+                        {
                         //
                         // prepare the Questor Session Log - keeps track of starts, restarts and exits, and hopefully the reasons
                         //
                             
                         // Get the path
-                        string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Log\\" + CharacterName + "\\";
-                        string filename = (path + Cache.Instance.FilterPath(CharacterName) + ".sessions.log");
                             
-                        Directory.CreateDirectory(path);
+                            Directory.CreateDirectory(Settings.Instance.SessionsLogPath);
 
                         Cache.Instance.SessionIskPerHrGenerated = (Cache.Instance.SessionIskGenerated / (Cache.Instance.SessionRunningTime / 60));
                         Cache.Instance.SessionLootPerHrGenerated = (Cache.Instance.SessionLootGenerated / (Cache.Instance.SessionRunningTime / 60));
                         Cache.Instance.SessionLPPerHrGenerated = ((Cache.Instance.SessionLPGenerated * Settings.Instance.IskPerLP) / (Cache.Instance.SessionRunningTime / 60));
                         Cache.Instance.SessionTotalPerHrGenerated = (Cache.Instance.SessionIskPerHrGenerated + Cache.Instance.SessionLootPerHrGenerated + Cache.Instance.SessionLPPerHrGenerated);
+                            Logging.Log("QuestorState.CloseQuestor: Writing Session Data [1]");
                 
                         // Write the header
-                        if (!File.Exists(filename))
-                            File.AppendAllText(filename, "Date;RunningTime;SessionState;LastMission;WalletBalance;MemoryUsage;Reason;IskGenerated;LootGenerated;LPGenerated;Isk/Hr;Loot/Hr;LP/HR;Total/HR;\r\n");
+                            if (!File.Exists(Settings.Instance.SessionsLogFile))
+                                File.AppendAllText(Settings.Instance.SessionsLogFile, "Date;RunningTime;SessionState;LastMission;WalletBalance;MemoryUsage;Reason;IskGenerated;LootGenerated;LPGenerated;Isk/Hr;Loot/Hr;LP/HR;Total/HR;\r\n");
 
                         // Build the line
                         var line = DateTime.Now + ";";
@@ -1177,35 +1187,124 @@ namespace Questor
                         line += Cache.Instance.SessionTotalPerHrGenerated + ";\r\n";
 
                         // The mission is finished
-                        File.AppendAllText(filename, line);
+                            Logging.Log(line);
+                            File.AppendAllText(Settings.Instance.SessionsLogFile, line);
 
-                        Logging.Log("Questor: Writing to session log [ " + filename);
-
-                        if (Cache.Instance.CloseQuestorCMDLogoff == true)
-                    {
-                            Logging.Log("Questor: We are in station: Logging Off eve.");
-                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdLogOff);
-                            return;
+                            Logging.Log("Questor: Writing to session log [ " + Settings.Instance.SessionsLogFile);
+                            Logging.Log("Questor is stopping because: " + Cache.Instance.ReasonToStopQuestor);
+                            Settings.Instance.SessionsLog = false; //so we don't write the sessionlog more than once per session
                         }
-                        if (Cache.Instance.CloseQuestorCMDExitGame == true)
+                        if (Cache.Instance.CloseQuestorCMDLogoff)
                         {
-                            Logging.Log("Questor: We are in station: Exiting eve.");
-                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
+                            if (CloseQuestorCMDLogoffflag)
+                            {
+                                Logging.Log("Questor: We are in station: Logging off EVE: In theory eve and questor will restart on their own when the client comes back up");
+                                LavishScript.ExecuteCommand("uplink echo Logging off EVE:  \\\"${Game}\\\" \\\"${Profile}\\\"");
+                                Logging.Log("Questor: you can change this option by setting the wallet and eveprocessmemoryceiling options to use exit instead of logoff: see the settings.xml file");
+                                Logging.Log("Questor: Logging Off eve in 15 seconds.");
+                                CloseQuestorCMDLogoffflag = false;
+                                _CloseQuestorDelay = DateTime.Now.AddSeconds(20);
+                            }
+                            if (_CloseQuestorDelay.AddSeconds(-10) < DateTime.Now)
+                            {
+                                Logging.Log("Questor: Exiting eve in 10 seconds");
+                            }
+                            if (_CloseQuestorDelay < DateTime.Now)
+                    {
+                                Logging.Log("Questor: Exiting eve now.");
+                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdLogOff);
+                            } 
+                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdLogOff);
+                            break;
+                        }
+                        if (Cache.Instance.CloseQuestorCMDExitGame)
+                        {
+                            //Logging.Log("Questor: We are in station: Exit option has been configured.");
+                            if ((Settings.Instance.CloseQuestorCMDUplinkIsboxerCharacterSet) && (Settings.Instance.CloseQuestorCMDUplinkInnerspaceProfile))
+                            {
+                                Logging.Log("Questor: We are in station: Don't be silly you cant use both the CloseQuestorCMDUplinkIsboxerProfile and the CloseQuestorCMDUplinkIsboxerProfile setting, choose one");
+                            }
+                            else
+                            {
+                                if (Settings.Instance.CloseQuestorCMDUplinkInnerspaceProfile) //if configured as true we will use the innerspace profile to restart this session
+                                {
+                                    //Logging.Log("Questor: We are in station: CloseQuestorCMDUplinkInnerspaceProfile is true");
+                                    if (CloseQuestorCMDUplink)
+                                    {
+                                        Logging.Log("Questor: We are in station: Starting a timer in the innerspace uplink to restart this innerspace profile session");
+                                        LavishScript.ExecuteCommand("uplink exec timedcommand 350 open \\\"${Game}\\\" \\\"${Profile}\\\"");
+                                        Logging.Log("Questor: Done: quitting this session so the new isboxer session can take over");
+                                        Logging.Log("Questor: Exiting eve in 15 seconds.");
+                                        CloseQuestorCMDUplink = false;
+                                        _CloseQuestorDelay = DateTime.Now.AddSeconds(20);
+                                    }
+                                    if (_CloseQuestorDelay.AddSeconds(-10) < DateTime.Now)
+                                    {
+                                        Logging.Log("Questor: Exiting eve in 10 seconds");
+                                    } 
+                                    if (_CloseQuestorDelay < DateTime.Now)
+                                    {
+                                        Logging.Log("Questor: Exiting eve now.");
+                                        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
+                                    } 
                             return;
                         }
-                        if ((Cache.Instance.CloseQuestorCMDExitGame == false) & (Cache.Instance.CloseQuestorCMDLogoff == false)) 
+                                if (Settings.Instance.CloseQuestorCMDUplinkIsboxerCharacterSet) //if configured as true we will use isboxer to restart this session
+                                {
+                                    //Logging.Log("Questor: We are in station: CloseQuestorCMDUplinkIsboxerProfile is true");
+                                    if (CloseQuestorCMDUplink)
+                        {
+                                        Logging.Log("Questor: We are in station: Starting a timer in the innerspace uplink to restart this isboxer character set");
+                                        LavishScript.ExecuteCommand("uplink timedcommand 350 runscript isboxer -launch \\\"${ISBoxerCharacterSet}\\\"");
+                                        Logging.Log("Questor: Done: quitting this session so the new innerspace session can take over");
+                            Logging.Log("Questor: We are in station: Exiting eve.");
+                                        CloseQuestorCMDUplink = false;
+                                        _CloseQuestorDelay = DateTime.Now.AddSeconds(20);
+                                    }
+                                    if (_CloseQuestorDelay.AddSeconds(-10) < DateTime.Now)
+                                    {
+                                        Logging.Log("Questor: Exiting eve in 10 seconds");
+                                        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
+                                    } 
+                                    if (_CloseQuestorDelay < DateTime.Now)
+                                    {
+                                        Logging.Log("Questor: Exiting eve now.");
+                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
+                                    } 
+                            return;
+                        }
+                                if (!Settings.Instance.CloseQuestorCMDUplinkInnerspaceProfile && !Settings.Instance.CloseQuestorCMDUplinkIsboxerCharacterSet)
+                        {
+                                    Logging.Log("Questor: CloseQuestorCMDUplinkInnerspaceProfile and CloseQuestorCMDUplinkIsboxerProfile both false");
+                                    if (CloseQuestorCMDUplink)
+                                    {
+                                        CloseQuestorCMDUplink = false;
+                                        _CloseQuestorDelay = DateTime.Now.AddSeconds(20);
+                                    }
+                                    if (_CloseQuestorDelay.AddSeconds(-10) < DateTime.Now)
+                                    {
+                                        Logging.Log("Questor: Exiting eve in 10 seconds");
+                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
+                                    } 
+                                    if (_CloseQuestorDelay < DateTime.Now)
+                                    {
+                                        Logging.Log("Questor: Exiting eve now.");
+                                        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
+                                    }
+                            return;
+                        }
+                            }
+                            
+                        }
+                        if ((!Cache.Instance.CloseQuestorCMDExitGame) & (!Cache.Instance.CloseQuestorCMDLogoff)) 
                         {
                             Logging.Log("Neither Quit or Logoff were set to true: Stopping EVE with quit command");
-                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
-                            return;
-                        }
-                        Logging.Log("Questor: QuestorState.CloseQuestor: We are in station: Exiting eve with quit command......");
                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
-                            Logging.Log("Questor: has not yet closed...");
                         break;
 
                     }
-
+                        break;   
+                    }
                     if (Settings.Instance.DebugStates)
                         Logging.Log("Traveler.State = " + _traveler.State);
                     break;
