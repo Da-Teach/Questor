@@ -381,62 +381,60 @@ namespace Questor
                     }
                 }
             }
-			}
-			}
 
             if (!Paused)
             {
                 if (DateTime.Now.Subtract(_lastAction).TotalMinutes > 1)
-            {
+                {
                     _lastAction = DateTime.Now;
                     //Logging.Log("[Questor] Wallet Balance Debug Info: lastknowngoodconnectedtime = " + Settings.Instance.lastKnownGoodConnectedTime);
                     //Logging.Log("[Questor] Wallet Balance Debug Info: DateTime.Now - lastknowngoodconnectedtime = " + DateTime.Now.Subtract(Settings.Instance.lastKnownGoodConnectedTime).TotalSeconds);
                     if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) > 1)
-            {
+                    {
                         Logging.Log(String.Format("Questor: Wallet Balance Has Not Changed in [ {0} ] minutes.", Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes,0)));
-			}
+                    }
                     
                     //Settings.Instance.walletbalancechangelogoffdelay = 2;  //used for debugging purposes
                     //Logging.Log("Cache.Instance.lastKnownGoodConnectedTime is currently: " + Cache.Instance.lastKnownGoodConnectedTime);
-            if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) < Settings.Instance.walletbalancechangelogoffdelay)
-            {
-                if (State == QuestorState.Salvage)
-                {
-                    Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
-                    Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
-                }
-                else
-                {
-                    if (Cache.Instance.MyWalletBalance != Cache.Instance.DirectEve.Me.Wealth)
+                    if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) < Settings.Instance.walletbalancechangelogoffdelay)
                     {
-                        Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
-                        Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
+                        if (State == QuestorState.Salvage)
+                        {
+                            Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                            Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
+                        }
+                        else
+                        {
+                            if (Cache.Instance.MyWalletBalance != Cache.Instance.DirectEve.Me.Wealth)
+                            {
+                                Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                                Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
+                            }
+                        }
                     }
-                }
-            }
-            else
-            {
+                    else
+                    {
 
                         Logging.Log(String.Format("Questor: Wallet Balance Has Not Changed in [ {0} ] minutes. Switching to QuestorState.CloseQuestor", Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes, 0)));
-                Cache.Instance.ReasonToStopQuestor = "Wallet Balance did not change for over " + Settings.Instance.walletbalancechangelogoffdelay + "min";
-                
-                if (Settings.Instance.walletbalancechangelogoffdelayLogofforExit == "logoff")
-                {
+                        Cache.Instance.ReasonToStopQuestor = "Wallet Balance did not change for over " + Settings.Instance.walletbalancechangelogoffdelay + "min";
+
+                        if (Settings.Instance.walletbalancechangelogoffdelayLogofforExit == "logoff")
+                        {
                             Logging.Log("Questor: walletbalancechangelogoffdelayLogofforExit is set to: " + Settings.Instance.walletbalancechangelogoffdelayLogofforExit); 
-                    Cache.Instance.CloseQuestorCMDLogoff = true;
-                    Cache.Instance.CloseQuestorCMDExitGame = false;
-                    Cache.Instance.SessionState = "LoggingOff";
-                }
-                if (Settings.Instance.walletbalancechangelogoffdelayLogofforExit == "exit")
-                {
+                            Cache.Instance.CloseQuestorCMDLogoff = true;
+                            Cache.Instance.CloseQuestorCMDExitGame = false;
+                            Cache.Instance.SessionState = "LoggingOff";
+                        }
+                        if (Settings.Instance.walletbalancechangelogoffdelayLogofforExit == "exit")
+                        {
                             Logging.Log("Questor: walletbalancechangelogoffdelayLogofforExit is set to: " + Settings.Instance.walletbalancechangelogoffdelayLogofforExit);
-                    Cache.Instance.CloseQuestorCMDLogoff = false;
-                    Cache.Instance.CloseQuestorCMDExitGame = true;
-                    Cache.Instance.SessionState = "Exiting";
-                }
-                State = QuestorState.CloseQuestor;
-                return;
-            }
+                            Cache.Instance.CloseQuestorCMDLogoff = false;
+                            Cache.Instance.CloseQuestorCMDExitGame = true;
+                            Cache.Instance.SessionState = "Exiting";
+                        }
+                        State = QuestorState.CloseQuestor;
+                        return;
+                    }
                 }
             }
 
@@ -556,76 +554,76 @@ namespace Questor
                         Cache.Instance.SessionLPGenerated = (Cache.Instance.SessionLPGenerated + (Cache.Instance.Agent.LoyaltyPoints - LoyaltyPoints));
                         if (Settings.Instance.MissionStats1Log)
                         {
-                        Directory.CreateDirectory(Settings.Instance.MissionStats1LogPath);
+                            Directory.CreateDirectory(Settings.Instance.MissionStats1LogPath);
 
-                        // Write the header
-                        if (!File.Exists(Settings.Instance.MissionStats1LogFile))
-                            File.AppendAllText(Settings.Instance.MissionStats1LogFile, "Date;Mission;TimeMission;TimeSalvage;TotalTime;Isk;Loot;LP;\r\n");
+                            // Write the header
+                            if (!File.Exists(Settings.Instance.MissionStats1LogFile))
+                                File.AppendAllText(Settings.Instance.MissionStats1LogFile, "Date;Mission;TimeMission;TimeSalvage;TotalTime;Isk;Loot;LP;\r\n");
 
-                        // Build the line
-                        var line = DateTime.Now + ";";
-                        line += Mission + ";";
-                        line += ((int)FinishedTask.Subtract(StartedTask).TotalMinutes) + ";";
-                        line += ((int)DateTime.Now.Subtract(FinishedTask).TotalMinutes) + ";";
-                        line += ((int)DateTime.Now.Subtract(StartedTask).TotalMinutes) + ";";
-                        line += ((int)(Cache.Instance.DirectEve.Me.Wealth - Cache.Instance.Wealth)) + ";";
-                        line += ((int)LootValue) + ";";
-                        line += (Cache.Instance.Agent.LoyaltyPoints - LoyaltyPoints) + ";\r\n";
+                            // Build the line
+                            var line = DateTime.Now + ";";
+                            line += Mission + ";";
+                            line += ((int)FinishedTask.Subtract(StartedTask).TotalMinutes) + ";";
+                            line += ((int)DateTime.Now.Subtract(FinishedTask).TotalMinutes) + ";";
+                            line += ((int)DateTime.Now.Subtract(StartedTask).TotalMinutes) + ";";
+                            line += ((int)(Cache.Instance.DirectEve.Me.Wealth - Cache.Instance.Wealth)) + ";";
+                            line += ((int)LootValue) + ";";
+                            line += (Cache.Instance.Agent.LoyaltyPoints - LoyaltyPoints) + ";\r\n";
 
-                        // The mission is finished
-                        File.AppendAllText(Settings.Instance.MissionStats1LogFile, line);
-                        Logging.Log("Questor: is writing mission log1 to  [ " + Settings.Instance.MissionStats1LogFile);
+                            // The mission is finished
+                            File.AppendAllText(Settings.Instance.MissionStats1LogFile, line);
+                            Logging.Log("Questor: is writing mission log1 to  [ " + Settings.Instance.MissionStats1LogFile);
                         }
                         if (Settings.Instance.MissionStats2Log)
                         {
-                        Directory.CreateDirectory(Settings.Instance.MissionStats2LogPath);
+                            Directory.CreateDirectory(Settings.Instance.MissionStats2LogPath);
 
-                        // Write the header
-                        if (!File.Exists(Settings.Instance.MissionStats2LogFile))
-                            File.AppendAllText(Settings.Instance.MissionStats2LogFile, "Date;Mission;Time;Isk;Loot;LP;LostDrones;AmmoConsumption;AmmoValue\r\n");
+                            // Write the header
+                            if (!File.Exists(Settings.Instance.MissionStats2LogFile))
+                                File.AppendAllText(Settings.Instance.MissionStats2LogFile, "Date;Mission;Time;Isk;Loot;LP;LostDrones;AmmoConsumption;AmmoValue\r\n");
 
-                        // Build the line
-                        var line2 = string.Format("{0:MM/dd/yyyy HH:mm:ss}", DateTime.Now) + ";";
-                        line2 += Mission + ";";
-                        line2 += ((int)DateTime.Now.Subtract(StartedTask).TotalMinutes) + ";";
-                        line2 += ((int)(Cache.Instance.DirectEve.Me.Wealth - Cache.Instance.Wealth)) + ";";
-                        line2 += ((int)LootValue) + ";";
-                        line2 += (Cache.Instance.Agent.LoyaltyPoints - LoyaltyPoints) + ";";
-                        line2 += ((int)LostDrones) + ";";
-                        line2 += ((int)AmmoConsumption) + ";";
-                        line2 += ((int)AmmoValue) + ";\r\n";
+                            // Build the line
+                            var line2 = string.Format("{0:MM/dd/yyyy HH:mm:ss}", DateTime.Now) + ";";
+                            line2 += Mission + ";";
+                            line2 += ((int)DateTime.Now.Subtract(StartedTask).TotalMinutes) + ";";
+                            line2 += ((int)(Cache.Instance.DirectEve.Me.Wealth - Cache.Instance.Wealth)) + ";";
+                            line2 += ((int)LootValue) + ";";
+                            line2 += (Cache.Instance.Agent.LoyaltyPoints - LoyaltyPoints) + ";";
+                            line2 += ((int)LostDrones) + ";";
+                            line2 += ((int)AmmoConsumption) + ";";
+                            line2 += ((int)AmmoValue) + ";\r\n";
 
-                        // The mission is finished
-                        Logging.Log("Questor: is writing mission log2 to [ " + Settings.Instance.MissionStats2LogFile);
-                        File.AppendAllText(Settings.Instance.MissionStats2LogFile, line2);
+                            // The mission is finished
+                            Logging.Log("Questor: is writing mission log2 to [ " + Settings.Instance.MissionStats2LogFile);
+                            File.AppendAllText(Settings.Instance.MissionStats2LogFile, line2);
                         }
                         if (Settings.Instance.MissionStats3Log)
                         {
-                        Directory.CreateDirectory(Settings.Instance.MissionStats3LogPath);
+                            Directory.CreateDirectory(Settings.Instance.MissionStats3LogPath);
 
-                        // Write the header
-                        if (!File.Exists(Settings.Instance.MissionStats3LogFile))
-                            File.AppendAllText(Settings.Instance.MissionStats3LogFile, "Date;Mission;Time;Isk;Loot;LP;LostDrones;AmmoConsumption;AmmoValue;Panics;LowestShield;LowestArmor;LowestCap;RepairCycles\r\n");
+                            // Write the header
+                            if (!File.Exists(Settings.Instance.MissionStats3LogFile))
+                                File.AppendAllText(Settings.Instance.MissionStats3LogFile, "Date;Mission;Time;Isk;Loot;LP;LostDrones;AmmoConsumption;AmmoValue;Panics;LowestShield;LowestArmor;LowestCap;RepairCycles\r\n");
 
-                        // Build the line
-                        var line3 = DateTime.Now + ";";
-                        line3 += Mission + ";";
-                        line3 += ((int)DateTime.Now.Subtract(StartedTask).TotalMinutes) + ";";
-                        line3 += ((long)(Cache.Instance.DirectEve.Me.Wealth - Cache.Instance.Wealth)) + ";";
-                        line3 += ((long)LootValue) + ";";
-                        line3 += ((long)Cache.Instance.Agent.LoyaltyPoints - LoyaltyPoints) + ";";
-                        line3 += ((int)LostDrones) + ";";
-                        line3 += ((int)AmmoConsumption) + ";";
-                        line3 += ((int)AmmoValue) + ";";
-                        line3 += ((int)Cache.Instance.panic_attempts_this_mission) + ";";
-                        line3 += ((int)Cache.Instance.lowest_shield_percentage_this_mission) + ";";
-                        line3 += ((int)Cache.Instance.lowest_armor_percentage_this_mission) + ";";
-                        line3 += ((int)Cache.Instance.lowest_capacitor_percentage_this_mission) + ";";
-                        line3 += ((int)Cache.Instance.repair_cycle_time_this_mission) + ";\r\n";
-                        
-                        // The mission is finished
-                        Logging.Log("Questor: is writing mission log3 to  [ " + Settings.Instance.MissionStats3LogFile);
-                        File.AppendAllText(Settings.Instance.MissionStats3LogFile, line3);
+                            // Build the line
+                            var line3 = DateTime.Now + ";";
+                            line3 += Mission + ";";
+                            line3 += ((int)DateTime.Now.Subtract(StartedTask).TotalMinutes) + ";";
+                            line3 += ((long)(Cache.Instance.DirectEve.Me.Wealth - Cache.Instance.Wealth)) + ";";
+                            line3 += ((long)LootValue) + ";";
+                            line3 += ((long)Cache.Instance.Agent.LoyaltyPoints - LoyaltyPoints) + ";";
+                            line3 += ((int)LostDrones) + ";";
+                            line3 += ((int)AmmoConsumption) + ";";
+                            line3 += ((int)AmmoValue) + ";";
+                            line3 += ((int)Cache.Instance.panic_attempts_this_mission) + ";";
+                            line3 += ((int)Cache.Instance.lowest_shield_percentage_this_mission) + ";";
+                            line3 += ((int)Cache.Instance.lowest_armor_percentage_this_mission) + ";";
+                            line3 += ((int)Cache.Instance.lowest_capacitor_percentage_this_mission) + ";";
+                            line3 += ((int)Cache.Instance.repair_cycle_time_this_mission) + ";\r\n";
+
+                            // The mission is finished
+                            Logging.Log("Questor: is writing mission log3 to  [ " + Settings.Instance.MissionStats3LogFile);
+                            File.AppendAllText(Settings.Instance.MissionStats3LogFile, line3);
                         }
                         // Disable next log line
                         Mission = null;
@@ -875,10 +873,10 @@ namespace Questor
                     else
                     {
                         Logging.Log("Questor.LocalWatch: Bad standings pilots in local: We will stay 5 minutes in the station and then we will check if it is clear again");
-						Logging.Log("Questor.LocalWatch: debugging: exiting station anyway...");
+                        Logging.Log("Questor.LocalWatch: debugging: exiting station anyway...");
                         //State = QuestorState.WaitingforBadGuytoGoAway;
                         State = QuestorState.WarpOutStation;
-						Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                        Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
                         Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
                     }
                         State = QuestorState.WarpOutStation;
@@ -1136,57 +1134,56 @@ namespace Questor
                     {
                         Logging.Log("QuestorState.CloseQuestor: Entered Traveler - making sure we will be docked at Home Station");
                     }
-                        var baseDestination2 = _traveler.Destination as StationDestination;
-                        if (baseDestination2 == null || baseDestination2.StationId != Cache.Instance.Agent.StationId)
-                            _traveler.Destination = new StationDestination(Cache.Instance.Agent.SolarSystemId, Cache.Instance.Agent.StationId, Cache.Instance.DirectEve.GetLocationName(Cache.Instance.Agent.StationId));
+                    var baseDestination2 = _traveler.Destination as StationDestination;
+                    if (baseDestination2 == null || baseDestination2.StationId != Cache.Instance.Agent.StationId)
+                        _traveler.Destination = new StationDestination(Cache.Instance.Agent.SolarSystemId, Cache.Instance.Agent.StationId, Cache.Instance.DirectEve.GetLocationName(Cache.Instance.Agent.StationId));
 
-                        if (Cache.Instance.PriorityTargets.Any(pt => pt != null && pt.IsValid))
-                        {
+                    if (Cache.Instance.PriorityTargets.Any(pt => pt != null && pt.IsValid))
+                    {
                         Logging.Log("QuestorState.CloseQuestor: GoToBase: Priority targets found, engaging!");
-                            _combat.ProcessState();
-                        }
-
-                        _traveler.ProcessState();
-                        if (_traveler.State == TravelerState.AtDestination)
-                        {
+                        _combat.ProcessState();
+                    }
+                    _traveler.ProcessState();
+                    if (_traveler.State == TravelerState.AtDestination)
+                    {
                         //Logging.Log("QuestorState.CloseQuestor: At Station: Docked");
                         if (Settings.Instance.SessionsLog) // if false we do not write a sessionlog, doubles as a flag so we dont write the sessionlog more than once
                         {
-                        //
-                        // prepare the Questor Session Log - keeps track of starts, restarts and exits, and hopefully the reasons
-                        //
-                            
-                        // Get the path
+                            //
+                            // prepare the Questor Session Log - keeps track of starts, restarts and exits, and hopefully the reasons
+                            //
+
+                            // Get the path
                             
                             Directory.CreateDirectory(Settings.Instance.SessionsLogPath);
 
-                        Cache.Instance.SessionIskPerHrGenerated = (Cache.Instance.SessionIskGenerated / (Cache.Instance.SessionRunningTime / 60));
-                        Cache.Instance.SessionLootPerHrGenerated = (Cache.Instance.SessionLootGenerated / (Cache.Instance.SessionRunningTime / 60));
-                        Cache.Instance.SessionLPPerHrGenerated = ((Cache.Instance.SessionLPGenerated * Settings.Instance.IskPerLP) / (Cache.Instance.SessionRunningTime / 60));
-                        Cache.Instance.SessionTotalPerHrGenerated = (Cache.Instance.SessionIskPerHrGenerated + Cache.Instance.SessionLootPerHrGenerated + Cache.Instance.SessionLPPerHrGenerated);
+                            Cache.Instance.SessionIskPerHrGenerated = (Cache.Instance.SessionIskGenerated / (Cache.Instance.SessionRunningTime / 60));
+                            Cache.Instance.SessionLootPerHrGenerated = (Cache.Instance.SessionLootGenerated / (Cache.Instance.SessionRunningTime / 60));
+                            Cache.Instance.SessionLPPerHrGenerated = ((Cache.Instance.SessionLPGenerated * Settings.Instance.IskPerLP) / (Cache.Instance.SessionRunningTime / 60));
+                            Cache.Instance.SessionTotalPerHrGenerated = (Cache.Instance.SessionIskPerHrGenerated + Cache.Instance.SessionLootPerHrGenerated + Cache.Instance.SessionLPPerHrGenerated);
                             Logging.Log("QuestorState.CloseQuestor: Writing Session Data [1]");
-                
-                        // Write the header
+
+                            // Write the header
                             if (!File.Exists(Settings.Instance.SessionsLogFile))
                                 File.AppendAllText(Settings.Instance.SessionsLogFile, "Date;RunningTime;SessionState;LastMission;WalletBalance;MemoryUsage;Reason;IskGenerated;LootGenerated;LPGenerated;Isk/Hr;Loot/Hr;LP/HR;Total/HR;\r\n");
 
-                        // Build the line
-                        var line = DateTime.Now + ";";
-                        line += Cache.Instance.SessionRunningTime + ";";
-                        line += Cache.Instance.SessionState + ";";
-                        line += Mission + ";";
-                        line += ((int)Cache.Instance.DirectEve.Me.Wealth + ";");
-                        line += ((int)Cache.Instance.totalMegaBytesOfMemoryUsed + ";");
-                        line += Cache.Instance.ReasonToStopQuestor + ";";
-                        line += Cache.Instance.SessionIskGenerated + ";";
-                        line += Cache.Instance.SessionLootGenerated + ";";
-                        line += Cache.Instance.SessionLPGenerated + ";";
-                        line += Cache.Instance.SessionIskPerHrGenerated + ";";
-                        line += Cache.Instance.SessionLootPerHrGenerated + ";";
-                        line += Cache.Instance.SessionLPPerHrGenerated + ";";
-                        line += Cache.Instance.SessionTotalPerHrGenerated + ";\r\n";
+                            // Build the line
+                            var line = DateTime.Now + ";";
+                            line += Cache.Instance.SessionRunningTime + ";";
+                            line += Cache.Instance.SessionState + ";";
+                            line += Mission + ";";
+                            line += ((int)Cache.Instance.DirectEve.Me.Wealth + ";");
+                            line += ((int)Cache.Instance.totalMegaBytesOfMemoryUsed + ";");
+                            line += Cache.Instance.ReasonToStopQuestor + ";";
+                            line += Cache.Instance.SessionIskGenerated + ";";
+                            line += Cache.Instance.SessionLootGenerated + ";";
+                            line += Cache.Instance.SessionLPGenerated + ";";
+                            line += Cache.Instance.SessionIskPerHrGenerated + ";";
+                            line += Cache.Instance.SessionLootPerHrGenerated + ";";
+                            line += Cache.Instance.SessionLPPerHrGenerated + ";";
+                            line += Cache.Instance.SessionTotalPerHrGenerated + ";\r\n";
 
-                        // The mission is finished
+                            // The mission is finished
                             Logging.Log(line);
                             File.AppendAllText(Settings.Instance.SessionsLogFile, line);
 
@@ -1210,9 +1207,9 @@ namespace Questor
                                 Logging.Log("Questor: Exiting eve in 10 seconds");
                             }
                             if (_CloseQuestorDelay < DateTime.Now)
-                    {
+                            {
                                 Logging.Log("Questor: Exiting eve now.");
-                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdLogOff);
+                                Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdLogOff);
                             } 
                             Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdLogOff);
                             break;
@@ -1247,17 +1244,17 @@ namespace Questor
                                         Logging.Log("Questor: Exiting eve now.");
                                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
                                     } 
-                            return;
-                        }
+                                    return;
+                                }
                                 if (Settings.Instance.CloseQuestorCMDUplinkIsboxerCharacterSet) //if configured as true we will use isboxer to restart this session
                                 {
                                     //Logging.Log("Questor: We are in station: CloseQuestorCMDUplinkIsboxerProfile is true");
                                     if (CloseQuestorCMDUplink)
-                        {
+                                    {
                                         Logging.Log("Questor: We are in station: Starting a timer in the innerspace uplink to restart this isboxer character set");
                                         LavishScript.ExecuteCommand("uplink timedcommand 350 runscript isboxer -launch \\\"${ISBoxerCharacterSet}\\\"");
                                         Logging.Log("Questor: Done: quitting this session so the new innerspace session can take over");
-                            Logging.Log("Questor: We are in station: Exiting eve.");
+                                        Logging.Log("Questor: We are in station: Exiting eve.");
                                         CloseQuestorCMDUplink = false;
                                         _CloseQuestorDelay = DateTime.Now.AddSeconds(20);
                                     }
@@ -1269,12 +1266,12 @@ namespace Questor
                                     if (_CloseQuestorDelay < DateTime.Now)
                                     {
                                         Logging.Log("Questor: Exiting eve now.");
-                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
+                                        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
                                     } 
-                            return;
-                        }
+                                    return;
+                                }
                                 if (!Settings.Instance.CloseQuestorCMDUplinkInnerspaceProfile && !Settings.Instance.CloseQuestorCMDUplinkIsboxerCharacterSet)
-                        {
+                                {
                                     Logging.Log("Questor: CloseQuestorCMDUplinkInnerspaceProfile and CloseQuestorCMDUplinkIsboxerProfile both false");
                                     if (CloseQuestorCMDUplink)
                                     {
@@ -1284,25 +1281,24 @@ namespace Questor
                                     if (_CloseQuestorDelay.AddSeconds(-10) < DateTime.Now)
                                     {
                                         Logging.Log("Questor: Exiting eve in 10 seconds");
-                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
+                                        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
                                     } 
                                     if (_CloseQuestorDelay < DateTime.Now)
                                     {
                                         Logging.Log("Questor: Exiting eve now.");
                                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
                                     }
-                            return;
-                        }
+                                    return;
+                                }
                             }
                             
                         }
                         if ((!Cache.Instance.CloseQuestorCMDExitGame) & (!Cache.Instance.CloseQuestorCMDLogoff)) 
                         {
                             Logging.Log("Neither Quit or Logoff were set to true: Stopping EVE with quit command");
-                        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
-                        break;
-
-                    }
+                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
+                            break;
+                        }
                         break;   
                     }
                     if (Settings.Instance.DebugStates)
@@ -1314,35 +1310,35 @@ namespace Questor
                     {
                         if (Settings.Instance.DroneStatsLog)
                         {
-                        // Lost drone statistics
-                        // (inelegantly located here so as to avoid the necessity to switch to a combat ship after salvaging)
-                        if (Settings.Instance.UseDrones)
-                        {
-                            var droneBay = Cache.Instance.DirectEve.GetShipsDroneBay();
-                            if (droneBay.Window == null)
+                            // Lost drone statistics
+                            // (inelegantly located here so as to avoid the necessity to switch to a combat ship after salvaging)
+                            if (Settings.Instance.UseDrones)
                             {
-                                Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenDroneBayOfActiveShip);
-                                break;
+                                var droneBay = Cache.Instance.DirectEve.GetShipsDroneBay();
+                                if (droneBay.Window == null)
+                                {
+                                    Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenDroneBayOfActiveShip);
+                                    break;
+                                }
+                                if (!droneBay.IsReady)
+                                    break;
+                                if (Cache.Instance.InvTypesById.ContainsKey(Settings.Instance.DroneTypeId))
+                                {
+                                    var drone = Cache.Instance.InvTypesById[Settings.Instance.DroneTypeId];
+                                    LostDrones = (int)Math.Floor((droneBay.Capacity - droneBay.UsedCapacity) / drone.Volume);
+                                    Logging.Log("DroneStats: Logging the number of lost drones: " + LostDrones.ToString());
+
+                                    if (!File.Exists(Settings.Instance.DroneStatslogFile))
+                                        File.AppendAllText(Settings.Instance.DroneStatslogFile, "Mission;Number of lost drones\r\n");
+                                    var droneline = Mission + ";";
+                                    droneline += ((int)LostDrones) + ";\r\n";
+                                    File.AppendAllText(Settings.Instance.DroneStatslogFile, droneline);
+                                }
+                                else
+                                {
+                                    Logging.Log("DroneStats: Couldn't find the drone TypeID specified in the settings.xml; this shouldn't happen!");
+                                }
                             }
-                            if (!droneBay.IsReady)
-                                break;
-                            if (Cache.Instance.InvTypesById.ContainsKey(Settings.Instance.DroneTypeId))
-                            {
-                                var drone = Cache.Instance.InvTypesById[Settings.Instance.DroneTypeId];
-                                LostDrones = (int)Math.Floor((droneBay.Capacity - droneBay.UsedCapacity) / drone.Volume);
-                                Logging.Log("DroneStats: Logging the number of lost drones: " + LostDrones.ToString());
-                                                       
-                                if (!File.Exists(Settings.Instance.DroneStatslogFile))
-                                    File.AppendAllText(Settings.Instance.DroneStatslogFile, "Mission;Number of lost drones\r\n");
-                                var droneline = Mission + ";";
-                                droneline += ((int)LostDrones) + ";\r\n";
-                                File.AppendAllText(Settings.Instance.DroneStatslogFile, droneline);
-                            }
-                            else
-                            {
-                                Logging.Log("DroneStats: Couldn't find the drone TypeID specified in the settings.xml; this shouldn't happen!");
-                            }
-                        }
                         }
                         // Lost drone statistics stuff ends here
 
@@ -1577,15 +1573,15 @@ namespace Questor
                 //    _arm.State = ArmState.Idle;
                 //    var Scoopbookmark = Cache.Instance.BookmarksByLabel("ScoopSpot").OrderBy(b => b.CreatedOn).FirstOrDefault();
                 //    if (Scoopbookmark == null)
-                    //{
+                //    {
                 //        Logging.Log("Bookmark named [ ScoopSpot ] not found");
                 //        State = QuestorState.Idle;
                 //        break;
-                    //}
-                    //
+                //    }
+                //
                 //    State = QuestorState.ScoopStep2GotoScoopBookmark;
                 //    _traveler.Destination = new BookmarkDestination(Scoopbookmark);
-                    //
+                //
                 //    //}
                 //    break;
 
@@ -1616,11 +1612,11 @@ namespace Questor
                 //
                 //    // Is our cargo window open?
                 //    if (MyScoopshipCargo.Window == null)
-                    //{
+                //    {
                 //        // No, command it to open
                 //        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenCargoHoldOfActiveShip);
-                    //    break;
-                    //}
+                //        break;
+                //    }
                 //
                 //    //if (MyScoopshipCargo.IsReady && (MyScoopshipCargo.Capacity - MyScoopshipCargo.UsedCapacity) < 3500)
                 //    //{

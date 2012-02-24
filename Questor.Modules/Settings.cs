@@ -105,7 +105,7 @@ namespace Questor.Modules
         
         public int walletbalancechangelogoffdelay { get; set; }
         public string walletbalancechangelogoffdelayLogofforExit { get; set; }
-        
+
         public Int64 EVEProcessMemoryCeiling { get; set; }
         public string EVEProcessMemoryCeilingLogofforExit { get; set; }
 
