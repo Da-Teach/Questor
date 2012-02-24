@@ -385,6 +385,7 @@ namespace Questor
             {
                 if (DateTime.Now.Subtract(_lastAction).TotalMinutes > 1)
             {
+                    _lastAction = DateTime.Now;
                     //Logging.Log("[Questor] Wallet Balance Debug Info: lastknowngoodconnectedtime = " + Settings.Instance.lastKnownGoodConnectedTime);
                     //Logging.Log("[Questor] Wallet Balance Debug Info: DateTime.Now - lastknowngoodconnectedtime = " + DateTime.Now.Subtract(Settings.Instance.lastKnownGoodConnectedTime).TotalSeconds);
                     if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) > 1)
