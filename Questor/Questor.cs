@@ -378,28 +378,22 @@ namespace Questor
                     }
                 }
             }
-            //Logging.Log("[Questor] Wallet Balance Debug Info: lastknowngoodconnectedtime = " + Settings.Instance.lastKnownGoodConnectedTime);
-            //Logging.Log("[Questor] Wallet Balance Debug Info: DateTime.Now - lastknowngoodconnectedtime = " + DateTime.Now.Subtract(Settings.Instance.lastKnownGoodConnectedTime).TotalSeconds);
-            if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) == 15)
-            {
-				Logging.Log("[Questor] Wallet Balance Has Not Changed in [ " + "15" + " ] min");
 			}
-            if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) == 20)
-            {
-				Logging.Log("[Questor] Wallet Balance Has Not Changed in [ " + "20" + " ] min");
 			}
-            if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) == 25)
+
+            if (!Paused)
             {
-				Logging.Log("[Questor] Wallet Balance Has Not Changed in [ " + "25" + " ] min");
-			}
-            if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) == 30)
+                if (DateTime.Now.Subtract(_lastAction).TotalMinutes > 1)
             {
-				Logging.Log("[Questor] Wallet Balance Has Not Changed in [ " + "30" + " ] min");
-			}
-            if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) == 35)
+                    //Logging.Log("[Questor] Wallet Balance Debug Info: lastknowngoodconnectedtime = " + Settings.Instance.lastKnownGoodConnectedTime);
+                    //Logging.Log("[Questor] Wallet Balance Debug Info: DateTime.Now - lastknowngoodconnectedtime = " + DateTime.Now.Subtract(Settings.Instance.lastKnownGoodConnectedTime).TotalSeconds);
+                    if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) > 1)
             {
-				Logging.Log("[Questor] Wallet Balance Has Not Changed in [ " + "35" + " ] min");
+                        Logging.Log(String.Format("Questor: Wallet Balance Has Not Changed in [ {0} ] minutes.", Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes,0)));
 			}
+                    
+                    //Settings.Instance.walletbalancechangelogoffdelay = 2;  //used for debugging purposes
+                    //Logging.Log("Cache.Instance.lastKnownGoodConnectedTime is currently: " + Cache.Instance.lastKnownGoodConnectedTime);
             if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) < Settings.Instance.walletbalancechangelogoffdelay)
             {
                 if (State == QuestorState.Salvage)
@@ -419,23 +413,27 @@ namespace Questor
             else
             {
 
-                Logging.Log("[Questor] Wallet Balance Has Not Changed in [ " + Settings.Instance.walletbalancechangelogoffdelay + " ] minutes. Quitting game.");
+                        Logging.Log(String.Format("Questor: Wallet Balance Has Not Changed in [ {0} ] minutes. Switching to QuestorState.CloseQuestor", Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes, 0)));
                 Cache.Instance.ReasonToStopQuestor = "Wallet Balance did not change for over " + Settings.Instance.walletbalancechangelogoffdelay + "min";
                 
                 if (Settings.Instance.walletbalancechangelogoffdelayLogofforExit == "logoff")
                 {
+                            Logging.Log("Questor: walletbalancechangelogoffdelayLogofforExit is set to: " + Settings.Instance.walletbalancechangelogoffdelayLogofforExit); 
                     Cache.Instance.CloseQuestorCMDLogoff = true;
                     Cache.Instance.CloseQuestorCMDExitGame = false;
                     Cache.Instance.SessionState = "LoggingOff";
                 }
                 if (Settings.Instance.walletbalancechangelogoffdelayLogofforExit == "exit")
                 {
+                            Logging.Log("Questor: walletbalancechangelogoffdelayLogofforExit is set to: " + Settings.Instance.walletbalancechangelogoffdelayLogofforExit);
                     Cache.Instance.CloseQuestorCMDLogoff = false;
                     Cache.Instance.CloseQuestorCMDExitGame = true;
                     Cache.Instance.SessionState = "Exiting";
                 }
                 State = QuestorState.CloseQuestor;
                 return;
+            }
+                }
             }
 
             // We always check our defense state if we're in space, regardless of questor state
@@ -1078,7 +1076,7 @@ namespace Questor
                         _traveler.ProcessState();
                         if (_traveler.State == TravelerState.AtDestination)
                         {
-                            if (Cache.Instance.totalMegaBytesOfMemoryUsed > (Settings.Instance.EVEProcessMemoryCeiling - 50))
+                            if (Cache.Instance.totalMegaBytesOfMemoryUsed > (Settings.Instance.EVEProcessMemoryCeiling - 50) && Settings.Instance.EVEProcessMemoryCielingLogofforExit != "")
                             {
                                 Logging.Log("Questor: Memory usage is above the EVEProcessMemoryCeiling threshold. EVE instance: totalMegaBytesOfMemoryUsed - " + Cache.Instance.totalMegaBytesOfMemoryUsed + " MB");
                                 Cache.Instance.ReasonToStopQuestor = "Memory usage is above the EVEProcessMemoryCeiling threshold. EVE instance: totalMegaBytesOfMemoryUsed - " + Cache.Instance.totalMegaBytesOfMemoryUsed + " MB";
