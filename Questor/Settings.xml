@@ -11,13 +11,9 @@
   
   <!-- EVEProcessMemoryCieling: If this instance of EVE consumes more than the stated MB of Memory close eve when in station between missions-->
   <EVEProcessMemoryCeiling>1150</EVEProcessMemoryCeiling>  <!-- default is 1150-->
-  <!-- this defaults to exit because of issues with the questor window disappearing and occessionally the eve process getting 'hung' when using logoff -->
-  <EVEProcessMemoryCeilingLogofforExit>exit</EVEProcessMemoryCeilingLogofforExit> <!-- default is exit, other option is: logoff -->
   
   <!-- walletbalancechangelogoffdelay: If your characters wallet ballance does not change within this many minutes exit eve, the assumption is your toon is stuck or disconnected -->
   <walletbalancechangelogoffdelay>40</walletbalancechangelogoffdelay>  <!-- default is 40 -->
-  <!-- this defaults to exit because of issues with the questor window disappearing and occessionally the eve process getting 'hung' when using logoff -->
-  <walletbalancechangelogoffdelayLogofforExit>exit</walletbalancechangelogoffdelayLogofforExit>  <!-- default is exit, other option is: logoff -->
   
   <!-- These two options are mutually exclusive: choose ONE: -->
   <!-- When questor has to quit (walletbalance or eveprocessmemoryceiling or <insert reason here> questor will try to initiate a timedcommand to the innerspace uplink to restart the session -->
