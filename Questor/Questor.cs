@@ -26,6 +26,7 @@ namespace Questor
         private frmMain m_Parent;
         private AgentInteraction _agentInteraction;
         private Arm _arm;
+        //private SwitchShip _switch;
         private Combat _combat;
         private LocalWatch _localwatch;
         private ScanInteraction _scanInteraction;
@@ -53,6 +54,7 @@ namespace Questor
         private double _lastY;
         private double _lastZ;
         private bool _GatesPresent;
+        private bool first_start = true;
         DateTime nextAction = DateTime.Now;
         
         public Questor(frmMain form1)
@@ -74,6 +76,7 @@ namespace Questor
             _unloadLoot = new UnloadLoot();
             _agentInteraction = new AgentInteraction();
             _arm = new Arm();
+            //_switch = new SwitchShip();
             _missionController = new MissionController();
             _drones = new Drones();
             _panic = new Panic();
@@ -779,41 +782,21 @@ namespace Questor
                     break;
 
                 case QuestorState.Switch:
-                    var shipHangar = Cache.Instance.DirectEve.GetShipHangar();
-                    var shipName = Settings.Instance.CombatShipName.ToLower();
 
-                    // Is the ship hangar open?
-                    if(shipHangar.Window == null)
-                    {
-                        // No, command it to open
-                        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenShipHangar);
-                        break;
-                    }
-
-                    if(!shipHangar.IsReady)
-                        break;
-
-                    if((!string.IsNullOrEmpty(shipName) && Cache.Instance.DirectEve.ActiveShip.GivenName.ToLower() != shipName))
-                    {
-                        if(DateTime.Now.Subtract(_lastAction).TotalSeconds > 15)
-                        {
-                            var ships = Cache.Instance.DirectEve.GetShipHangar().Items;
-                            foreach(var ship in ships.Where(ship => ship.GivenName.ToLower() == shipName))
-                            {
-                                Logging.Log("Switch: Making [" + ship.GivenName + "] active");
-
-                                ship.ActivateShip();
-                                _lastAction = DateTime.Now;
-
-                                return;
-                            }
-                        }
-                        return;
-                    }
-
-                    State = QuestorState.GotoBase;
-
-                    break;
+                    //if (_switch.State == SwitchShipState.Idle)
+                    //{
+                    //    Logging.Log("Switch: Begin");
+                    //    _switch.State = SwitchShipState.Begin;
+                    //}
+                    //
+                    //_switch.ProcessState();
+                    //
+                    //if (_switch.State == SwitchShipState.Done)
+                    //{
+                    //    _switch.State = SwitchShipState.Idle;
+                    //    State = QuestorState.GotoBase;
+                    //}
+                    //break;
 
                 case QuestorState.Arm:
                     if (_arm.State == ArmState.Idle)
@@ -965,9 +948,9 @@ namespace Questor
 
                 case QuestorState.Scanning:
                     //_localwatch.ProcessState();
-                    //_scanInteraction.ProcessState();
-                    //if(_scanInteraction.State == ScanInteractionState.Idle)
-                    //    _scanInteraction.State = ScanInteractionState.Scan;
+                    _scanInteraction.ProcessState();
+                    if (_scanInteraction.State == ScanInteractionState.Idle)
+                        _scanInteraction.State = ScanInteractionState.Scan;
                     /*
                     if(_scanInteraction.State == ScanInteractionState.Done)
                         State = QuestorState.CombatHelper_anomaly;
