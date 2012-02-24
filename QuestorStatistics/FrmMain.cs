@@ -19,7 +19,7 @@ namespace QuestorStatistics
     {
         
 
-        string LocalRuta = Application.StartupPath;
+        string LocalRuta = Application.StartupPath+"//log//";
 
         //-------------------------------------------------------------------------
         // Start the Form and look for the files .Statistics.log in the root
@@ -33,7 +33,7 @@ namespace QuestorStatistics
             System.IO.DirectoryInfo o = new System.IO.DirectoryInfo(LocalRuta);
             System.IO.FileInfo[] myfiles = null;
 
-            myfiles = o.GetFiles("*.datedstatistics.log");
+            myfiles = o.GetFiles("*.Statistics.log");
             for (int y = 0; y <= myfiles.Length - 1; y++)
             {
                 cmb1.Items.Add(myfiles[y].Name);
