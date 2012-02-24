@@ -550,7 +550,8 @@ namespace Questor
                         Cache.Instance.SessionIskGenerated = (Cache.Instance.SessionIskGenerated + (Cache.Instance.DirectEve.Me.Wealth - Cache.Instance.Wealth));
                         Cache.Instance.SessionLootGenerated = (Cache.Instance.SessionLootGenerated + (int)LootValue);
                         Cache.Instance.SessionLPGenerated = (Cache.Instance.SessionLPGenerated + (Cache.Instance.Agent.LoyaltyPoints - LoyaltyPoints));
-
+                        if (Settings.Instance.MissionStats1Log)
+                        {
                         Directory.CreateDirectory(Settings.Instance.MissionStats1LogPath);
 
                         // Write the header
@@ -570,7 +571,9 @@ namespace Questor
                         // The mission is finished
                         File.AppendAllText(Settings.Instance.MissionStats1LogFile, line);
                         Logging.Log("Questor: is writing mission log1 to  [ " + Settings.Instance.MissionStats1LogFile);
-
+                        }
+                        if (Settings.Instance.MissionStats2Log)
+                        {
                         Directory.CreateDirectory(Settings.Instance.MissionStats2LogPath);
 
                         // Write the header
@@ -591,7 +594,9 @@ namespace Questor
                         // The mission is finished
                         Logging.Log("Questor: is writing mission log2 to [ " + Settings.Instance.MissionStats2LogFile);
                         File.AppendAllText(Settings.Instance.MissionStats2LogFile, line2);
-
+                        }
+                        if (Settings.Instance.MissionStats3Log)
+                        {
                         Directory.CreateDirectory(Settings.Instance.MissionStats3LogPath);
 
                         // Write the header
@@ -617,7 +622,7 @@ namespace Questor
                         // The mission is finished
                         Logging.Log("Questor: is writing mission log3 to  [ " + Settings.Instance.MissionStats3LogFile);
                         File.AppendAllText(Settings.Instance.MissionStats3LogFile, line3);
-
+                        }
                         // Disable next log line
                         Mission = null;
                     }
@@ -1207,6 +1212,8 @@ namespace Questor
                 case QuestorState.CompleteMission:
                     if (_agentInteraction.State == AgentInteractionState.Idle)
                     {
+                        if (Settings.Instance.DroneStatsLog)
+                        {
                         // Lost drone statistics
                         // (inelegantly located here so as to avoid the necessity to switch to a combat ship after salvaging)
                         if (Settings.Instance.UseDrones)
@@ -1235,6 +1242,7 @@ namespace Questor
                             {
                                 Logging.Log("DroneStats: Couldn't find the drone TypeID specified in the settings.xml; this shouldn't happen!");
                             }
+                        }
                         }
                         // Lost drone statistics stuff ends here
 

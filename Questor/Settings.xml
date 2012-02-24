@@ -2,8 +2,6 @@
 <settings>
   <!-- Auto start when Questor is loaded -->
   <autoStart>true</autoStart>  <!-- default is true -->
-  <!-- Save Log Console -->
-  <saveLog>true</saveLog>  <!-- default is true -->
   <!-- debugStates: creates more verbose logging: use for debugging purposes only -->
   <debugStates>false</debugStates>  <!-- default is false -->
   <!-- debugPerformance: creates more verbose logging: use for debugging purposes only -->
@@ -12,9 +10,9 @@
   <CharacterMode>dps</CharacterMode>  <!-- default is dps -->
   
   <!-- EVEProcessMemoryCieling: If this instance of EVE consumes more than the stated MB of Memory close eve when in station between missions-->
-  <EVEProcessMemoryCieling>1150</EVEProcessMemoryCieling>  <!-- default is 1150-->
+  <EVEProcessMemoryCeiling>1150</EVEProcessMemoryCeiling>  <!-- default is 1150-->
   <!-- this defaults to exit because of issues with the questor window disappearing and occessionally the eve process getting 'hung' when using logoff -->
-  <EVEProcessMemoryCielingLogofforExit>exit</EVEProcessMemoryCielingLogofforExit> <!-- default is exit, other option is: logoff -->
+  <EVEProcessMemoryCeilingLogofforExit>exit</EVEProcessMemoryCeilingLogofforExit> <!-- default is exit, other option is: logoff -->
   
   <!-- walletbalancechangelogoffdelay: If your characters wallet ballance does not change within this many minutes exit eve, the assumption is your toon is stuck or disconnected -->
   <walletbalancechangelogoffdelay>40</walletbalancechangelogoffdelay>  <!-- default is 40 -->
@@ -245,4 +243,25 @@
 
   <!-- Recall drones if below this capacitor percentage and further away then half the drone control range -->
   <longRangeDroneRecallCapacitorPct>30</longRangeDroneRecallCapacitorPct>
+  
+  <!-- -------------------------------------------------------------------------------------------------------- -->
+  <!--      Logging Options: All logs are in ./.Net Programs/Logs/<CharacterName>/<optionalsubdirectory> -->
+  <!-- -------------------------------------------------------------------------------------------------------- -->
+  <!-- Save Log Console: the logs will save to: ./.Net Programs/Logs/<CharacterName>/consolelogs/<DailyLog> -->
+  <saveLog>true</saveLog>  <!-- default is true -->
+  <!-- Enable or Disable the SessionsLog that tracks Logins / Logoffs and overall session stats for questor -->
+  <SessionsLog>true</SessionsLog> <!-- default is: true -->
+  <!-- Enable or Disable the DroneStatsLog that tracks drone losses -->
+  <DroneStatsLog>true</DroneStatsLog><!-- default is: true -->
+  <!-- Enable or Disable the WreckLootStatistics Log - this log can get quite large -->
+  <WreckLootStatistics>false</WreckLootStatistics><!-- default is: false -->
+  <!-- Enable of Disable the MissionStats1Log: original and compatible with QuestorStatistics -->
+  <MissionStats1Log>true</MissionStats1Log><!-- default is: true -->
+  <!-- Enable of Disable the MissionStats2Log: more verbose that MissionStats1Log -->
+  <MissionStats2Log>true</MissionStats2Log><!-- default is: true -->
+  <!-- Enable of Disable the MissionStats3Log: most verbose and is in csv format that can be opened in excel for sorting and beancounting -->
+  <MissionStats3Log>true</MissionStats3Log><!-- default is: true -->
+  <!-- Enable of Disable the PocketStatistics logs: each and every pocket of missions will generate a seperate log with completion times and other statistics for your XML tuning pleasure -->
+  <PocketStatistics>true</PocketStatistics><!-- default is: true -->
+  
 </settings>

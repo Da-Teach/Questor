@@ -56,6 +56,8 @@ namespace Questor.Modules
             //    return;
             var mission = Cache.Instance.GetAgentMission(AgentId);
             var currentPocketName = Cache.Instance.FilterPath(mission.Name);
+            if (Settings.Instance.PocketStatistics)
+            {
             Settings.Instance.PocketStatisticsFile = Path.Combine(Settings.Instance.PocketStatisticsPath, Cache.Instance.FilterPath(Cache.Instance.DirectEve.Me.Name) + " - " + currentPocketName + " - " + _pocket + " - PocketStatistics.csv");
             
 			Directory.CreateDirectory(Settings.Instance.PocketStatisticsPath);
@@ -82,7 +84,7 @@ namespace Questor.Modules
                 // The old pocket is finished
             Logging.Log("MissionController: Writing pocket statistics to [ " + Settings.Instance.PocketStatisticsFile + "and clearing stats for next pocket");
             File.AppendAllText(Settings.Instance.PocketStatisticsFile, pocketstats_line);
-
+            }
                 // Update statistic values for next pocket stats
                 Wealth = Cache.Instance.DirectEve.Me.Wealth;
                 StartedPocket = DateTime.Now;

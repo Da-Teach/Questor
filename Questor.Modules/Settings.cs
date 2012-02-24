@@ -129,18 +129,25 @@ namespace Questor.Modules
 
         public string logpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
+        public bool   SessionsLog { get; set; }
         public string SessionsLogPath { get; set; }
         public string SessionsLogFile { get; set; }
+        public bool   DroneStatsLog { get; set; }
         public string DroneStatsLogPath { get; set; }
         public string DroneStatslogFile { get; set; }
+        public bool   WreckLootStatistics { get; set; }
         public string WreckLootStatisticsPath { get; set; }
         public string WreckLootStatisticsFile { get; set; }
+        public bool   MissionStats1Log { get; set; }
         public string MissionStats1LogPath { get; set; }
         public string MissionStats1LogFile { get; set; }
+        public bool   MissionStats2Log { get; set; }
         public string MissionStats2LogPath { get; set; }
         public string MissionStats2LogFile { get; set; }
+        public bool   MissionStats3Log { get; set; }
         public string MissionStats3LogPath { get; set; }
         public string MissionStats3LogFile { get; set; }
+        public bool   PocketStatistics { get; set; }
         public string PocketStatisticsPath { get; set; }
         public string PocketStatisticsFile { get; set; }
 
@@ -217,6 +224,9 @@ namespace Questor.Modules
         {
             var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var settingsPath = Path.Combine(path, Cache.Instance.FilterPath(_characterName) + ".xml");
+            var logpath = Path.Combine(path, "\\log\\");
+            logpath = Path.Combine(logpath, Cache.Instance.FilterPath(_characterName));
+            logpath = Path.Combine(logpath, "\\");
 
             var repairstopwatch = new Stopwatch();
 
@@ -239,7 +249,7 @@ namespace Questor.Modules
 
                 AutoStart = false;
 
-                SaveLog = false;
+                SaveLog = true;
 
                 maxLineConsole = 1000;
 
@@ -328,7 +338,7 @@ namespace Questor.Modules
 
             AutoStart = (bool?) xml.Element("autoStart") ?? false;
 
-            SaveLog = (bool?)xml.Element("saveLog") ?? false;
+            SaveLog = (bool?)xml.Element("saveLog") ?? true;
 
             maxLineConsole = (int?)xml.Element("maxLineConsole") ?? 1000;
             waitDecline = (bool?) xml.Element("waitDecline") ?? false;
@@ -382,6 +392,14 @@ namespace Questor.Modules
             
             walletbalancechangelogoffdelay = (int?)xml.Element("walletbalancechangelogoffdelay") ?? 30;
             walletbalancechangelogoffdelayLogofforExit = (string)xml.Element("walletbalancechangelogoffdelayLogofforExit") ?? "exit";
+
+            SessionsLog = (bool?)xml.Element("SessionsLog") ?? true;
+            DroneStatsLog = (bool?)xml.Element("DroneStatsLog") ?? true;
+            WreckLootStatistics = (bool?)xml.Element("WreckLootStatistics") ?? true;
+            MissionStats1Log = (bool?)xml.Element("MissionStats1Log") ?? true;
+            MissionStats2Log = (bool?)xml.Element("MissionStats2Log") ?? true;
+            MissionStats3Log = (bool?)xml.Element("MissionStats3Log") ?? true;
+            PocketStatistics = (bool?)xml.Element("PocketStatistics") ?? true;
 
             var missionsPath = (string) xml.Element("missionsPath");
             MissionsPath = !string.IsNullOrEmpty(missionsPath) ? Path.Combine(path, missionsPath) : Path.Combine(path, "Missions");

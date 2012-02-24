@@ -290,6 +290,8 @@ namespace Questor.Modules
                 // Build a list of items to loot
                 var lootItems = new List<ItemCache>();
 				
+                if (Settings.Instance.WreckLootStatistics)
+                {
                 // Log all items found in the wreck
                 File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, "TIME: " + string.Format("{0:dd/MM/yyyy HH:mm:ss}", DateTime.Now) + "\n");
                 File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, "NAME: " + containerEntity.Name + "\n");
@@ -302,7 +304,7 @@ namespace Questor.Modules
                     File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, "=\n");
                 }
                 File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, ";" + "\n");
-				
+                }
 				//if (freeCargoCapacity < 1000) //this should allow BSs to dump scrapmetal but haulers and noctus' to hold onto it
 				//{
 				//	// Dump scrap metal if we have any
