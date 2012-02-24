@@ -1644,31 +1644,33 @@ namespace Questor
                     }
                     break;
 
-                case QuestorState.Debug_WindowNames:
+                case QuestorState.Debug_CloseQuestor:
+                    //Logging.Log("ISBoxerCharacterSet: " + Settings.Instance.Lavish_ISBoxerCharacterSet);
+                    //Logging.Log("Profile: " + Settings.Instance.Lavish_InnerspaceProfile);
+                    //Logging.Log("Game: " + Settings.Instance.Lavish_Game);
+                    Logging.Log("CloseQuestorCMDUplinkInnerspaceProfile: " + Settings.Instance.CloseQuestorCMDUplinkInnerspaceProfile);
+                    Logging.Log("CloseQuestorCMDUplinkISboxerCharacterSet: " + Settings.Instance.CloseQuestorCMDUplinkIsboxerCharacterSet);
+                    Logging.Log("walletbalancechangelogoffdelay: " + Settings.Instance.walletbalancechangelogoffdelay);
+                    Logging.Log("walletbalancechangelogoffdelayLogofforExit: " + Settings.Instance.walletbalancechangelogoffdelayLogofforExit);
+                    Logging.Log("walletbalancechangelogoffdelayLogofforExit: " + Settings.Instance.walletbalancechangelogoffdelayLogofforExit);
+                    Logging.Log("EVEProcessMemoryCeiling: " + Settings.Instance.EVEProcessMemoryCeiling);
+                    Logging.Log("EVEProcessMemoryCielingLogofforExit: " + Settings.Instance.EVEProcessMemoryCeilingLogofforExit);
+                    State = QuestorState.Error;
+                    return;
+                    
+                    
+               case QuestorState.Debug_Windows:
                     var windows = new List<DirectWindow>();
             
                     foreach (var window in windows)
                     {
                         Logging.Log("Debug_Questor_WindowNames: [" + window.Name + "]");              
                     }
-                    State = QuestorState.Error;
-                    break;
-                    
-                    
-               case QuestorState.Debug_WindowCaptions:
-                    var windows2 = new List<DirectWindow>();
-            
-                    foreach (var window in windows2)
+                    foreach (var window in windows)
                     {
                         Logging.Log("Debug_Windowcaptions: [" + window.Name + window.Caption + "]");              
                     }
-                    State = QuestorState.Error;
-                    break;
-
-               case QuestorState.Debug_WindowTypes:
-                    var windows3 = new List<DirectWindow>();
-
-                    foreach (var window in windows3)
+                    foreach (var window in windows)
                     {
                         Logging.Log("Debug_WindowTypes: [" + window.Name + window.Type + "]");
                     }

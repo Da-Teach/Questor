@@ -48,8 +48,7 @@ namespace Questor
         SalvageOnly,
         SalvageOnlyBookmarks,
         GotoSalvageOnlyBookmark,
-        Debug_WindowNames,
-        Debug_WindowCaptions,
-        Debug_WindowTypes,
+        Debug_Windows,
+        Debug_CloseQuestor,
     }
 }
