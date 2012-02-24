@@ -129,7 +129,7 @@ namespace Questor.Modules
                     
                     CommonMissionCompletionItemHangar.Add(ItemsToMove);
                     _lastAction = DateTime.Now;
-                    
+
                     Logging.Log("UnloadLoot: Moving Common Mission Completion Items to Local hangar");
                     State = UnloadLootState.MoveLoot;
                     break;
@@ -270,6 +270,20 @@ namespace Questor.Modules
                     if (corpLootHangar != null)
                     {
                         corpLootHangar.StackAll();
+                        _lastAction = DateTime.Now;
+                    }
+                    State = UnloadLootState.StackItemsLootContainer;
+                    break;
+
+                case UnloadLootState.StackItemsLootContainer:
+                    // Dont stack until 5 seconds after the cargo has cleared
+                    if(DateTime.Now.Subtract(_lastAction).TotalSeconds < 5)
+                        break;
+
+                    // Stack everything
+                    if(lootContainer != null)
+                    {
+                        lootContainer.StackAll();
                         _lastAction = DateTime.Now;
                     }
                     State = UnloadLootState.WaitForStacking;
