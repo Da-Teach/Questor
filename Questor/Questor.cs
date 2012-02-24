@@ -686,7 +686,7 @@ namespace Questor
                     Cache.Instance.totalMegaBytesOfMemoryUsed = ((currentProcess.WorkingSet64 / 1024) / 1024);
                     Logging.Log("Questor: EVE instance: totalMegaBytesOfMemoryUsed - " + Cache.Instance.totalMegaBytesOfMemoryUsed + " MB");
 
-                    if (Cache.Instance.totalMegaBytesOfMemoryUsed > Settings.Instance.EVEProcessMemoryCeiling)
+                    if (Cache.Instance.totalMegaBytesOfMemoryUsed > Settings.Instance.EVEProcessMemoryCeiling && Settings.Instance.EVEProcessMemoryCeilingLogofforExit != "")
                     {
                         Logging.Log("Questor: Memory usage is above the EVEProcessMemoryCeiling threshold. EVE instance: totalMegaBytesOfMemoryUsed - " + Cache.Instance.totalMegaBytesOfMemoryUsed + " MB");
                         Logging.Log("Questor: Setting QuestorState to GotoBase.");
@@ -1082,11 +1082,11 @@ namespace Questor
                         _traveler.ProcessState();
                         if (_traveler.State == TravelerState.AtDestination)
                         {
-                            if (Cache.Instance.totalMegaBytesOfMemoryUsed > (Settings.Instance.EVEProcessMemoryCeiling - 50) && Settings.Instance.EVEProcessMemoryCielingLogofforExit != "")
+                            if (Cache.Instance.totalMegaBytesOfMemoryUsed > (Settings.Instance.EVEProcessMemoryCeiling - 50) && Settings.Instance.EVEProcessMemoryCeilingLogofforExit != "")
                             {
                                 Logging.Log("Questor: Memory usage is above the EVEProcessMemoryCeiling threshold. EVE instance: totalMegaBytesOfMemoryUsed - " + Cache.Instance.totalMegaBytesOfMemoryUsed + " MB");
                                 Cache.Instance.ReasonToStopQuestor = "Memory usage is above the EVEProcessMemoryCeiling threshold. EVE instance: totalMegaBytesOfMemoryUsed - " + Cache.Instance.totalMegaBytesOfMemoryUsed + " MB";
-                                if (Settings.Instance.EVEProcessMemoryCielingLogofforExit == "logoff")
+                                if (Settings.Instance.EVEProcessMemoryCeilingLogofforExit == "logoff")
                                 {
                                     Cache.Instance.CloseQuestorCMDLogoff = true;
                                     Cache.Instance.CloseQuestorCMDExitGame = false;
@@ -1094,7 +1094,7 @@ namespace Questor
                                     State = QuestorState.CloseQuestor;
                                     return;
                                 }
-                                if (Settings.Instance.EVEProcessMemoryCielingLogofforExit == "exit")
+                                if (Settings.Instance.EVEProcessMemoryCeilingLogofforExit == "exit")
                                 {
                                     Cache.Instance.CloseQuestorCMDLogoff = false;
                                     Cache.Instance.CloseQuestorCMDExitGame = true;
