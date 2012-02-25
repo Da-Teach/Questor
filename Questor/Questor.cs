@@ -771,6 +771,7 @@ namespace Questor
 
                         _agentInteraction.State = AgentInteractionState.Idle;
                         State = QuestorState.Arm;
+                        return;
                     }
 
                     //if(_agentInteraction.State == AgentInteractionState.ChangeAgent)
@@ -1398,15 +1399,18 @@ namespace Questor
                         if (_combat.State != CombatState.OutOfAmmo && Settings.Instance.AfterMissionSalvaging && Cache.Instance.BookmarksByLabel(Settings.Instance.BookmarkPrefix + " ").Count > 0 && (mission == null || mission.State == (int)MissionState.Offered))
                         {
                             State = QuestorState.BeginAfterMissionSalvaging;
+                            return;
                         }
                         else if (_combat.State == CombatState.OutOfAmmo)
                         {
                             State = QuestorState.Start;
+                            return;
                         }
                         else
                         {
                             FinishedTask = DateTime.Now;
                             State = QuestorState.Idle;
+                            return;
                     }
                     }
                     break;
@@ -1866,6 +1870,7 @@ namespace Questor
                             Logging.Log("Salvage: Goto the next salvage bookmark");
                             _traveler.Destination = new BookmarkDestination(bookmarks.OrderBy(b => b.CreatedOn).First());
                             State = QuestorState.GotoSalvageOnlyBookmark;
+                            return;
                         }
                         break;
                     }
@@ -1902,6 +1907,7 @@ namespace Questor
                         // should never happen, but still...
                         Logging.Log("Traveler: (questor.cs) No destination?");
                         State = QuestorState.Error;
+                        return;
                     }
                     else
                         if (destination.Count == 1 && destination.First() == 0)
@@ -1931,16 +1937,19 @@ namespace Questor
                             {
                                 Logging.Log("Questor stopped: (questor.cs) an error has occured");
                                 State = QuestorState.Error;
+                                return;
                             }
                             else if (Cache.Instance.InSpace)
                             {
                                 Logging.Log("Traveler: (questor.cs) Arrived at destination (in space, Questor stopped)");
                                 State = QuestorState.Error;
+                                return;
                             }
                             else
                             {
                                 Logging.Log("Traveler: (questor.cs) Arrived at destination");
                                 State = QuestorState.Idle;
+                                return;
                             }
                         }
                     }
