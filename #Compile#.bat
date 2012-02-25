@@ -29,6 +29,8 @@ if not exist output mkdir output >>nul 2>>nul
 :: Echo deleting old build from the output directory
 del .\output\*.exe /Q >>nul 2>>nul
 del .\output\*.dll /Q >>nul 2>>nul
+del .\output\*.xml /Q >>nul 2>>nul
+
 :: Echo Adding new build to the output directory
 copy .\questor\bin\debug\*.exe .\output\*.exe >>nul 2>>nul
 copy .\questor\bin\debug\*.dll .\output\*.dll >>nul 2>>nul
@@ -40,6 +42,11 @@ copy .\BuyLPI\bin\debug\*.exe .\output\*.exe >>nul 2>>nul
 copy .\Traveler\bin\debug\*.exe .\output\*.exe >>nul 2>>nul
 copy .\QuestorManager\bin\debug\*.exe .\output\*.exe >>nul 2>>nul
 ::copy .\QuestorSettings\bin\debug\*.exe .\output\*.exe >>nul 2>>nul
+Echo Copying mostly static files...
+copy .\questor\invtypes.xml .\output\
+copy .\questor\ShipTargetValues.xml .\output\
+copy .\questor\factions.xml .\output\
+copy .\questor\settings.xml .\output\settings-template-rename-to-charactername.xml
 Echo.
 Echo use #TransferToLiveCopy#.bat to move the new build into place for testing 
 Echo.
