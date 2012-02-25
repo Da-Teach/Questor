@@ -293,14 +293,16 @@ namespace Questor.Modules
             foreach (var weapon in weapons)
             {
                 // dont waste ammo on small target if you use autocannon or siege i hope you use drone
-                //if(Settings.Instance.WeaponGroupId == 55 || Settings.Instance.WeaponGroupId == 508 || Settings.Instance.WeaponGroupId == 506)
-                //{
-                //    if (target.Distance <= 9000 && !target.TargetValue.HasValue)
-                //    {
-                //        weapon.Deactivate();
-                //    }
-                //}
-
+                if (Settings.Instance.DontShootFrigatesWithSiegeorAutoCannons) //this defaults to false and needs to be changes in your characters settings xml file if you want to enable this option
+                {
+                    if (Settings.Instance.WeaponGroupId == 55 || Settings.Instance.WeaponGroupId == 508 || Settings.Instance.WeaponGroupId == 506)
+                    {
+                        if (target.Distance <= 9000 && !target.TargetValue.HasValue)
+                        {
+                            weapon.Deactivate();
+                        }
+                    }
+                }
                 if (!weapon.IsActive)
                     continue;
 

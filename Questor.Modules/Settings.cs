@@ -111,6 +111,7 @@ namespace Questor.Modules
 
         public bool CloseQuestorCMDUplinkInnerspaceProfile { get; set; }
         public bool CloseQuestorCMDUplinkIsboxerCharacterSet { get; set; }
+        public bool DontShootFrigatesWithSiegeorAutoCannons { get; set; }
 
         //public int missionbookmarktoagentloops { get; set; }  //not yet used - although it is likely a good ide to fix it so it is used - it would eliminate going back and fourth to the same mission over and over
         public string missionName { get; set; }

@@ -210,6 +210,9 @@
        on then the bot will loot all wrecks/cans before finishing the loot-action -->
   <lootEverything>true</lootEverything>
 
+  <!-- Use ONLY drones and NOT torps or autocannons on frigates -->
+  <DontShootFrigatesWithSiegeorAutoCannons>false</DontShootFrigatesWithSiegeorAutoCannons>
+
   <!-- Use drones, disable on ships without a drone bay! -->
   <useDrones>true</useDrones>
 
