@@ -69,6 +69,7 @@ namespace Questor.Modules
 		public float minStandings { get; set; }
         public bool UseGatesInSalvage { get; set; }
 
+        public bool UseLocalWatch { get; set; }
         public int LocalBadStandingPilotsToTolerate { get; set; }
         public double LocalBadStandingLevelToConsiderBad { get; set; }
 
@@ -355,6 +356,7 @@ namespace Questor.Modules
 
             UseGatesInSalvage = (bool?)xml.Element("useGatesInSalvage") ?? false;
             
+            UseLocalWatch = (bool?)xml.Element("UseLocalWatch") ?? true;
             LocalBadStandingPilotsToTolerate = (int?)xml.Element("LocalBadStandingPilotsToTolerate") ?? 1;
             LocalBadStandingLevelToConsiderBad = (double?)xml.Element("LocalBadStandingLevelToConsiderBad") ?? -0.1;
 

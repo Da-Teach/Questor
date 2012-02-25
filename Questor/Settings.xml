@@ -38,6 +38,7 @@
   <windowYPosition>1050</windowYPosition> <!-- needs to be customized -->
 
   <!-- Local Watch Settings -->
+  <UseLocalWatch>true</UseLocalWatch> <!-- if false all local watching for bad standings pilots is disabled -->
   <LocalBadStandingPilotsToTolerate>1</LocalBadStandingPilotsToTolerate> <!--  minimum is 1 -->
   <LocalBadStandingLevelToConsiderBad>-0.1</LocalBadStandingLevelToConsiderBad> <!--  from -10 to 10, I recommend -0.1 so that all negative standings will cause alarm -->
 			

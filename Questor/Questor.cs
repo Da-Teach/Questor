@@ -857,6 +857,8 @@ namespace Questor
                     break;
 
                 case QuestorState.LocalWatch:
+                    if (Settings.Instance.UseLocalWatch)
+                    {
                     if(Cache.Instance.Local_safe(Settings.Instance.LocalBadStandingPilotsToTolerate, Settings.Instance.LocalBadStandingLevelToConsiderBad))
                     {
                         Logging.Log("Questor.LocalWatch: local is clear");
@@ -865,13 +867,15 @@ namespace Questor
                     else
                     {
                         Logging.Log("Questor.LocalWatch: Bad standings pilots in local: We will stay 5 minutes in the station and then we will check if it is clear again");
-                        Logging.Log("Questor.LocalWatch: debugging: exiting station anyway...");
-                        //State = QuestorState.WaitingforBadGuytoGoAway;
-                        State = QuestorState.WarpOutStation;
+                        State = QuestorState.WaitingforBadGuytoGoAway;
                         Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
                         Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
                     }
+                    }
+                    else
+                    {
                         State = QuestorState.WarpOutStation;
+                    }
                     break;
 
                 case QuestorState.WaitingforBadGuytoGoAway:
