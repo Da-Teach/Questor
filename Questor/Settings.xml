@@ -246,9 +246,9 @@
   <!-- Recall drones if below this capacitor percentage and further away then half the drone control range -->
   <longRangeDroneRecallCapacitorPct>30</longRangeDroneRecallCapacitorPct>
   
-  <!-- -------------------------------------------------------------------------------------------------------- -->
+  <!--                                                                                                                                                   -->
   <!--      Logging Options: All logs are in ./.Net Programs/Logs/<CharacterName>/<optionalsubdirectory> -->
-  <!-- -------------------------------------------------------------------------------------------------------- -->
+  <!--                                                                                                                                                   -->
   <!-- Save Log Console: the logs will save to: ./.Net Programs/Logs/<CharacterName>/consolelogs/<DailyLog> -->
   <saveLog>true</saveLog>  <!-- default is true -->
   <!-- Enable or Disable the SessionsLog that tracks Logins / Logoffs and overall session stats for questor -->
