@@ -188,8 +188,9 @@ namespace Questor
                 return;
 
             // If Questor window not visible, show it
-            if (!m_Parent.Visible)
-                m_Parent.Visible = true;
+            // this is causing crashes on closing?
+            //if (!m_Parent.Visible)
+            //    m_Parent.Visible = true;
 
             // We are not in space or station, don't do shit yet!
             if (!Cache.Instance.InSpace && !Cache.Instance.InStation)
