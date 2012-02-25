@@ -1214,14 +1214,16 @@ namespace Questor
                                     {
                                         Logging.Log("Questor: We are in station: Starting a timer in the innerspace uplink to restart this innerspace profile session");
                                         LavishScript.ExecuteCommand("uplink exec timedcommand 350 open \\\"${Game}\\\" \\\"${Profile}\\\"");
-                                        Logging.Log("Questor: Done: quitting this session so the new isboxer session can take over");
+                                        Logging.Log("Questor: Done: quitting this session so the new innerspace session can take over");
                                         Logging.Log("Questor: Exiting eve in 15 seconds.");
                                         CloseQuestorCMDUplink = false;
                                         _CloseQuestorDelay = DateTime.Now.AddSeconds(20);
                                     }
-                                    if (_CloseQuestorDelay.AddSeconds(-10) < DateTime.Now)
+                                    if ((_CloseQuestorDelay.AddSeconds(-10) == DateTime.Now) && (!CloseQuestor10SecWarningDone))
                                     {
+                                        CloseQuestor10SecWarningDone = true;
                                         Logging.Log("Questor: Exiting eve in 10 seconds");
+                                        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
                                     } 
                                     if (_CloseQuestorDelay < DateTime.Now)
                                     {
@@ -1237,13 +1239,14 @@ namespace Questor
                                     {
                                         Logging.Log("Questor: We are in station: Starting a timer in the innerspace uplink to restart this isboxer character set");
                                         LavishScript.ExecuteCommand("uplink timedcommand 350 runscript isboxer -launch \\\"${ISBoxerCharacterSet}\\\"");
-                                        Logging.Log("Questor: Done: quitting this session so the new innerspace session can take over");
+                                        Logging.Log("Questor: Done: quitting this session so the new isboxer session can take over");
                                         Logging.Log("Questor: We are in station: Exiting eve.");
                                         CloseQuestorCMDUplink = false;
                                         _CloseQuestorDelay = DateTime.Now.AddSeconds(20);
                                     }
-                                    if (_CloseQuestorDelay.AddSeconds(-10) < DateTime.Now)
+                                    if ((_CloseQuestorDelay.AddSeconds(-10) == DateTime.Now) && (!CloseQuestor10SecWarningDone))
                                     {
+                                        CloseQuestor10SecWarningDone = true;
                                         Logging.Log("Questor: Exiting eve in 10 seconds");
                                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
                                     } 
@@ -1262,8 +1265,9 @@ namespace Questor
                                         CloseQuestorCMDUplink = false;
                                         _CloseQuestorDelay = DateTime.Now.AddSeconds(20);
                                     }
-                                    if (_CloseQuestorDelay.AddSeconds(-10) < DateTime.Now)
+                                    if ((_CloseQuestorDelay.AddSeconds(-10) == DateTime.Now) && (!CloseQuestor10SecWarningDone))
                                     {
+                                        CloseQuestor10SecWarningDone = true;
                                         Logging.Log("Questor: Exiting eve in 10 seconds");
                                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
                                     } 
