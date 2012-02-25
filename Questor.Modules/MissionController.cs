@@ -318,6 +318,26 @@ namespace Questor.Modules
 
                 // Are we approaching the active (out of range) target?
                 // Wait for it (or others) to get into range
+
+                if (Settings.Instance.SpeedTank && Cache.Instance.Approaching == null && Cache.Instance.Approaching.Id != target.Id)
+                    target.Orbit(Cache.Instance.OrbitDistance); 
+
+                if (!Settings.Instance.SpeedTank)
+                {
+                    if (target.Distance > Cache.Instance.OrbitDistance + 5000 && Cache.Instance.Approaching == null)
+                    {
+                        target.Approach(Cache.Instance.OrbitDistance);
+                        Logging.Log("MissionController.ClearPocket: Approaching target [" + target.Name + "][" + target.Id + "]");
+                    }
+
+                    if (target.Distance <= Cache.Instance.OrbitDistance && Cache.Instance.Approaching != null)
+                    {
+                        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                        Cache.Instance.Approaching = null;
+                        Logging.Log("MissionController.ClearPocket: Stop ship, target is in orbit range");
+                    }
+                }
+
                 if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id)
                 {
                     Logging.Log("MissionController.ClearPocket: Approaching target [" + target.Name + "][" + target.Id + "]");
@@ -374,7 +394,7 @@ namespace Questor.Modules
             }
 
             var closest = targets.OrderBy(t => t.Distance).First();
-            if (closest.Distance < 2500)
+            if (closest.Distance < 2200)
             {
                 // We are close enough to whatever we needed to move to
                 _currentAction++;
@@ -797,7 +817,7 @@ namespace Questor.Modules
             }
 
             var closest = containers.FirstOrDefault(c => targetNames.Contains(c.Name)) ?? containers.First();
-            if (closest.Distance > 2500 && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id))
+            if (closest.Distance > 2200 && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id))
             {
                 Logging.Log("MissionController.LootItem: Approaching target [" + closest.Name + "][" + closest.Id + "]");
                 closest.Approach();
@@ -848,7 +868,7 @@ namespace Questor.Modules
             }
 
             var closest = containers.FirstOrDefault(c => targetNames.Contains(c.Name)) ?? containers.First();
-            if (closest.Distance > 2500 && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id))
+            if (closest.Distance > 2200 && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id))
             {
                 Logging.Log("MissionController.Loot: Approaching target [" + closest.Name + "][" + closest.Id + "]");
                 closest.Approach();
