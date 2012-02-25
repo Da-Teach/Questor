@@ -97,6 +97,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Factions.xml" />
+    <Content Include="ShipTargetValues.xml" />
+    <Content Include="InvTypes.xml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Questor.Modules\Questor.Modules.csproj">
       <Project>{0C0BE1A3-BA5B-41A1-B578-F20777D02304}</Project>
       <Name>Questor.Modules</Name>
