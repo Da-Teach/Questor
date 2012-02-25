@@ -274,16 +274,25 @@ namespace Questor.Modules
         /// </summary>
         private void ActivateWeapons(EntityCache target)
         {
-            // Enable speed tank
-            if (Cache.Instance.Approaching == null)
-                if(Settings.Instance.SpeedTank)
+
+            if (Settings.Instance.SpeedTank && Cache.Instance.Approaching == null)
                 target.Orbit(Cache.Instance.OrbitDistance);
-                else
+
+            if (!Settings.Instance.SpeedTank)
+            {
+                if (target.Distance > Cache.Instance.OrbitDistance + 5000 && Cache.Instance.Approaching == null)
                 {
-                    if(target.Distance > Cache.Instance.OrbitDistance + 5000)
                         target.Approach(Cache.Instance.OrbitDistance);
+                        Logging.Log("Combat.ActivateWeapons: Approaching target [" + target.Name + "][" + target.Id + "]");
                 }
 
+                if (target.Distance <= Cache.Instance.OrbitDistance && Cache.Instance.Approaching != null)
+                {
+                    Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                    Cache.Instance.Approaching = null;
+                    Logging.Log("Combat.ActivateWeapons.ClearPocket: Stop ship, target is in orbit range");
+                }
+            }
 
             // Get the weapons
             var weapons = Cache.Instance.Weapons;
