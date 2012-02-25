@@ -108,6 +108,7 @@ namespace Questor
         public bool CloseQuestorCMDUplink = true;
         public bool CloseQuestorCMDLogoffflag = true;
         public DateTime _CloseQuestorDelay { get; set; }
+        private bool CloseQuestor10SecWarningDone = false;
 
         public string CharacterName { get; set; }
 
