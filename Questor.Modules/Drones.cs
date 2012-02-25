@@ -215,6 +215,12 @@ namespace Questor.Modules
                         State = DroneState.Fighting;
                     break;
 
+                case DroneState.OutOfDrones:
+                    //if (DateTime.Now.Subtract(_launchTimeout).TotalSeconds > 1000)
+                    //{
+                    //    State = DroneState.WaitingForTargets;
+                    //}
+                    break;
                 case DroneState.Fighting:
                     // Should we recall our drones? This is a possible list of reasons why we should
                     var recall = false;

@@ -843,6 +843,7 @@ namespace Questor
                         Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
                         Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;	
                         _arm.State = ArmState.Idle;
+                        _drones.State = DroneState.WaitingForTargets;
                         State = QuestorState.LocalWatch;
                     }
                     
