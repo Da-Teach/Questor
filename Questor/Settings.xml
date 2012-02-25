@@ -71,15 +71,17 @@
 
   <!-- Wait for mission decline timer to expire before declining again -->
   <waitDecline>true</waitDecline>
-
   <minStandings>5.0</minStandings>
-
+  
+  <!-- Use Faction Fittings: default is enabled (true): if disabled (false) this will turn off all fitting manager related features -->
+  <UseFittingManager>true</UseFittingManager>
+  
   <!-- Faction specific fittings listed here -->
   <factionfittings>
     <factionfitting faction="Default" fitting="Default" />
   </factionfittings>
 
- <missionfittings>
+  <missionfittings>
   <!-- <missionfitting mission="Cargo Delivery" fitting="cargo" dronetype="2185" /> -->
 </missionfittings>
 

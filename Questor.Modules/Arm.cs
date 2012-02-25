@@ -264,7 +264,7 @@ namespace Questor.Modules
                         Logging.Log("Arm: Opening ship's drone bay");
                         State = ArmState.OpenDroneBay;
                     }
-                    else if ((Settings.Instance.FittingsDefined && DefaultFittingFound) && !(UseMissionShip && !(Cache.Instance.ChangeMissionShipFittings)))
+                    else if ((Settings.Instance.UseFittingManager && DefaultFittingFound) && !(UseMissionShip && !(Cache.Instance.ChangeMissionShipFittings)))
                     {
                         Logging.Log("Arm: Fitting");
                         State = ArmState.OpenFittingWindow;
@@ -324,7 +324,7 @@ namespace Questor.Modules
                         {
                             Logging.Log("Arm: Error! Couldn't find Default Fitting.  Disabling fitting manager.");
                             DefaultFittingFound = false;
-                            Settings.Instance.FittingsDefined = false;
+                            Settings.Instance.UseFittingManager = false;
                             State = ArmState.MoveItems;
                             break;
                         }
@@ -410,7 +410,7 @@ namespace Questor.Modules
  
                     var neededDrones = Math.Floor((droneBay.Capacity - droneBay.UsedCapacity)/drone.Volume);
                     Logging.Log("neededDrones: " + neededDrones);
-                    if (neededDrones == 0 && ((Settings.Instance.FittingsDefined && DefaultFittingFound) && !(UseMissionShip && !(Cache.Instance.ChangeMissionShipFittings))))
+                    if (neededDrones == 0 && ((Settings.Instance.UseFittingManager && DefaultFittingFound) && !(UseMissionShip && !(Cache.Instance.ChangeMissionShipFittings))))
                     {
                         Logging.Log("Arm: Fitting");
                         State = ArmState.OpenFittingWindow;

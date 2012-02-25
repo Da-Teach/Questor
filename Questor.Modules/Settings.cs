@@ -42,7 +42,7 @@ namespace Questor.Modules
             MissionFitting = new List<MissionFitting>();
             Blacklist = new List<string>();
 			FactionBlacklist = new List<string>();
-            FittingsDefined = false;
+            UseFittingManager = true;
             DefaultFitting = new FactionFitting();
         }
 
@@ -157,7 +157,7 @@ namespace Questor.Modules
 
         public List<FactionFitting> FactionFitting { get; private set; }
         public List<MissionFitting> MissionFitting { get; private set; }
-        public bool FittingsDefined { get; set; }
+        public bool UseFittingManager { get; set; }
         public FactionFitting DefaultFitting { get; set; }
 
         public int MinimumAmmoCharges { get; set; }
@@ -423,8 +423,11 @@ namespace Questor.Modules
 
             MinimumAmmoCharges = (int?) xml.Element("minimumAmmoCharges") ?? 0;
 
+UseFittingManager = (bool?)xml.Element("UseFittingManager") ?? true;
             FactionFitting.Clear();
             var factionFittings = xml.Element("factionfittings");
+            if (UseFittingManager)
+            {
             if (factionFittings != null)
             {
                 foreach (var factionfitting in factionFittings.Elements("factionfitting"))
@@ -432,8 +435,8 @@ namespace Questor.Modules
                 if (FactionFitting.Exists(m => m.Faction.ToLower() == "default"))
                 {
                     DefaultFitting = FactionFitting.Find(m => m.Faction.ToLower() == "default");
-                    if (!(DefaultFitting.Fitting == "") && !(DefaultFitting.Fitting == null))
-                        FittingsDefined = true;
+                        if ((DefaultFitting.Fitting == "") || (DefaultFitting.Fitting == null))
+                            UseFittingManager = false;
                     else
                         Logging.Log("Settings: Error! No default fitting specified or fitting is incorrect.  Fitting manager will not be used.");
                 }
@@ -442,13 +445,16 @@ namespace Questor.Modules
             }
             else
                 Logging.Log("Settings: No faction fittings specified.  Fitting manager will not be used.");
+            }
 
             MissionFitting.Clear();
             var missionFittings = xml.Element("missionfittings");
+            if (UseFittingManager)
+            {
             if (missionFittings != null)
                 foreach (var missionfitting in missionFittings.Elements("missionfitting"))
                     MissionFitting.Add(new MissionFitting(missionfitting));
-
+            }
             WeaponGroupId = (int?) xml.Element("weaponGroupId") ?? 0;
 
             ReserveCargoCapacity = (int?) xml.Element("reserveCargoCapacity") ?? 0;

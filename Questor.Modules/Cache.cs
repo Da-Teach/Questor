@@ -803,7 +803,7 @@ namespace Questor.Modules
             if (factionName == null || factionName == "")
                 factionName = "Default";
 
-            if (Settings.Instance.FittingsDefined)
+            if (Settings.Instance.UseFittingManager)
             {
                 //Set fitting to default
                 DefaultFitting = (string)Settings.Instance.DefaultFitting.Fitting;

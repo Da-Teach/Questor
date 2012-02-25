@@ -431,7 +431,7 @@ namespace Questor.Modules
                     Logging.Log("AgentInteraction: Mission enemy faction: " + factionName);
                     if (Settings.Instance.FactionBlacklist.Any(m => m.ToLower() == factionName.ToLower()))
                         return true;
-                    if (Settings.Instance.FittingsDefined && Settings.Instance.FactionFitting.Any(m => m.Faction.ToLower() == factionName.ToLower()))
+                    if (Settings.Instance.UseFittingManager && Settings.Instance.FactionFitting.Any(m => m.Faction.ToLower() == factionName.ToLower()))
                     {
                         var FactionFitting = Settings.Instance.FactionFitting.FirstOrDefault(m => m.Faction.ToLower() == factionName.ToLower());
                         Cache.Instance.factionFit = (string)FactionFitting.Fitting;
@@ -451,7 +451,7 @@ namespace Questor.Modules
                 }
                 return false;  */
             }
-            if (Settings.Instance.FittingsDefined)
+            if (Settings.Instance.UseFittingManager)
             {
                 Cache.Instance.factionName = "Default";
                 var _FactionFitting = Settings.Instance.FactionFitting.FirstOrDefault(m => m.Faction.ToLower() == "default");
