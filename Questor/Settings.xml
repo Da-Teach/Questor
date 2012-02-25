@@ -109,6 +109,9 @@
   <!-- Corporation hangar to use for ammo (empty is personal hangar) -->
   <ammoHangar></ammoHangar>  <!-- default is: no value -->
 
+  <!-- container to use for Loot (empty would not use a container at all) : this ONLY works with General Freight Containers at the moment-->
+  <LootContainer></LootContainer>
+  
   <!-- Ship used for combat missions, empty means current ship -->
   <combatShipName></combatShipName>  <!-- needs to be customized -->
 
