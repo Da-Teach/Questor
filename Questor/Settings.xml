@@ -83,7 +83,7 @@
 
   <missionfittings>
   <!-- <missionfitting mission="Cargo Delivery" fitting="cargo" dronetype="2185" /> -->
-</missionfittings>
+  </missionfittings>
 
   <!-- List of factions which the bot will try to avoid -->
   <factionblacklist>
