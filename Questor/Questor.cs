@@ -652,9 +652,14 @@ namespace Questor
                             State = QuestorState.DelayedStart;
 
                             Logging.Log("Questor: Random mission start delay of [" + _randomDelay + "] seconds");
+                            return;
                         }
                         else
+                        {
                             State = QuestorState.Cleanup;
+                            return;
+                        }
+                            
                     }
                     else if (ExitWhenIdle)
                         LavishScript.ExecuteCommand("exit");
@@ -1432,11 +1437,12 @@ namespace Questor
                         if (bookmark == null)
                         {
                             State = QuestorState.Idle;
-                            break;
+                            return;
                         }
 
                         State = QuestorState.GotoSalvageBookmark;
                         _traveler.Destination = new BookmarkDestination(bookmark);
+                        return;
                     }
                     break;
 
@@ -1452,6 +1458,7 @@ namespace Questor
 
                         State = QuestorState.Salvage;
                         _traveler.Destination = null;
+                        return;
                     }
 
                     if (Settings.Instance.DebugStates)
@@ -1504,6 +1511,7 @@ namespace Questor
                             Logging.Log("Salvage: We have salvaged all bookmarks, goto base");
                             Cache.Instance.SalvageAll = false;
                             State = QuestorState.GotoBase;
+                            return;
                         }
                         else
                         {
@@ -1514,17 +1522,20 @@ namespace Questor
 
                                 State = QuestorState.GotoSalvageBookmark;
                                 _traveler.Destination = new BookmarkDestination(bookmarks.OrderBy(b => b.CreatedOn).First());
+                                return;
                             }
                             else if (Settings.Instance.UseGatesInSalvage)
                             {
                                 Logging.Log("Salvage: Acceleration gate found - moving to next pocket");
                                 State = QuestorState.SalvageUseGate;
+                                return;
                             }
                             else
                             {
                                 Logging.Log("Salvage: Acceleration gate found, useGatesInSalvage set to false - Returning to base");
                                 State = QuestorState.GotoBase;
                                 _traveler.Destination = null;
+                                return;
                             }
                         }
                         break;
@@ -1680,6 +1691,7 @@ namespace Questor
 
                         State = QuestorState.SalvageNextPocket;
                         _lastPulse = DateTime.Now;
+                        return;
                     }
                     else if (closest.Distance < 150000)
                     {
@@ -1710,6 +1722,7 @@ namespace Questor
                         Logging.Log("Salvage: We've moved to the next Pocket [" + distance + "]");
 
                         State = QuestorState.Salvage;
+                        return;
                     }
                     else if (DateTime.Now.Subtract(_lastPulse).TotalMinutes > 2)
                     {
@@ -1717,6 +1730,7 @@ namespace Questor
 
                         // We have reached a timeout, revert to ExecutePocketActions (e.g. most likely Activate)
                         State = QuestorState.SalvageUseGate;
+                        return;
                     }
                     break;
 
@@ -1764,7 +1778,7 @@ namespace Questor
                         Logging.Log("Debug_WindowTypes: [" + window.Name + window.Type + "]");
                     }
                     State = QuestorState.Error;
-                    break;
+                    return;
     
                 case QuestorState.SalvageOnly:
                     Cache.Instance.OpenWrecks = true;
@@ -1788,7 +1802,7 @@ namespace Questor
                         State = QuestorState.Idle;
                         AutoStart = false;
                         Paused = true;
-                        break;
+                        return;
                     }
 
                     closestWreck = Cache.Instance.UnlootedContainers.First();
@@ -1846,7 +1860,7 @@ namespace Questor
                     {
                         Logging.Log("Salvage: We are full");
                         State = QuestorState.Error;
-                        break;
+                        return;
                     }
                     if (Cache.Instance.UnlootedContainers.Count() == 0)
                     {
