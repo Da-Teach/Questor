@@ -315,6 +315,9 @@ namespace Questor.Modules
                 if (!weapon.IsActive)
                     continue;
 
+                if (weapon.IsReloadingAmmo || weapon.IsDeactivating || weapon.IsChangingAmmo)
+                    continue;
+
                 // No ammo loaded
                 if (weapon.Charge == null)
                     continue;
@@ -331,10 +334,13 @@ namespace Questor.Modules
                 if (ammo == null)
                     continue;
 
+                // If we have already activated warp, deactivate the weapons
+                if (!Cache.Instance.DirectEve.ActiveShip.Entity.IsWarping)
+                {
                 // Target is in range
                 if (target.Distance <= ammo.Range)
                     continue;
-
+                }
                 // Target is out of range, stop firing
                 weapon.Deactivate();
             }
@@ -349,6 +355,9 @@ namespace Questor.Modules
             // Activate the weapons (it not yet activated)))
             foreach (var weapon in weapons)
             {
+                // Are we reloading, deactivating or changing ammo?
+                if (weapon.IsReloadingAmmo || weapon.IsDeactivating || weapon.IsChangingAmmo)
+                    continue;
                 // Are we on the right target?
                 if (weapon.IsActive)
                 {
@@ -357,10 +366,6 @@ namespace Questor.Modules
 
                     continue;
                 }
-
-                // Are we reloading, deactivating or changing ammo?
-                if (weapon.IsReloadingAmmo || weapon.IsDeactivating || weapon.IsChangingAmmo)
-                    continue;
 
                 // No, check ammo type and if thats correct, activate weapon
                 if (ReloadAmmo(weapon, target) && CanActivate(weapon, target, true))
