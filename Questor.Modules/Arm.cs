@@ -121,6 +121,11 @@ namespace Questor.Modules
                         }
                         return;
                     }
+                    if ((!string.IsNullOrEmpty(salvageshipName) && Cache.Instance.DirectEve.ActiveShip.GivenName.ToLower() != salvageshipName))
+                    {
+                        State = ArmState.OpenShipHangar;
+                        break;
+                    }
 					if (DateTime.Now.Subtract(_lastAction).TotalSeconds > 10)
                     {
 						Logging.Log("Arm: Done");
@@ -178,6 +183,12 @@ namespace Questor.Modules
                             return;
                         }
                         return;
+                    }
+
+                    if ((!string.IsNullOrEmpty(shipName) && Cache.Instance.DirectEve.ActiveShip.GivenName.ToLower() != shipName))
+                    {
+                        State = ArmState.OpenShipHangar;
+                        break;
                     }
                     else if (TryMissionShip)
                         UseMissionShip = true;
