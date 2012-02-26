@@ -1048,7 +1048,12 @@ namespace Questor
 
                     // anti bump
                     var structure = Cache.Instance.Entities.Where(i => i.GroupId == (int)Group.LargeCollidableStructure).OrderBy(t => t.Distance).FirstOrDefault();
-                    if (structure != null && structure.Distance < 2000)
+                    if (Cache.Instance.TargetedBy.Any(t => t.IsWarpScramblingMe))
+                    {
+                        _combat.ProcessState();
+                        _drones.ProcessState();
+                    }
+                    else if (structure != null && structure.Distance < 2000)
                     {
                         structure.Orbit(3000);
                     }
