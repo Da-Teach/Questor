@@ -672,7 +672,6 @@ namespace Questor
                         State = QuestorState.CloseQuestor;
                         return;
                     }
-                        LavishScript.ExecuteCommand("exit");
                     break;
 
                 case QuestorState.DelayedStart:
