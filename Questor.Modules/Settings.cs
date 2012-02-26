@@ -431,23 +431,31 @@ UseFittingManager = (bool?)xml.Element("UseFittingManager") ?? true;
             var factionFittings = xml.Element("factionfittings");
             if (UseFittingManager)
             {
-            if (factionFittings != null)
-            {
-                foreach (var factionfitting in factionFittings.Elements("factionfitting"))
-                    FactionFitting.Add(new FactionFitting(factionfitting));
-                if (FactionFitting.Exists(m => m.Faction.ToLower() == "default"))
+                if (factionFittings != null)
                 {
-                    DefaultFitting = FactionFitting.Find(m => m.Faction.ToLower() == "default");
-                        if ((DefaultFitting.Fitting == "") || (DefaultFitting.Fitting == null))
-                            UseFittingManager = false;
+                    foreach (var factionfitting in factionFittings.Elements("factionfitting"))
+                        FactionFitting.Add(new FactionFitting(factionfitting));
+                    if (FactionFitting.Exists(m => m.Faction.ToLower() == "default"))
+                    {
+                        DefaultFitting = FactionFitting.Find(m => m.Faction.ToLower() == "default");
+                            if ((DefaultFitting.Fitting == "") || (DefaultFitting.Fitting == null))
+                            {
+                                UseFittingManager = false;
+                                Logging.Log("Settings: Error! No default fitting specified or fitting is incorrect.  Fitting manager will not be used.");
+                            }
+                            Logging.Log("Settings: Faction Fittings defined. Fitting manager will be used when appropriate.");
+                    }
                     else
+                    {
+                        UseFittingManager = false;
                         Logging.Log("Settings: Error! No default fitting specified or fitting is incorrect.  Fitting manager will not be used.");
+                    }
                 }
                 else
-                    Logging.Log("Settings: Error! No default fitting specified or fitting is incorrect.  Fitting manager will not be used.");
-            }
-            else
-                Logging.Log("Settings: No faction fittings specified.  Fitting manager will not be used.");
+                {
+                    UseFittingManager = false;
+                    Logging.Log("Settings: No faction fittings specified.  Fitting manager will not be used.");
+                }
             }
 
             MissionFitting.Clear();
