@@ -59,7 +59,7 @@
   <agentName></agentName>  <!-- needs to be customized -->
   
   <!-- Run missions that take us into low security space? - READ: DANGEROUS!!! -->
-  <LowSecmissions>false<LowSecMissions> <!-- default is: false -->
+  <LowSecMissions>false<LowSecMissions> <!-- default is: false -->
   
   <!-- Enable storyline botting (experimental) -->
   <enableStorylines>false</enableStorylines>  <!-- default is false -->
