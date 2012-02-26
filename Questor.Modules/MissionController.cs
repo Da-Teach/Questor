@@ -192,8 +192,19 @@ namespace Questor.Modules
             var targets = Cache.Instance.EntitiesByName(target);
             if (targets == null || targets.Count() == 0)
             {
-                Logging.Log("MissionController.Activate: Can't find [" + target + "] to activate! Stopping Questor!");
+                if (!_waiting)
+                {
+                    Logging.Log("MissionController.Activate: Can't find [" + target + "] to activate! Waiting 30 seconds before giving up");
+                    _waitingSince = DateTime.Now;
+                    _waiting = true;
+                }
+                if (_waiting)
+                {
+                    if (DateTime.Now.Subtract(_waitingSince).TotalSeconds < 30)
+                    {
                 State = MissionControllerState.Error;
+                    }
+                }
                 return;
             }
 
