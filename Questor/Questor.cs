@@ -662,6 +662,16 @@ namespace Questor
                             
                     }
                     else if (ExitWhenIdle)
+                    {
+                        //LavishScript.ExecuteCommand("exit");
+                        Cache.Instance.ReasonToStopQuestor = "Settings: ExitWhenIdle is true, and we are idle... exiting";
+                        Logging.Log(Cache.Instance.ReasonToStopQuestor);
+                        Cache.Instance.CloseQuestorCMDLogoff = false;
+                        Cache.Instance.CloseQuestorCMDExitGame = true;
+                        Cache.Instance.SessionState = "Exiting";
+                        State = QuestorState.CloseQuestor;
+                        return;
+                    }
                         LavishScript.ExecuteCommand("exit");
                     break;
 
