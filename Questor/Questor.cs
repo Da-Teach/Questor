@@ -106,7 +106,7 @@ namespace Questor
         public bool ExitWhenIdle { get; set; }
         public bool LogPathsNotSetupYet = true;
         public bool CloseQuestorCMDUplink = true;
-        public bool CloseQuestorCMDLogoffflag = true;
+        public bool CloseQuestorflag = true;
         public DateTime _CloseQuestorDelay { get; set; }
         private bool CloseQuestor10SecWarningDone = false;
 
@@ -1114,6 +1114,22 @@ namespace Questor
 
                                 _traveler.Destination = null;
                             }
+                            // If Questor window not visible, schedule a restart of questor in the uplink so that the GUI will start normally
+                            if (!m_Parent.Visible && CloseQuestorflag) //GUI isnt visible and CloseQuestorflag is true, so that his code block only runs once
+                            {
+                                CloseQuestorflag = false;
+                                //m_Parent.Visible = true; //this does not work for some reason - innerspace bug?
+                                Cache.Instance.ReasonToStopQuestor = "The Questor GUI is not visible: did EVE get restarted due to a crash or lag?";
+                                Logging.Log(Cache.Instance.ReasonToStopQuestor);
+                                Cache.Instance.CloseQuestorCMDLogoff = false;
+                                Cache.Instance.CloseQuestorCMDExitGame = true;
+                                Cache.Instance.SessionState = "Exiting";
+                                State = QuestorState.CloseQuestor;
+                            }
+                            else
+                            {
+                                //Logging.Log("Questor GUI is still visible: evidently EVE hasnt crashed and restarted yet, thats good.");
+                            }
                         }
 
                         if (Settings.Instance.DebugStates)
@@ -1189,13 +1205,13 @@ namespace Questor
                         }
                         if (Cache.Instance.CloseQuestorCMDLogoff)
                         {
-                            if (CloseQuestorCMDLogoffflag)
+                            if (CloseQuestorflag)
                             {
                                 Logging.Log("Questor: We are in station: Logging off EVE: In theory eve and questor will restart on their own when the client comes back up");
                                 LavishScript.ExecuteCommand("uplink echo Logging off EVE:  \\\"${Game}\\\" \\\"${Profile}\\\"");
                                 Logging.Log("Questor: you can change this option by setting the wallet and eveprocessmemoryceiling options to use exit instead of logoff: see the settings.xml file");
                                 Logging.Log("Questor: Logging Off eve in 15 seconds.");
-                                CloseQuestorCMDLogoffflag = false;
+                                CloseQuestorflag = false;
                                 _CloseQuestorDelay = DateTime.Now.AddSeconds(20);
                             }
                             if (_CloseQuestorDelay.AddSeconds(-10) < DateTime.Now)
@@ -1312,7 +1328,7 @@ namespace Questor
                         {
                             // Lost drone statistics
                             // (inelegantly located here so as to avoid the necessity to switch to a combat ship after salvaging)
-                            if (Settings.Instance.UseDrones)
+                            if (Settings.Instance.UseDrones && Cache.Instance.DirectEve.ActiveShip.GroupId != 31)
                             {
                                 var droneBay = Cache.Instance.DirectEve.GetShipsDroneBay();
                                 if (droneBay.Window == null)
@@ -1542,7 +1558,6 @@ namespace Questor
                                 return;
                             }
                         }
-                        break;
                     }
 
                     var closestWreck = Cache.Instance.UnlootedContainers.First();
