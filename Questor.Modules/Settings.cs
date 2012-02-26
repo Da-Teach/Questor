@@ -103,6 +103,7 @@ namespace Questor.Modules
         public string bookmarkWarpOut { get; set; }
 
         public string MissionsPath { get; set; }
+        public bool LowSecMissions { get; set; }
         
         public int walletbalancechangelogoffdelay { get; set; }
         public string walletbalancechangelogoffdelayLogofforExit { get; set; }
@@ -414,6 +415,7 @@ namespace Questor.Modules
 
             var missionsPath = (string) xml.Element("missionsPath");
             MissionsPath = !string.IsNullOrEmpty(missionsPath) ? Path.Combine(path, missionsPath) : Path.Combine(path, "Missions");
+            LowSecMissions = (bool?)xml.Element("LowSecMissions") ?? false;
 
             MaximumHighValueTargets = (int?) xml.Element("maximumHighValueTargets") ?? 2;
             MaximumLowValueTargets = (int?) xml.Element("maximumLowValueTargets") ?? 2;
