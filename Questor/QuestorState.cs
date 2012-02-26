@@ -24,6 +24,7 @@ namespace Questor
         ExecuteMission,
         DelayedGotoBase,
         GotoBase,
+        CheckEVEStatus,
         CompleteMission,
         UnloadLoot,
         BeginAfterMissionSalvaging,

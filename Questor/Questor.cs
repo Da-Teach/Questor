@@ -698,23 +698,6 @@ namespace Questor
                     // cargo hold that is undesirable and causes
                     // problems loading the correct ammo on occasion
                     //
-
-                    // get the current process
-                    Process currentProcess = System.Diagnostics.Process.GetCurrentProcess();
-
-                    // get the physical mem usage (this only runs between missions)
-                    Cache.Instance.totalMegaBytesOfMemoryUsed = ((currentProcess.WorkingSet64 / 1024) / 1024);
-                    Logging.Log("Questor: EVE instance: totalMegaBytesOfMemoryUsed - " + Cache.Instance.totalMegaBytesOfMemoryUsed + " MB");
-
-                    if (Cache.Instance.totalMegaBytesOfMemoryUsed > Settings.Instance.EVEProcessMemoryCeiling && Settings.Instance.EVEProcessMemoryCeilingLogofforExit != "")
-                    {
-                        Logging.Log("Questor: Memory usage is above the EVEProcessMemoryCeiling threshold. EVE instance: totalMegaBytesOfMemoryUsed - " + Cache.Instance.totalMegaBytesOfMemoryUsed + " MB");
-                        Logging.Log("Questor: Setting QuestorState to GotoBase.");
-                        State = QuestorState.GotoBase;
-                        break;
-                    }
-                    else
-                    {
                         if (Cache.Instance.LootAlreadyUnloaded == false)
                         {
                             State = QuestorState.GotoBase;
@@ -725,9 +708,6 @@ namespace Questor
                             State = QuestorState.Start;
                             break;
                         }
-                    }
-
-
 
                 case QuestorState.Start:
                     Cache.Instance.LootAlreadyUnloaded = false;
@@ -1086,9 +1066,39 @@ namespace Questor
                         }
 
                         _traveler.ProcessState();
+                        if (Settings.Instance.DebugStates)
+                        {
+                            Logging.Log("Traveler.State = " + _traveler.State);
+                        }
                         if (_traveler.State == TravelerState.AtDestination)
                         {
-                            if (Cache.Instance.totalMegaBytesOfMemoryUsed > (Settings.Instance.EVEProcessMemoryCeiling - 50) && Settings.Instance.EVEProcessMemoryCeilingLogofforExit != "")
+                            State = QuestorState.CheckEVEStatus;
+                        }
+                    }
+                    break;
+
+                case QuestorState.CheckEVEStatus:
+                    // get the current process
+                    Process currentProcess = System.Diagnostics.Process.GetCurrentProcess();
+
+                    // get the physical mem usage (this only runs between missions)
+                    Cache.Instance.totalMegaBytesOfMemoryUsed = ((currentProcess.WorkingSet64 / 1024) / 1024);
+                    Logging.Log("Questor: EVE instance: totalMegaBytesOfMemoryUsed - " + Cache.Instance.totalMegaBytesOfMemoryUsed + " MB");
+                    
+                    // If Questor window not visible, schedule a restart of questor in the uplink so that the GUI will start normally
+                    if (!m_Parent.Visible && CloseQuestorflag) //GUI isnt visible and CloseQuestorflag is true, so that his code block only runs once
+                    {
+                        CloseQuestorflag = false;
+                        //m_Parent.Visible = true; //this does not work for some reason - innerspace bug?
+                        Cache.Instance.ReasonToStopQuestor = "The Questor GUI is not visible: did EVE get restarted due to a crash or lag?";
+                        Logging.Log(Cache.Instance.ReasonToStopQuestor);
+                        Cache.Instance.CloseQuestorCMDLogoff = false;
+                        Cache.Instance.CloseQuestorCMDExitGame = true;
+                        Cache.Instance.SessionState = "Exiting";
+                        State = QuestorState.CloseQuestor;
+                        return;
+                    }
+                    else if (Cache.Instance.totalMegaBytesOfMemoryUsed > (Settings.Instance.EVEProcessMemoryCeiling - 50) && Settings.Instance.EVEProcessMemoryCeilingLogofforExit != "")
                             {
                                 Logging.Log("Questor: Memory usage is above the EVEProcessMemoryCeiling threshold. EVE instance: totalMegaBytesOfMemoryUsed - " + Cache.Instance.totalMegaBytesOfMemoryUsed + " MB");
                                 Cache.Instance.ReasonToStopQuestor = "Memory usage is above the EVEProcessMemoryCeiling threshold. EVE instance: totalMegaBytesOfMemoryUsed - " + Cache.Instance.totalMegaBytesOfMemoryUsed + " MB";
@@ -1113,6 +1123,7 @@ namespace Questor
                             }
                             else
                             {
+                                Cache.Instance.SessionState = "Running";
                                 mission = Cache.Instance.GetAgentMission(Cache.Instance.AgentId);
                                 if (_missionController.State == MissionControllerState.Error)
                                     State = QuestorState.Error;
@@ -1123,27 +1134,6 @@ namespace Questor
 
                                 _traveler.Destination = null;
                             }
-                            // If Questor window not visible, schedule a restart of questor in the uplink so that the GUI will start normally
-                            if (!m_Parent.Visible && CloseQuestorflag) //GUI isnt visible and CloseQuestorflag is true, so that his code block only runs once
-                            {
-                                CloseQuestorflag = false;
-                                //m_Parent.Visible = true; //this does not work for some reason - innerspace bug?
-                                Cache.Instance.ReasonToStopQuestor = "The Questor GUI is not visible: did EVE get restarted due to a crash or lag?";
-                                Logging.Log(Cache.Instance.ReasonToStopQuestor);
-                                Cache.Instance.CloseQuestorCMDLogoff = false;
-                                Cache.Instance.CloseQuestorCMDExitGame = true;
-                                Cache.Instance.SessionState = "Exiting";
-                                State = QuestorState.CloseQuestor;
-                            }
-                            else
-                            {
-                                //Logging.Log("Questor GUI is still visible: evidently EVE hasnt crashed and restarted yet, thats good.");
-                            }
-                        }
-
-                        if (Settings.Instance.DebugStates)
-                            Logging.Log("Traveler.State = " + _traveler.State);
-                    }
                     break;
 
                 case QuestorState.CloseQuestor:
