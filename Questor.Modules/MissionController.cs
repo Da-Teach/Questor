@@ -415,6 +415,11 @@ namespace Questor.Modules
                     Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
                     Cache.Instance.Approaching = null;
                 }
+                if (Settings.Instance.SpeedTank)
+                {
+                    //this should at least keep speed tanked ships from going poof if a mission XML uses moveto
+                    closest.Orbit(Cache.Instance.OrbitDistance);
+                }
             }
             else
             {
@@ -454,6 +459,11 @@ namespace Questor.Modules
                 {
                     Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
                     Cache.Instance.Approaching = null;
+                }
+                if (Settings.Instance.SpeedTank)
+                {
+                    //this should at least keep speed tanked ships from going poof if a mission XML uses moveto
+                    closest.Orbit(Cache.Instance.OrbitDistance);
                 }
             }
             else if (closest.Distance < 150000)
