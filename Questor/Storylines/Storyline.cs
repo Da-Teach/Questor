@@ -52,7 +52,7 @@
             _storylines.Add("Transaction Data Delivery", new TransactionDataDelivery());
             _storylines.Add("Innocents in the Crossfire", new GenericCombatStoryline());
 			_storylines.Add("Patient Zero", new GenericCombatStoryline());
-			_storylines.Add("Soothe The Salvage Beast", new GenericCombatStoryline());
+			_storylines.Add("Soothe the Salvage Beast", new GenericCombatStoryline());
 			_storylines.Add("Quota Season", new GenericCombatStoryline());
 			//_storylines.Add("Matriarch", new GenericCombatStoryline());
             //_storylines.Add("Diplomatic Incident", new GenericCombatStoryline());
