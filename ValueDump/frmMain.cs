@@ -219,7 +219,7 @@ namespace ValueDump
                             i.ReprocessValue = null;
                     }
 
-                    Log("Saving InvItems.xml");
+                    Log("Saving InvTypes.xml");
 
                     var xdoc = new XDocument(new XElement("invtypes"));
                     foreach (var type in InvTypesById.Values.OrderBy(i => i.Id))
