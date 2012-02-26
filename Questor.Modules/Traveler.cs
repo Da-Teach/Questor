@@ -93,7 +93,7 @@ namespace Questor.Modules
 
                 // Warp to, approach or jump the stargate
                 var entity = entities.First();
-                if (entity.Distance < 2500)
+                if (entity.Distance < 1900)
                 {
                     Logging.Log("Traveler: (traveler.cs) Jumping to [" + locationName + "]");
                     entity.Jump();

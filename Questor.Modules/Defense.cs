@@ -29,13 +29,31 @@ namespace Questor.Modules
                 activate |= module.GroupId == (int) Group.SensorBooster;
                 activate |= module.GroupId == (int) Group.TrackingComputer;
                 activate |= module.GroupId == (int) Group.ECCM;
+                activate |= module.GroupId == (int) Group.CloakingDevice;
 
                 if (!activate)
                     continue;
 
-                if (module.IsActive)
+                if (module.IsActive | module.IsGoingOnline | module.IsDeactivating)
                     continue;
 
+                if (module.GroupId == (int) Group.CloakingDevice)
+                {
+                    //Logging.Log("This module has a typeID of: " + module.TypeId + " !!");
+                    if (module.TypeId != 11578)  //11578 Covert Ops Cloaking Device - if you dont have a covops cloak try the next module
+                    {
+                        continue;
+                    }
+                    var StuffThatMayDecloakMe = Cache.Instance.Entities.Where(t => t.Name != Cache.Instance.DirectEve.Me.Name || t.IsBadIdea || t.IsContainer || t.IsNpc || t.IsPlayer).OrderBy(t => t.Distance).FirstOrDefault();
+                    if (StuffThatMayDecloakMe != null || StuffThatMayDecloakMe.Distance <= 2300) //if their is anything within 2300m do not attempt to cloak
+                    {
+                        if (StuffThatMayDecloakMe.Distance != 0)
+                        {
+                            //Logging.Log(StuffThatMayDecloakMe.Name + " is very close at: " + StuffThatMayDecloakMe.Distance + " meters");
+                            continue;
+                        }
+                    }
+                }
                 module.Click();
                 //More human behaviour
                 //System.Threading.Thread.Sleep(333);

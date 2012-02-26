@@ -1560,14 +1560,14 @@ namespace Questor
                     }
 
                     var closestWreck = Cache.Instance.UnlootedContainers.First();
-                    if (closestWreck.Distance > 2500 && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closestWreck.Id))
+                    if (closestWreck.Distance > 1900 && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closestWreck.Id))
                     {
                         if (closestWreck.Distance > 150000)
                             closestWreck.WarpTo();
                         else
                             closestWreck.Approach();
                     }
-                    else if (closestWreck.Distance <= 2500 && Cache.Instance.Approaching != null)
+                    else if (closestWreck.Distance <= 1900 && Cache.Instance.Approaching != null)
                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
 
                     try
@@ -1697,7 +1697,7 @@ namespace Questor
                     _lastZ = Cache.Instance.DirectEve.ActiveShip.Entity.Z;
 
                     var closest = targets.OrderBy(t => t.Distance).First();
-                    if (closest.Distance < 2500)
+                    if (closest.Distance < 1900)
                     {
                         Logging.Log("Salvage: Acceleration gate found - GroupID=" + closest.GroupId);
 
@@ -1824,14 +1824,14 @@ namespace Questor
                     }
 
                     closestWreck = Cache.Instance.UnlootedContainers.First();
-                    if (closestWreck.Distance > 2500 && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closestWreck.Id))
+                    if (closestWreck.Distance > 1900 && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closestWreck.Id))
                     {
                         if (closestWreck.Distance > 150000)
                             closestWreck.WarpTo();
                         else
                             closestWreck.Approach();
                     }
-                    else if (closestWreck.Distance <= 2500 && Cache.Instance.Approaching != null)
+                    else if (closestWreck.Distance <= 1900 && Cache.Instance.Approaching != null)
                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
 
                     try
@@ -1908,14 +1908,14 @@ namespace Questor
                         break;
                     }
                     closestWreck = Cache.Instance.UnlootedContainers.First();
-                    if (closestWreck.Distance > 2500 && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closestWreck.Id))
+                    if (closestWreck.Distance > 1900 && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closestWreck.Id))
                     {
                         if (closestWreck.Distance > 150000)
                             closestWreck.WarpTo();
                         else
                             closestWreck.Approach();
                     }
-                    else if (closestWreck.Distance <= 2500 && Cache.Instance.Approaching != null)
+                    else if (closestWreck.Distance <= 1900 && Cache.Instance.Approaching != null)
                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
                     try
                     {

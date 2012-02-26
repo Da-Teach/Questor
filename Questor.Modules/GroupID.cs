@@ -26,6 +26,7 @@ namespace Questor.Modules
         ArmorHardeners = 328,
         DamageControl = 60,
         ECCM = 202,
+        CloakingDevice = 330,
 
         SensorBooster = 212,
         TrackingComputer = 213,

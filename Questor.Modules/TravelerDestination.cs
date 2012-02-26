@@ -176,7 +176,7 @@ namespace Questor.Modules
                 return false;
             }
 
-            if (entity.Distance < 2500)
+            if (entity.Distance < 1900)
             {
                 Logging.Log("Traveler.StationDestination: Dock at [" + entity.Name + "]");
                 entity.Dock();

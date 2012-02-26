@@ -498,6 +498,9 @@ namespace Questor.Modules
                 result |= GroupId == (int)Group.ConcordDrone;
                 result |= GroupId == (int)Group.CustomsOfficial;
                 result |= GroupId == (int)Group.Billboard;
+                result |= GroupId == (int)Group.Stargate;
+                result |= GroupId == (int)Group.Station;
+                result |= GroupId == (int)Group.Capsule;
                 result |= IsFrigate;
                 result |= IsCruiser;
                 result |= IsBattlecruiser;
