@@ -400,7 +400,8 @@ namespace Questor.Modules
             DontShootFrigatesWithSiegeorAutoCannons = (bool?)xml.Element("DontShootFrigatesWithSiegeorAutoCannons") ?? false;
             //Assume InnerspaceProfile
             CloseQuestorCMDUplinkInnerspaceProfile = (bool?)xml.Element("CloseQuestorCMDUplinkInnerspaceProfile") ?? true;
-            CloseQuestorCMDUplinkIsboxerCharacterSet = (bool?)xml.Element("CloseQuestorCMDUplinkIsboxerProfile") ?? false;
+            CloseQuestorCMDUplinkIsboxerCharacterSet = (bool?)xml.Element("CloseQuestorCMDUplinkIsboxerCharacterSet") ?? false;
+
 
             walletbalancechangelogoffdelay = (int?)xml.Element("walletbalancechangelogoffdelay") ?? 30;
             walletbalancechangelogoffdelayLogofforExit = (string)xml.Element("walletbalancechangelogoffdelayLogofforExit") ?? "exit";
