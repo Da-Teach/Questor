@@ -45,6 +45,7 @@ namespace Questor
         private UnloadLoot _unloadLoot;
 
         private DateTime _lastAction;
+        private DateTime _lastWalletCheck;
         private DateTime _lastupdateofSessionRunningTime;
         private DateTime _questorStarted;
         private Random _random;
@@ -389,9 +390,9 @@ namespace Questor
 
             if (!Paused)
             {
-                if (DateTime.Now.Subtract(_lastAction).TotalMinutes > 1)
+                if (DateTime.Now.Subtract(_lastWalletCheck).TotalMinutes > 1)
                 {
-                    _lastAction = DateTime.Now;
+                    _lastWalletCheck = DateTime.Now;
                     //Logging.Log("[Questor] Wallet Balance Debug Info: lastknowngoodconnectedtime = " + Settings.Instance.lastKnownGoodConnectedTime);
                     //Logging.Log("[Questor] Wallet Balance Debug Info: DateTime.Now - lastknowngoodconnectedtime = " + DateTime.Now.Subtract(Settings.Instance.lastKnownGoodConnectedTime).TotalSeconds);
                     if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) > 1)
