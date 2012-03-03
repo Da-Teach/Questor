@@ -68,9 +68,14 @@
     <Compile Include="LocalWatch.cs" />
     <Compile Include="Combat.cs" />
     <Compile Include="CombatState.cs" />
+    <Compile Include="CourierMission.cs" />
+    <Compile Include="CourierMissionState.cs" />
     <Compile Include="DamageType.cs" />
     <Compile Include="DebugModule.cs" />
     <Compile Include="DebugModuleState.cs" />
+    <Compile Include="Distances.cs" />
+    <Compile Include="SwitchShipState.cs" />
+    <Compile Include="SwitchShip.cs" />
     <Compile Include="Defense.cs" />
     <Compile Include="Drones.cs" />
     <Compile Include="DroneState.cs" />
