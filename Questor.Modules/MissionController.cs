@@ -331,12 +331,12 @@ namespace Questor.Modules
                 // Are we approaching the active (out of range) target?
                 // Wait for it (or others) to get into range
 
-                if (Settings.Instance.SpeedTank && Cache.Instance.Approaching == null)
+                if (Settings.Instance.SpeedTank && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id))
                     target.Orbit(Cache.Instance.OrbitDistance); 
 
                 if (!Settings.Instance.SpeedTank)
                 {
-                    if (target.Distance > Cache.Instance.OrbitDistance + (int)Distance.OrbitDistanceCushion && Cache.Instance.Approaching == null)
+                    if (target.Distance > Cache.Instance.OrbitDistance + (int)Distance.OrbitDistanceCushion && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id))
                     {
                         target.Approach(Cache.Instance.OrbitDistance);
                         Logging.Log("MissionController.ClearPocket: Approaching target [" + target.Name + "][" + target.Id + "]");
@@ -1067,7 +1067,6 @@ namespace Questor.Modules
                     foreach (var a in _pocketActions)
                         Logging.Log("MissionController: Action." + a);
 
-                    
                     if (Cache.Instance.OrbitDistance != Settings.Instance.OrbitDistance)
                     {
                         if (Cache.Instance.OrbitDistance == 0)
