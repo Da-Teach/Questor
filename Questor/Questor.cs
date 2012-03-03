@@ -449,8 +449,8 @@ namespace Questor
             {
                 watch.Reset();
                 watch.Start();
-                if (!Cache.Instance.ExitSta)
-                _defense.ProcessState();
+                if (!Cache.Instance.DoNotBreakInvul)
+                    _defense.ProcessState();
                 watch.Stop();
 
                 if (Settings.Instance.DebugPerformance)
@@ -897,14 +897,14 @@ namespace Questor
                         {
                             Logging.Log("WarpOut: Warp at " + _bookmark.Title);
                             _traveler.Destination = new BookmarkDestination(_bookmark);
-                            Cache.Instance.ExitSta = true;
+                            Cache.Instance.DoNotBreakInvul = true;
                         }
 
                         _traveler.ProcessState();
                         if (_traveler.State == TravelerState.AtDestination)
                         {
                             Logging.Log("WarpOut: Safe!");
-                            Cache.Instance.ExitSta = false;
+                            Cache.Instance.DoNotBreakInvul = false;
                             State = QuestorState.GotoMission;
                             _traveler.Destination = null;
                         }

@@ -157,7 +157,7 @@ namespace Questor.Modules
             get { return _instance; }
         }
 
-        public bool ExitSta = false;
+        public bool DoNotBreakInvul = false;
 
         public bool LootAlreadyUnloaded = false;
 
@@ -567,7 +567,7 @@ namespace Questor.Modules
         public bool StopTimeSpecified { get; set; }
         public DateTime StopTime { get; set; }
         public bool CloseQuestorCMDLogoff = false;
-        public bool CloseQuestorCMDExitGame = false;
+        public bool CloseQuestorCMDExitGame = true;
         public string ReasonToStopQuestor { get; set; }
         public string SessionState { get; set; }
         public double SessionIskGenerated { get; set; }
