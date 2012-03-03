@@ -37,7 +37,7 @@ namespace Questor.Modules
             Ammo = new List<Ammo>();
             ItemsBlackList = new List<int>();
             WreckBlackList = new List<int>();
-            //AgentsList = new List<AgentsList>();
+            AgentsList = new List<AgentsList>();
             FactionFitting = new List<FactionFitting>();
             MissionFitting = new List<MissionFitting>();
             Blacklist = new List<string>();
@@ -84,6 +84,8 @@ namespace Questor.Modules
 
         public string CombatShipName { get; set; }
         public string SalvageShipName { get; set; }
+        public string TransportShipName { get; set; }
+        public bool MultiAgentSupport { get; private set; }
 
         public string LootHangar { get; set; }
         public string AmmoHangar { get; set; }
@@ -98,7 +100,7 @@ namespace Questor.Modules
         public bool AfterMissionSalvaging { get; set; }
         public bool UnloadLootAtStation { get; set; }
 
-        public string AgentName { get; set; }
+        //public string AgentName { get; set; }
 
         public string bookmarkWarpOut { get; set; }
 
@@ -152,6 +154,7 @@ namespace Questor.Modules
         public string PocketStatisticsFile { get; set; }
 
         public List<FactionFitting> FactionFitting { get; private set; }
+        public List<AgentsList> AgentsList { get; set; }
         public List<MissionFitting> MissionFitting { get; private set; }
         public bool UseFittingManager { get; set; }
         public FactionFitting DefaultFitting { get; set; }
@@ -240,7 +243,7 @@ namespace Questor.Modules
             if (!File.Exists(settingsPath))
             {
                 // Clear settings
-                AgentName = string.Empty;
+                //AgentName = string.Empty;
 
                 CharacterMode = "dps";
 
@@ -281,6 +284,7 @@ namespace Questor.Modules
                 ItemsBlackList.Clear();
                 WreckBlackList.Clear();
                 FactionFitting.Clear();
+                AgentsList.Clear();
                 MissionFitting.Clear();
 
                 MinimumAmmoCharges = 0;
@@ -381,7 +385,7 @@ namespace Questor.Modules
             AfterMissionSalvaging = (bool?) xml.Element("afterMissionSalvaging") ?? false;
             UnloadLootAtStation = (bool?) xml.Element("unloadLootAtStation") ?? false;
 
-            AgentName = (string) xml.Element("agentName");
+            //AgentName = (string) xml.Element("agentName");
 
             bookmarkWarpOut = (string)xml.Element("bookmarkWarpOut") ?? "insta";
 
@@ -420,7 +424,26 @@ namespace Questor.Modules
 
             MinimumAmmoCharges = (int?) xml.Element("minimumAmmoCharges") ?? 0;
 
-UseFittingManager = (bool?)xml.Element("UseFittingManager") ?? true;
+            UseFittingManager = (bool?)xml.Element("UseFittingManager") ?? true;
+            //agent list
+            AgentsList.Clear();
+            var agentList = xml.Element("agentsList");
+            if(agentList != null)
+            {
+                int i = 0;
+                foreach (var agent in agentList.Elements("agentList"))
+                {
+                    AgentsList.Add(new AgentsList(agent));
+                    i++;
+                }
+                if (i >= 2)
+                    MultiAgentSupport = true;
+                else
+                    MultiAgentSupport = false;
+            }
+            else
+                Logging.Log("Settings: Error! No Agents List specified.");
+
             FactionFitting.Clear();
             var factionFittings = xml.Element("factionfittings");
             if (UseFittingManager)

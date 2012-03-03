@@ -80,6 +80,11 @@ namespace Questor.Modules
         private List<EntityCache> _stations;
 
         /// <summary>
+        ///   Stargate cache
+        /// </summary>
+        private List<EntityCache> _stargates;
+
+        /// <summary>
         ///   Targeted by cache
         /// </summary>
         private List<EntityCache> _targetedBy;
@@ -167,6 +172,8 @@ namespace Questor.Modules
 
         public double Wealth { get; set; }
         public bool OpenWrecks = false;
+        public bool NormalApproch = true;
+        public bool CourierMission = false;
 
         public bool Local_safe(int max_bad, double stand) {
             int number = 0;
@@ -256,6 +263,8 @@ namespace Questor.Modules
         /// </summary>
         public bool IsMissionPocketDone { get; set; }
         public string ExtConsole { get; set; }
+        public bool IsAgentLoop { get; set; }
+        private string AgentName = "";
 
         public DateTime _lastModuleActivation;
         public int panic_attempts_this_mission { get; set; }
@@ -273,15 +282,46 @@ namespace Questor.Modules
         public long totalMegaBytesOfMemoryUsed { get; set; }
         public double MyWalletBalance { get; set; }
 
+        public string CurrentAgent { 
+            get
+            {
+                if(AgentName == "")
+                {
+                    AgentName = SwitchAgent;
+                    Logging.Log("Cache.CurrentAgent is null set first agent: " + CurrentAgent);
+                }
+
+                return AgentName;
+            }
+            set
+            {
+                AgentName = value;
+            }
+        }
+
+        public string SwitchAgent
+        {
+            get
+            {
+                var agent = Settings.Instance.AgentsList.OrderBy(j => j.Priorit).FirstOrDefault(i => DateTime.Now >= i.Decline_timer);
+                if(agent == null)
+                {
+                    agent = Settings.Instance.AgentsList.OrderBy(j => j.Priorit).FirstOrDefault();
+                    IsAgentLoop = true;
+                }
+                else
+                    IsAgentLoop = false;
+
+                return agent.Name;
+            }
+        }
+
         public long AgentId
         {
             get
             {
-                if (!_agentId.HasValue)
-                {
-                    _agent = DirectEve.GetAgentByName(Settings.Instance.AgentName);
-                    _agentId = _agent.AgentId;
-                }
+                _agent = DirectEve.GetAgentByName(CurrentAgent);
+                _agentId = _agent.AgentId;
 
                 return _agentId ?? -1;
             }
@@ -291,28 +331,8 @@ namespace Questor.Modules
         {
             get
             {
-                if (!_agentId.HasValue)
-                {
-                    _agent = DirectEve.GetAgentByName(Settings.Instance.AgentName);
-                    _agentId = _agent.AgentId;
-                }
-
-                if (_agent == null)
-                    _agent = DirectEve.GetAgentById(_agentId.Value);
-
-                return _agent;
-            }
-        }
-
-        public DirectAgent MissionName
-        {
-            get
-            {
-                if (!_agentId.HasValue)
-                {
-                    _agent = DirectEve.GetAgentByName(Settings.Instance.AgentName);
-                    _agentId = _agent.AgentId;
-                }
+				_agent = DirectEve.GetAgentByName(CurrentAgent);
+                _agentId = _agent.AgentId;
 
                 if (_agent == null)
                     _agent = DirectEve.GetAgentById(_agentId.Value);
@@ -477,6 +497,17 @@ namespace Questor.Modules
                     _stations = Entities.Where(e => e.CategoryId == (int) CategoryID.Station).ToList();
 
                 return _stations;
+            }
+        }
+
+        public IEnumerable<EntityCache> Stargates
+        {
+            get
+            {
+                if (_stargates == null)
+                    _stargates = Entities.Where(e => e.GroupId == (int)Group.Stargate).ToList();
+
+                return _stargates;
             }
         }
 
@@ -665,6 +696,7 @@ namespace Questor.Modules
             _unlootedContainers = null;
             _star = null;
             _stations = null;
+            _stargates = null;
             _modules = null;
             _targets = null;
             _targeting = null;
@@ -915,6 +947,15 @@ namespace Questor.Modules
         {
             DirectEve.BookmarkCurrentLocation(label, "", null);
         }
+
+        /// <summary>
+        ///   Create a bookmark of the closest wreck
+        /// </summary>
+        /// <param name = "label"></param>
+        //public void CreateBookmarkofWreck(IEnumerable<EntityCache> containers, string label)
+        //{
+        //    DirectEve.BookmarkEntity(Cache.Instance.Containers.FirstOrDefault, "a", "a", null);
+        //}
 
         private Func<EntityCache, int> OrderByLowestHealth()
         {

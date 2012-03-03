@@ -26,8 +26,9 @@ namespace Questor
         private frmMain m_Parent;
         private AgentInteraction _agentInteraction;
         private Arm _arm;
-        //private SwitchShip _switch;
+        private SwitchShip _switch;
         private Combat _combat;
+        private CourierMission _courier;
         private LocalWatch _localwatch;
         private ScanInteraction _scanInteraction;
         private Defense _defense;
@@ -77,7 +78,8 @@ namespace Questor
             _unloadLoot = new UnloadLoot();
             _agentInteraction = new AgentInteraction();
             _arm = new Arm();
-            //_switch = new SwitchShip();
+            _courier = new CourierMission();
+            _switch = new SwitchShip();
             _missionController = new MissionController();
             _drones = new Drones();
             _panic = new Panic();
@@ -151,10 +153,11 @@ namespace Questor
                 ValidSettings = false;
             }
 
-            var agent = Cache.Instance.DirectEve.GetAgentByName(Settings.Instance.AgentName);
+            var agent = Cache.Instance.DirectEve.GetAgentByName(Cache.Instance.CurrentAgent);
+
             if (agent == null || !agent.IsValid)
             {
-                Logging.Log("Settings: Unable to locate agent [" + Settings.Instance.AgentName + "]");
+                Logging.Log("Settings: Unable to locate agent [" + Cache.Instance.CurrentAgent + "]");
                 ValidSettings = false;
             }
             else
@@ -711,7 +714,14 @@ namespace Questor
                     }
 
                 case QuestorState.Start:
-                    Cache.Instance.LootAlreadyUnloaded = false;
+                    if (first_start && Settings.Instance.MultiAgentSupport)
+                    {
+                        //if you are in wrong station and is not first agent
+                        State = QuestorState.Switch;
+                        first_start = false;
+                        break;
+                    }
+
                     if (_agentInteraction.State == AgentInteractionState.Idle)
                     {
                         if (Settings.Instance.CharacterMode == "salvage")
@@ -770,41 +780,47 @@ namespace Questor
                         return;
                     }
 
-                    //if(_agentInteraction.State == AgentInteractionState.ChangeAgent)
-                    //{
-                    //    _agentInteraction.State = AgentInteractionState.Idle;
-                    //    ValidateSettings();
-                    //    State = QuestorState.Switch;
-                    //}
+                    if (_agentInteraction.State == AgentInteractionState.ChangeAgent)
+                    {
+                        _agentInteraction.State = AgentInteractionState.Idle;
+                        ValidateSettings();
+                        State = QuestorState.Switch;
+                        break;
+                    }
 
                     break;
 
                 case QuestorState.Switch:
 
-                    //if (_switch.State == SwitchShipState.Idle)
-                    //{
-                    //    Logging.Log("Switch: Begin");
-                    //    _switch.State = SwitchShipState.Begin;
-                    //}
-                    //
-                    //_switch.ProcessState();
-                    //
-                    //if (_switch.State == SwitchShipState.Done)
-                    //{
-                    //    _switch.State = SwitchShipState.Idle;
-                    //    State = QuestorState.GotoBase;
-                    //}
-                    //break;
+                    if (_switch.State == SwitchShipState.Idle)
+                    {
+                        Logging.Log("Switch: Begin");
+                        _switch.State = SwitchShipState.Begin;
+                    }
+
+                    _switch.ProcessState();
+
+                    if (_switch.State == SwitchShipState.Done)
+                    {
+                        _switch.State = SwitchShipState.Idle;
+                        State = QuestorState.GotoBase;
+                    }
+                    break;
 
                 case QuestorState.Arm:
                     if (_arm.State == ArmState.Idle)
                     {
-                        Logging.Log("Arm: Begin");
-                        _arm.State = ArmState.Begin;
+                        if (Cache.Instance.CourierMission)
+                            _arm.State = ArmState.SwitchToTransportShip;
+                        else
+                        {
+                            Logging.Log("Arm: Begin");
+                            _arm.State = ArmState.Begin;
 
-                        // Load right ammo based on mission
-                        _arm.AmmoToLoad.Clear();
-                        _arm.AmmoToLoad.AddRange(_agentInteraction.AmmoToLoad);
+                            // Load right ammo based on mission
+                            _arm.AmmoToLoad.Clear();
+                            _arm.AmmoToLoad.AddRange(_agentInteraction.AmmoToLoad);
+                        }
                     }
 
                     _arm.ProcessState();
@@ -841,7 +857,11 @@ namespace Questor
                         Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
                         _arm.State = ArmState.Idle;
                         _drones.State = DroneState.WaitingForTargets;
-                        State = QuestorState.LocalWatch;
+
+                        if (Cache.Instance.CourierMission)
+                            State = QuestorState.CourierMission;
+                        else
+                            State = QuestorState.LocalWatch;
                     }
 
                     break;
@@ -1078,7 +1098,16 @@ namespace Questor
                         }
                         if (_traveler.State == TravelerState.AtDestination)
                         {
-                            State = QuestorState.CheckEVEStatus;
+                            mission = Cache.Instance.GetAgentMission(Cache.Instance.AgentId);
+
+                            if (_missionController.State == MissionControllerState.Error)
+                                State = QuestorState.Error;
+                            else if (_combat.State != CombatState.OutOfAmmo && mission != null && mission.State == (int)MissionState.Accepted)
+                                State = QuestorState.CompleteMission;
+                            else
+                                State = QuestorState.UnloadLoot;
+
+                            _traveler.Destination = null;
                         }
                     }
                     break;
@@ -1390,7 +1419,14 @@ namespace Questor
                     if (_agentInteraction.State == AgentInteractionState.Done)
                     {
                         _agentInteraction.State = AgentInteractionState.Idle;
-                        State = QuestorState.UnloadLoot;
+                        if (Cache.Instance.CourierMission)
+                        {
+                            Cache.Instance.CourierMission = false;
+                            State = QuestorState.Idle;
+                        }
+                        else
+                            State = QuestorState.UnloadLoot;
+                        return;
                     }
                     break;
 
@@ -1756,6 +1792,22 @@ namespace Questor
 
                         State = QuestorState.GotoBase;
                         break;
+                    }
+                    break;
+
+                case QuestorState.CourierMission:
+
+                    if (_courier.State == CourierMissionState.Idle)
+                        _courier.State = CourierMissionState.GotoPickupLocation;
+
+                    _courier.ProcessState();
+
+                    if (_courier.State == CourierMissionState.Done)
+                    {
+                        _courier.State = CourierMissionState.Idle;
+                        Cache.Instance.CourierMission = false;
+
+                        State = QuestorState.GotoBase;
                     }
                     break;
 

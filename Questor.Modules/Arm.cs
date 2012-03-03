@@ -53,7 +53,6 @@ namespace Questor.Modules
             switch (State)
             {
                 case ArmState.Idle:
-
                     break;
                 case ArmState.Done:
                     break;
@@ -78,6 +77,7 @@ namespace Questor.Modules
                     break;
 
                 case ArmState.OpenShipHangar:
+                case ArmState.SwitchToTransportShip:
                 case ArmState.SwitchToSalvageShip:
                     // Is the ship hangar open?
                     if (shipHangar.Window == null)
@@ -95,6 +95,11 @@ namespace Questor.Modules
                         Logging.Log("Arm: Activating combat ship");
                         State = ArmState.ActivateCombatShip;
                     }
+                    else if (State == ArmState.SwitchToTransportShip)
+                    {
+                        Logging.Log("Arm: Activating transport ship");
+                        State = ArmState.ActivateTransportShip;
+                    }
                     else
                     {
                         Logging.Log("Arm: Activating salvage ship");
@@ -102,9 +107,51 @@ namespace Questor.Modules
                     }
                     break;
 
+                case ArmState.ActivateTransportShip:
+                    string transportshipName = Settings.Instance.TransportShipName.ToLower();
+
+                    if (!string.IsNullOrEmpty(transportshipName))
+                    {
+                        State = ArmState.NotEnoughAmmo;
+                        Logging.Log("Arm.ActivateTransportShip: Could not find transportshipName in settings!");
+                        return;
+                    }
+                    else if (Cache.Instance.DirectEve.ActiveShip.GivenName.ToLower() != transportshipName)
+                    {
+                        if (DateTime.Now.Subtract(_lastAction).TotalSeconds > 10)
+                        {
+                            var ships = Cache.Instance.DirectEve.GetShipHangar().Items;
+                            foreach (var ship in ships.Where(ship => ship.GivenName.ToLower() == transportshipName))
+                            {
+                                Logging.Log("Arm: Making [" + ship.GivenName + "] active");
+
+                                ship.ActivateShip();
+                                _lastAction = DateTime.Now;
+                            }
+                            return;
+                        }
+                        return;
+                    }
+                    else if (DateTime.Now.Subtract(_lastAction).TotalSeconds > 7)
+                    {
+                        if (Cache.Instance.DirectEve.ActiveShip.GivenName.ToLower() == transportshipName)
+                        {
+                            Logging.Log("Arm.ActivateTransportShip: Done");
+                            State = ArmState.Done;
+                            return;
+                        }
+                        else
+                        {
+                            State = ArmState.NotEnoughAmmo;
+                            Logging.Log("Arm.ActivateTransportShip: Could not find [" + transportshipName + "] ship!");
+                            return;
+                        }
+                    }
+                    break;
+                    
                 case ArmState.ActivateSalvageShip:
                     var salvageshipName = Settings.Instance.SalvageShipName.ToLower();
-					
+
                     if ((!string.IsNullOrEmpty(salvageshipName) && Cache.Instance.DirectEve.ActiveShip.GivenName.ToLower() != salvageshipName))
                     {
                         if (DateTime.Now.Subtract(_lastAction).TotalSeconds > 15)
@@ -126,25 +173,29 @@ namespace Questor.Modules
                         State = ArmState.OpenShipHangar;
                         break;
                     }
-					if (DateTime.Now.Subtract(_lastAction).TotalSeconds > 10)
+                    if (DateTime.Now.Subtract(_lastAction).TotalSeconds > 10)
                     {
-						Logging.Log("Arm: Done");
-						State = ArmState.Done;
-						return;
+                        Logging.Log("Arm: Done");
+                        State = ArmState.Done;
+                        return;
                     }
-					break;
-				case ArmState.ActivateCombatShip:
+                    break;
+                case ArmState.ActivateCombatShip:
                     var shipName = Settings.Instance.CombatShipName.ToLower();
-                                   
+
+                    if (!string.IsNullOrEmpty(shipName))
+                    {
+                        State = ArmState.NotEnoughAmmo;
+                        Logging.Log("Arm.ActivateCombatShip: Could not find CombatShipName in settings!");
+                        return;
+                    }
                     if (!Cache.Instance.ArmLoadedCache)
                     {
                         _missionItemMoved = false;
                         Cache.Instance.RefreshMissionItems(AgentId);
                         Cache.Instance.ArmLoadedCache = true;
                     }
-					
-					                   
-					// If we've got a mission-specific ship defined, switch to it
+                    // If we've got a mission-specific ship defined, switch to it
                     if ((State == ArmState.ActivateCombatShip) && !(Cache.Instance.MissionShip == "" || Cache.Instance.MissionShip == null) && TryMissionShip)
                         shipName = Cache.Instance.MissionShip.ToLower();
 
@@ -270,7 +321,7 @@ namespace Questor.Modules
                     if (!cargo.IsReady)
                         break;
 
-                    if (Settings.Instance.UseDrones && Settings.Instance.DroneTypeId > 0)
+                    if (Settings.Instance.UseDrones && (Cache.Instance.DirectEve.ActiveShip.GroupId != 31 && Cache.Instance.DirectEve.ActiveShip.GroupId != 28 && Cache.Instance.DirectEve.ActiveShip.GroupId != 380))
                     {
                         Logging.Log("Arm: Opening ship's drone bay");
                         State = ArmState.OpenDroneBay;

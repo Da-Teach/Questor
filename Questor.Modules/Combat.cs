@@ -278,7 +278,7 @@ namespace Questor.Modules
             if (Settings.Instance.SpeedTank && Cache.Instance.Approaching == null)
                 target.Orbit(Cache.Instance.OrbitDistance);
 
-            if (!Settings.Instance.SpeedTank)
+            if (!Settings.Instance.SpeedTank && Cache.Instance.NormalApproch)
             {
                 if (target.Distance > Cache.Instance.OrbitDistance + 5000 && Cache.Instance.Approaching == null)
                 {

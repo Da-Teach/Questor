@@ -56,7 +56,13 @@
   <minimumPropulsionModuleDistance>5000</minimumPropulsionModuleDistance>
   <minimumPropulsionModuleCapacitor>55</minimumPropulsionModuleCapacitor>
   <!-- The agent that you are running missions for -->
-  <agentName></agentName>  <!-- needs to be customized -->
+  <agentsList>
+	<agentList name="" priority="0" />
+	<!-- <agentList name="" priority="1" /> -->
+  </agentsList> <!-- needs to be customized -->
+  
+  <!-- The agent that you are running missions for | this setting is no longer used: please configure agentsList-->
+  <!-- <agentName></agentName>  --> <!-- old setting no longer in use -->
   
   <!-- Run missions that take us into low security space? - READ: DANGEROUS!!! -->
   <LowSecmissions>false</LowSecMissions> <!-- default is: false -->
@@ -115,13 +121,16 @@
   <ammoHangar></ammoHangar>  <!-- default is: no value -->
 
   <!-- container to use for Loot (empty would not use a container at all) : this ONLY works with General Freight Containers at the moment-->
-  <LootContainer></LootContainer>
+  <lootContainer></lootContainer>
   
   <!-- Ship used for combat missions, empty means current ship -->
   <combatShipName></combatShipName>  <!-- needs to be customized -->
 
   <!-- Ship used for after mission salvaging, empty means current ship -->
   <salvageShipName></salvageShipName>  <!-- needs to be customized-->
+  
+  <!-- Ship used for Enemy Abound 2of5 -->
+  <transportShipName></transportShipName> <!-- needs to be customized-->
 
   <!-- Create salvage bookmarks once a pocket has been cleared and there are wrecks/cans left
        Note: All salvage bookmarks will be in this naming format:  BookmarkPrefix [time]

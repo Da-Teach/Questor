@@ -22,6 +22,7 @@ namespace Questor
         WarpOutStation,
         GotoMission,
         ExecuteMission,
+        CourierMission,
         DelayedGotoBase,
         GotoBase,
         CheckEVEStatus,
