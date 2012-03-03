@@ -158,7 +158,7 @@ namespace Questor.Modules
                     }
 
                     // Once we have warped off 500km, assume we are "safer"
-                    if (State == PanicState.StartPanicking && Cache.Instance.DistanceFromMe(_lastNormalX, _lastNormalY, _lastNormalZ) > 500000)
+                    if (State == PanicState.StartPanicking && Cache.Instance.DistanceFromMe(_lastNormalX, _lastNormalY, _lastNormalZ) > (int)Distance.PanicDistanceToConsiderSafelyWarpedOff)
                     {
                         Logging.Log("Panic: We've warped off");
                         State = PanicState.Panicking;
@@ -171,7 +171,7 @@ namespace Questor.Modules
                         if (Cache.Instance.InWarp)
                             break;
 
-                        if (station.Distance > 150000)
+                        if (station.Distance > (int)Distance.WarptoDistance)
                             station.WarpTo();
                         else
                             station.Dock();
@@ -183,7 +183,7 @@ namespace Questor.Modules
                     if (Cache.Instance.Star == null)
                         break;
 
-                    if (Cache.Instance.Star.Distance > 500000000)
+                    if (Cache.Instance.Star.Distance > (int)Distance.WeCanWarpToStarFromHere)
                     {
                         if (Cache.Instance.InWarp)
                             break;

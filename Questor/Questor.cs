@@ -1077,9 +1077,9 @@ namespace Questor
                         _combat.ProcessState();
                         _drones.ProcessState();
                     }
-                    else if (structure != null && structure.Distance < 2000)
+                    else if (structure != null && structure.Distance < (int)Distance.TooCloseToStructure)
                     {
-                        structure.Orbit(3000);
+                        structure.Orbit((int)Distance.SafeDistancefromStructure);
                     }
                     else
                     {
@@ -1548,7 +1548,7 @@ namespace Questor
                         do
                         {
                             // Remove all bookmarks from address book
-                            var bookmark = bookmarks.FirstOrDefault(b => Cache.Instance.DistanceFromMe(b.X ?? 0, b.Y ?? 0, b.Z ?? 0) < 250000);
+                            var bookmark = bookmarks.FirstOrDefault(b => Cache.Instance.DistanceFromMe(b.X ?? 0, b.Y ?? 0, b.Z ?? 0) < (int)Distance.BookmarksOnGridWithMe);
                             if (!GatesInRoom && _GatesPresent) // if there were gates, but we've gone through them all, delete all bookmarks
                                 bookmark = bookmarks.FirstOrDefault();
                             else if (GatesInRoom)
@@ -1593,14 +1593,14 @@ namespace Questor
                     }
 
                     var closestWreck = Cache.Instance.UnlootedContainers.First();
-                    if (closestWreck.Distance > 1900 && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closestWreck.Id))
+                    if (closestWreck.Distance > (int)Distance.SafeScoopRange && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closestWreck.Id))
                     {
-                        if (closestWreck.Distance > 150000)
+                        if (closestWreck.Distance > (int)Distance.WarptoDistance)
                             closestWreck.WarpTo();
                         else
                             closestWreck.Approach();
                     }
-                    else if (closestWreck.Distance <= 1900 && Cache.Instance.Approaching != null)
+                    else if (closestWreck.Distance <= (int)Distance.SafeScoopRange && Cache.Instance.Approaching != null)
                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
 
                     try
@@ -1687,9 +1687,9 @@ namespace Questor
                 //        break;
                 //    }
                 //    var closestWreck2 = Cache.Instance.UnlootedWrecksAndSecureCans.First();
-                //    if (closestWreck2.Distance > 2500 && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closestWreck2.Id))
+                //    if (closestWreck2.Distance > (int)Distance.SafeScoopRange && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closestWreck2.Id))
                 //    {
-                //        if (closestWreck2.Distance > 15300)
+                //        if (closestWreck2.Distance > (int)Distance.WarptoDistance)
                 //        {
                 //            closestWreck2.WarpTo();
                 //            break;
@@ -1697,7 +1697,7 @@ namespace Questor
                 //        else
                 //            closestWreck2.Approach();
                 //    }
-                //    else if (closestWreck2.Distance <= 2500 && Cache.Instance.Approaching != null)
+                //    else if (closestWreck2.Distance <= (int)Distance.SafeScoopRange && Cache.Instance.Approaching != null)
                 //        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
                 //
                 //    try
@@ -1730,7 +1730,7 @@ namespace Questor
                     _lastZ = Cache.Instance.DirectEve.ActiveShip.Entity.Z;
 
                     var closest = targets.OrderBy(t => t.Distance).First();
-                    if (closest.Distance < 1900)
+                    if (closest.Distance < (int)Distance.DecloakRange)
                     {
                         Logging.Log("Salvage: Acceleration gate found - GroupID=" + closest.GroupId);
 
@@ -1744,7 +1744,7 @@ namespace Questor
                         _lastPulse = DateTime.Now;
                         return;
                     }
-                    else if (closest.Distance < 150000)
+                    else if (closest.Distance < (int)Distance.WarptoDistance)
                     {
                         // Move to the target
                         if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
@@ -1764,7 +1764,7 @@ namespace Questor
                 case QuestorState.SalvageNextPocket:
                     Cache.Instance.OpenWrecks = true;
                     var distance = Cache.Instance.DistanceFromMe(_lastX, _lastY, _lastZ);
-                    if (distance > 100000)
+                    if (distance > (int)Distance.NextPocketDistance)
                     {
                         //we know we are connected if we were able to arm the ship - update the lastknownGoodConnectedTime
                         Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
@@ -1873,14 +1873,14 @@ namespace Questor
                     }
 
                     closestWreck = Cache.Instance.UnlootedContainers.First();
-                    if (closestWreck.Distance > 1900 && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closestWreck.Id))
+                    if (closestWreck.Distance > (int)Distance.SafeScoopRange && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closestWreck.Id))
                     {
-                        if (closestWreck.Distance > 150000)
+                        if (closestWreck.Distance > (int)Distance.WarptoDistance)
                             closestWreck.WarpTo();
                         else
                             closestWreck.Approach();
                     }
-                    else if (closestWreck.Distance <= 1900 && Cache.Instance.Approaching != null)
+                    else if (closestWreck.Distance <= (int)Distance.SafeScoopRange && Cache.Instance.Approaching != null)
                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
 
                     try
@@ -1936,7 +1936,7 @@ namespace Questor
                         do
                         {
                             // Remove all bookmarks from address book
-                            var bookmark = bookmarks.FirstOrDefault(b => Cache.Instance.DistanceFromMe(b.X ?? 0, b.Y ?? 0, b.Z ?? 0) < 250000);
+                            var bookmark = bookmarks.FirstOrDefault(b => Cache.Instance.DistanceFromMe(b.X ?? 0, b.Y ?? 0, b.Z ?? 0) < (int)Distance.BookmarksOnGridWithMe);
                             if (bookmark == null)
                                 break;
                             bookmark.Delete();
@@ -1957,14 +1957,14 @@ namespace Questor
                         break;
                     }
                     closestWreck = Cache.Instance.UnlootedContainers.First();
-                    if (closestWreck.Distance > 1900 && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closestWreck.Id))
+                    if (closestWreck.Distance > (int)Distance.SafeScoopRange && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closestWreck.Id))
                     {
-                        if (closestWreck.Distance > 150000)
+                        if (closestWreck.Distance > (int)Distance.WarptoDistance)
                             closestWreck.WarpTo();
                         else
                             closestWreck.Approach();
                     }
-                    else if (closestWreck.Distance <= 1900 && Cache.Instance.Approaching != null)
+                    else if (closestWreck.Distance <= (int)Distance.SafeScoopRange && Cache.Instance.Approaching != null)
                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
                     try
                     {

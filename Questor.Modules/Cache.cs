@@ -1005,14 +1005,17 @@ namespace Questor.Modules
             var highValueTarget = targets.Where(t => t.TargetValue.HasValue && t.Distance < distance).OrderByDescending(t => t.TargetValue.Value).ThenBy(OrderByLowestHealth()).ThenBy(t => t.Distance).FirstOrDefault();
             // Get the closest low value target
             var lowValueTarget = targets.Where(t => !t.TargetValue.HasValue && t.Distance < distance).OrderBy(OrderByLowestHealth()).ThenBy(t => t.Distance).FirstOrDefault();
-            /*
-            if (Cache.Instance.MissionWeaponGroupId == 55 || Cache.Instance.MissionWeaponGroupId == 508)
+            
+            if (Settings.Instance.DontShootFrigatesWithSiegeorAutoCannons)
             {
-                if (lowValueTarget != null && !lowValueFirst && lowValueTarget.Distance > 12000)
-                    return targets.Where(t => !t.TargetValue.HasValue && t.Distance > 12000 && t.Distance < distance).OrderByDescending(t => t.Distance).FirstOrDefault();
-                if (lowValueTarget != null && !lowValueFirst && lowValueTarget.Distance < 12000)
-                    lowValueTarget = null;
-            }*/
+                if (Cache.Instance.MissionWeaponGroupId == 55 || Cache.Instance.MissionWeaponGroupId == 508)
+                {
+                    if (lowValueTarget != null && !lowValueFirst && lowValueTarget.Distance > (int)Distance.InsideThisRangeIsLIkelyToBeMostlyFrigates)
+                        return targets.Where(t => !t.TargetValue.HasValue && t.Distance > (int)Distance.InsideThisRangeIsLIkelyToBeMostlyFrigates && t.Distance < distance).OrderByDescending(t => t.Distance).FirstOrDefault();
+                    if (lowValueTarget != null && !lowValueFirst && lowValueTarget.Distance < (int)Distance.InsideThisRangeIsLIkelyToBeMostlyFrigates)
+                        lowValueTarget = null;
+                }
+            }
             if (lowValueFirst && lowValueTarget != null)
                 return lowValueTarget;
             if (!lowValueFirst && highValueTarget != null)

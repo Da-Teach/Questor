@@ -280,7 +280,7 @@ namespace Questor.Modules
 
             if (!Settings.Instance.SpeedTank && Cache.Instance.NormalApproch)
             {
-                if (target.Distance > Cache.Instance.OrbitDistance + 5000 && Cache.Instance.Approaching == null)
+                if (target.Distance > Cache.Instance.OrbitDistance + (int)Distance.OrbitDistanceCushion && Cache.Instance.Approaching == null)
                 {
                     target.Approach(Cache.Instance.OrbitDistance);
                     Logging.Log("Combat.ActivateWeapons: Approaching target [" + target.Name + "][" + target.Id + "]");
@@ -306,7 +306,7 @@ namespace Questor.Modules
                 {
                     if (Settings.Instance.WeaponGroupId == 55 || Settings.Instance.WeaponGroupId == 508 || Settings.Instance.WeaponGroupId == 506)
                     {
-                        if (target.Distance <= 9000 && !target.TargetValue.HasValue)
+                        if (target.Distance <= (int)Distance.InsideThisRangeIsLIkelyToBeMostlyFrigates && !target.TargetValue.HasValue)
                         {
                             weapon.Deactivate();
                         }

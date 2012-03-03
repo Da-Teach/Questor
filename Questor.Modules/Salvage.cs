@@ -61,7 +61,7 @@ namespace Questor.Modules
 
                 var wreck = wrecks.FirstOrDefault(w => w.Id == tractorBeam.TargetId);
                 // If the wreck no longer exists, or its within loot range then disable the tractor beam
-                if (tractorBeam.IsActive && (wreck == null || wreck.Distance <= 2500))
+                if (tractorBeam.IsActive && (wreck == null || wreck.Distance <= (int)Distance.SafeScoopRange))
                 {
                     tractorBeam.Deactivate();
                     //More human behaviour
@@ -75,11 +75,11 @@ namespace Questor.Modules
             foreach (var wreck in wrecks)
             {
                 // This velocity check solves some bugs where velocity showed up as 150000000m/s
-                if (wreck.Velocity != 0 && wreck.Velocity < 2500)
+                if (wreck.Velocity != 0 && wreck.Velocity < (int)Distance.SafeScoopRange)
                     continue;
 
                 // Is this wreck within range?
-                if (wreck.Distance < 2400)
+                if (wreck.Distance < (int)Distance.SafeScoopRange)
                     continue;
 
                 if (tractorBeams.Count == 0)
@@ -159,7 +159,7 @@ namespace Questor.Modules
 
                 if(!Cache.Instance.SalvageAll)
                 {
-                    if(Settings.Instance.WreckBlackList.Any(a => a == wreck.TypeId) && (wreck.Distance < 2400 || wreck.IsWreckEmpty))
+                    if(Settings.Instance.WreckBlackList.Any(a => a == wreck.TypeId) && (wreck.Distance < (int)Distance.SafeScoopRange || wreck.IsWreckEmpty))
                     {
                         wreck.UnlockTarget();
                         continue;
@@ -170,7 +170,7 @@ namespace Questor.Modules
                     continue;
 
                 // Unlock if within loot range
-                if (wreck.Distance < 2400)
+                if (wreck.Distance < (int)Distance.SafeScoopRange)
                 {
                     Logging.Log("Salvage: Cargo Container [" + wreck.Name + "][" + wreck.Id + "] within loot range, unlocking container.");
                     wreck.UnlockTarget();
@@ -204,12 +204,12 @@ namespace Questor.Modules
                     continue;
 
                 // No need to tractor a non-wreck within loot range
-                if (wreck.GroupId != (int) Group.Wreck && wreck.Distance < 2400)
+                if (wreck.GroupId != (int) Group.Wreck && wreck.Distance < (int)Distance.SafeScoopRange)
                     continue;
 
                 if(!Cache.Instance.SalvageAll)
                 {
-                    if(Settings.Instance.WreckBlackList.Any(a => a == wreck.TypeId) && (wreck.IsWreckEmpty || wreck.Distance < 2500))
+                    if (Settings.Instance.WreckBlackList.Any(a => a == wreck.TypeId) && (wreck.IsWreckEmpty || wreck.Distance < (int)Distance.SafeScoopRange))
                         continue;
                 }
 
@@ -273,7 +273,7 @@ namespace Questor.Modules
                 var containerEntity = Cache.Instance.EntityById(window.ItemId);
 
                 // Does it no longer exist or is it out of transfer range or its looted
-                if (containerEntity == null || containerEntity.Distance > 2500 || Cache.Instance.LootedContainers.Contains(containerEntity.Id))
+                if (containerEntity == null || containerEntity.Distance > (int)Distance.SafeScoopRange || Cache.Instance.LootedContainers.Contains(containerEntity.Id))
                 {
                     Logging.Log("Salvage: Closing loot window [" + window.ItemId + "]");
                     window.Close();
@@ -448,7 +448,7 @@ namespace Questor.Modules
             }
 
             // Open a container in range
-            foreach (var containerEntity in Cache.Instance.Containers.Where(e => e.Distance <= 2400))
+            foreach (var containerEntity in Cache.Instance.Containers.Where(e => e.Distance <= (int)Distance.SafeScoopRange))
             {
                 // Emptry wreck, ignore
                 if (containerEntity.GroupId == (int) Group.Wreck && containerEntity.IsWreckEmpty)

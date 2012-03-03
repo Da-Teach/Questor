@@ -45,7 +45,7 @@ namespace Questor.Modules
                         continue;
                     }
                     var StuffThatMayDecloakMe = Cache.Instance.Entities.Where(t => t.Name != Cache.Instance.DirectEve.Me.Name || t.IsBadIdea || t.IsContainer || t.IsNpc || t.IsPlayer).OrderBy(t => t.Distance).FirstOrDefault();
-                    if (StuffThatMayDecloakMe != null || StuffThatMayDecloakMe.Distance <= 2300) //if their is anything within 2300m do not attempt to cloak
+                    if (StuffThatMayDecloakMe != null || StuffThatMayDecloakMe.Distance <= (int)Distance.SafeToCloakDistance) //if their is anything within 2300m do not attempt to cloak
                     {
                         if (StuffThatMayDecloakMe.Distance != 0)
                         {

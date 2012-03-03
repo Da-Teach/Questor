@@ -94,7 +94,7 @@ namespace Questor.Modules
 
             // Do we already have a bookmark?
             var bookmarks = Cache.Instance.BookmarksByLabel(Settings.Instance.BookmarkPrefix + " ");
-            var bookmark = bookmarks.FirstOrDefault(b => Cache.Instance.DistanceFromMe(b.X ?? 0, b.Y ?? 0, b.Z ?? 0) < 250000);
+            var bookmark = bookmarks.FirstOrDefault(b => Cache.Instance.DistanceFromMe(b.X ?? 0, b.Y ?? 0, b.Z ?? 0) < (int)Distance.BookmarksOnGridWithMe);
             if (bookmark != null)
             {
                 Logging.Log("AnomalyController: Pocket already bookmarked for salvaging [" + bookmark.Title + "]");
@@ -124,7 +124,7 @@ namespace Questor.Modules
             }
 
             var closest = targets.OrderBy(t => t.Distance).First();
-            if (closest.Distance < 2300)
+            if (closest.Distance < (int)Distance.GateActivationRange)
             {
                 // Tell the drones module to retract drones
                 Cache.Instance.IsMissionPocketDone = true;
@@ -133,12 +133,12 @@ namespace Questor.Modules
                 if (Cache.Instance.ActiveDrones.Count() > 0)
                     return;
 
-                if (closest.Distance < -10100)
+                if (closest.Distance < (int)Distance.WayTooClose)
                 {
-                    closest.Orbit(1000);
+                    closest.Orbit((int)Distance.GateActivationRange);
                 }
                 Logging.Log(" dist " + closest.Distance);
-                if (closest.Distance >= -10100)
+                if (closest.Distance >= (int)Distance.WayTooClose)
                 {
                     // Add bookmark (before we activate)
                     if (Settings.Instance.CreateSalvageBookmarks)
@@ -155,7 +155,7 @@ namespace Questor.Modules
                     State = AnomalyControllerState.NextPocket;
                 }
             }
-            else if (closest.Distance < 150000)
+            else if (closest.Distance < (int)Distance.WarptoDistance)
             {
                 // Move to the target
                 if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
@@ -233,7 +233,7 @@ namespace Questor.Modules
                         target.Orbit(Cache.Instance.OrbitDistance);
                     else 
                     {
-                        if (target.Distance > Cache.Instance.OrbitDistance + 5000)
+                        if (target.Distance > Cache.Instance.OrbitDistance + (int)Distance.OrbitDistanceCushion)
                             target.Approach(Cache.Instance.OrbitDistance);
                         else
                         {
@@ -278,7 +278,7 @@ namespace Questor.Modules
             }
 
             var closest = targets.OrderBy(t => t.Distance).First();
-            if (closest.Distance < 2300)
+            if (closest.Distance < (int)Distance.GateActivationRange)
             {
                 // We are close enough to whatever we needed to move to
                 _currentAction++;
@@ -289,7 +289,7 @@ namespace Questor.Modules
                     Cache.Instance.Approaching = null;
                 }
             }
-            else if (closest.Distance < 150000)
+            else if (closest.Distance < (int)Distance.WarptoDistance)
             {
                 // Move to the target
                 if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
@@ -421,7 +421,7 @@ namespace Questor.Modules
                         closest.Orbit(Cache.Instance.OrbitDistance);
                     else
                     {
-                        if (closest.Distance > Cache.Instance.OrbitDistance + 5000)
+                        if (closest.Distance > Cache.Instance.OrbitDistance + (int)Distance.OrbitDistanceCushion)
                             closest.Approach(Cache.Instance.OrbitDistance);
                         else
                         {
@@ -464,7 +464,7 @@ namespace Questor.Modules
             }
 
             var closest = containers.FirstOrDefault(c => targetNames.Contains(c.Name)) ?? containers.First();
-            if (closest.Distance > 2500 && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id))
+            if (closest.Distance > (int)Distance.SafeScoopRange && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id))
             {
                 Logging.Log("AnomalyController.LootItem: Approaching target [" + closest.Name + "][" + closest.Id + "]");
                 closest.Approach();
@@ -508,7 +508,7 @@ namespace Questor.Modules
             }
 
             var closest = containers.FirstOrDefault(c => targetNames.Contains(c.Name)) ?? containers.First();
-            if (closest.Distance > 2500 && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id))
+            if (closest.Distance > (int)Distance.SafeScoopRange && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id))
             {
                 Logging.Log("AnomalyController.Loot: Approaching target [" + closest.Name + "][" + closest.Id + "]");
                 closest.Approach();
@@ -694,7 +694,7 @@ namespace Questor.Modules
 
                 case AnomalyControllerState.NextPocket:
                     var distance = Cache.Instance.DistanceFromMe(_lastX, _lastY, _lastZ);
-                    if (distance > 100000)
+                    if (distance > (int)Distance.NextPocketDistance)
                     {
                         Logging.Log("AnomalyController: We've moved to the next Pocket [" + distance + "]");
 

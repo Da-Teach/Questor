@@ -68,7 +68,7 @@ namespace Questor.Modules
                     if (Cache.Instance.InStation)
                     {
                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdExitStation);
-                        _nextAction = DateTime.Now.AddSeconds(25);
+                        _nextAction = DateTime.Now.AddSeconds(7);
                     }
 
                     // We are not yet in space, wait for it
@@ -93,14 +93,14 @@ namespace Questor.Modules
 
                 // Warp to, approach or jump the stargate
                 var entity = entities.First();
-                if (entity.Distance < 1900)
+                if (entity.Distance < (int)Distance.DecloakRange)
                 {
                     Logging.Log("Traveler: (traveler.cs) Jumping to [" + locationName + "]");
                     entity.Jump();
 
                     _nextAction = DateTime.Now.AddSeconds(15);
                 }
-                else if (entity.Distance < 150000)
+                else if (entity.Distance < (int)Distance.WarptoDistance)
                     entity.Approach();
                 else
                 {

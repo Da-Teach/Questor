@@ -45,7 +45,7 @@ namespace Questor.Modules
                     Logging.Log("Traveler.SolarSystemDestination: Exiting station");
 
                     Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdExitStation);
-                    _nextAction = DateTime.Now.AddSeconds(30);
+                    _nextAction = DateTime.Now.AddSeconds(7);
                 }
 
                 // We are not there yet
@@ -134,7 +134,7 @@ namespace Questor.Modules
                     }
 					else Logging.Log("Traveler.StationDestination: UndockPrefix is not configured");
                     Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdExitStation);
-                    nextAction = DateTime.Now.AddSeconds(30);
+                    nextAction = DateTime.Now.AddSeconds(7);
                     //nextAction = DateTime.Now.AddSeconds(Settings.Instance.UndockDelay);
                 }
 
@@ -153,7 +153,7 @@ namespace Questor.Modules
 
             if (localundockBookmark != null)
             {
-                if (Cache.Instance.DistanceFromMe(localundockBookmark.X ?? 0, localundockBookmark.Y ?? 0, localundockBookmark.Z ?? 0) < 150000)
+                if (Cache.Instance.DistanceFromMe(localundockBookmark.X ?? 0, localundockBookmark.Y ?? 0, localundockBookmark.Z ?? 0) < (int)Distance.WarptoDistance)
                 {
                     Logging.Log("Traveler.BookmarkDestination: Arrived at undock bookmark [" + localundockBookmark.Title + "]");
                     localundockBookmark = null;
@@ -176,12 +176,12 @@ namespace Questor.Modules
                 return false;
             }
 
-            if (entity.Distance < 1900)
+            if (entity.Distance < (int)Distance.DockingRange)
             {
                 Logging.Log("Traveler.StationDestination: Dock at [" + entity.Name + "]");
                 entity.Dock();
             }
-            else if (entity.Distance < 150000)
+            else if (entity.Distance < (int)Distance.WarptoDistance)
                 entity.Approach();
             else
             {
@@ -189,7 +189,7 @@ namespace Questor.Modules
                 entity.WarpTo();
             }
 
-            nextAction = DateTime.Now.AddSeconds(25);
+            nextAction = DateTime.Now.AddSeconds(20);
             return false;
         }
     }
@@ -245,23 +245,23 @@ namespace Questor.Modules
                 // We are apparently in a station that is incorrect
                 Logging.Log("Traveler.BookmarkDestination: We're docked in the wrong station, undocking");
                 if (!string.IsNullOrEmpty(Settings.Instance.UndockPrefix))
+                {
+                    var bookmarks = Cache.Instance.DirectEve.Bookmarks.Where(b => b.Title.Contains(Cache.Instance.DirectEve.GetLocationName(Cache.Instance.DirectEve.Session.StationId ?? 0)) && b.Title.Contains(Settings.Instance.UndockPrefix));
+                    if (bookmarks != null && bookmarks.Count() > 0)
                     {
-                        var bookmarks = Cache.Instance.DirectEve.Bookmarks.Where(b => b.Title.Contains(Cache.Instance.DirectEve.GetLocationName(Cache.Instance.DirectEve.Session.StationId ?? 0)) && b.Title.Contains(Settings.Instance.UndockPrefix));
-                        if (bookmarks != null && bookmarks.Count() > 0)
+                        undockBookmark = bookmarks.FirstOrDefault();
+                        if (undockBookmark.X == null || undockBookmark.Y == null || undockBookmark.Z == null)
                         {
-                            undockBookmark = bookmarks.FirstOrDefault();
-                            if (undockBookmark.X == null || undockBookmark.Y == null || undockBookmark.Z == null)
-                            {
-                                Logging.Log("Traveler.StationDestination: undock bookmark [" + undockBookmark.Title + "] is unusable: it has no coords");
-                                undockBookmark = null;
-                            }
-							else Logging.Log("Traveler.StationDestination: undock bookmark [" + undockBookmark.Title + "] is usable: it has coords");
+                            Logging.Log("Traveler.StationDestination: undock bookmark [" + undockBookmark.Title + "] is unusable: it has no coords");
+                            undockBookmark = null;
                         }
-						else Logging.Log("Traveler.StationDestination: undock bookmark does not exist");
+						else Logging.Log("Traveler.StationDestination: undock bookmark [" + undockBookmark.Title + "] is usable: it has coords");
                     }
-					else Logging.Log("Traveler.StationDestination: UndockPrefix is not configured");
+					else Logging.Log("Traveler.StationDestination: undock bookmark does not exist");
+                }
+				else Logging.Log("Traveler.StationDestination: UndockPrefix is not configured");
                 Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdExitStation);
-                nextAction = DateTime.Now.AddSeconds(25);
+                nextAction = DateTime.Now.AddSeconds(7);
                 return false;
             }
 
@@ -283,7 +283,7 @@ namespace Questor.Modules
                     Logging.Log("Traveler.BookmarkDestination: We're docked but our destination is in space, undocking");
 
                     Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdExitStation);
-                    nextAction = DateTime.Now.AddSeconds(25);
+                    nextAction = DateTime.Now.AddSeconds(7);
                 }
 
                 // We are not there yet
@@ -298,7 +298,7 @@ namespace Questor.Modules
 
             if (undockBookmark != null)
             {
-                if (Cache.Instance.DistanceFromMe(undockBookmark.X ?? 0, undockBookmark.Y ?? 0, undockBookmark.Z ?? 0) < 150000)
+                if (Cache.Instance.DistanceFromMe(undockBookmark.X ?? 0, undockBookmark.Y ?? 0, undockBookmark.Z ?? 0) < (int)Distance.WarptoDistance)
                 {
                     Logging.Log("Traveler.BookmarkDestination: Arrived at undock bookmark [" + undockBookmark.Title + "]");
                     undockBookmark = null;
@@ -333,7 +333,7 @@ namespace Questor.Modules
             Logging.Log("Traveler.BookmarkDestination: Warping to bookmark [" + bookmark.Title + "]");
             Cache.Instance.DoNotBreakInvul = false;
             bookmark.WarpTo();
-            nextAction = DateTime.Now.AddSeconds(25);
+            nextAction = DateTime.Now.AddSeconds(15);
             return false;
         }
     }
@@ -387,7 +387,7 @@ namespace Questor.Modules
         public override bool PerformFinalDestinationTask()
         {
             var undockBookmark = UndockBookmark;
-            var arrived = BookmarkDestination.PerformFinalDestinationTask(GetMissionBookmark(AgentId, Title), 150000000, ref _nextAction, ref undockBookmark);
+            var arrived = BookmarkDestination.PerformFinalDestinationTask(GetMissionBookmark(AgentId, Title), (int)Distance.MissionWarpLimit, ref _nextAction, ref undockBookmark);
             UndockBookmark = undockBookmark;
             return arrived;// Mission bookmarks have a 1.000.000 distance warp-to limit (changed it to 150.000.000 as there are some bugged missions around)  
         }

@@ -166,7 +166,7 @@ namespace Questor.Modules
 
             // Do we already have a bookmark?
             var bookmarks = Cache.Instance.BookmarksByLabel(Settings.Instance.BookmarkPrefix + " ");
-            var bookmark = bookmarks.FirstOrDefault(b => Cache.Instance.DistanceFromMe(b.X ?? 0, b.Y ?? 0, b.Z ?? 0) < 250000);
+            var bookmark = bookmarks.FirstOrDefault(b => Cache.Instance.DistanceFromMe(b.X ?? 0, b.Y ?? 0, b.Z ?? 0) < (int)Distance.BookmarksOnGridWithMe);
             if (bookmark != null)
             {
                 Logging.Log("MissionController: Pocket already bookmarked for salvaging [" + bookmark.Title + "]");
@@ -210,7 +210,7 @@ namespace Questor.Modules
             }
 
             var closest = targets.OrderBy(t => t.Distance).First();
-            if (closest.Distance < 2300)
+            if (closest.Distance < (int)Distance.GateActivationRange)
             {
                 // Tell the drones module to retract drones
                 Cache.Instance.IsMissionPocketDone = true;
@@ -230,12 +230,12 @@ namespace Questor.Modules
                 // this seemingly slowed down the exit from cetain missions for me for 2-3min as it had a command to orbit some random object
                 // after the "done" command
                 //
-                if (closest.Distance < -10100)
+                if (closest.Distance < (int)Distance.TooCloseToStructure)
                 {
-                    closest.Orbit(1000);
+                    closest.Orbit((int)Distance.GateActivationRange);
                 }
                 //Logging.Log("MissionController: distance " + closest.Distance);
-                if (closest.Distance >= -10100)
+                if (closest.Distance >= (int)Distance.TooCloseToStructure)
                 {
                     // Add bookmark (before we activate)
                     if (Settings.Instance.CreateSalvageBookmarks)
@@ -252,7 +252,7 @@ namespace Questor.Modules
                     State = MissionControllerState.NextPocket;
                 }
             }
-            else if (closest.Distance < 150000)
+            else if (closest.Distance < (int)Distance.WarptoDistance)
             {
                 // Move to the target
                 if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
@@ -336,7 +336,7 @@ namespace Questor.Modules
 
                 if (!Settings.Instance.SpeedTank)
                 {
-                    if (target.Distance > Cache.Instance.OrbitDistance + 5000 && Cache.Instance.Approaching == null)
+                    if (target.Distance > Cache.Instance.OrbitDistance + (int)Distance.OrbitDistanceCushion && Cache.Instance.Approaching == null)
                     {
                         target.Approach(Cache.Instance.OrbitDistance);
                         Logging.Log("MissionController.ClearPocket: Approaching target [" + target.Name + "][" + target.Id + "]");
@@ -358,7 +358,7 @@ namespace Questor.Modules
                         target.Orbit(Cache.Instance.OrbitDistance);
                     else
                     {
-                        if(target.Distance > Cache.Instance.OrbitDistance + 5000)
+                        if(target.Distance > Cache.Instance.OrbitDistance + (int)Distance.OrbitDistanceCushion)
                             target.Approach(Cache.Instance.OrbitDistance);
                     	else
                         {
@@ -406,7 +406,7 @@ namespace Questor.Modules
             }
 
             var closest = targets.OrderBy(t => t.Distance).First();
-            if (closest.Distance < 2200)
+            if (closest.Distance < (int)Distance.GateActivationRange)
             {
                 // We are close enough to whatever we needed to move to
                 _currentAction++;
@@ -451,7 +451,7 @@ namespace Questor.Modules
             }
 
             var closest = targets.OrderBy(t => t.Distance).First();
-            if (closest.Distance < 2300)
+            if (closest.Distance < (int)Distance.GateActivationRange)
             {
                 // We are close enough to whatever we needed to move to
                 _currentAction++;
@@ -467,7 +467,7 @@ namespace Questor.Modules
                 //    closest.Orbit(Cache.Instance.OrbitDistance);
                 //}
             }
-            else if (closest.Distance < 150000)
+            else if (closest.Distance < (int)Distance.WarptoDistance)
             {
                     // Move to the target
                     if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
@@ -839,7 +839,7 @@ namespace Questor.Modules
             }
 
             var closest = containers.FirstOrDefault(c => targetNames.Contains(c.Name)) ?? containers.First();
-            if (closest.Distance > 2200 && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id))
+            if (closest.Distance > (int)Distance.SafeScoopRange && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id))
             {
                 Logging.Log("MissionController.LootItem: Approaching target [" + closest.Name + "][" + closest.Id + "]");
                 closest.Approach();
@@ -890,7 +890,7 @@ namespace Questor.Modules
             }
 
             var closest = containers.FirstOrDefault(c => targetNames.Contains(c.Name)) ?? containers.First();
-            if (closest.Distance > 2200 && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id))
+            if (closest.Distance > (int)Distance.SafeScoopRange && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id))
             {
                 Logging.Log("MissionController.Loot: Approaching target [" + closest.Name + "][" + closest.Id + "]");
                 closest.Approach();
@@ -1118,7 +1118,7 @@ namespace Questor.Modules
 
                 case MissionControllerState.NextPocket:
                     var distance = Cache.Instance.DistanceFromMe(_lastX, _lastY, _lastZ);
-                    if (distance > 100000)
+                    if (distance > (int)Distance.NextPocketDistance)
                     {
                         Logging.Log("MissionController: We've moved to the next Pocket [" + distance + "]");
 
