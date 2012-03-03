@@ -8,9 +8,9 @@
 //  </copyright>
 //-------------------------------------------------------------------------------
 using System;
+using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using System.Xml.XPath;
 using System.Reflection;
 using System.Xml.Linq;
@@ -37,11 +37,11 @@ namespace Questor
         private static string _scriptFile;
         private static bool   _loginOnly;
         private static bool   _showHelp;
+        private static int _maxRuntime;
         private static bool _chantlingScheduler;
 
-        private static DateTime _startTime;
         public static DateTime _stopTime;
-		private static DateTime _scheduledstartTime;
+        private static DateTime _scheduledstartTime;
         public static DateTime _scheduledstopTime;
         private static double minutesToStart;
         private static bool _readyToStarta;
@@ -53,6 +53,23 @@ namespace Questor
         public static bool stopTimeSpecified = false;
 
         private static DateTime _lastPulse;
+        private static DateTime _startTime;
+
+        public static DateTime startTime
+        {
+           get 
+           {
+              return _startTime; 
+           }
+        }
+
+        public static int maxRuntime
+        {
+            get
+            {
+                return _maxRuntime;
+            }
+        }
 
         /// <summary>
         /// The main entry point for the application.
@@ -60,6 +77,7 @@ namespace Questor
         [STAThread]
         static void Main(string[] args)
         {
+            _maxRuntime = Int32.MaxValue;
             var p = new OptionSet() {
                 "Usage: questor [OPTIONS]",
                 "Run missions and make uber ISK.",
@@ -75,6 +93,8 @@ namespace Questor
                 v => _scriptFile = v },
                 { "l|login", "login only and exit.",
                 v => _loginOnly = v != null },
+                { "r|runtime=", "Quit Questor after {RUNTIME} minutes.",
+                v => _maxRuntime = Int32.Parse(v) },
                 { "x|chantling", "use chantling's scheduler",
                 v => _chantlingScheduler = v != null },
                 { "h|help", "show this message and exit",
@@ -141,19 +161,19 @@ namespace Questor
                         _password = _schedule.PW;
                     }
                     _startTime = _schedule.Start;
-					
+
                     if (_schedule.startTimeSpecified )
                         _startTime = _startTime.AddSeconds((double)(_r.Next(0, (_randStartDelay * 60))));
-						_scheduledstartTime = _schedule.Start;
-						_scheduledstopTime = _schedule.Stop;
-						_stopTime = _schedule.Stop;
-						
-						//if ((DateTime.Now > _scheduledstopTime))
-						//{
-						//	_startTime = _startTime.AddDays(1); //otherwise, start tomorrow at start time
-						//	_readyToStarta = false;
-						//}
-						if ((DateTime.Now > _startTime))
+                        _scheduledstartTime = _schedule.Start;
+                        _scheduledstopTime = _schedule.Stop;
+                        _stopTime = _schedule.Stop;
+
+                        //if ((DateTime.Now > _scheduledstopTime))
+                        //{
+                        //	_startTime = _startTime.AddDays(1); //otherwise, start tomorrow at start time
+                        //	_readyToStarta = false;
+                        //}
+                        if ((DateTime.Now > _startTime))
 						{
 							if ((DateTime.Now.Subtract( _startTime).TotalMinutes < 1200 )) //if we're less than x hours past start time, start now
 							{
@@ -238,6 +258,8 @@ namespace Questor
                     return;
             }
 
+            _startTime = DateTime.Now;
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new frmMain());
@@ -269,10 +291,12 @@ namespace Questor
             {
                 foreach(var window in _directEve.Windows)
                 {
-					Logging.Log("[Startup] windowtitles:" + window.Name + "::" + window.Html);
-					//
-					// Close these windows and continue
-					//
+                    if (string.IsNullOrEmpty(window.Html))
+                        continue;
+                    Logging.Log("[Startup] windowtitles:" + window.Name + "::" + window.Html);
+                    //
+                    // Close these windows and continue
+                    //
                     if (window.Name == "telecom")
                     {
                         Logging.Log("Questor: Closing telecom message...");
@@ -296,39 +320,39 @@ namespace Questor
                             close |= window.Html.Contains("accepting connections");
                             close |= window.Html.Contains("Could not connect");
                             close |= window.Html.Contains("The connection to the server was closed");
-							close |= window.Html.Contains("server was closed"); 
-							close |= window.Html.Contains("Unable to connect to the selected server. Please check the address and try again.");
-							close |= window.Html.Contains("make sure your characters are out of harm");
-							close |= window.Html.Contains("Connection to server lost");
-							close |= window.Html.Contains("The socket was closed");
-							close |= window.Html.Contains("The specified proxy or server node");
-							close |= window.Html.Contains("Starting up");
-							close |= window.Html.Contains("Unable to connect to the selected server");
-							close |= window.Html.Contains("Could not connect to the specified address");
-							close |= window.Html.Contains("Connection Timeout");
-							close |= window.Html.Contains("The cluster is not currently accepting connections");
-							close |= window.Html.Contains("Your character is located within");
-							close |= window.Html.Contains("The transport has not yet been connected");
-							close |= window.Html.Contains("The user's connection has been usurped");
-							close |= window.Html.Contains("The EVE cluster has reached its maximum user limit");
-							close |= window.Html.Contains("The connection to the server was closed");
-							//close |= window.Html.Contains("A client update is avilable and will now be installed");
+                            close |= window.Html.Contains("server was closed"); 
+                            close |= window.Html.Contains("Unable to connect to the selected server. Please check the address and try again.");
+                            close |= window.Html.Contains("make sure your characters are out of harm");
+                            close |= window.Html.Contains("Connection to server lost");
+                            close |= window.Html.Contains("The socket was closed");
+                            close |= window.Html.Contains("The specified proxy or server node");
+                            close |= window.Html.Contains("Starting up");
+                            close |= window.Html.Contains("Unable to connect to the selected server");
+                            close |= window.Html.Contains("Could not connect to the specified address");
+                            close |= window.Html.Contains("Connection Timeout");
+                            close |= window.Html.Contains("The cluster is not currently accepting connections");
+                            close |= window.Html.Contains("Your character is located within");
+                            close |= window.Html.Contains("The transport has not yet been connected");
+                            close |= window.Html.Contains("The user's connection has been usurped");
+                            close |= window.Html.Contains("The EVE cluster has reached its maximum user limit");
+                            close |= window.Html.Contains("The connection to the server was closed");
+                            //close |= window.Html.Contains("A client update is avilable and will now be installed");
                             //
                             // eventually it would be nice to hit ok on this one and let it update
                             //
                             close |= window.Html.StartsWith("<html><body>A client update is available and will now be installed.");
                             close |= window.Html.Contains("You are on a <b>14 day trial</b>.");
-							//
-							// these windows require a quit of eve all together
-							//
-							close |= window.Html.Contains("The connection was closed");
-							close |= window.Html.Contains("Connection to server lost."); //INFORMATION
-							close |= window.Html.Contains("Connection to server lost"); //INFORMATION
-							close |= window.Html.Contains("Local cache is corrupt");
+                            //
+                            // these windows require a quit of eve all together
+                            //
+                            close |= window.Html.Contains("The connection was closed");
+                            close |= window.Html.Contains("Connection to server lost."); //INFORMATION
+                            close |= window.Html.Contains("Connection to server lost"); //INFORMATION
+                            close |= window.Html.Contains("Local cache is corrupt");
                             close |= window.Html.Contains("Local session information is corrupt");
-							close |= window.Html.Contains("The client's local session"); // information is corrupt");
-							
-							//Logging.Log("[Startup] (2) close is: " + close);
+                            close |= window.Html.Contains("The client's local session"); // information is corrupt");
+
+                            //Logging.Log("[Startup] (2) close is: " + close);
                             //Logging.Log("[Startup] (1) window.Html is: " + window.Html);
                             _pulsedelay = 60;
                         }
@@ -338,9 +362,9 @@ namespace Questor
                             Logging.Log("Questor: Closing modal window...");
                             Logging.Log("Questor: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
                             window.Close();
-							continue;
+                            continue;
                         }
-						if (restart)
+                        if (restart)
                         {
                             Logging.Log("Startup: Restarting eve...");
                             Logging.Log("Startup: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
@@ -351,7 +375,7 @@ namespace Questor
 
                     if (string.IsNullOrEmpty(window.Html))
                         continue;
-					if (window.Name == "telecom")
+                    if (window.Name == "telecom")
                         continue;
                     Logging.Log("[Startup] We've got an unexpected window, auto login halted.");
                     Logging.Log("[Startup] window.Name is: " + window.Name);
@@ -397,8 +421,11 @@ namespace Questor
 
             if (_directEve.Login.AtLogin)
             {
-                Logging.Log("[Startup] Logging in account [" + _username + "]");
+                Logging.Log("[Startup] Login account [" + _username + "]");
+                //System.Threading.Thread.Sleep(1000);
                 _directEve.Login.Login(_username, _password);
+                Logging.Log("[Startup] Waiting 5 Seconds for Character Selection Screen");
+                //System.Threading.Thread.Sleep(5000);
                 _pulsedelay = 40;
                 return;
             }
