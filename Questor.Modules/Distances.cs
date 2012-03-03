@@ -17,7 +17,7 @@ namespace Questor.Modules
         SafeDistancefromStructure = 5000,
         WarptoDistance = 152000,
         NextPocketDistance = 100000, // If we moved more then 100km, assume next Pocket
-        GateActivationRange = 2400,
+        GateActivationRange = 1000,
         WayTooClose = -10100, // This is uaually used to determine how far inside the 'docking ring' of an acceleration gate we are. 
         OrbitDistanceCushion = 5000, // This is used to determine when to stop orbitingor approaching, if not speed tanking (orbit distance + orbitdistancecushion)
         InsideThisRangeIsLIkelyToBeMostlyFrigates = 12000, // 12k - overall this assumption works, but there are missions where BSs will be at this range, use with caution

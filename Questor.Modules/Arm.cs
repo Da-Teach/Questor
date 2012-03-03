@@ -110,10 +110,10 @@ namespace Questor.Modules
                 case ArmState.ActivateTransportShip:
                     string transportshipName = Settings.Instance.TransportShipName.ToLower();
 
-                    if (!string.IsNullOrEmpty(transportshipName))
+                    if (string.IsNullOrEmpty(transportshipName))
                     {
                         State = ArmState.NotEnoughAmmo;
-                        Logging.Log("Arm.ActivateTransportShip: Could not find transportshipName in settings!");
+                            Logging.Log("Arm.ActivateTransportShip: Could not find transportshipName: " + transportshipName + " in settings!");
                         return;
                     }
                     else if (Cache.Instance.DirectEve.ActiveShip.GivenName.ToLower() != transportshipName)
@@ -140,17 +140,18 @@ namespace Questor.Modules
                             State = ArmState.Done;
                             return;
                         }
-                        else
-                        {
-                            State = ArmState.NotEnoughAmmo;
-                            Logging.Log("Arm.ActivateTransportShip: Could not find [" + transportshipName + "] ship!");
-                            return;
-                        }
                     }
                     break;
                     
                 case ArmState.ActivateSalvageShip:
                     var salvageshipName = Settings.Instance.SalvageShipName.ToLower();
+
+                    if (string.IsNullOrEmpty(salvageshipName))
+                    {
+                        State = ArmState.NotEnoughAmmo;
+                        Logging.Log("Arm.ActivateSalvageShip: Could not find salvageshipName: " + salvageshipName + " in settings!");
+                        return;
+                    }
 
                     if ((!string.IsNullOrEmpty(salvageshipName) && Cache.Instance.DirectEve.ActiveShip.GivenName.ToLower() != salvageshipName))
                     {
@@ -183,10 +184,10 @@ namespace Questor.Modules
                 case ArmState.ActivateCombatShip:
                     var shipName = Settings.Instance.CombatShipName.ToLower();
 
-                    if (!string.IsNullOrEmpty(shipName))
+                    if (string.IsNullOrEmpty(shipName))
                     {
                         State = ArmState.NotEnoughAmmo;
-                        Logging.Log("Arm.ActivateCombatShip: Could not find CombatShipName in settings!");
+                            Logging.Log("Arm.ActivateCombatShip: Could not find CombatShipName: " + shipName + " in settings!");
                         return;
                     }
                     if (!Cache.Instance.ArmLoadedCache)

@@ -371,7 +371,7 @@ namespace Questor.Modules
             WindowXPosition = (int?) xml.Element("windowXPosition") ?? 1600;
             WindowYPosition = (int?) xml.Element("windowYPosition") ?? 1050;
 
-            CombatShipName = (string) xml.Element("combatShipName") ?? "raven";
+            CombatShipName = (string) xml.Element("combatShipName") ?? "change-settings-for combatshipname-to-your-ship-name";
             SalvageShipName = (string) xml.Element("salvageShipName") ?? "noctis";
 
             LootHangar = (string) xml.Element("lootHangar");
