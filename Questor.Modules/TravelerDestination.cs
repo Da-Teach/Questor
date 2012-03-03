@@ -331,7 +331,7 @@ namespace Questor.Modules
                 return false;
 
             Logging.Log("Traveler.BookmarkDestination: Warping to bookmark [" + bookmark.Title + "]");
-            Cache.Instance.ExitSta = false;
+            Cache.Instance.DoNotBreakInvul = false;
             bookmark.WarpTo();
             nextAction = DateTime.Now.AddSeconds(25);
             return false;
