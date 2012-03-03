@@ -346,13 +346,18 @@ namespace Questor.Modules
         {
             if (bookmark == null)
             {
-                Logging.Log("Traveler.MissionBookmarkDestination: Invalid mission bookmark! - This is not fixable close eve.");
 
                 AgentId = -1;
                 Title = null;
                 SolarSystemId = Cache.Instance.DirectEve.Session.SolarSystemId ?? -1;
-				//Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdLogOff);
-                Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
+                //Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdLogOff);
+                //Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
+                
+                Cache.Instance.CloseQuestorCMDLogoff = false;
+                Cache.Instance.CloseQuestorCMDExitGame = true;
+                Cache.Instance.ReasonToStopQuestor = "Traveler.MissionBookmarkDestination: Invalid mission bookmark! - Lag?! Closing EVE";
+                Logging.Log(Cache.Instance.ReasonToStopQuestor);
+                Cache.Instance.SessionState = "Quitting";
                 return;
             }
 
