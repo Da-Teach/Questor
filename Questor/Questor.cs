@@ -124,7 +124,6 @@ namespace Questor
         public double AmmoValue { get; set; }
         public double AmmoConsumption { get; set; }
 
-		
         public void SettingsLoaded(object sender, EventArgs e)
         {
             ApplySettings();
@@ -189,10 +188,6 @@ namespace Questor
             if (!Cache.Instance.DirectEve.Session.IsReady)
                 return;
 
-            // If Questor window not visible, show it
-            // this is causing crashes on closing?
-            //if (!m_Parent.Visible)
-            //    m_Parent.Visible = true;
 
             // We are not in space or station, don't do shit yet!
             if (!Cache.Instance.InSpace && !Cache.Instance.InStation)
@@ -848,7 +843,7 @@ namespace Questor
                         _drones.State = DroneState.WaitingForTargets;
                         State = QuestorState.LocalWatch;
                     }
-                    
+
                     break;
 
                 case QuestorState.LocalWatch:

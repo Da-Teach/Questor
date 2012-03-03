@@ -130,17 +130,17 @@ namespace Questor.Modules
             get { return TypeId == 30497 || TypeId == 15331; }
         }
 
-		public bool IsMissionItem
+        public bool IsMissionItem
         {   //Zbikoki's Hacker Card 28260, Reports 3814, Gate Key 2076, Militants 25373, Marines 3810
             get { return TypeId == 28260 || TypeId == 3814 || TypeId == 2076 || TypeId == 25373 || TypeId == 3810; }
         }
-		
-		public bool IsLootForShipFitting
+
+        public bool IsLootForShipFitting
         {   //Named 100mn Afterburner, Named Target Painter (PWNAGE),
-			// this needs attention // fix me
+            // this needs attention // fix me
             get { return TypeId == 1 || TypeId == 1; }
         }
-		
+
         public bool IsBookmark
         {
             get { return TypeId == 51; }
@@ -183,18 +183,18 @@ namespace Questor.Modules
                 if (InvType.MaxBuy == null)
                 {
                     if (InvType.MinSell == null)
-					{
-						return null;
-					}
-					else
-					{
-					return InvType.MedianSell/InvType.Volume;
-					}
-				}
-				else
-				{
-					return InvType.MedianBuy/InvType.Volume;
-				}
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        return InvType.MedianSell/InvType.Volume;
+                    }
+                }
+                else
+                {
+                    return InvType.MedianBuy/InvType.Volume;
+                }
             }
         }
     }

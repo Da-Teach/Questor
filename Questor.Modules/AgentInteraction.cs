@@ -32,7 +32,7 @@ namespace Questor.Modules
         private DateTime _nextAction;
 
         public bool waitDecline { get; set; }
-		  public float minStandings { get; set; }
+        public float minStandings { get; set; }
 
         public AgentInteraction()
         {
@@ -60,12 +60,12 @@ namespace Questor.Modules
         private void WaitForConversation()
         {
             waitDecline = Settings.Instance.waitDecline;
-				minStandings = Settings.Instance.minStandings;
+            minStandings = Settings.Instance.minStandings;
 
             var agentWindow = Agent.Window;
             if (agentWindow == null || !agentWindow.IsReady)
                 return;
-            
+
             if (Purpose == AgentInteractionPurpose.AmmoCheck)
             {
                 Logging.Log("AgentInteraction: Checking ammo type");
@@ -174,9 +174,9 @@ namespace Questor.Modules
 
                 // Load faction xml
                 var xml = XDocument.Load(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Factions.xml"));
-                var faction = xml.Root.Elements("faction").Where(f => (string) f.Attribute("logo") == logo).FirstOrDefault();
+                var faction = xml.Root.Elements("faction").Where(f => (string)f.Attribute("logo") == logo).FirstOrDefault();
                 if (faction != null)
-                    return (DamageType) Enum.Parse(typeof (DamageType), (string) faction.Attribute("damagetype"));
+                    return (DamageType)Enum.Parse(typeof(DamageType), (string)faction.Attribute("damagetype"));
             }
 
             return DamageType.EM;
@@ -206,7 +206,7 @@ namespace Questor.Modules
             var missionName = Cache.Instance.FilterPath(mission.Name);
 
             var html = agentWindow.Objective;
-				if (CheckFaction())
+            if (CheckFaction() || Settings.Instance.Blacklist.Any(m => m.ToLower() == missionName.ToLower()))
             {
                 if (Purpose != AgentInteractionPurpose.AmmoCheck)
                     Logging.Log("AgentInteraction: Declining blacklisted faction mission");
@@ -224,10 +224,10 @@ namespace Questor.Modules
                 if (Purpose != AgentInteractionPurpose.AmmoCheck)
                     Logging.Log("AgentInteraction: Declining low-sec mission");
 
-                State = AgentInteractionState.DeclineMission;
-                _nextAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
-                return;
-            }
+                    State = AgentInteractionState.DeclineMission;
+                    _nextAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
+                    return;
+                }
             }
 
             if (!ForceAccept)
@@ -300,7 +300,7 @@ namespace Questor.Modules
                 return;
             }
 
-            if (mission.State == (int) MissionState.Offered)
+            if (mission.State == (int)MissionState.Offered)
             {
                 Logging.Log("AgentInteraction: Accepting mission [" + missionName + "]");
 
@@ -358,51 +358,69 @@ namespace Questor.Modules
             if (decline == null)
                 return;
 
-				// Check for agent decline timer
-				if (waitDecline)
-				{
-	            var html = agentWindow.Briefing;
-	            if (html.Contains("Declining a mission from this agent within the next"))
-	            {
-						var standingRegex = new Regex("Effective Standing:\\s(?<standing>\\d+.\\d+)");
-						var standingMatch = standingRegex.Match(html);
-						float standings = 0;
-						if (standingMatch.Success)
-						{
-							var standingValue = standingMatch.Groups["standing"].Value;
-							standingValue = standingValue.Replace('.', ','); // necessary for systems w/ comma-delimited number formatting
-							standings = float.Parse(standingValue);
-							Logging.Log("AgentInteraction: Agent decline timer detected. Current standings: " + standings + ". Minimum standings: " + minStandings);
-						}
-					   if (standings <= minStandings)
-						{
-							var hourRegex = new Regex("\\s(?<hour>\\d+)\\shour");
-							var minuteRegex = new Regex("\\s(?<minute>\\d+)\\sminute");
-							var hourMatch = hourRegex.Match(html);
-							var minuteMatch = minuteRegex.Match(html);
-							int hours = 0;
-							int minutes = 0;
-							if (hourMatch.Success)
-							{
-								var hourValue = hourMatch.Groups["hour"].Value;
-								hours = Convert.ToInt32(hourValue);
-							}
-							if (minuteMatch.Success)
-							{
-								var minuteValue = minuteMatch.Groups["minute"].Value;
-								minutes = Convert.ToInt32(minuteValue);
-							}
-	
-							int secondsToWait = ((hours * 3600) + (minutes * 60) + 60);
-							State = AgentInteractionState.StartConversation;
-			            _nextAction = DateTime.Now.AddSeconds(secondsToWait);
-							Logging.Log("AgentInteraction: Current standings at or below minimum.  Waiting " + (secondsToWait / 60) + " minutes to try decline again.");
-							CloseConversation();
-							return;
-						}
-						Logging.Log("AgentInteraction: Current standings above minimum.  Declining mission.");						
-					}
-				}
+            // Check for agent decline timer
+            if (waitDecline)
+            {
+                var html = agentWindow.Briefing;
+                if (html.Contains("Declining a mission from this agent within the next"))
+                {
+                    var standingRegex = new Regex("Effective Standing:\\s(?<standing>\\d+.\\d+)");
+                    var standingMatch = standingRegex.Match(html);
+                    float standings = 0;
+                    if (standingMatch.Success)
+                    {
+                        var standingValue = standingMatch.Groups["standing"].Value;
+                        standingValue = standingValue.Replace('.', ','); // necessary for systems w/ comma-delimited number formatting
+                        standings = float.Parse(standingValue);
+                        Logging.Log("AgentInteraction: Agent decline timer detected. Current standings: " + standings + ". Minimum standings: " + minStandings);
+                    }
+
+                    var hourRegex = new Regex("\\s(?<hour>\\d+)\\shour");
+                    var minuteRegex = new Regex("\\s(?<minute>\\d+)\\sminute");
+                    var hourMatch = hourRegex.Match(html);
+                    var minuteMatch = minuteRegex.Match(html);
+                    int hours = 0;
+                    int minutes = 0;
+                    if (hourMatch.Success)
+                    {
+                        var hourValue = hourMatch.Groups["hour"].Value;
+                        hours = Convert.ToInt32(hourValue);
+                    }
+                    if (minuteMatch.Success)
+                    {
+                        var minuteValue = minuteMatch.Groups["minute"].Value;
+                        minutes = Convert.ToInt32(minuteValue);
+                    }
+
+                    int secondsToWait = ((hours * 3600) + (minutes * 60) + 60);
+                    var current_agent = Settings.Instance.AgentsList.FirstOrDefault(i => i.Name == Cache.Instance.CurrentAgent);
+
+                    if (standings <= minStandings && Cache.Instance.IsAgentLoop)
+                    {
+                        _nextAction = DateTime.Now.AddSeconds(secondsToWait);
+                        Logging.Log("AgentInteraction: Current standings at or below minimum.  Waiting " + (secondsToWait / 60) + " minutes to try decline again.");
+                        CloseConversation();
+
+                        State = AgentInteractionState.StartConversation;
+
+                        return;
+                    }
+
+                    //add timer to current agent
+                    if (!Cache.Instance.IsAgentLoop && Settings.Instance.MultiAgentSupport)
+                    {
+                        current_agent.Decline_timer = DateTime.Now.AddSeconds(secondsToWait);
+                        CloseConversation();
+
+                        Cache.Instance.CurrentAgent = Cache.Instance.SwitchAgent;
+                        Logging.Log("AgentInteraction: new agent is " + Cache.Instance.CurrentAgent);
+                        State = AgentInteractionState.ChangeAgent;
+
+                        return;
+                    }
+                    Logging.Log("AgentInteraction: Current standings above minimum.  Declining mission.");
+                }
+            }
 
             // Decline and request a new mission
             Logging.Log("AgentInteraction: Saying [Decline]");
@@ -413,8 +431,8 @@ namespace Questor.Modules
             _nextAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
         }
 
-		  public bool CheckFaction()
-		  {
+        public bool CheckFaction()
+        {
             var agentWindow = Agent.Window;
             var html = agentWindow.Objective;
             var logoRegex = new Regex("img src=\"factionlogo:(?<factionlogo>\\d+)");
@@ -425,7 +443,7 @@ namespace Questor.Modules
 
                 // Load faction xml
                 var xml = XDocument.Load(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Factions.xml"));
-                var faction = xml.Root.Elements("faction").Where(f => (string) f.Attribute("logo") == logo).FirstOrDefault();
+                var faction = xml.Root.Elements("faction").Where(f => (string)f.Attribute("logo") == logo).FirstOrDefault();
                 //Cache.Instance.factionFit = "Default";
                 //Cache.Instance.Fitting = "Default";
                 if (faction != null)
@@ -464,7 +482,7 @@ namespace Questor.Modules
                 //Cache.Instance.Fitting = Cache.Instance.factionFit;
             }
             return false;
-          }
+        }
 
         public void CloseConversation()
         {

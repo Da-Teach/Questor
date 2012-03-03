@@ -41,7 +41,7 @@ namespace Questor.Modules
             FactionFitting = new List<FactionFitting>();
             MissionFitting = new List<MissionFitting>();
             Blacklist = new List<string>();
-			FactionBlacklist = new List<string>();
+            FactionBlacklist = new List<string>();
             UseFittingManager = true;
             DefaultFitting = new FactionFitting();
         }
@@ -104,7 +104,7 @@ namespace Questor.Modules
 
         public string MissionsPath { get; set; }
         public bool LowSecMissions { get; set; }
-        
+
         public int walletbalancechangelogoffdelay { get; set; }
         public string walletbalancechangelogoffdelayLogofforExit { get; set; }
 
@@ -126,12 +126,6 @@ namespace Questor.Modules
         public List<int> WreckBlackList { get; set; }
         public bool WreckBlackListSmallWrecks { get; set; }
         public bool WreckBlackListMediumWrecks { get; set; }
-
-
-        //public string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        //public string logpath = Path.Combine(path, "\\log\\");
-        //public string logpath = Path.Combine(logpath, Cache.Instance.FilterPath(_characterName));
-        //public string logpath = Path.Combine(logpath, "\\");
 
         public string logpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
@@ -230,9 +224,6 @@ namespace Questor.Modules
         {
             var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var settingsPath = Path.Combine(path, Cache.Instance.FilterPath(_characterName) + ".xml");
-            var logpath = Path.Combine(path, "\\log\\");
-            logpath = Path.Combine(logpath, Cache.Instance.FilterPath(_characterName));
-            logpath = Path.Combine(logpath, "\\");
 
             var repairstopwatch = new Stopwatch();
 
@@ -277,7 +268,7 @@ namespace Questor.Modules
                 LootHangar = string.Empty;
                 AmmoHangar = string.Empty;
                 BookmarkHangar = string.Empty;
-				LootContainer = string.Empty;
+                LootContainer = string.Empty;
 
                 MissionsPath = Path.Combine(path, "Missions");
 
@@ -356,7 +347,7 @@ namespace Questor.Modules
 			minStandings = (float?) xml.Element("minStandings") ?? 10;
 
             UseGatesInSalvage = (bool?)xml.Element("useGatesInSalvage") ?? false;
-            
+
             UseLocalWatch = (bool?)xml.Element("UseLocalWatch") ?? true;
             LocalBadStandingPilotsToTolerate = (int?)xml.Element("LocalBadStandingPilotsToTolerate") ?? 1;
             LocalBadStandingLevelToConsiderBad = (double?)xml.Element("LocalBadStandingLevelToConsiderBad") ?? -0.1;
@@ -371,8 +362,8 @@ namespace Questor.Modules
             EnableStorylines = (bool?) xml.Element("enableStorylines") ?? false;
             IskPerLP = (double?)xml.Element("IskPerLP") ?? 600;
 
-			UndockDelay = (int?)xml.Element("undockdelay") ?? 10;
-			UndockPrefix = (string) xml.Element("undockprefix") ?? "Insta";
+            UndockDelay = (int?)xml.Element("undockdelay") ?? 10;
+            UndockPrefix = (string) xml.Element("undockprefix") ?? "Insta";
             WindowXPosition = (int?) xml.Element("windowXPosition") ?? 1600;
             WindowYPosition = (int?) xml.Element("windowYPosition") ?? 1050;
 
@@ -382,7 +373,7 @@ namespace Questor.Modules
             LootHangar = (string) xml.Element("lootHangar");
             AmmoHangar = (string) xml.Element("ammoHangar");
             BookmarkHangar = (string)xml.Element("bookmarkHangar");
-			LootContainer = (string)xml.Element("lootContainer");
+            LootContainer = (string)xml.Element("lootContainer");
 
             CreateSalvageBookmarks = (bool?) xml.Element("createSalvageBookmarks") ?? false;
             BookmarkPrefix = (string) xml.Element("bookmarkPrefix") ?? "Salvage:";
@@ -396,7 +387,7 @@ namespace Questor.Modules
 
             EVEProcessMemoryCeiling = (int?)xml.Element("EVEProcessMemoryCeiling") ?? 900;
             EVEProcessMemoryCeilingLogofforExit = (string)xml.Element("EVEProcessMemoryCeilingLogofforExit") ?? "exit";
-            
+
             DontShootFrigatesWithSiegeorAutoCannons = (bool?)xml.Element("DontShootFrigatesWithSiegeorAutoCannons") ?? false;
             //Assume InnerspaceProfile
             CloseQuestorCMDUplinkInnerspaceProfile = (bool?)xml.Element("CloseQuestorCMDUplinkInnerspaceProfile") ?? true;
@@ -441,12 +432,12 @@ UseFittingManager = (bool?)xml.Element("UseFittingManager") ?? true;
                     if (FactionFitting.Exists(m => m.Faction.ToLower() == "default"))
                     {
                         DefaultFitting = FactionFitting.Find(m => m.Faction.ToLower() == "default");
-                            if ((DefaultFitting.Fitting == "") || (DefaultFitting.Fitting == null))
-                            {
-                                UseFittingManager = false;
-                                Logging.Log("Settings: Error! No default fitting specified or fitting is incorrect.  Fitting manager will not be used.");
-                            }
-                            Logging.Log("Settings: Faction Fittings defined. Fitting manager will be used when appropriate.");
+                        if ((DefaultFitting.Fitting == "") || (DefaultFitting.Fitting == null))
+                        {
+                            UseFittingManager = false;
+                            Logging.Log("Settings: Error! No default fitting specified or fitting is incorrect.  Fitting manager will not be used.");
+                        }
+                        Logging.Log("Settings: Faction Fittings defined. Fitting manager will be used when appropriate.");
                     }
                     else
                     {
@@ -465,9 +456,9 @@ UseFittingManager = (bool?)xml.Element("UseFittingManager") ?? true;
             var missionFittings = xml.Element("missionfittings");
             if (UseFittingManager)
             {
-            if (missionFittings != null)
-                foreach (var missionfitting in missionFittings.Elements("missionfitting"))
-                    MissionFitting.Add(new MissionFitting(missionfitting));
+                if (missionFittings != null)
+                    foreach (var missionfitting in missionFittings.Elements("missionfitting"))
+                        MissionFitting.Add(new MissionFitting(missionfitting));
             }
             WeaponGroupId = (int?) xml.Element("weaponGroupId") ?? 0;
 

@@ -58,42 +58,42 @@ namespace Questor.Modules
             var currentPocketName = Cache.Instance.FilterPath(mission.Name);
             if (Settings.Instance.PocketStatistics)
             {
-            Settings.Instance.PocketStatisticsFile = Path.Combine(Settings.Instance.PocketStatisticsPath, Cache.Instance.FilterPath(Cache.Instance.DirectEve.Me.Name) + " - " + currentPocketName + " - " + _pocket + " - PocketStatistics.csv");
-            
-			Directory.CreateDirectory(Settings.Instance.PocketStatisticsPath);
+                Settings.Instance.PocketStatisticsFile = Path.Combine(Settings.Instance.PocketStatisticsPath, Cache.Instance.FilterPath(Cache.Instance.DirectEve.Me.Name) + " - " + currentPocketName + " - " + _pocket + " - PocketStatistics.csv");
 
-            //
-            // this is writing down stats from the PREVIOUS pocket (if any?!)
-            //
+                Directory.CreateDirectory(Settings.Instance.PocketStatisticsPath);
 
-            // Write the header
-            if (!File.Exists(Settings.Instance.PocketStatisticsFile))
-                File.AppendAllText(Settings.Instance.PocketStatisticsFile, "Date and Time;Mission Name and Pocket;Time to complete;Isk;panics;LowestShields;LowestArmor;LowestCapacitor;RepairCycles\r\n");
+                //
+                // this is writing down stats from the PREVIOUS pocket (if any?!)
+                //
 
-            // Build the line
-            var pocketstats_line = DateTime.Now + ";";
-            pocketstats_line += currentPocketName + ";" + "pocket" + (_pocket) + ";";
-            pocketstats_line += ((int)DateTime.Now.Subtract(StartedPocket).TotalMinutes) + ";";
-            pocketstats_line += ((long)(Cache.Instance.DirectEve.Me.Wealth - Wealth)) + ";";
-            pocketstats_line += ((int)Cache.Instance.panic_attempts_this_pocket) + ";";
-            pocketstats_line += ((int)Cache.Instance.lowest_shield_percentage_this_pocket) + ";";
-            pocketstats_line += ((int)Cache.Instance.lowest_armor_percentage_this_pocket) + ";";
-            pocketstats_line += ((int)Cache.Instance.lowest_capacitor_percentage_this_pocket) + ";";
-            pocketstats_line += ((int)Cache.Instance.repair_cycle_time_this_pocket) + ";\r\n";            
-            
+                // Write the header
+                if (!File.Exists(Settings.Instance.PocketStatisticsFile))
+                    File.AppendAllText(Settings.Instance.PocketStatisticsFile, "Date and Time;Mission Name and Pocket;Time to complete;Isk;panics;LowestShields;LowestArmor;LowestCapacitor;RepairCycles\r\n");
+
+                // Build the line
+                var pocketstats_line = DateTime.Now + ";";
+                pocketstats_line += currentPocketName + ";" + "pocket" + (_pocket) + ";";
+                pocketstats_line += ((int)DateTime.Now.Subtract(StartedPocket).TotalMinutes) + ";";
+                pocketstats_line += ((long)(Cache.Instance.DirectEve.Me.Wealth - Wealth)) + ";";
+                pocketstats_line += ((int)Cache.Instance.panic_attempts_this_pocket) + ";";
+                pocketstats_line += ((int)Cache.Instance.lowest_shield_percentage_this_pocket) + ";";
+                pocketstats_line += ((int)Cache.Instance.lowest_armor_percentage_this_pocket) + ";";
+                pocketstats_line += ((int)Cache.Instance.lowest_capacitor_percentage_this_pocket) + ";";
+                pocketstats_line += ((int)Cache.Instance.repair_cycle_time_this_pocket) + ";\r\n";
+
                 // The old pocket is finished
-            Logging.Log("MissionController: Writing pocket statistics to [ " + Settings.Instance.PocketStatisticsFile + "and clearing stats for next pocket");
-            File.AppendAllText(Settings.Instance.PocketStatisticsFile, pocketstats_line);
+                Logging.Log("MissionController: Writing pocket statistics to [ " + Settings.Instance.PocketStatisticsFile + "and clearing stats for next pocket");
+                File.AppendAllText(Settings.Instance.PocketStatisticsFile, pocketstats_line);
             }
-                // Update statistic values for next pocket stats
-                Wealth = Cache.Instance.DirectEve.Me.Wealth;
-                StartedPocket = DateTime.Now;
-                Cache.Instance.panic_attempts_this_pocket = 0;
-                Cache.Instance.lowest_shield_percentage_this_pocket = 101;
-                Cache.Instance.lowest_armor_percentage_this_pocket = 101;
-                Cache.Instance.lowest_capacitor_percentage_this_pocket = 101;
-                Cache.Instance.repair_cycle_time_this_pocket = 0;
-                LostDrones = 0;
+            // Update statistic values for next pocket stats
+            Wealth = Cache.Instance.DirectEve.Me.Wealth;
+            StartedPocket = DateTime.Now;
+            Cache.Instance.panic_attempts_this_pocket = 0;
+            Cache.Instance.lowest_shield_percentage_this_pocket = 101;
+            Cache.Instance.lowest_armor_percentage_this_pocket = 101;
+            Cache.Instance.lowest_capacitor_percentage_this_pocket = 101;
+            Cache.Instance.repair_cycle_time_this_pocket = 0;
+            LostDrones = 0;
         }
 
         private void ReloadAll()
@@ -150,19 +150,17 @@ namespace Questor.Modules
                 // boosters may cause an unneeded salvage trip but that is better than leaving millions in loot behind.  
                 if (DateTime.Now.Subtract(_lastLogMessage).TotalSeconds > 20)
                 {
-                if (!Settings.Instance.LootEverything && Cache.Instance.Containers.Count() < Settings.Instance.MinimumWreckCount)
-                {
-                    Logging.Log("MissionController: No bookmark created because the pocket has [" + Cache.Instance.Containers.Count() + "] wrecks/containers and the minimum is [" + Settings.Instance.MinimumWreckCount + "]");
+                    if (!Settings.Instance.LootEverything && Cache.Instance.Containers.Count() < Settings.Instance.MinimumWreckCount)
+                    {
+                        Logging.Log("MissionController: No bookmark created because the pocket has [" + Cache.Instance.Containers.Count() + "] wrecks/containers and the minimum is [" + Settings.Instance.MinimumWreckCount + "]");
                         _lastLogMessage = DateTime.Now; 
-                    return;
-                }
-                else if (Settings.Instance.LootEverything)
-                {
-                    Logging.Log("MissionController: No bookmark created because the pocket has [" + Cache.Instance.UnlootedContainers.Count() + "] wrecks/containers and the minimum is [" + Settings.Instance.MinimumWreckCount + "]");
+                    }
+                    else if (Settings.Instance.LootEverything)
+                    {
+                        Logging.Log("MissionController: No bookmark created because the pocket has [" + Cache.Instance.UnlootedContainers.Count() + "] wrecks/containers and the minimum is [" + Settings.Instance.MinimumWreckCount + "]");
                         _lastLogMessage = DateTime.Now;
-                    return;
+                    }
                 }
-            }
 
             }
 
@@ -172,13 +170,16 @@ namespace Questor.Modules
             if (bookmark != null)
             {
                 Logging.Log("MissionController: Pocket already bookmarked for salvaging [" + bookmark.Title + "]");
-                return;
             }
-
-            // No, create a bookmark
-            var label = string.Format("{0} {1:HHmm}", Settings.Instance.BookmarkPrefix, DateTime.UtcNow);
-            Logging.Log("MissionController: Bookmarking pocket for salvaging [" + label + "]");
-            Cache.Instance.CreateBookmark(label);
+            else
+            {
+                // No, create a bookmark
+                var label = string.Format("{0} {1:HHmm}", Settings.Instance.BookmarkPrefix, DateTime.UtcNow);
+                //var containers = Cache.Instance.Containers.Where(e => !Cache.Instance.LootedContainers.Contains(e.Id)).OrderBy(e => e.Distance);
+                Logging.Log("MissionController: Bookmarking pocket for salvaging [" + label + "]");
+                Cache.Instance.CreateBookmark(label);
+                //Cache.Instance.CreateBookmarkofwreck(containers,label);
+            }
         }
 
         private void ActivateAction(Action action)
@@ -202,7 +203,7 @@ namespace Questor.Modules
                 {
                     if (DateTime.Now.Subtract(_waitingSince).TotalSeconds < 30)
                     {
-                State = MissionControllerState.Error;
+                        State = MissionControllerState.Error;
                     }
                 }
                 return;
@@ -223,33 +224,33 @@ namespace Questor.Modules
                     BookmarkPocketForSalvaging();
 
                // Reload weapons and activate gate to move to the next pocket
-				ReloadAll();
+                ReloadAll();
                 //
                 // this is a bad idea for a speed tank, we ought to somehow cache the object they are orbiting/approaching, etc
                 // this seemingly slowed down the exit from cetain missions for me for 2-3min as it had a command to orbit some random object
                 // after the "done" command
                 //
                 if (closest.Distance < -10100)
-				{
+                {
                     closest.Orbit(1000);
-				}
-				//Logging.Log("MissionController: distance " + closest.Distance);
-				if (closest.Distance >= -10100)
-				{
-					// Add bookmark (before we activate)
-					if (Settings.Instance.CreateSalvageBookmarks)
-						BookmarkPocketForSalvaging();
-					
+                }
+                //Logging.Log("MissionController: distance " + closest.Distance);
+                if (closest.Distance >= -10100)
+                {
+                    // Add bookmark (before we activate)
+                    if (Settings.Instance.CreateSalvageBookmarks)
+                        BookmarkPocketForSalvaging();
+
                     // Reload weapons and activate gate to move to the next pocket
                     ReloadAll();
-					closest.Activate();
-				 
-					// Do not change actions, if NextPocket gets a timeout (>2 mins) then it reverts to the last action
-					Logging.Log("MissionController.Activate: Activate [" + closest.Name + "] and change state to 'NextPocket'");
-				 
-					_lastActivateAction = DateTime.Now;
-					State = MissionControllerState.NextPocket;
-				}
+                    closest.Activate();
+
+                    // Do not change actions, if NextPocket gets a timeout (>2 mins) then it reverts to the last action
+                    Logging.Log("MissionController.Activate: Activate [" + closest.Name + "] and change state to 'NextPocket'");
+
+                    _lastActivateAction = DateTime.Now;
+                    State = MissionControllerState.NextPocket;
+                }
             }
             else if (closest.Distance < 150000)
             {
@@ -330,7 +331,7 @@ namespace Questor.Modules
                 // Are we approaching the active (out of range) target?
                 // Wait for it (or others) to get into range
 
-                if (Settings.Instance.SpeedTank && Cache.Instance.Approaching == null && Cache.Instance.Approaching.Id != target.Id)
+                if (Settings.Instance.SpeedTank && Cache.Instance.Approaching == null)
                     target.Orbit(Cache.Instance.OrbitDistance); 
 
                 if (!Settings.Instance.SpeedTank)
@@ -428,12 +429,12 @@ namespace Questor.Modules
                 {
                     Logging.Log("MissionController.MoveTo: Approaching target [" + closest.Name + "][" + closest.Id + "]");
                     closest.Approach();
-					 _currentAction++;
+                    _currentAction++;
                 }
             }
         }
 
-		private void MoveToAction(Action action)
+        private void MoveToAction(Action action)
         {
             var target = action.GetParameterValue("target");
 
@@ -487,7 +488,7 @@ namespace Questor.Modules
                 // We cant warp if we have drones out
                 if (Cache.Instance.ActiveDrones.Count() > 0)
                     return;
-                
+
                 if (DateTime.Now.Subtract(_lastAlign ).TotalMinutes > 2)
                 {
                 // Probably never happens
@@ -806,7 +807,7 @@ namespace Questor.Modules
                 // if we arent generally looting we need to re-enable the opening of wrecks to
                 // find this LootItems we are looking for
                 Cache.Instance.OpenWrecks = true;
-            
+
             int quantity;
             if (!int.TryParse(action.GetParameterValue("quantity"), out quantity))
                 quantity = 1;
@@ -867,7 +868,7 @@ namespace Questor.Modules
                     Logging.Log("MissionController.Loot: We are done looting");
                         // now that we are done with this action revert OpenWrecks to false
                         Cache.Instance.OpenWrecks = false;
-                    
+
                     _currentAction++;
                     return;
                 }
@@ -967,11 +968,11 @@ namespace Questor.Modules
                 case ActionState.MoveTo:
                     MoveToAction(action);
                     break;
-				
-				case ActionState.MoveToBackground:
+
+                case ActionState.MoveToBackground:
                     MoveToBackgroundAction(action);
                     break;
-					
+
                 case ActionState.Loot:
                     LootAction(action);
                     break;
@@ -1002,7 +1003,11 @@ namespace Questor.Modules
                     break;
                 case MissionControllerState.Done:
                     LogStatistics();
-					Cache.Instance.IgnoreTargets.Clear();
+
+                    if (!Cache.Instance.NormalApproch)
+                        Cache.Instance.NormalApproch = true;
+
+                    Cache.Instance.IgnoreTargets.Clear();
                     break;
                 case MissionControllerState.Error:
                     break;

@@ -48,7 +48,7 @@ namespace Questor.Modules
         ///   Returns all non-empty wrecks and all containers
         /// </summary>
         private List<EntityCache> _containers;
-        
+
         /// <summary>
         ///   Entities cache (all entities within 256km)
         /// </summary>
@@ -255,7 +255,6 @@ namespace Questor.Modules
         ///   Used for Drones to know that it should retract drones
         /// </summary>
         public bool IsMissionPocketDone { get; set; }
-
         public string ExtConsole { get; set; }
 
         public DateTime _lastModuleActivation;

@@ -12,7 +12,7 @@ namespace Questor.Modules
     using System;
     using System.Linq;
     using System.Diagnostics;
-    
+
     public class Defense
     {
         private void ActivateOnce()
@@ -23,13 +23,13 @@ namespace Questor.Modules
                     continue;
 
                 var activate = false;
-                activate |= module.GroupId == (int) Group.ShieldHardeners;
-                activate |= module.GroupId == (int) Group.DamageControl;
-                activate |= module.GroupId == (int) Group.ArmorHardeners;
-                activate |= module.GroupId == (int) Group.SensorBooster;
-                activate |= module.GroupId == (int) Group.TrackingComputer;
-                activate |= module.GroupId == (int) Group.ECCM;
-                activate |= module.GroupId == (int) Group.CloakingDevice;
+                activate |= module.GroupId == (int)Group.ShieldHardeners;
+                activate |= module.GroupId == (int)Group.DamageControl;
+                activate |= module.GroupId == (int)Group.ArmorHardeners;
+                activate |= module.GroupId == (int)Group.SensorBooster;
+                activate |= module.GroupId == (int)Group.TrackingComputer;
+                activate |= module.GroupId == (int)Group.ECCM;
+                activate |= module.GroupId == (int)Group.CloakingDevice;
 
                 if (!activate)
                     continue;
@@ -37,7 +37,7 @@ namespace Questor.Modules
                 if (module.IsActive | module.IsGoingOnline | module.IsDeactivating)
                     continue;
 
-                if (module.GroupId == (int) Group.CloakingDevice)
+                if (module.GroupId == (int)Group.CloakingDevice)
                 {
                     //Logging.Log("This module has a typeID of: " + module.TypeId + " !!");
                     if (module.TypeId != 11578)  //11578 Covert Ops Cloaking Device - if you dont have a covops cloak try the next module
@@ -69,20 +69,18 @@ namespace Questor.Modules
                     continue;
 
                 double perc;
-                if (module.GroupId == (int) Group.ShieldBoosters)
-                {   
+                if (module.GroupId == (int)Group.ShieldBoosters)
+                {
                     perc = Cache.Instance.DirectEve.ActiveShip.ShieldPercentage;
                 }
-                else if (module.GroupId == (int) Group.ArmorRepairer)
+                else if (module.GroupId == (int)Group.ArmorRepairer)
                 {
                     perc = Cache.Instance.DirectEve.ActiveShip.ArmorPercentage;
                 }
                 else
                     continue;
-				
-				var inCombat = Cache.Instance.TargetedBy.Count() > 0;
 
-
+                var inCombat = Cache.Instance.TargetedBy.Count() > 0;
                 if (!module.IsActive && ((inCombat && perc < Settings.Instance.ActivateRepairModules) || (!inCombat && perc < Settings.Instance.DeactivateRepairModules && Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage > Settings.Instance.SafeCapacitorPct)))
                 {
                     if (Cache.Instance.DirectEve.ActiveShip.ShieldPercentage < Cache.Instance.lowest_shield_percentage_this_pocket)
@@ -107,13 +105,13 @@ namespace Questor.Modules
                     //System.Threading.Thread.Sleep(333);
                     module.Click();
                     Cache.Instance.StartedBoosting = DateTime.Now;
-					
+
                     //Logging.Log("LowestShieldPercentage(pocket) [ " + Cache.Instance.lowest_shield_percentage_this_pocket + " ] ");
-					//Logging.Log("LowestArmorPercentage(pocket) [ " + Cache.Instance.lowest_armor_percentage_this_pocket + " ] ");
-					//Logging.Log("LowestCapacitorPercentage(pocket) [ " + Cache.Instance.lowest_capacitor_percentage_this_pocket + " ] ");
-					//Logging.Log("LowestShieldPercentage(mission) [ " + Cache.Instance.lowest_shield_percentage_this_mission + " ] ");
-					//Logging.Log("LowestArmorPercentage(mission) [ " + Cache.Instance.lowest_armor_percentage_this_mission + " ] ");
-					//Logging.Log("LowestCapacitorPercentage(mission) [ " + Cache.Instance.lowest_capacitor_percentage_this_mission + " ] ");
+                    //Logging.Log("LowestArmorPercentage(pocket) [ " + Cache.Instance.lowest_armor_percentage_this_pocket + " ] ");
+                    //Logging.Log("LowestCapacitorPercentage(pocket) [ " + Cache.Instance.lowest_capacitor_percentage_this_pocket + " ] ");
+                    //Logging.Log("LowestShieldPercentage(mission) [ " + Cache.Instance.lowest_shield_percentage_this_mission + " ] ");
+                    //Logging.Log("LowestArmorPercentage(mission) [ " + Cache.Instance.lowest_armor_percentage_this_mission + " ] ");
+                    //Logging.Log("LowestCapacitorPercentage(mission) [ " + Cache.Instance.lowest_capacitor_percentage_this_mission + " ] ");
                 }
                 else if (module.IsActive && perc >= Settings.Instance.DeactivateRepairModules)
                 {
@@ -121,7 +119,7 @@ namespace Questor.Modules
                     //System.Threading.Thread.Sleep(333);
                     module.Click();
                     Cache.Instance._lastModuleActivation = DateTime.Now;
-					Cache.Instance.repair_cycle_time_this_pocket = Cache.Instance.repair_cycle_time_this_pocket + ((int)DateTime.Now.Subtract(Cache.Instance.StartedBoosting).TotalSeconds);
+                    Cache.Instance.repair_cycle_time_this_pocket = Cache.Instance.repair_cycle_time_this_pocket + ((int)DateTime.Now.Subtract(Cache.Instance.StartedBoosting).TotalSeconds);
                     Cache.Instance.repair_cycle_time_this_mission = Cache.Instance.repair_cycle_time_this_mission + ((int)DateTime.Now.Subtract(Cache.Instance.StartedBoosting).TotalSeconds);
                     Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
                     //Cache.Instance.repair_cycle_time_this_pocket = Cache.Instance.repair_cycle_time_this_pocket + ((int)watch.Elapsed);
@@ -134,7 +132,7 @@ namespace Questor.Modules
         {
             foreach (var module in Cache.Instance.Modules)
             {
-                if (module.GroupId != (int) Group.Afterburner)
+                if (module.GroupId != (int)Group.Afterburner)
                     continue;
 
                 if (module.InLimboState)
@@ -144,7 +142,7 @@ namespace Questor.Modules
                 var activate = Cache.Instance.Approaching != null;
                 activate &= !module.IsActive;
                 activate &= !module.IsDeactivating;
-                
+
                 // Should we deactivate the module?
                 var deactivate = Cache.Instance.Approaching == null;
                 deactivate &= module.IsActive;
@@ -157,7 +155,7 @@ namespace Questor.Modules
                     // Activate if target is far enough
                     activate &= Cache.Instance.Approaching.Distance > Settings.Instance.MinimumPropulsionModuleDistance;
                     // Deactivate if target is too close
-                    deactivate |= Cache.Instance.Approaching.Distance <  Settings.Instance.MinimumPropulsionModuleDistance;
+                    deactivate |= Cache.Instance.Approaching.Distance < Settings.Instance.MinimumPropulsionModuleDistance;
                 }
 
                 // If we have less then x% cap, do not activate or deactivate the module
@@ -170,13 +168,13 @@ namespace Questor.Modules
                     //More human behaviour
                     //System.Threading.Thread.Sleep(333); 
                     module.Click();
-				}
+                }
                 else if (deactivate && module.IsActive)
-				{
+                {
                     //More human behaviour
                     //System.Threading.Thread.Sleep(333); 
                     module.Click();
-				}
+                }
             }
         }
 

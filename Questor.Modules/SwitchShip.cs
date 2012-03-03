@@ -44,7 +44,7 @@ namespace Questor.Modules
                         break;
 
                     Logging.Log("SwitchShip: Activating combat ship");
-                        
+
                     State = SwitchShipState.ActivateCombatShip;
 
                     break;
@@ -77,7 +77,7 @@ namespace Questor.Modules
                 case SwitchShipState.OpenFittingWindow:
                     //let's check first if we need to change fitting at all
                     Logging.Log("SwitchShip: Fitting: " + DefaultFitting + " - currentFit: " + Cache.Instance.currentFit);
-                    if(DefaultFitting.Equals(Cache.Instance.currentFit))
+                    if (DefaultFitting.Equals(Cache.Instance.currentFit))
                     {
                         Logging.Log("SwitchShip: Current fit is correct - no change necessary");
                         State = SwitchShipState.Done;
@@ -113,7 +113,7 @@ namespace Questor.Modules
                     {
                         //ok found it
                         var ship = Cache.Instance.DirectEve.ActiveShip;
-                        if(DefaultFitting.ToLower().Equals(fitting.Name.ToLower()) && fitting.ShipTypeId == ship.TypeId)
+                        if (DefaultFitting.ToLower().Equals(fitting.Name.ToLower()) && fitting.ShipTypeId == ship.TypeId)
                         {
                             Logging.Log("SwitchShip: Found fitting " + fitting.Name);
                             //switch to the requested fitting for the current mission
@@ -144,7 +144,7 @@ namespace Questor.Modules
                     break;
 
                 case SwitchShipState.NotEnoughAmmo:
-                    Logging.Log("SwitchShip: Out of Ammo, checking a solution ...");                   
+                    Logging.Log("SwitchShip: Out of Ammo, checking a solution ...");
                     break;
             }
         }

@@ -15,11 +15,9 @@ namespace Questor.Modules
     public static class Logging
     {
         public static void Log(string line)
-        { 
+        {
             InnerSpace.Echo(string.Format("{0:HH:mm:ss} {1}", DateTime.Now, line));
             Cache.Instance.ExtConsole += string.Format("{0:HH:mm:ss} {1}", DateTime.Now, line + "\r\n");
         }
     }
-}    
-
-
+}

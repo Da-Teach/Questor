@@ -51,7 +51,7 @@ namespace Questor.Modules
 
             var tractorBeamRange = tractorBeams.Min(t => t.OptimalRange);
 
-            var wrecks = Cache.Instance.Targets.Where(t => (t.GroupId == (int) Group.Wreck || t.GroupId == (int) Group.CargoContainer) && t.Distance < tractorBeamRange).ToList();
+            var wrecks = Cache.Instance.Targets.Where(t => (t.GroupId == (int)Group.Wreck || t.GroupId == (int)Group.CargoContainer) && t.Distance < tractorBeamRange).ToList();
 
             for (var i = tractorBeams.Count - 1; i >= 0; i--)
             {
@@ -145,7 +145,7 @@ namespace Questor.Modules
             targets.AddRange(Cache.Instance.Targeting);
 
             var hasSalvagers = Cache.Instance.Modules.Any(m => Salvagers.Contains(m.TypeId));
-            var wreckTargets = targets.Where(t => (t.GroupId == (int) Group.Wreck || t.GroupId == (int) Group.CargoContainer) && t.CategoryId == (int) CategoryID.Celestial).ToList();
+            var wreckTargets = targets.Where(t => (t.GroupId == (int)Group.Wreck || t.GroupId == (int)Group.CargoContainer) && t.CategoryId == (int)CategoryID.Celestial).ToList();
 
             // Check for cargo containers
             foreach (var wreck in wreckTargets)
@@ -170,21 +170,20 @@ namespace Questor.Modules
                     continue;
 
                 // Unlock if within loot range
-                if(wreck.Distance < 2400)
+                if (wreck.Distance < 2400)
                 {
                     Logging.Log("Salvage: Cargo Container [" + wreck.Name + "][" + wreck.Id + "] within loot range, unlocking container.");
                     wreck.UnlockTarget();
                 }
             }
 
-            if(Cache.Instance.MissionLoot)
+            if (Cache.Instance.MissionLoot)
             {
                 if(wreckTargets.Count >= Math.Min(Cache.Instance.DirectEve.ActiveShip.MaxLockedTargets, Cache.Instance.DirectEve.Me.MaxLockedTargets))
                     return;
             }
-            else
-            if (wreckTargets.Count >= MaximumWreckTargets)
-                return;
+            else if (wreckTargets.Count >= MaximumWreckTargets)
+                    return;
 
             var tractorBeams = Cache.Instance.Modules.Where(m => TractorBeams.Contains(m.TypeId)).ToList();
             var tractorBeamRange = 0d;
@@ -289,49 +288,49 @@ namespace Questor.Modules
 
                 // Build a list of items to loot
                 var lootItems = new List<ItemCache>();
-				
+
                 if (Settings.Instance.WreckLootStatistics)
                 {
-                // Log all items found in the wreck
-                File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, "TIME: " + string.Format("{0:dd/MM/yyyy HH:mm:ss}", DateTime.Now) + "\n");
-                File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, "NAME: " + containerEntity.Name + "\n");
-                File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, "ITEMS:" + "\n");
-                foreach (var item in items.OrderBy(i => i.TypeId))
-                {
-                    File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, "TypeID: " + item.TypeId.ToString() + "\n");
-                    File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, "Name: " + item.Name + "\n");
-                    File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, "Quantity: " + item.Quantity.ToString() + "\n");
-                    File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, "=\n");
+                    // Log all items found in the wreck
+                    File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, "TIME: " + string.Format("{0:dd/MM/yyyy HH:mm:ss}", DateTime.Now) + "\n");
+                    File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, "NAME: " + containerEntity.Name + "\n");
+                    File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, "ITEMS:" + "\n");
+                    foreach (var item in items.OrderBy(i => i.TypeId))
+                    {
+                        File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, "TypeID: " + item.TypeId.ToString() + "\n");
+                        File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, "Name: " + item.Name + "\n");
+                        File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, "Quantity: " + item.Quantity.ToString() + "\n");
+                        File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, "=\n");
+                    }
+                    File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, ";" + "\n");
                 }
-                File.AppendAllText(Settings.Instance.WreckLootStatisticsFile, ";" + "\n");
-                }
-				//if (freeCargoCapacity < 1000) //this should allow BSs to dump scrapmetal but haulers and noctus' to hold onto it
-				//{
-				//	// Dump scrap metal if we have any
-				//	if (containerEntity.Name == "Cargo Container" && shipsCargo.Any(i => i.IsScrapMetal))
-				//	{
-				//		foreach (var item in shipsCargo.Where(i => i.IsScrapMetal))
-				//		{
-				//			container.Add(item.DirectItem);
-				//			freeCargoCapacity += item.TotalVolume;
-				//		}
+                //if (freeCargoCapacity < 1000) //this should allow BSs to dump scrapmetal but haulers and noctus' to hold onto it
+                //{
+                //	// Dump scrap metal if we have any
+                //	if (containerEntity.Name == "Cargo Container" && shipsCargo.Any(i => i.IsScrapMetal))
+                //	{
+                //		foreach (var item in shipsCargo.Where(i => i.IsScrapMetal))
+                //		{
+                //			container.Add(item.DirectItem);
+                //			freeCargoCapacity += item.TotalVolume;
+                //		}
                 //
-				//		shipsCargo.RemoveAll(i => i.IsScrapMetal);
-				//	}
-				//}
+                //		shipsCargo.RemoveAll(i => i.IsScrapMetal);
+                //	}
+                //}
                 // Walk through the list of items ordered by highest value item first
                 foreach (var item in items.OrderByDescending(i => i.IskPerM3))
                 {
                     if (freeCargoCapacity < 1000) //this should allow BSs to not pickup large low value items but haulers and noctus' to scoop everything
-					{
-						// We never want to pick up a cap booster
-						if (item.GroupID == (int) Group.CapacitorGroupCharge)
-							continue;
+                    {
+                        // We never want to pick up a cap booster
+                        if (item.GroupID == (int)Group.CapacitorGroupCharge)
+                            continue;
 
-						// We never want to pick up metal scraps
-						//if (item.IsScrapMetal)
-						//	continue;
-					}
+                        // We never want to pick up metal scraps
+                        //if (item.IsScrapMetal)
+                        //	continue;
+                    }
                     // We pick up loot depending on isk per m3
                     var isMissionItem = Cache.Instance.MissionItems.Contains((item.Name ?? string.Empty).ToLower());
 
@@ -348,7 +347,7 @@ namespace Questor.Modules
                     //       scooped because unloadlootstate.MoveCommonMissionCompletionitems 
                     //       will move them into the hangar floor not the loot location
                     if (!isMissionItem && item.IsAliveandWontFitInContainers)
-                    continue;
+                        continue;
 
                     // We are at our max, either make room or skip the item
                     if ((freeCargoCapacity - item.TotalVolume) <= (isMissionItem ? 0 : ReserveCargoCapacity))
@@ -471,7 +470,7 @@ namespace Questor.Modules
                 // Don't even try to open a wreck if you are speed tanking and you aren't processing a loot action
                 //if (Settings.Instance.SpeedTank == true && Cache.Instance.OpenWrecks == false)
                 //    continue;
-                
+
                 // Don't even try to open a wreck if you are specified LootEverything as false and you aren't processing a loot action
                 //      this is currently commented out as it would keep golems and other non-speed tanked ships from looting the field as they cleared
                 //      missions, but NOT stick around after killing things to clear it ALL. Looteverything==false does NOT mean loot nothing

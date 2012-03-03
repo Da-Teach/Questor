@@ -200,7 +200,7 @@ namespace Questor.Modules
             {
                 if (weapon.CurrentCharges >= weapon.MaxCharges)
                     return;
-                
+
                 if (weapon.IsReloadingAmmo || weapon.IsDeactivating || weapon.IsChangingAmmo)
                     return;
 
@@ -282,15 +282,15 @@ namespace Questor.Modules
             {
                 if (target.Distance > Cache.Instance.OrbitDistance + 5000 && Cache.Instance.Approaching == null)
                 {
-                        target.Approach(Cache.Instance.OrbitDistance);
-                        Logging.Log("Combat.ActivateWeapons: Approaching target [" + target.Name + "][" + target.Id + "]");
+                    target.Approach(Cache.Instance.OrbitDistance);
+                    Logging.Log("Combat.ActivateWeapons: Approaching target [" + target.Name + "][" + target.Id + "]");
                 }
 
                 if (target.Distance <= Cache.Instance.OrbitDistance && Cache.Instance.Approaching != null)
                 {
                     Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
                     Cache.Instance.Approaching = null;
-                    Logging.Log("Combat.ActivateWeapons.ClearPocket: Stop ship, target is in orbit range");
+                    Logging.Log("Combat.ActivateWeapons: Stop ship, target is in orbit range");
                 }
             }
 
@@ -337,8 +337,8 @@ namespace Questor.Modules
                 // If we have already activated warp, deactivate the weapons
                 if (!Cache.Instance.DirectEve.ActiveShip.Entity.IsWarping)
                 {
-                // Target is in range
-                if (target.Distance <= ammo.Range)
+                    // Target is in range
+                    if(target.Distance <= ammo.Range)
                     continue;
                 }
                 // Target is out of range, stop firing
@@ -375,7 +375,7 @@ namespace Questor.Modules
                     //More human behaviour
                     //System.Threading.Thread.Sleep(333);
 
-					//we know we are connected if we were able to get this far - update the lastknownGoodConnectedTime
+                    //we know we are connected if we were able to get this far - update the lastknownGoodConnectedTime
                     Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
                     Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
                 }
@@ -386,7 +386,7 @@ namespace Questor.Modules
         /// </summary>
         public void ActivateTargetPainters(EntityCache target)
         {
-            var targetPainters = Cache.Instance.Modules.Where(m => m.GroupId == (int) Group.TargetPainter).ToList();
+            var targetPainters = Cache.Instance.Modules.Where(m => m.GroupId == (int)Group.TargetPainter).ToList();
 
             // Find the first active weapon
             // Assist this weapon
@@ -456,7 +456,7 @@ namespace Questor.Modules
         /// </summary>
         public void ActivateStasisWeb(EntityCache target)
         {
-            var webs = Cache.Instance.Modules.Where(m => m.GroupId == (int) Group.StasisWeb).ToList();
+            var webs = Cache.Instance.Modules.Where(m => m.GroupId == (int)Group.StasisWeb).ToList();
 
             // Find the first active weapon
             // Assist this weapon
@@ -526,7 +526,7 @@ namespace Questor.Modules
             var combatTargets = targets.Where(e => e.CategoryId == (int)CategoryID.Entity && e.IsNpc && !e.IsContainer && e.GroupId != (int)Group.LargeCollidableStructure).ToList();
 
             // Remove any target that is too far out of range (Weapon Range * 1.5)
-            for (var i = combatTargets.Count - 1; i >= 0; i --)
+            for (var i = combatTargets.Count - 1; i >= 0; i--)
             {
                 var target = combatTargets[i];
                 if (target.Distance > maxRange*1.5d)
@@ -550,7 +550,7 @@ namespace Questor.Modules
             var lowValueTargets = combatTargets.Where(t => !t.TargetValue.HasValue && !Cache.Instance.PriorityTargets.Any(pt => pt.Id == t.Id)).ToList();
 
             // Build a list of things targeting me
-            var targetingMe = Cache.Instance.TargetedBy.Where(t => t.IsNpc && t.CategoryId == (int) CategoryID.Entity && !t.IsContainer && t.Distance < maxRange && !targets.Any(c => c.Id == t.Id) && !Cache.Instance.IgnoreTargets.Contains(t.Name.Trim())).ToList();
+            var targetingMe = Cache.Instance.TargetedBy.Where(t => t.IsNpc && t.CategoryId == (int)CategoryID.Entity && !t.IsContainer && t.Distance < maxRange && !targets.Any(c => c.Id == t.Id) && !Cache.Instance.IgnoreTargets.Contains(t.Name.Trim())).ToList();
             var highValueTargetingMe = targetingMe.Where(t => t.TargetValue.HasValue).OrderByDescending(t => t.TargetValue.Value).ThenBy(t => t.Distance).ToList();
             var lowValueTargetingMe = targetingMe.Where(t => !t.TargetValue.HasValue).OrderBy(t => t.Distance).ToList();
 
