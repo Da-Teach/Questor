@@ -262,40 +262,43 @@ namespace Questor
                     Cache.Instance.SessionIskGenerated = 0;
                     Cache.Instance.SessionLootGenerated = 0;
                     Cache.Instance.SessionLPGenerated = 0;
-                    //
-                    // prepare the Questor Session Log - keeps track of starts, restarts and exits, and hopefully the reasons
-                    //
+                    
+                    if (Settings.Instance.SessionsLog)
+                    {
+                        //
+                        // prepare the Questor Session Log - keeps track of starts, restarts and exits, and hopefully the reasons
+                        //
 
-                    // Get the path
+                        // Get the path
 
-                    Directory.CreateDirectory(Settings.Instance.SessionsLogPath);
+                        Directory.CreateDirectory(Settings.Instance.SessionsLogPath);
 
-                    // Write the header
-                    if (!File.Exists(Settings.Instance.SessionsLogFile))
-                        File.AppendAllText(Settings.Instance.SessionsLogFile, "Date;RunningTime;SessionState;LastMission;WalletBalance;MemoryUsage;Reason;IskGenerated;LootGenerated;LPGenerated;Isk/Hr;Loot/Hr;LP/HR;Total/HR;\r\n");
+                        // Write the header
+                        if (!File.Exists(Settings.Instance.SessionsLogFile))
+                            File.AppendAllText(Settings.Instance.SessionsLogFile, "Date;RunningTime;SessionState;LastMission;WalletBalance;MemoryUsage;Reason;IskGenerated;LootGenerated;LPGenerated;Isk/Hr;Loot/Hr;LP/HR;Total/HR;\r\n");
 
-                    // Build the line
-                    var line = DateTime.Now + ";";
-                    line += "0" + ";";
-                    line += Cache.Instance.SessionState + ";";
-                    line += "n/a" + ";";
-                    line += Cache.Instance.DirectEve.Me.Wealth + ";";
-                    line += Cache.Instance.totalMegaBytesOfMemoryUsed + ";";
-                    line += "Starting" + ";";
-                    line += "n/a" + ";";
-                    line += "n/a" + ";";
-                    line += "n/a" + ";";
-                    line += "n/a" + ";";
-                    line += "n/a" + ";";
-                    line += "n/a" + ";";
-                    line += "n/a" + ";\r\n";
+                        // Build the line
+                        var line = DateTime.Now + ";";
+                        line += "0" + ";";
+                        line += Cache.Instance.SessionState + ";";
+                        line += "n/a" + ";";
+                        line += Cache.Instance.DirectEve.Me.Wealth + ";";
+                        line += Cache.Instance.totalMegaBytesOfMemoryUsed + ";";
+                        line += "Starting" + ";";
+                        line += "n/a" + ";";
+                        line += "n/a" + ";";
+                        line += "n/a" + ";";
+                        line += "n/a" + ";";
+                        line += "n/a" + ";";
+                        line += "n/a" + ";";
+                        line += "n/a" + ";\r\n";
 
-                    // The mission is finished
-                    File.AppendAllText(Settings.Instance.SessionsLogFile, line);
+                        // The mission is finished
+                        File.AppendAllText(Settings.Instance.SessionsLogFile, line);
 
-                    Cache.Instance.SessionState = "";
-
-                    Logging.Log("Questor: Writing session data to [ " + Settings.Instance.SessionsLogFile);
+                        Cache.Instance.SessionState = "";
+                        Logging.Log("Questor: Writing session data to [ " + Settings.Instance.SessionsLogFile);
+                    }
                 }
             }
 
