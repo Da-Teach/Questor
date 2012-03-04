@@ -52,14 +52,15 @@
             _storylines.Add("Transaction Data Delivery", new TransactionDataDelivery());
             _storylines.Add("Innocents in the Crossfire", new GenericCombatStoryline());
 			_storylines.Add("Patient Zero", new GenericCombatStoryline());
-			//_storylines.Add("Soothe the Salvage Beast", new GenericCombatStoryline());
+            _storylines.Add("Soothe the Salvage Beast", new GenericCombatStoryline());
             _storylines.Add("Forgotten Outpost", new GenericCombatStoryline());
-            _storylines.Add("Stem The Flow", new GenericCombatStoryline());
+            _storylines.Add("Stem the Flow", new GenericCombatStoryline());
 			_storylines.Add("Quota Season", new GenericCombatStoryline());
 			//_storylines.Add("Matriarch", new GenericCombatStoryline());
             //_storylines.Add("Diplomatic Incident", new GenericCombatStoryline());
 			_storylines.Add("Nine Tenths of the Wormhole", new GenericCombatStoryline());
 		}
+            //these work but are against other factions that I generally like to avoid
 			//_storylines.Add("The Blood of Angry Men", new GenericCombatStoryline());  //amarr faction
 			//_storylines.Add("Amarrian Excavators", new GenericCombatStoryline()); 	//amarr faction
 			
