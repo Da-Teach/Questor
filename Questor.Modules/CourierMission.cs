@@ -6,7 +6,7 @@
 
     public class CourierMission
     {
-        private DateTime _nextAction;
+        private DateTime _nextCourierAction;
         private Traveler _traveler;
         public CourierMissionState State { get; set; }
 
@@ -46,10 +46,8 @@
             var hangar = directEve.GetItemHangar();
             if (hangar.Window == null)
             {
-                _nextAction = DateTime.Now.AddSeconds(8);
-
+                _nextCourierAction = DateTime.Now.AddSeconds(8);
                 Logging.Log("CourierMissionState: Opening hangar floor");
-
                 directEve.ExecuteCommand(DirectCmd.OpenHangarFloor);
                 return false;
             }
@@ -61,10 +59,8 @@
             var cargo = directEve.GetShipsCargo();
             if (cargo.Window == null)
             {
-                _nextAction = DateTime.Now.AddSeconds(8);
-
+                _nextCourierAction = DateTime.Now.AddSeconds(8);
                 Logging.Log("CourierMissionState: Opening cargo");
-
                 directEve.ExecuteCommand(DirectCmd.OpenCargoHoldOfActiveShip);
                 return false;
             }
@@ -90,7 +86,7 @@
                 Logging.Log("CourierMissionState: Moving [" + item.TypeName + "][" + item.ItemId + "] to " + (pickup ? "cargo" : "hangar"));
                 to.Add(item);
             }
-            _nextAction = DateTime.Now.AddSeconds(8);
+            _nextCourierAction = DateTime.Now.AddSeconds(8);
             return false;
         }
 

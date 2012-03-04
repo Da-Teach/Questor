@@ -29,7 +29,7 @@ namespace Questor.Modules
         public const string Decline = "Decline";
         public const string Close = "Close";
         private DateTime _lastMissionOpenRequest;
-        private DateTime _nextAction;
+        private DateTime _nextAgentAction;
 
         public bool waitDecline { get; set; }
         public float minStandings { get; set; }
@@ -75,7 +75,7 @@ namespace Questor.Modules
             {
                 Logging.Log("AgentInteraction: Replying to agent");
                 State = AgentInteractionState.ReplyToAgent;
-                _nextAction = DateTime.Now.AddSeconds(7);
+                _nextAgentAction = DateTime.Now.AddSeconds(7);
             }
         }
 
@@ -106,7 +106,7 @@ namespace Questor.Modules
                     Logging.Log("AgentInteraction: Closing conversation");
 
                     State = AgentInteractionState.CloseConversation;
-                    _nextAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
+                    _nextAgentAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
                 }
                 else
                 {
@@ -114,7 +114,7 @@ namespace Questor.Modules
 
                     // Apparently someone clicked "accept" already
                     State = AgentInteractionState.WaitForMission;
-                    _nextAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
+                    _nextAgentAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
                 }
             }
             else if (request != null)
@@ -127,7 +127,7 @@ namespace Questor.Modules
 
                     Logging.Log("AgentInteraction: Waiting for mission");
                     State = AgentInteractionState.WaitForMission;
-                    _nextAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
+                    _nextAgentAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
                 }
                 else
                 {
@@ -141,7 +141,7 @@ namespace Questor.Modules
                 Logging.Log("AgentInteraction: Saying [View Mission]");
 
                 view.Say();
-                _nextAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
+                _nextAgentAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
                 // No state change
             }
             else if (accept != null || decline != null)
@@ -151,7 +151,7 @@ namespace Questor.Modules
                     Logging.Log("AgentInteraction: Waiting for mission");
 
                     State = AgentInteractionState.WaitForMission; // Dont say anything, wait for the mission
-                    _nextAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
+                    _nextAgentAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
                 }
                 else
                 {
@@ -212,7 +212,7 @@ namespace Questor.Modules
                     Logging.Log("AgentInteraction: Declining blacklisted faction mission");
 
                 State = AgentInteractionState.DeclineMission;
-                _nextAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
+                _nextAgentAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
                 return;
             }
 
@@ -225,7 +225,7 @@ namespace Questor.Modules
                         Logging.Log("AgentInteraction: Declining low-sec mission");
 
                     State = AgentInteractionState.DeclineMission;
-                    _nextAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
+                    _nextAgentAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
                     return;
                 }
             }
@@ -238,7 +238,7 @@ namespace Questor.Modules
                     Logging.Log("AgentInteraction: Declining courier/mining/trade");
 
                     State = AgentInteractionState.DeclineMission;
-                    _nextAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
+                    _nextAgentAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
                     return;
                 }
 
@@ -303,7 +303,7 @@ namespace Questor.Modules
                 Logging.Log("AgentInteraction: Accepting mission [" + missionName + "]");
 
                 State = AgentInteractionState.AcceptMission;
-                _nextAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
+                _nextAgentAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
             }
             else // If we already accepted the mission, close the convo
             {
@@ -311,7 +311,7 @@ namespace Questor.Modules
                 Logging.Log("AgentInteraction: Closing conversation");
                 //CheckFaction();
                 State = AgentInteractionState.CloseConversation;
-                _nextAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
+                _nextAgentAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
             }
         }
 
@@ -335,7 +335,7 @@ namespace Questor.Modules
 
             Logging.Log("AgentInteraction: Closing conversation");
             State = AgentInteractionState.CloseConversation;
-            _nextAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
+            _nextAgentAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
         }
 
         private void DeclineMission()
@@ -395,7 +395,7 @@ namespace Questor.Modules
 
                     if (standings <= minStandings && Cache.Instance.IsAgentLoop)
                     {
-                        _nextAction = DateTime.Now.AddSeconds(secondsToWait);
+                        _nextAgentAction = DateTime.Now.AddSeconds(secondsToWait);
                         Logging.Log("AgentInteraction: Current standings at or below minimum.  Waiting " + (secondsToWait / 60) + " minutes to try decline again.");
                         CloseConversation();
 
@@ -426,7 +426,7 @@ namespace Questor.Modules
 
             Logging.Log("AgentInteraction: Replying to agent");
             State = AgentInteractionState.ReplyToAgent;
-            _nextAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
+            _nextAgentAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
         }
 
         public bool CheckFaction()
@@ -502,7 +502,7 @@ namespace Questor.Modules
         public void ProcessState()
         {
             // Wait a bit before doing "things"
-            if (DateTime.Now < _nextAction)
+            if (DateTime.Now < _nextAgentAction)
                 return;
 
             switch (State)
