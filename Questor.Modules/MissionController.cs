@@ -165,7 +165,8 @@ namespace Questor.Modules
                 }
 
             }
-
+            else
+            {
             // Do we already have a bookmark?
             var bookmarks = Cache.Instance.BookmarksByLabel(Settings.Instance.BookmarkPrefix + " ");
             var bookmark = bookmarks.FirstOrDefault(b => Cache.Instance.DistanceFromMe(b.X ?? 0, b.Y ?? 0, b.Z ?? 0) < (int)Distance.BookmarksOnGridWithMe);
@@ -182,6 +183,7 @@ namespace Questor.Modules
                 Cache.Instance.CreateBookmark(label);
                 //Cache.Instance.CreateBookmarkofwreck(containers,label);
             }
+        }
         }
 
         private void ActivateAction(Action action)
