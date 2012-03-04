@@ -444,6 +444,11 @@ namespace Questor
                 return;
             }
 
+            if (Cache.Instance.SessionState.ToLower() == "Quitting".ToLower())
+            {
+                State = QuestorState.CloseQuestor;
+            }
+
             // Panic always runs, not just in space
             watch.Reset();
             watch.Start();
