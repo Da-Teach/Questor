@@ -275,12 +275,12 @@ namespace Questor.Modules
         private void ActivateWeapons(EntityCache target)
         {
 
-            if (Settings.Instance.SpeedTank && Cache.Instance.Approaching == null)
+            if (Settings.Instance.SpeedTank && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id))
                 target.Orbit(Cache.Instance.OrbitDistance);
 
             if (!Settings.Instance.SpeedTank && Cache.Instance.NormalApproch)
             {
-                if (target.Distance > Cache.Instance.OrbitDistance + (int)Distance.OrbitDistanceCushion && Cache.Instance.Approaching == null)
+                if (target.Distance > Cache.Instance.OrbitDistance + (int)Distance.OrbitDistanceCushion && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id))
                 {
                     target.Approach(Cache.Instance.OrbitDistance);
                     Logging.Log("Combat.ActivateWeapons: Approaching target [" + target.Name + "][" + target.Id + "]");
@@ -306,7 +306,7 @@ namespace Questor.Modules
                 {
                     if (Settings.Instance.WeaponGroupId == 55 || Settings.Instance.WeaponGroupId == 508 || Settings.Instance.WeaponGroupId == 506)
                     {
-                        if (target.Distance <= (int)Distance.InsideThisRangeIsLIkelyToBeMostlyFrigates && !target.TargetValue.HasValue)
+                    if (target.Distance <= (int)Distance.InsideThisRangeIsLIkelyToBeMostlyFrigates && !target.TargetValue.HasValue && target.GroupId != (int)Group.LargeCollidableStructure)
                         {
                             weapon.Deactivate();
                         }
@@ -498,7 +498,9 @@ namespace Questor.Modules
             if (Cache.Instance.DirectEve.ActiveShip.MaxLockedTargets == 0)
             {
                 if (!_isJammed)
+                {
                     Logging.Log("Combat: We are jammed and can't target anything");
+                }
 
                 _isJammed = true;
                 return;
