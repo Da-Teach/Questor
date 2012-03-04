@@ -581,22 +581,22 @@ namespace Questor.Modules
             }
 
             logpath = (Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\log\\" + Cache.Instance.DirectEve.Me.Name + "\\");
-            ConsoleLogPath = Settings.Instance.logpath;
-            ConsoleLogFile = (Settings.Instance.logpath + string.Format("{0:MM-dd-yyyy}", DateTime.Today) + "-" + Cache.Instance.DirectEve.Me.Name + "-" + "console" + ".log");
-            SessionsLogPath = Settings.Instance.logpath;
-            SessionsLogFile = (Settings.Instance.logpath + Cache.Instance.DirectEve.Me.Name + ".Sessions.log");
-            DroneStatsLogPath = Settings.Instance.logpath;
-            DroneStatslogFile = (Settings.Instance.logpath + Cache.Instance.DirectEve.Me.Name + ".DroneStats.log");
-            WreckLootStatisticsPath = Settings.Instance.logpath;
-            WreckLootStatisticsFile = (Settings.Instance.logpath + Cache.Instance.DirectEve.Me.Name + ".WreckLootStatisticsDump.log");
-            MissionStats1LogPath = Path.Combine(Settings.Instance.logpath, "missionstats\\");
-            MissionStats1LogFile = (Settings.Instance.MissionStats1LogPath + Cache.Instance.DirectEve.Me.Name + ".Statistics.log");
-            MissionStats2LogPath = Path.Combine(Settings.Instance.logpath, "missionstats\\");
-            MissionStats2LogFile = (Settings.Instance.MissionStats2LogPath + Cache.Instance.DirectEve.Me.Name + ".DatedStatistics.log");
-            MissionStats3LogPath = Path.Combine(Settings.Instance.logpath, "missionstats\\");
-            MissionStats3LogFile = (Settings.Instance.MissionStats3LogPath + Cache.Instance.DirectEve.Me.Name + ".CustomDatedStatistics.csv");
-            PocketStatisticsPath = Path.Combine(Settings.Instance.logpath, "pocketstats\\");
-            PocketStatisticsFile = Path.Combine(Settings.Instance.PocketStatisticsPath, "pocketstats - generic");
+            ConsoleLogPath = logpath;
+            ConsoleLogFile = (logpath + string.Format("{0:MM-dd-yyyy}", DateTime.Today) + "-" + Cache.Instance.DirectEve.Me.Name + "-" + "console" + ".log");
+            SessionsLogPath = logpath;
+            SessionsLogFile = (logpath + Cache.Instance.DirectEve.Me.Name + ".Sessions.log");
+            DroneStatsLogPath = logpath;
+            DroneStatslogFile = (logpath + Cache.Instance.DirectEve.Me.Name + ".DroneStats.log");
+            WreckLootStatisticsPath = logpath;
+            WreckLootStatisticsFile = (logpath + Cache.Instance.DirectEve.Me.Name + ".WreckLootStatisticsDump.log");
+            MissionStats1LogPath = Path.Combine(logpath, "missionstats\\");
+            MissionStats1LogFile = (MissionStats1LogPath + Cache.Instance.DirectEve.Me.Name + ".Statistics.log");
+            MissionStats2LogPath = Path.Combine(logpath, "missionstats\\");
+            MissionStats2LogFile = (MissionStats2LogPath + Cache.Instance.DirectEve.Me.Name + ".DatedStatistics.log");
+            MissionStats3LogPath = Path.Combine(logpath, "missionstats\\");
+            MissionStats3LogFile = (MissionStats3LogPath + Cache.Instance.DirectEve.Me.Name + ".CustomDatedStatistics.csv");
+            PocketStatisticsPath = Path.Combine(logpath, "pocketstats\\");
+            PocketStatisticsFile = Path.Combine(PocketStatisticsPath, "pocketstats - generic");
 
             if (SettingsLoaded != null)
                 SettingsLoaded(this, new EventArgs());
