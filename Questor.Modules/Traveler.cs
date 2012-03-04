@@ -16,7 +16,7 @@ namespace Questor.Modules
     public class Traveler
     {
         private TravelerDestination _destination;
-        private DateTime _nextAction;
+        private DateTime _nextTravelerAction;
 
         public TravelerState State { get; set; }
         public DirectBookmark UndockBookmark { get; set; }
@@ -37,7 +37,7 @@ namespace Questor.Modules
         /// <param name = "solarSystemId"></param>
         private void NagivateToBookmarkSystem(long solarSystemId)
         {
-            if (_nextAction > DateTime.Now)
+            if (_nextTravelerAction > DateTime.Now)
                 return;
 
 			var undockBookmark = UndockBookmark;
@@ -68,7 +68,7 @@ namespace Questor.Modules
                     if (Cache.Instance.InStation)
                     {
                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdExitStation);
-                        _nextAction = DateTime.Now.AddSeconds(7);
+                        _nextTravelerAction = DateTime.Now.AddSeconds((int)Time.TravelerExitStationAmIInSpaceYet_seconds);
                     }
 
                     // We are not yet in space, wait for it
@@ -87,7 +87,7 @@ namespace Questor.Modules
                 {
                     // not found, that cant be true?!?!?!?!
                     Logging.Log("Traveler: (traveler.cs) Error [Stargate (" + locationName + ")] not found, most likely lag waiting 15 seconds.");
-                    _nextAction = DateTime.Now.AddSeconds(15);
+                    _nextTravelerAction = DateTime.Now.AddSeconds((int)Time.TravelerNoStargatesFoundRetryDelay_seconds);
                     return;
                 }
 
@@ -98,7 +98,7 @@ namespace Questor.Modules
                     Logging.Log("Traveler: (traveler.cs) Jumping to [" + locationName + "]");
                     entity.Jump();
 
-                    _nextAction = DateTime.Now.AddSeconds(15);
+                    _nextTravelerAction = DateTime.Now.AddSeconds((int)Time.TravelerJumpedGateNextCommandDelay_seconds);
                 }
                 else if (entity.Distance < (int)Distance.WarptoDistance)
                     entity.Approach();
@@ -106,8 +106,7 @@ namespace Questor.Modules
                 {
                     Logging.Log("Traveler: (traveler.cs) Warping to [Stargate (" + locationName + ")]");
                     entity.WarpTo();
-
-                    _nextAction = DateTime.Now.AddSeconds(5);
+                    _nextTravelerAction = DateTime.Now.AddSeconds((int)Time.TravelerInWarpedNextCommandDelay_seconds);
                 }
             }
         }

@@ -22,7 +22,7 @@ namespace Questor.Modules
         private int _currentAction;
         private DateTime _lastActivateAction;
         private DateTime _lastApproachAction;
-        private DateTime _lastLogMessage;
+        private DateTime _lastBookmarkPocketAttempt;
         private readonly Dictionary<long, DateTime> _lastWeaponReload = new Dictionary<long, DateTime>();
         private double _lastX;
         private double _lastY;
@@ -127,7 +127,7 @@ namespace Questor.Modules
                 if (weapon.IsReloadingAmmo || weapon.IsDeactivating || weapon.IsChangingAmmo)
                     return;
 
-                if (_lastWeaponReload.ContainsKey(weapon.ItemId) && DateTime.Now < _lastWeaponReload[weapon.ItemId].AddSeconds(22))
+                if (_lastWeaponReload.ContainsKey(weapon.ItemId) && DateTime.Now < _lastWeaponReload[weapon.ItemId].AddSeconds((int)Time.ReloadWeaponDelayBeforeUsable_seconds))
                     return;
                 _lastWeaponReload[weapon.ItemId] = DateTime.Now;
 
@@ -150,17 +150,17 @@ namespace Questor.Modules
                 // This scenario only happens when all wrecks are within tractor range and you have a salvager 
                 // (typically only with a Golem).  Check to see if there are any cargo containers in space.  Cap 
                 // boosters may cause an unneeded salvage trip but that is better than leaving millions in loot behind.  
-                if (DateTime.Now.Subtract(_lastLogMessage).TotalSeconds > 20)
+                if (DateTime.Now.Subtract(_lastBookmarkPocketAttempt).TotalSeconds > (int)Time.BookmarkPocketRetryDelay_seconds)
                 {
                     if (!Settings.Instance.LootEverything && Cache.Instance.Containers.Count() < Settings.Instance.MinimumWreckCount)
                     {
                         Logging.Log("MissionController: No bookmark created because the pocket has [" + Cache.Instance.Containers.Count() + "] wrecks/containers and the minimum is [" + Settings.Instance.MinimumWreckCount + "]");
-                        _lastLogMessage = DateTime.Now; 
+                        _lastBookmarkPocketAttempt = DateTime.Now; 
                     }
                     else if (Settings.Instance.LootEverything)
                     {
                         Logging.Log("MissionController: No bookmark created because the pocket has [" + Cache.Instance.UnlootedContainers.Count() + "] wrecks/containers and the minimum is [" + Settings.Instance.MinimumWreckCount + "]");
-                        _lastLogMessage = DateTime.Now;
+                        _lastBookmarkPocketAttempt = DateTime.Now;
                     }
                 }
 
@@ -203,7 +203,7 @@ namespace Questor.Modules
                 }
                 else if (_waiting)
                 {
-                    if (DateTime.Now.Subtract(_waitingSince).TotalSeconds > 30)
+                    if (DateTime.Now.Subtract(_waitingSince).TotalSeconds > (int)Time.ActivateAction_NoGateFound_delay)
                     {
                         Logging.Log("MissionController.Activate: After 30 seconds of waiting the gate is still not on grid: MissionControllerState.Error");
                         State = MissionControllerState.Error;
@@ -230,11 +230,11 @@ namespace Questor.Modules
                 //
                 if ((closest.Distance < -10100) && (DateTime.Now.Subtract(_lastOrbit).TotalSeconds > 30))
                 {
-				    closest.Orbit(1000);
+                    closest.Orbit(1000);
                     _lastOrbit = DateTime.Now;
                 }
                 //Logging.Log("MissionController: distance " + closest.Distance);
-                //if ((closest.Distance <= (int)Distance.TooCloseToStructure) && (DateTime.Now.Subtract(_lastOrbit).TotalSeconds > 10)) //-10100 meters (inside docking ring) - so close that we may get tangled in the structure on activation - move away
+                //if ((closest.Distance <= (int)Distance.TooCloseToStructure) && (DateTime.Now.Subtract(_lastOrbit).TotalSeconds > 30)) //-10100 meters (inside docking ring) - so close that we may get tangled in the structure on activation - move away
                 //{
                 //    Logging.Log("MissionController.Activate: Too close to Structure to activate: orbiting");
                 //    closest.Orbit((int)Distance.GateActivationRange); // 1000 meters
@@ -279,7 +279,7 @@ namespace Questor.Modules
                 if (Cache.Instance.ActiveDrones.Count() > 0)
                     return;
                     
-                if (DateTime.Now.Subtract(_lastAlign ).TotalMinutes > 2)
+                if (DateTime.Now.Subtract(_lastAlign ).TotalMinutes > (int)Time.LastAlignDelay_minutes)
                 {
                     // Only happens if we are asked to Activate something that is outside Distance.CloseToGateActivationRange (default is: 6k)
                 closest.AlignTo();
@@ -496,7 +496,7 @@ namespace Questor.Modules
                 if (Cache.Instance.ActiveDrones.Count() > 0)
                     return;
 
-                if (DateTime.Now.Subtract(_lastAlign ).TotalMinutes > 2)
+                if (DateTime.Now.Subtract(_lastAlign ).TotalMinutes > (int)Time.LastAlignDelay_minutes)
                 {
                 // Probably never happens
                 closest.AlignTo();

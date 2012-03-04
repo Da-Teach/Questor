@@ -10,7 +10,7 @@ namespace Questor.Modules
 
     public class SwitchShip
     {
-        private DateTime _lastAction;
+        private DateTime _lastSwitchShipAction;
 
         public SwitchShipState State { get; set; }
 
@@ -54,7 +54,7 @@ namespace Questor.Modules
 
                     if ((!string.IsNullOrEmpty(shipName) && Cache.Instance.DirectEve.ActiveShip.GivenName.ToLower() != shipName))
                     {
-                        if (DateTime.Now.Subtract(_lastAction).TotalSeconds > 15)
+                        if (DateTime.Now.Subtract(_lastSwitchShipAction).TotalSeconds > (int)Time.SwitchShipsDelay_seconds)
                         {
                             var ships = Cache.Instance.DirectEve.GetShipHangar().Items;
                             foreach (var ship in ships.Where(ship => ship.GivenName.ToLower() == shipName))
@@ -63,7 +63,7 @@ namespace Questor.Modules
 
                                 ship.ActivateShip();
                                 Logging.Log("SwitchShip: Activated");
-                                _lastAction = DateTime.Now;
+                                _lastSwitchShipAction = DateTime.Now;
                                 return;
                             }
                         }
@@ -118,7 +118,7 @@ namespace Questor.Modules
                             Logging.Log("SwitchShip: Found fitting " + fitting.Name);
                             //switch to the requested fitting for the current mission
                             fitting.Fit();
-                            _lastAction = DateTime.Now;
+                            _lastSwitchShipAction = DateTime.Now;
                             Cache.Instance.currentFit = fitting.Name;
                             State = SwitchShipState.WaitForFitting;
                             break;
@@ -131,7 +131,7 @@ namespace Questor.Modules
 
                 case SwitchShipState.WaitForFitting:
                     //let's wait 10 seconds
-                    if (DateTime.Now.Subtract(_lastAction).TotalMilliseconds > 10000 &&
+                    if (DateTime.Now.Subtract(_lastSwitchShipAction).TotalMilliseconds > (int)Time.FittingWindowLoadFittingDelay_seconds &&
                         Cache.Instance.DirectEve.GetLockedItems().Count == 0)
                     {
                         //we should be done fitting, proceed to the next state
@@ -140,7 +140,7 @@ namespace Questor.Modules
                         fittingMgr.Close();
                         Logging.Log("SwitchShip: Done fitting");
                     }
-                    else Logging.Log("SwitchShip: Waiting for fitting. time elapsed = " + DateTime.Now.Subtract(_lastAction).TotalMilliseconds + " locked items = " + Cache.Instance.DirectEve.GetLockedItems().Count);
+                    else Logging.Log("SwitchShip: Waiting for fitting. time elapsed = " + DateTime.Now.Subtract(_lastSwitchShipAction).TotalMilliseconds + " locked items = " + Cache.Instance.DirectEve.GetLockedItems().Count);
                     break;
 
                 case SwitchShipState.NotEnoughAmmo:

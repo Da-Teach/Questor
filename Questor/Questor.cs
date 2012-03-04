@@ -183,7 +183,7 @@ namespace Questor
             var watch = new Stopwatch();
 
             // Only pulse state changes every 1.5s
-            if (DateTime.Now.Subtract(_lastPulse).TotalMilliseconds < 1500)
+            if (DateTime.Now.Subtract(_lastPulse).TotalMilliseconds < (int)Time.QuestorPulse_milliseconds) //default: 1500ms
                 return;
             _lastPulse = DateTime.Now;
 
@@ -228,11 +228,11 @@ namespace Questor
                     LogPathsNotSetupYet = false;
                 }
             }
+
             // Invalid settings, quit while we're ahead
             if (!ValidSettings)
             {
-
-                if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 15)
+                if (DateTime.Now.Subtract(_lastAction).TotalSeconds < (int)Time.ValidateSettings_seconds) //default is a 15 second interval
                 {
                     ValidateSettings();
                     _lastAction = DateTime.Now;
@@ -240,13 +240,13 @@ namespace Questor
                 return;
             }
 
-            if (DateTime.Now.Subtract(_lastupdateofSessionRunningTime).TotalSeconds < 15)
+            if (DateTime.Now.Subtract(_lastupdateofSessionRunningTime).TotalSeconds < (int)Time.SessionRunningTimeUpdate_seconds)
             {
                 Cache.Instance.SessionRunningTime = (int)DateTime.Now.Subtract(_questorStarted).TotalMinutes;
                 _lastupdateofSessionRunningTime = DateTime.Now;
             }
 
-            if (DateTime.Now.Subtract(_questorStarted).TotalSeconds < 60)
+            if ((DateTime.Now.Subtract(_questorStarted).TotalSeconds > 10) && (DateTime.Now.Subtract(_questorStarted).TotalSeconds < 60))
             {
                 if (Cache.Instance.QuestorJustStarted)
                 {
@@ -390,7 +390,7 @@ namespace Questor
 
             if (!Paused)
             {
-                if (DateTime.Now.Subtract(_lastWalletCheck).TotalMinutes > 1)
+                if (DateTime.Now.Subtract(_lastWalletCheck).TotalMinutes > (int)Time.WalletCheck_minutes)
                 {
                     _lastWalletCheck = DateTime.Now;
                     //Logging.Log("[Questor] Wallet Balance Debug Info: lastknowngoodconnectedtime = " + Settings.Instance.lastKnownGoodConnectedTime);
@@ -691,7 +691,7 @@ namespace Questor
 
 
                 case QuestorState.DelayedGotoBase:
-                    if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 15)
+                    if (DateTime.Now.Subtract(_lastAction).TotalSeconds < (int)Time.DelayedGotoBase_seconds)
                         break;
 
                     Logging.Log("Questor: Heading back to base");
@@ -893,7 +893,7 @@ namespace Questor
 
                 case QuestorState.WaitingforBadGuytoGoAway:
                     _lastAction = DateTime.Now;
-                    if(DateTime.Now.Subtract(_lastAction).Minutes < 5)
+                    if(DateTime.Now.Subtract(_lastAction).Minutes < (int)Time.WaitforBadGuytoGoAway_minutes)
                         break;
 
                     State = QuestorState.LocalWatch;
@@ -902,6 +902,7 @@ namespace Questor
 
                 case QuestorState.WarpOutStation:
                     var _bookmark = Cache.Instance.BookmarksByLabel(Settings.Instance.bookmarkWarpOut ?? "").OrderByDescending(b => b.CreatedOn).Where(b => b.LocationId == Cache.Instance.DirectEve.Session.SolarSystemId).FirstOrDefault();
+                    //var _bookmark = Cache.Instance.BookmarksByLabel(Settings.Instance.bookmarkWarpOut + "-" + Cache.Instance.CurrentAgent ?? "").OrderBy(b => b.CreatedOn).FirstOrDefault();
                     var _solarid = Cache.Instance.DirectEve.Session.SolarSystemId ?? -1;
 
                     if (_bookmark == null)
@@ -1041,7 +1042,7 @@ namespace Questor
                     if (_combat.State == CombatState.OutOfAmmo)
                     {
                         Logging.Log("Combat: Out of Ammo!");
-                        //_drone.State = DroneState.Recalling
+                        //_drone.State = DroneState.Recalling;
                         State = QuestorState.GotoBase;
 
                         // Clear looted containers
@@ -1243,7 +1244,7 @@ namespace Questor
                                     Logging.Log("Questor: you can change this option by setting the wallet and eveprocessmemoryceiling options to use exit instead of logoff: see the settings.xml file");
                                     Logging.Log("Questor: Logging Off eve in 15 seconds.");
                                     CloseQuestorflag = false;
-                                    _CloseQuestorDelay = DateTime.Now.AddSeconds(20);
+                                    _CloseQuestorDelay = DateTime.Now.AddSeconds((int)Time.CloseQuestorDelayBeforeExit_seconds);
                                 }
                                 if (_CloseQuestorDelay.AddSeconds(-10) < DateTime.Now)
                                 {
@@ -1276,7 +1277,7 @@ namespace Questor
                                             Logging.Log("Questor: Done: quitting this session so the new innerspace session can take over");
                                             Logging.Log("Questor: Exiting eve in 15 seconds.");
                                             CloseQuestorCMDUplink = false;
-                                            _CloseQuestorDelay = DateTime.Now.AddSeconds(20);
+                                            _CloseQuestorDelay = DateTime.Now.AddSeconds((int)Time.CloseQuestorDelayBeforeExit_seconds);
                                         }
                                         if ((_CloseQuestorDelay.AddSeconds(-10) == DateTime.Now) && (!CloseQuestor10SecWarningDone))
                                         {
@@ -1301,7 +1302,7 @@ namespace Questor
                                             Logging.Log("Questor: Done: quitting this session so the new isboxer session can take over");
                                             Logging.Log("Questor: We are in station: Exiting eve.");
                                             CloseQuestorCMDUplink = false;
-                                            _CloseQuestorDelay = DateTime.Now.AddSeconds(20);
+                                            _CloseQuestorDelay = DateTime.Now.AddSeconds((int)Time.CloseQuestorDelayBeforeExit_seconds);
                                         }
                                         if ((_CloseQuestorDelay.AddSeconds(-10) == DateTime.Now) && (!CloseQuestor10SecWarningDone))
                                         {
@@ -1322,7 +1323,7 @@ namespace Questor
                                         if (CloseQuestorCMDUplink)
                                         {
                                             CloseQuestorCMDUplink = false;
-                                            _CloseQuestorDelay = DateTime.Now.AddSeconds(20);
+                                            _CloseQuestorDelay = DateTime.Now.AddSeconds((int)Time.CloseQuestorDelayBeforeExit_seconds);
                                         }
                                         if ((_CloseQuestorDelay.AddSeconds(-10) == DateTime.Now) && (!CloseQuestor10SecWarningDone))
                                         {

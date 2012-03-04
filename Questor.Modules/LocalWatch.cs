@@ -15,7 +15,7 @@
             {
                 case LocalWatchState.Start:
                     //checking local every 5 second
-                    if(DateTime.Now.Subtract(_lastAction).TotalSeconds < 5)
+                    if(DateTime.Now.Subtract(_lastAction).TotalSeconds < (int)Time.LocalWatch_CheckLocalDelay_seconds)
                         break;
 
                     State = LocalWatchState.CheckLocal;

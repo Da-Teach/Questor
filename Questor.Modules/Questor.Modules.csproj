@@ -100,6 +100,7 @@
     <Compile Include="SalvageState.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="ShipTargetValue.cs" />
+    <Compile Include="Time.cs" />
     <Compile Include="Traveler.cs" />
     <Compile Include="TravelerDestination.cs" />
     <Compile Include="TravelerState.cs" />

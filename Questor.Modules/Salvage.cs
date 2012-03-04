@@ -21,7 +21,7 @@ namespace Questor.Modules
         public static HashSet<int> TractorBeams = new HashSet<int> { 24348, 24620, 24622, 24644, 4250 };
 
         private DateTime _lastJettison = DateTime.MinValue;
-        private DateTime _nextAction;
+        private DateTime _nextSalvageAction;
 
         /// <summary>
         ///   Keep a list of times that we have tried to open a container (do not try to open the same container twice within 10 seconds)
@@ -406,7 +406,7 @@ namespace Questor.Modules
                             // If this is not a cargo container, then jettison loot
                             if (containerEntity.GroupId != (int) Group.CargoContainer || isMissionItem)
                             {
-                                if (DateTime.Now.Subtract(_lastJettison).TotalSeconds < 185)
+                                if (DateTime.Now.Subtract(_lastJettison).TotalSeconds < (int)Time.DelayBetweenJetcans_seconds)
                                     return;
 
                                 Logging.Log("Salvage: Jettisoning [" + moveTheseItems.Count + "] items to make room for the more valuable loot");
@@ -513,14 +513,14 @@ namespace Questor.Modules
 
                     // Default action
                     State = SalvageState.TargetWrecks;
-                    if (cargo.IsReady && cargo.Items.Any() && _nextAction < DateTime.Now)
+                    if (cargo.IsReady && cargo.Items.Any() && _nextSalvageAction < DateTime.Now)
                     {
                         // Check if there are actually duplicates
                         var duplicates = cargo.Items.Where(i => i.Quantity > 0).GroupBy(i => i.TypeId).Any(t => t.Count() > 1);
                         if (duplicates)
                             State = SalvageState.StackItems;
                         else
-                            _nextAction = DateTime.Now.AddSeconds(150);
+                            _nextSalvageAction = DateTime.Now.AddSeconds((int)Time.SalvageStackItems_seconds);
                     }
                     break;
 
@@ -530,13 +530,13 @@ namespace Questor.Modules
                     if (cargo.IsReady)
                         cargo.StackAll();
 
-                    _nextAction = DateTime.Now.AddSeconds(5);
+                    _nextSalvageAction = DateTime.Now.AddSeconds((int)Time.SalvageStackItemsDelayBeforeResuming_seconds);
                     State = SalvageState.WaitForStacking;
                     break;
 
                 case SalvageState.WaitForStacking:
                     // Wait 5 seconds after stacking
-                    if (_nextAction > DateTime.Now)
+                    if (_nextSalvageAction > DateTime.Now)
                         break;
 
                     if (Cache.Instance.DirectEve.GetLockedItems().Count == 0)
@@ -546,7 +546,7 @@ namespace Questor.Modules
                         break;
                     }
 
-                    if (DateTime.Now.Subtract(_nextAction).TotalSeconds > 120)
+                    if (DateTime.Now.Subtract(_nextSalvageAction).TotalSeconds > 120)
                     {
                         Logging.Log("Salvage: Stacking items timed out, clearing item locks");
                         Cache.Instance.DirectEve.UnlockItems();

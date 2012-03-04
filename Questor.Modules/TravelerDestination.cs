@@ -27,7 +27,7 @@ namespace Questor.Modules
 
     public class SolarSystemDestination : TravelerDestination
     {
-        private DateTime _nextAction;
+        private DateTime _nextSolarSystemAction;
 
         public SolarSystemDestination(long solarSystemId)
         {
@@ -40,12 +40,12 @@ namespace Questor.Modules
             // The destination is the solar system, not the station in the solar system.
             if (Cache.Instance.InStation && !Cache.Instance.InSpace)
             {
-                if (_nextAction < DateTime.Now)
+                if (_nextSolarSystemAction < DateTime.Now)
                 {
                     Logging.Log("Traveler.SolarSystemDestination: Exiting station");
 
                     Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdExitStation);
-                    _nextAction = DateTime.Now.AddSeconds(7);
+                    _nextSolarSystemAction = DateTime.Now.AddSeconds((int)Time.TravelerExitStationAmIInSpaceYet_seconds);
                 }
 
                 // We are not there yet
@@ -60,7 +60,7 @@ namespace Questor.Modules
 
     public class StationDestination : TravelerDestination
     {
-        private DateTime _nextAction;
+        private DateTime _nextStationAction;
 
         public StationDestination(long stationId)
         {
@@ -97,7 +97,7 @@ namespace Questor.Modules
         public override bool PerformFinalDestinationTask()
         {
             var localundockBookmark = UndockBookmark;
-            var arrived = PerformFinalDestinationTask(StationId, StationName, ref _nextAction, ref localundockBookmark);
+            var arrived = PerformFinalDestinationTask(StationId, StationName, ref _nextStationAction, ref localundockBookmark);
             UndockBookmark = localundockBookmark;
             return arrived;
         }
@@ -134,7 +134,7 @@ namespace Questor.Modules
                     }
 					else Logging.Log("Traveler.StationDestination: UndockPrefix is not configured");
                     Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdExitStation);
-                    nextAction = DateTime.Now.AddSeconds(7);
+                    nextAction = DateTime.Now.AddSeconds((int)Time.TravelerExitStationAmIInSpaceYet_seconds);
                     //nextAction = DateTime.Now.AddSeconds(Settings.Instance.UndockDelay);
                 }
 
@@ -196,7 +196,7 @@ namespace Questor.Modules
 
     public class BookmarkDestination : TravelerDestination
     {
-        private DateTime _nextAction;
+        private DateTime _nextBookmarkAction;
 
         public BookmarkDestination(DirectBookmark bookmark)
         {
@@ -225,7 +225,7 @@ namespace Questor.Modules
         {
             var bookmark = Cache.Instance.BookmarkById(BookmarkId);
             var undockBookmark = UndockBookmark;
-            var arrived = PerformFinalDestinationTask(bookmark, 150000, ref _nextAction, ref undockBookmark);
+            var arrived = PerformFinalDestinationTask(bookmark, 150000, ref _nextBookmarkAction, ref undockBookmark);
             UndockBookmark = undockBookmark;
             return arrived;
         }
@@ -261,7 +261,7 @@ namespace Questor.Modules
                 }
 				else Logging.Log("Traveler.StationDestination: UndockPrefix is not configured");
                 Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdExitStation);
-                nextAction = DateTime.Now.AddSeconds(7);
+                nextAction = DateTime.Now.AddSeconds((int)Time.TravelerExitStationAmIInSpaceYet_seconds);
                 return false;
             }
 
@@ -283,7 +283,7 @@ namespace Questor.Modules
                     Logging.Log("Traveler.BookmarkDestination: We're docked but our destination is in space, undocking");
 
                     Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdExitStation);
-                    nextAction = DateTime.Now.AddSeconds(7);
+                    nextAction = DateTime.Now.AddSeconds((int)Time.TravelerExitStationAmIInSpaceYet_seconds);
                 }
 
                 // We are not there yet
@@ -307,7 +307,7 @@ namespace Questor.Modules
                 {
                     Logging.Log("Traveler.BookmarkDestination: Warping to undock bookmark [" + undockBookmark.Title + "]");
                     undockBookmark.WarpTo();
-                    nextAction = DateTime.Now.AddSeconds(10);
+                    nextAction = DateTime.Now.AddSeconds((int)Time.TravelerInWarpedNextCommandDelay_seconds);
                     //nextAction = DateTime.Now.AddSeconds(Settings.Instance.UndockDelay);
                     return false;
                 }
@@ -333,14 +333,14 @@ namespace Questor.Modules
             Logging.Log("Traveler.BookmarkDestination: Warping to bookmark [" + bookmark.Title + "]");
             Cache.Instance.DoNotBreakInvul = false;
             bookmark.WarpTo();
-            nextAction = DateTime.Now.AddSeconds(15);
+            nextAction = DateTime.Now.AddSeconds((int)Time.TravelerInWarpedNextCommandDelay_seconds);
             return false;
         }
     }
 
     public class MissionBookmarkDestination : TravelerDestination
     {
-        private DateTime _nextAction;
+        private DateTime _nextMissionBookmarkAction;
 
         public MissionBookmarkDestination(DirectAgentMissionBookmark bookmark)
         {
@@ -358,7 +358,6 @@ namespace Questor.Modules
                 Cache.Instance.ReasonToStopQuestor = "Traveler.MissionBookmarkDestination: Invalid mission bookmark! - Lag?! Closing EVE";
                 Logging.Log(Cache.Instance.ReasonToStopQuestor);
                 Cache.Instance.SessionState = "Quitting";
-                return;
             }
 
             Logging.Log("Traveler.MissionBookmarkDestination: Destination set to mission bookmark [" + bookmark.Title + "]");
@@ -387,7 +386,7 @@ namespace Questor.Modules
         public override bool PerformFinalDestinationTask()
         {
             var undockBookmark = UndockBookmark;
-            var arrived = BookmarkDestination.PerformFinalDestinationTask(GetMissionBookmark(AgentId, Title), (int)Distance.MissionWarpLimit, ref _nextAction, ref undockBookmark);
+            var arrived = BookmarkDestination.PerformFinalDestinationTask(GetMissionBookmark(AgentId, Title), (int)Distance.MissionWarpLimit, ref _nextMissionBookmarkAction, ref undockBookmark);
             UndockBookmark = undockBookmark;
             return arrived;// Mission bookmarks have a 1.000.000 distance warp-to limit (changed it to 150.000.000 as there are some bugged missions around)  
         }
