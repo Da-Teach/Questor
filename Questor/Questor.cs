@@ -444,7 +444,7 @@ namespace Questor
                 return;
             }
 
-            if (Cache.Instance.SessionState.ToLower() == "Quitting".ToLower())
+            if (Cache.Instance.SessionState == "Quitting")
             {
                 State = QuestorState.CloseQuestor;
             }
