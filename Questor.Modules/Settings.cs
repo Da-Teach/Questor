@@ -580,23 +580,23 @@ namespace Questor.Modules
                 WreckBlackList.Add(26934);
             }
 
-            Settings.Instance.logpath = (Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\log\\" + Cache.Instance.DirectEve.Me.Name + "\\");
-            Settings.Instance.ConsoleLogPath = Settings.Instance.logpath;
-            Settings.Instance.ConsoleLogFile = (Settings.Instance.logpath + string.Format("{0:MM-dd-yyyy}", DateTime.Today) + "-" + Cache.Instance.DirectEve.Me.Name + "-" + "console" + ".log");
-            Settings.Instance.SessionsLogPath = Settings.Instance.logpath;
-            Settings.Instance.SessionsLogFile = (Settings.Instance.logpath + Cache.Instance.DirectEve.Me.Name + ".Sessions.log");
-            Settings.Instance.DroneStatsLogPath = Settings.Instance.logpath;
-            Settings.Instance.DroneStatslogFile = (Settings.Instance.logpath + Cache.Instance.DirectEve.Me.Name + ".DroneStats.log");
-            Settings.Instance.WreckLootStatisticsPath = Settings.Instance.logpath;
-            Settings.Instance.WreckLootStatisticsFile = (Settings.Instance.logpath + Cache.Instance.DirectEve.Me.Name + ".WreckLootStatisticsDump.log");
-            Settings.Instance.MissionStats1LogPath = Path.Combine(Settings.Instance.logpath, "missionstats\\");
-            Settings.Instance.MissionStats1LogFile = (Settings.Instance.MissionStats1LogPath + Cache.Instance.DirectEve.Me.Name + ".Statistics.log");
-            Settings.Instance.MissionStats2LogPath = Path.Combine(Settings.Instance.logpath, "missionstats\\");
-            Settings.Instance.MissionStats2LogFile = (Settings.Instance.MissionStats2LogPath + Cache.Instance.DirectEve.Me.Name + ".DatedStatistics.log");
-            Settings.Instance.MissionStats3LogPath = Path.Combine(Settings.Instance.logpath, "missionstats\\");
-            Settings.Instance.MissionStats3LogFile = (Settings.Instance.MissionStats3LogPath + Cache.Instance.DirectEve.Me.Name + ".CustomDatedStatistics.csv");
-            Settings.Instance.PocketStatisticsPath = Path.Combine(Settings.Instance.logpath, "pocketstats\\");
-            Settings.Instance.PocketStatisticsFile = Path.Combine(Settings.Instance.PocketStatisticsPath, "pocketstats - generic");
+            logpath = (Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\log\\" + Cache.Instance.DirectEve.Me.Name + "\\");
+            ConsoleLogPath = Settings.Instance.logpath;
+            ConsoleLogFile = (Settings.Instance.logpath + string.Format("{0:MM-dd-yyyy}", DateTime.Today) + "-" + Cache.Instance.DirectEve.Me.Name + "-" + "console" + ".log");
+            SessionsLogPath = Settings.Instance.logpath;
+            SessionsLogFile = (Settings.Instance.logpath + Cache.Instance.DirectEve.Me.Name + ".Sessions.log");
+            DroneStatsLogPath = Settings.Instance.logpath;
+            DroneStatslogFile = (Settings.Instance.logpath + Cache.Instance.DirectEve.Me.Name + ".DroneStats.log");
+            WreckLootStatisticsPath = Settings.Instance.logpath;
+            WreckLootStatisticsFile = (Settings.Instance.logpath + Cache.Instance.DirectEve.Me.Name + ".WreckLootStatisticsDump.log");
+            MissionStats1LogPath = Path.Combine(Settings.Instance.logpath, "missionstats\\");
+            MissionStats1LogFile = (Settings.Instance.MissionStats1LogPath + Cache.Instance.DirectEve.Me.Name + ".Statistics.log");
+            MissionStats2LogPath = Path.Combine(Settings.Instance.logpath, "missionstats\\");
+            MissionStats2LogFile = (Settings.Instance.MissionStats2LogPath + Cache.Instance.DirectEve.Me.Name + ".DatedStatistics.log");
+            MissionStats3LogPath = Path.Combine(Settings.Instance.logpath, "missionstats\\");
+            MissionStats3LogFile = (Settings.Instance.MissionStats3LogPath + Cache.Instance.DirectEve.Me.Name + ".CustomDatedStatistics.csv");
+            PocketStatisticsPath = Path.Combine(Settings.Instance.logpath, "pocketstats\\");
+            PocketStatisticsFile = Path.Combine(Settings.Instance.PocketStatisticsPath, "pocketstats - generic");
 
             if (SettingsLoaded != null)
                 SettingsLoaded(this, new EventArgs());

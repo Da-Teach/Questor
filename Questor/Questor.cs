@@ -243,6 +243,8 @@ namespace Questor
                     
                     if (Settings.Instance.SessionsLog)
                     {
+                        if (Cache.Instance.DirectEve.Me.Wealth != 0 || Cache.Instance.DirectEve.Me.Wealth != -2147483648) // this hopefully resolves having negative maxint in the session logs occassionally
+                        {
                         //
                         // prepare the Questor Session Log - keeps track of starts, restarts and exits, and hopefully the reasons
                         //
@@ -276,6 +278,7 @@ namespace Questor
 
                         Cache.Instance.SessionState = "";
                         Logging.Log("Questor: Writing session data to [ " + Settings.Instance.SessionsLogFile);
+                        }
                     }
                 }
             }
