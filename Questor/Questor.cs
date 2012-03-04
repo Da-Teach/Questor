@@ -206,28 +206,6 @@ namespace Questor
             // Check 3D rendering
             if (Cache.Instance.DirectEve.Session.IsInSpace && Cache.Instance.DirectEve.Rendering3D != !Disable3D)
                 Cache.Instance.DirectEve.Rendering3D = !Disable3D;
-            if (DateTime.Now.Subtract(_questorStarted).TotalSeconds < 10)
-            {
-                if (LogPathsNotSetupYet == true)
-                {
-                    Settings.Instance.logpath = (Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\log\\" + Cache.Instance.DirectEve.Me.Name + "\\");
-                    Settings.Instance.SessionsLogPath = Settings.Instance.logpath;
-                    Settings.Instance.SessionsLogFile = (Settings.Instance.logpath + Cache.Instance.DirectEve.Me.Name + ".Sessions.log");
-                    Settings.Instance.DroneStatsLogPath = Settings.Instance.logpath;
-                    Settings.Instance.DroneStatslogFile = (Settings.Instance.logpath + Cache.Instance.DirectEve.Me.Name + ".DroneStats.log");
-                    Settings.Instance.WreckLootStatisticsPath = Settings.Instance.logpath;
-                    Settings.Instance.WreckLootStatisticsFile = (Settings.Instance.logpath + Cache.Instance.DirectEve.Me.Name + ".WreckLootStatisticsDump.log");
-                    Settings.Instance.MissionStats1LogPath = Path.Combine(Settings.Instance.logpath, "missionstats\\");
-                    Settings.Instance.MissionStats1LogFile = (Settings.Instance.MissionStats1LogPath + Cache.Instance.DirectEve.Me.Name + ".Statistics.log");
-                    Settings.Instance.MissionStats2LogPath = Path.Combine(Settings.Instance.logpath, "missionstats\\");
-                    Settings.Instance.MissionStats2LogFile = (Settings.Instance.MissionStats2LogPath + Cache.Instance.DirectEve.Me.Name + ".DatedStatistics.log");
-                    Settings.Instance.MissionStats3LogPath = Path.Combine(Settings.Instance.logpath, "missionstats\\");
-                    Settings.Instance.MissionStats3LogFile = (Settings.Instance.MissionStats3LogPath + Cache.Instance.DirectEve.Me.Name + ".CustomDatedStatistics.csv");
-                    Settings.Instance.PocketStatisticsPath = Path.Combine(Settings.Instance.logpath, "pocketstats\\");
-                    Settings.Instance.PocketStatisticsFile = Path.Combine(Settings.Instance.PocketStatisticsPath, "pocketstats - generic");
-                    LogPathsNotSetupYet = false;
-                }
-            }
 
             // Invalid settings, quit while we're ahead
             if (!ValidSettings)

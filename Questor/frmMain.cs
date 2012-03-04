@@ -135,12 +135,15 @@ namespace Questor
                 if (txtExtConsole.Lines.Count() >= Settings.Instance.maxLineConsole)
                     txtExtConsole.Text = "";
 
-                if (Settings.Instance.SaveLog)
+                if (Settings.Instance.SaveConsoleLog)
                 {
-                    string Carpeta = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Log\\" + _questor.CharacterName + "\\console\\";
-                    string filename = Carpeta + string.Format("{0:MM-dd-yyyy}", DateTime.Today) + "-" + _questor.CharacterName + "-"+ "console" + ".log";
+                    //
+                    // why isnt this using the settings.instance.consolelog stuff? - There appears to be a chicken/egg problem with the UI loading and the settings loaading
+                    //
+                    string folder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Log\\" + _questor.CharacterName + "\\console\\";
+                    string filename = folder + string.Format("{0:MM-dd-yyyy}", DateTime.Today) + "-" + _questor.CharacterName + "-"+ "console" + ".log";
 
-                    Directory.CreateDirectory(Carpeta);
+                    Directory.CreateDirectory(folder);
                     if (!LogOpened)
                     {
                         Logging.Log("Questor: Writing to Daily Console Log " + filename);

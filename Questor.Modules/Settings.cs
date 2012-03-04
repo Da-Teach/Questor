@@ -29,7 +29,7 @@ namespace Questor.Modules
 
         public int ramdom_number()
         {
-            return ramdom.Next(4, 7);
+            return ramdom.Next(10, 35);
         }
 
         public Settings()
@@ -55,7 +55,7 @@ namespace Questor.Modules
 
         public bool AutoStart { get; set; }
 
-        public bool SaveLog { get; set; }
+        public bool SaveConsoleLog { get; set; }
 
         public int maxLineConsole { get; set; }
 
@@ -134,6 +134,9 @@ namespace Questor.Modules
         public bool   SessionsLog { get; set; }
         public string SessionsLogPath { get; set; }
         public string SessionsLogFile { get; set; }
+        public bool   ConsoleLog { get; set; }
+        public string ConsoleLogPath { get; set; }
+        public string ConsoleLogFile { get; set; }
         public bool   DroneStatsLog { get; set; }
         public string DroneStatsLogPath { get; set; }
         public string DroneStatslogFile { get; set; }
@@ -249,7 +252,7 @@ namespace Questor.Modules
 
                 AutoStart = false;
 
-                SaveLog = true;
+                SaveConsoleLog = true;
 
                 maxLineConsole = 1000;
 
@@ -339,7 +342,7 @@ namespace Questor.Modules
 
             AutoStart = (bool?) xml.Element("autoStart") ?? false;
 
-            SaveLog = (bool?)xml.Element("saveLog") ?? true;
+            SaveConsoleLog = (bool?)xml.Element("saveLog") ?? true;
 
             maxLineConsole = (int?)xml.Element("maxLineConsole") ?? 1000;
             waitDecline = (bool?) xml.Element("waitDecline") ?? false;
@@ -371,8 +374,9 @@ namespace Questor.Modules
             WindowXPosition = (int?) xml.Element("windowXPosition") ?? 1600;
             WindowYPosition = (int?) xml.Element("windowYPosition") ?? 1050;
 
-            CombatShipName = (string) xml.Element("combatShipName") ?? "change-settings-for combatshipname-to-your-ship-name";
-            SalvageShipName = (string) xml.Element("salvageShipName") ?? "noctis";
+            CombatShipName = (string) xml.Element("combatShipName") ?? "";
+            SalvageShipName = (string) xml.Element("salvageShipName") ?? "";
+            TransportShipName = (string)xml.Element("transportShipName") ?? "";
 
             LootHangar = (string) xml.Element("lootHangar");
             AmmoHangar = (string) xml.Element("ammoHangar");
@@ -575,6 +579,24 @@ namespace Questor.Modules
                 WreckBlackList.Add(26592);
                 WreckBlackList.Add(26934);
             }
+
+            Settings.Instance.logpath = (Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\log\\" + Cache.Instance.DirectEve.Me.Name + "\\");
+            Settings.Instance.ConsoleLogPath = Settings.Instance.logpath;
+            Settings.Instance.ConsoleLogFile = (Settings.Instance.logpath + string.Format("{0:MM-dd-yyyy}", DateTime.Today) + "-" + Cache.Instance.DirectEve.Me.Name + "-" + "console" + ".log");
+            Settings.Instance.SessionsLogPath = Settings.Instance.logpath;
+            Settings.Instance.SessionsLogFile = (Settings.Instance.logpath + Cache.Instance.DirectEve.Me.Name + ".Sessions.log");
+            Settings.Instance.DroneStatsLogPath = Settings.Instance.logpath;
+            Settings.Instance.DroneStatslogFile = (Settings.Instance.logpath + Cache.Instance.DirectEve.Me.Name + ".DroneStats.log");
+            Settings.Instance.WreckLootStatisticsPath = Settings.Instance.logpath;
+            Settings.Instance.WreckLootStatisticsFile = (Settings.Instance.logpath + Cache.Instance.DirectEve.Me.Name + ".WreckLootStatisticsDump.log");
+            Settings.Instance.MissionStats1LogPath = Path.Combine(Settings.Instance.logpath, "missionstats\\");
+            Settings.Instance.MissionStats1LogFile = (Settings.Instance.MissionStats1LogPath + Cache.Instance.DirectEve.Me.Name + ".Statistics.log");
+            Settings.Instance.MissionStats2LogPath = Path.Combine(Settings.Instance.logpath, "missionstats\\");
+            Settings.Instance.MissionStats2LogFile = (Settings.Instance.MissionStats2LogPath + Cache.Instance.DirectEve.Me.Name + ".DatedStatistics.log");
+            Settings.Instance.MissionStats3LogPath = Path.Combine(Settings.Instance.logpath, "missionstats\\");
+            Settings.Instance.MissionStats3LogFile = (Settings.Instance.MissionStats3LogPath + Cache.Instance.DirectEve.Me.Name + ".CustomDatedStatistics.csv");
+            Settings.Instance.PocketStatisticsPath = Path.Combine(Settings.Instance.logpath, "pocketstats\\");
+            Settings.Instance.PocketStatisticsFile = Path.Combine(Settings.Instance.PocketStatisticsPath, "pocketstats - generic");
 
             if (SettingsLoaded != null)
                 SettingsLoaded(this, new EventArgs());
