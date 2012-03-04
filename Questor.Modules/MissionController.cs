@@ -32,6 +32,8 @@ namespace Questor.Modules
         private bool _waiting;
         private DateTime _waitingSince;
         private DateTime _lastAlign;
+        private DateTime _lastOrbit;
+
         public long AgentId { get; set; }
 
         public MissionController()
@@ -199,18 +201,20 @@ namespace Questor.Modules
                     _waitingSince = DateTime.Now;
                     _waiting = true;
                 }
-                if (_waiting)
+                else if (_waiting)
                 {
-                    if (DateTime.Now.Subtract(_waitingSince).TotalSeconds < 30)
+                    if (DateTime.Now.Subtract(_waitingSince).TotalSeconds > 30)
                     {
+                        Logging.Log("MissionController.Activate: After 30 seconds of waiting the gate is still not on grid: MissionControllerState.Error");
                         State = MissionControllerState.Error;
                     }
                 }
                 return;
             }
-
+            
+            //if (closest.Distance <= (int)Distance.CloseToGateActivationRange) // if your distance is less than the 'close enough' range, default is 7000 meters
             var closest = targets.OrderBy(t => t.Distance).First();
-            if (closest.Distance < (int)Distance.GateActivationRange)
+            if (closest.Distance < 2300)
             {
                 // Tell the drones module to retract drones
                 Cache.Instance.IsMissionPocketDone = true;
@@ -219,23 +223,26 @@ namespace Questor.Modules
                 if (Cache.Instance.ActiveDrones.Count() > 0)
                     return;
 
-                // Add bookmark (before we activate)
-                if (Settings.Instance.CreateSalvageBookmarks)
-                    BookmarkPocketForSalvaging();
-
-               // Reload weapons and activate gate to move to the next pocket
-                ReloadAll();
                 //
                 // this is a bad idea for a speed tank, we ought to somehow cache the object they are orbiting/approaching, etc
                 // this seemingly slowed down the exit from cetain missions for me for 2-3min as it had a command to orbit some random object
                 // after the "done" command
                 //
-                if (closest.Distance < (int)Distance.TooCloseToStructure)
+                if ((closest.Distance < -10100) && (DateTime.Now.Subtract(_lastOrbit).TotalSeconds > 30))
                 {
-                    closest.Orbit((int)Distance.GateActivationRange);
+				    closest.Orbit(1000);
+                    _lastOrbit = DateTime.Now;
                 }
                 //Logging.Log("MissionController: distance " + closest.Distance);
-                if (closest.Distance >= (int)Distance.TooCloseToStructure)
+                //if ((closest.Distance <= (int)Distance.TooCloseToStructure) && (DateTime.Now.Subtract(_lastOrbit).TotalSeconds > 10)) //-10100 meters (inside docking ring) - so close that we may get tangled in the structure on activation - move away
+                //{
+                //    Logging.Log("MissionController.Activate: Too close to Structure to activate: orbiting");
+                //    closest.Orbit((int)Distance.GateActivationRange); // 1000 meters
+                //    _lastOrbit = DateTime.Now;
+                //}
+
+                //if (closest.Distance >= (int)Distance.TooCloseToStructure) //If we aren't so close that we may get tangled in the structure, activate it
+                if (closest.Distance >= -10100)
                 {
                     // Add bookmark (before we activate)
                     if (Settings.Instance.CreateSalvageBookmarks)
@@ -252,7 +259,7 @@ namespace Questor.Modules
                     State = MissionControllerState.NextPocket;
                 }
             }
-            else if (closest.Distance < (int)Distance.WarptoDistance)
+            else if (closest.Distance < 150000) //else if (closest.Distance < (int)Distance.WarptoDistance) //if we are inside warpto distance then approach
             {
                 // Move to the target
                 if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
@@ -266,7 +273,7 @@ namespace Questor.Modules
                     
                 }
             }
-            else
+            else //we must be outside warpto distance, but we are likley in a deadspace so align to the target
             {
                 // We cant warp if we have drones out
                 if (Cache.Instance.ActiveDrones.Count() > 0)
@@ -274,7 +281,7 @@ namespace Questor.Modules
                     
                 if (DateTime.Now.Subtract(_lastAlign ).TotalMinutes > 2)
                 {
-                // Probably never happens
+                    // Only happens if we are asked to Activate something that is outside Distance.CloseToGateActivationRange (default is: 6k)
                 closest.AlignTo();
                 _lastAlign = DateTime.Now;
                 }
