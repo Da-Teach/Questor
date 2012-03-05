@@ -24,7 +24,7 @@ namespace Questor.Modules
         InsideThisRangeIsLIkelyToBeMostlyFrigates = 9000, // 9k - overall this assumption works, use with caution
         DecloakRange = 1900,
         SafeToCloakDistance = 2300,
-        DockingRange = 0,
+        DockingRange = 2400,
         MissionWarpLimit = 150000000, // Mission bookmarks have a 1.000.000 distance warp-to limit (changed it to 150.000.000 as there are some bugged missions around)  
         PanicDistanceToConsiderSafelyWarpedOff = 500000,
         WeCanWarpToStarFromHere = 500000000,
