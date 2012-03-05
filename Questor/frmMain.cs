@@ -33,6 +33,8 @@ namespace Questor
             LavishScript.Commands.AddCommand("SetAutoStart", SetAutoStart);
             LavishScript.Commands.AddCommand("SetDisable3D", SetDisable3D);
             LavishScript.Commands.AddCommand("SetExitWhenIdle", SetExitWhenIdle);
+            LavishScript.Commands.AddCommand("SetQuestorStatetoCloseQuestor", SetQuestorStatetoCloseQuestor);
+            LavishScript.Commands.AddCommand("SetQuestorStatetoIdle", SetQuestorStatetoIdle);
         }
 
         private int SetAutoStart(string[] args)
@@ -84,9 +86,35 @@ namespace Questor
                 _questor.AutoStart = false;
                 Logging.Log("AutoStart is turned [off]");
             }
-
             return 0;
+        }
 
+        private int SetQuestorStatetoCloseQuestor(string[] args)
+        {
+            if (args.Length != 1 )
+            {
+                Logging.Log("SetQuestorStatetoCloseQuestor - Changes the QuestorState to CloseQuestor which will GotoBase and then Exit");
+                return -1;
+            }
+
+            _questor.State = QuestorState.CloseQuestor;
+
+            Logging.Log("QuestorState is now: CloseQuestor ");
+            return 0;
+        }
+
+        private int SetQuestorStatetoIdle(string[] args)
+        {
+            if (args.Length != 1)
+            {
+                Logging.Log("SetQuestorStatetoIdle - Changes the QuestorState to Idle which will GotoBase and then Exit");
+                return -1;
+            }
+
+            _questor.State = QuestorState.Idle;
+
+            Logging.Log("QuestorState is now: Idle ");
+            return 0;
         }
 
         private void tUpdateUI_Tick(object sender, EventArgs e)
