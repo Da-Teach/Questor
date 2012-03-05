@@ -1,29 +1,82 @@
 @Echo off
+::set releasetype=Release
+set releasetype=Debug
+::
+:: path to msbuild compiler - do not include trailing slash
+::
+set msbuild35=%systemroot%\Microsoft.Net\FrameWork\v3.5\msbuild.exe
+set msbuild4=%systemroot%\Microsoft.Net\FrameWork\v4.0.30319\msbuild.exe
+::
+
+::
+:: clear existing DLLs and EVEs from the previous build
+::
 del .\questor\bin\debug\*.* /Q
 del .\questor.modules\bin\debug\*.* /Q
-c:\Windows\Microsoft.NET\Framework\v3.5\msbuild .\BuyLPI\BuyLPI.csproj
-Echo Done building BUYLPI - see above for any errors - 1 of 7 builds
+::
+:: Build Project 1
+::
+set nameofproject=BUYLPI
+set csproj=.\BuyLPI\BuyLPI.csproj
+"%msbuild35%" "%csproj%" /p:configuration="%releasetype%" /target:Clean;Build
+Echo Done building %nameofproject% - see above for any errors - 1 of 7 builds
 pause
-c:\Windows\Microsoft.NET\Framework\v3.5\msbuild .\questor\Questor.csproj
-Echo Done building Questor - see above for any errors - 2 of 7 builds
+::
+:: Build Project 2
+::
+set nameofproject=Questor
+set csproj=.\questor\Questor.csproj
+"%msbuild35%" "%csproj%" /p:configuration="%releasetype%" /target:Clean;Build
+Echo Done building %nameofproject% - see above for any errors - 2 of 7 builds
 pause
-c:\Windows\Microsoft.NET\Framework\v3.5\msbuild .\Questor.Modules\Questor.Modules.csproj
-Echo Done building Questor.Modules - see above for any errors - 3 of 7 builds
+::
+:: Build Project 3
+::
+set nameofproject=Questor.Modules
+set csproj=.\Questor.Modules\Questor.Modules.csproj
+"%msbuild35%" "%csproj%" /p:configuration="%releasetype%" /target:Clean;Build
+Echo Done building %nameofproject% - see above for any errors - 3 of 7 builds
 pause
-c:\Windows\Microsoft.NET\Framework\v3.5\msbuild .\updateinvtypes\UpdateInvTypes.csproj
-Echo Done building UpdateInvTypes - see above for any errors - 4 of 7 builds
+::
+:: Build Project 4
+::
+set nameofproject=updateinvtypes
+set csproj=.\updateinvtypes\UpdateInvTypes.csproj
+"%msbuild35%" "%csproj%" /p:configuration="%releasetype%" /target:Clean;Build
+Echo Done building %nameofproject% - see above for any errors - 4 of 7 builds
 pause
-c:\Windows\Microsoft.NET\Framework\v3.5\msbuild .\valuedump\ValueDump.csproj
-Echo Done building Valuedump - see above for any errors - 5 of 7 builds
+::
+:: Build Project 5
+::
+set nameofproject=valuedump
+set csproj=.\valuedump\ValueDump.csproj
+"%msbuild35%" "%csproj%" /p:configuration="%releasetype%" /target:Clean;Build
+Echo Done building %nameofproject% - see above for any errors - 5 of 7 builds
 pause
-C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild .\QuestorManager\QuestorManager.csproj
-Echo Done building QuestorManager - see above for any errors - 6 of 7 builds
+::
+:: Build Project 6
+::
+set nameofproject=QuestorManager
+set csproj=.\QuestorManager\QuestorManager.csproj
+"%msbuild4%" "%csproj%" /p:configuration="%releasetype%" /target:Clean;Build
+Echo Done building %nameofproject% - see above for any errors - 6 of 7 builds
 pause
-C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild .\questorstatistics\QuestorStatistics.csproj
-Echo Done building QuestorStatistics - see above for any errors - 7 of 7 builds
+::
+:: Build Project 7
+::
+set nameofproject=QuestorStatistics
+set csproj=.\questorstatistics\QuestorStatistics.csproj
+"%msbuild4%" "%csproj%" /p:configuration="%releasetype%" /target:Clean;Build
+Echo Done building %nameofproject% - see above for any errors - 7 of 7 builds
 pause
-::C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild .\QuestorSettings\QuestorSettings.csproj
-::Echo Done building QuestorSettings - see above for any errors - 8 of 8 builds
+
+::
+:: Build Project 8
+::
+::set nameofproject=QuestorSettings
+::set csproj=.\QuestorSettings\QuestorSettings.csproj
+::%pathtomsbuild4%\msbuild %%csproj% /p:configuration="%releasetype%" /target:Clean;Build
+::Echo Done building %nameofproject% - see above for any errors - 7 of 7 builds
 ::pause
 if not exist output mkdir output >>nul 2>>nul
 :: Echo deleting old build from the output directory
