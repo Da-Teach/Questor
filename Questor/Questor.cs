@@ -258,20 +258,20 @@ namespace Questor
                             File.AppendAllText(Settings.Instance.SessionsLogFile, "Date;RunningTime;SessionState;LastMission;WalletBalance;MemoryUsage;Reason;IskGenerated;LootGenerated;LPGenerated;Isk/Hr;Loot/Hr;LP/HR;Total/HR;\r\n");
 
                         // Build the line
-                        var line = DateTime.Now + ";";
-                        line += "0" + ";";
-                        line += Cache.Instance.SessionState + ";";
-                        line += "n/a" + ";";
-                        line += Cache.Instance.DirectEve.Me.Wealth + ";";
-                        line += Cache.Instance.totalMegaBytesOfMemoryUsed + ";";
-                        line += "Starting" + ";";
-                        line += "n/a" + ";";
-                        line += "n/a" + ";";
-                        line += "n/a" + ";";
-                        line += "n/a" + ";";
-                        line += "n/a" + ";";
-                        line += "n/a" + ";";
-                        line += "n/a" + ";\r\n";
+                            var line = DateTime.Now + ";";                           //Date
+                            line += "0" + ";";                                       //RunningTime
+                            line += Cache.Instance.SessionState + ";";               //SessionState
+                            line += "" + ";";                                        //LastMission
+                            line += Cache.Instance.DirectEve.Me.Wealth + ";";        //WalletBalance
+                            line += Cache.Instance.totalMegaBytesOfMemoryUsed + ";"; //MemoryUsage
+                            line += "Starting" + ";";                                //Reason
+                            line += ";";                                             //IskGenerated
+                            line += ";";                                             //LootGenerated
+                            line += ";";                                             //LPGenerated
+                            line += ";";                                             //Isk/Hr
+                            line += ";";                                             //Loot/Hr
+                            line += ";";                                             //LP/HR
+                            line += ";\r\n";                                         //Total/HR
 
                         // The mission is finished
                         File.AppendAllText(Settings.Instance.SessionsLogFile, line);
