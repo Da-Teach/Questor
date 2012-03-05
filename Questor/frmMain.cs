@@ -17,7 +17,6 @@ namespace Questor
     public partial class frmMain : Form
     {
         private Questor _questor;
-        private bool LogOpened = false;
 
         public frmMain()
         {
@@ -134,23 +133,6 @@ namespace Questor
             {  
                 if (txtExtConsole.Lines.Count() >= Settings.Instance.maxLineConsole)
                     txtExtConsole.Text = "";
-
-                if (Settings.Instance.SaveConsoleLog)
-                {
-                    //
-                    // why isnt this using the settings.instance.consolelog stuff? - There appears to be a chicken/egg problem with the UI loading and the settings loaading
-                    //
-                    string folder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Log\\" + _questor.CharacterName + "\\console\\";
-                    string filename = folder + string.Format("{0:MM-dd-yyyy}", DateTime.Today) + "-" + _questor.CharacterName + "-"+ "console" + ".log";
-
-                    Directory.CreateDirectory(folder);
-                    if (!LogOpened)
-                    {
-                        Logging.Log("Questor: Writing to Daily Console Log " + filename);
-                        LogOpened = true;
-                    }
-                    File.AppendAllText(filename, Cache.Instance.ExtConsole);
-                }
 
                 txtExtConsole.AppendText(Cache.Instance.ExtConsole);
                 Cache.Instance.ExtConsole = null;
