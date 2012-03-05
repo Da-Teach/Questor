@@ -698,7 +698,7 @@ namespace Questor
                     }
                     else
                     {
-                        State = QuestorState.Start;
+                        State = QuestorState.CheckEVEStatus;
                         break;
                     }
 
