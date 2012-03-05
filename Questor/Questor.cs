@@ -46,6 +46,7 @@ namespace Questor
         private UnloadLoot _unloadLoot;
 
         private DateTime _lastAction;
+        private DateTime _lastLocalWatchAction;
         private DateTime _lastWalletCheck;
         private DateTime _lastupdateofSessionRunningTime;
         private DateTime _questorStarted;
@@ -527,7 +528,6 @@ namespace Questor
                     {
                         // Questor doesnt handle inspace-starts very well, head back to base to try again
                         Logging.Log("Questor: Started questor while in space, heading back to base in 15 seconds");
-
                         _lastAction = DateTime.Now;
                         State = QuestorState.DelayedGotoBase;
                         break;
@@ -858,6 +858,7 @@ namespace Questor
                 case QuestorState.LocalWatch:
                     if (Settings.Instance.UseLocalWatch)
                     {
+                        _lastLocalWatchAction = DateTime.Now; 
                         if (Cache.Instance.Local_safe(Settings.Instance.LocalBadStandingPilotsToTolerate, Settings.Instance.LocalBadStandingLevelToConsiderBad))
                         {
                             Logging.Log("Questor.LocalWatch: local is clear");
@@ -878,12 +879,9 @@ namespace Questor
                     break;
 
                 case QuestorState.WaitingforBadGuytoGoAway:
-                    _lastAction = DateTime.Now;
-                    if(DateTime.Now.Subtract(_lastAction).Minutes < (int)Time.WaitforBadGuytoGoAway_minutes)
+                    if(DateTime.Now.Subtract(_lastLocalWatchAction).Minutes < (int)Time.WaitforBadGuytoGoAway_minutes)
                         break;
-
                     State = QuestorState.LocalWatch;
-
                     break;
 
                 case QuestorState.WarpOutStation:
