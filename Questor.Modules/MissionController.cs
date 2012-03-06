@@ -295,7 +295,7 @@ namespace Questor.Modules
         {
             bool NoMovement;
             if (!bool.TryParse(action.GetParameterValue("nomovement"), out NoMovement))
-                NoMovement = true; 
+                NoMovement = false; 
             
             if (!Cache.Instance.NormalApproch)
                 Cache.Instance.NormalApproch = true;
@@ -328,7 +328,7 @@ namespace Questor.Modules
                 // Default Movement behavior
                 distancetoconsidertargets = range;
             }
-            else //movement commands are not allowed so only target things in range of weapons
+            if (NoMovement) //movement commands are not allowed so only target things in range of weapons
             {
                 // NoMovement is taking effect here
                 distancetoconsidertargets = (int)Distance.BookmarksOnGridWithMe; //250k by default
@@ -462,32 +462,10 @@ namespace Questor.Modules
             }
 
             var closest = targets.OrderBy(t => t.Distance).First();
-            if (closest.Distance < (int)Distance.GateActivationRange)
-            {
-                // We are close enough to whatever we needed to move to
-                _currentAction++;
-
-                if (Cache.Instance.Approaching != null)
-                {
-                    Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
-                    Cache.Instance.Approaching = null;
-                }
-                //if (Settings.Instance.SpeedTank)
-                //{
-                //    //this should at least keep speed tanked ships from going poof if a mission XML uses moveto
-                //    closest.Orbit(Cache.Instance.OrbitDistance);
-                //}
-            }
-            else
-            {
-                // Move to the target
-                if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
-                {
-                    Logging.Log("MissionController.MoveTo: Approaching target [" + closest.Name + "][" + closest.Id + "]");
-                    closest.Approach();
-                    _currentAction++;
-                }
-            }
+            // Move to the target
+            Logging.Log("MissionController.MoveToBackground: Approaching target [" + closest.Name + "][" + closest.Id + "]");
+            closest.Approach();
+           _currentAction++;
         }
 
         private void MoveToAction(Action action)
