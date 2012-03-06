@@ -156,7 +156,7 @@ namespace Questor.Modules
                     if (!Settings.Instance.LootEverything && Cache.Instance.Containers.Count() < Settings.Instance.MinimumWreckCount)
                     {
                         Logging.Log("MissionController: No bookmark created because the pocket has [" + Cache.Instance.Containers.Count() + "] wrecks/containers and the minimum is [" + Settings.Instance.MinimumWreckCount + "]");
-                        _lastBookmarkPocketAttempt = DateTime.Now; 
+                        _lastBookmarkPocketAttempt = DateTime.Now;
                     }
                     else if (Settings.Instance.LootEverything)
                     {
@@ -168,21 +168,22 @@ namespace Questor.Modules
             }
             else
             {
-            // Do we already have a bookmark?
-            var bookmarks = Cache.Instance.BookmarksByLabel(Settings.Instance.BookmarkPrefix + " ");
-            var bookmark = bookmarks.FirstOrDefault(b => Cache.Instance.DistanceFromMe(b.X ?? 0, b.Y ?? 0, b.Z ?? 0) < (int)Distance.BookmarksOnGridWithMe);
-            if (bookmark != null)
-            {
-                Logging.Log("MissionController: Pocket already bookmarked for salvaging [" + bookmark.Title + "]");
-            }
-            else
-            {
-                // No, create a bookmark
-                var label = string.Format("{0} {1:HHmm}", Settings.Instance.BookmarkPrefix, DateTime.UtcNow);
-                //var containers = Cache.Instance.Containers.Where(e => !Cache.Instance.LootedContainers.Contains(e.Id)).OrderBy(e => e.Distance);
-                Logging.Log("MissionController: Bookmarking pocket for salvaging [" + label + "]");
-                Cache.Instance.CreateBookmark(label);
-                //Cache.Instance.CreateBookmarkofwreck(containers,label);
+                // Do we already have a bookmark?
+                var bookmarks = Cache.Instance.BookmarksByLabel(Settings.Instance.BookmarkPrefix + " ");
+                var bookmark = bookmarks.FirstOrDefault(b => Cache.Instance.DistanceFromMe(b.X ?? 0, b.Y ?? 0, b.Z ?? 0) < (int)Distance.BookmarksOnGridWithMe);
+                if (bookmark != null)
+                {
+                    Logging.Log("MissionController: Pocket already bookmarked for salvaging [" + bookmark.Title + "]");
+                }
+                else
+                {
+                    // No, create a bookmark
+                    var label = string.Format("{0} {1:HHmm}", Settings.Instance.BookmarkPrefix, DateTime.UtcNow);
+                    //var containers = Cache.Instance.Containers.Where(e => !Cache.Instance.LootedContainers.Contains(e.Id)).OrderBy(e => e.Distance);
+                    Logging.Log("MissionController: Bookmarking pocket for salvaging [" + label + "]");
+                    Cache.Instance.CreateBookmark(label);
+                    //Cache.Instance.CreateBookmarkofwreck(containers,label);
+                }
             }
         }
 
@@ -284,8 +285,8 @@ namespace Questor.Modules
                 if (DateTime.Now.Subtract(_lastAlign ).TotalMinutes > (int)Time.LastAlignDelay_minutes)
                 {
                     // Only happens if we are asked to Activate something that is outside Distance.CloseToGateActivationRange (default is: 6k)
-                closest.AlignTo();
-                _lastAlign = DateTime.Now;
+                    closest.AlignTo();
+                    _lastAlign = DateTime.Now;
                 }
             }
         }
@@ -364,7 +365,9 @@ namespace Questor.Modules
                     return;
                 }
                 else
+                {
                     ReloadAll();
+                }
 
                 // Are we approaching the active (out of range) target?
                 // Wait for it (or others) to get into range
@@ -793,7 +796,7 @@ namespace Questor.Modules
             }
 
             //var targets = Cache.Instance.Entities.Where(e => targetNames.Contains(e.Name));
-            var target = Cache.Instance.Entities.Where(e => targetNames.Contains(e.Name)).OrderBy(t => t.Distance).First(); 
+            var target = Cache.Instance.Entities.Where(e => targetNames.Contains(e.Name)).OrderBy(t => t.Distance).First();
             if (nottheclosest)
                 target = Cache.Instance.Entities.Where(e => targetNames.Contains(e.Name)).OrderByDescending(t => t.Distance).First();
 
