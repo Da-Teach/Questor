@@ -1322,10 +1322,10 @@ namespace Questor
                                     }
                                 }
                             }
-                            Logging.Log("Autostart is false: Stopping EVE with quit command");
-                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
-                            break;
                         }
+                        Logging.Log("Autostart is false: Stopping EVE with quit command");
+                        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
+                        break;
                     }
                     if (Settings.Instance.DebugStates)
                         Logging.Log("Traveler.State = " + _traveler.State);
