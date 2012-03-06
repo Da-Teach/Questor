@@ -55,6 +55,7 @@
   <!-- Propulsion mod settings, do not activate AB/MWD unless these settings are matched -->
   <minimumPropulsionModuleDistance>5000</minimumPropulsionModuleDistance>
   <minimumPropulsionModuleCapacitor>55</minimumPropulsionModuleCapacitor>
+  
   <!-- The agent that you are running missions for -->
   <agentsList>
 	<agentList name="" priority="0" />
@@ -65,7 +66,7 @@
   <!-- <agentName></agentName>  --> <!-- old setting no longer in use -->
   
   <!-- Run missions that take us into low security space? - READ: DANGEROUS!!! -->
-  <LowSecmissions>false</LowSecMissions> <!-- default is: false -->
+  <LowSecMissions>false</LowSecMissions> <!-- default is: false -->
   
   <!-- Enable storyline botting (experimental) -->
   <enableStorylines>false</enableStorylines>  <!-- default is false -->
@@ -73,9 +74,8 @@
   <!-- undock delay -->
   <undockdelay>11</undockdelay>
 
-  <bookmarkWarpOut>Insta</bookmarkWarpOut>
-  
   <!-- prefix for undock bookmarks -->
+  <bookmarkWarpOut>Insta</bookmarkWarpOut>
   <undockprefix>Insta</undockprefix>
 
   <!-- Wait for mission decline timer to expire before declining again -->
@@ -87,7 +87,8 @@
   
   <!-- Faction specific fittings listed here -->
   <factionfittings>
-    <factionfitting faction="Default" fitting="Default" />
+    <factionfitting faction="Default" fitting="default" />
+	<!-- <factionfitting faction="Angel Cartel" fitting="angel" dronetype="2488" /> -->
   </factionfittings>
 
   <missionfittings>
@@ -96,9 +97,14 @@
 
   <!-- List of factions which the bot will try to avoid -->
   <factionblacklist>
-    <faction>Amarr Empire</faction>
 	<faction>Caldari State</faction>
+	<faction>Gallente Federation</faction>
     <faction>Minmatar Republic</faction>
+    <faction>Amarr Empire</faction>
+    <faction>CONCORD Assembly</faction>
+    <faction>Ammatar Mandate</faction>
+    <faction>Khanid Kingdom</faction>
+    <faction>Thukker Tribe</faction>
   </factionblacklist>
 
   <useGatesInSalvage>True</useGatesInSalvage> <!-- default is true -->
