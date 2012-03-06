@@ -185,7 +185,6 @@ namespace Questor.Modules
                 //Cache.Instance.CreateBookmarkofwreck(containers,label);
             }
         }
-        }
 
         private void ActivateAction(Action action)
         {
@@ -272,7 +271,7 @@ namespace Questor.Modules
                     Logging.Log("MissionController.Activate: Approaching target [" + closest.Name + "][" + closest.Id + "]");
                         _lastApproachAction = DateTime.Now;
                     closest.Approach();
-                }
+                    }
                     
                 }
             }
@@ -293,6 +292,10 @@ namespace Questor.Modules
 
         private void ClearPocketAction(Action action)
         {
+            bool NoMovement;
+            if (!bool.TryParse(action.GetParameterValue("nomovement"), out NoMovement))
+                NoMovement = true; 
+            
             if (!Cache.Instance.NormalApproch)
                 Cache.Instance.NormalApproch = true;
 
@@ -302,9 +305,9 @@ namespace Questor.Modules
             //
             // Get lowest range
             var range = Math.Min(Cache.Instance.WeaponRange, Cache.Instance.DirectEve.ActiveShip.MaxTargetRange);
-
-            //// We are obviously still killing stuff that's in range
-            //if (activeTargets.Count(t => t.Distance < range && t.IsNpc && t.CategoryId == (int) CategoryID.Entity) > 0)
+            var distancetoconsidertargets = range;
+            // We are obviously still killing stuff that's in range
+            //if (activeTargets.Count(t => t.Distance > range && t.IsNpc && t.CategoryId == (int) CategoryID.Entity) > 0)
             //{
             //    // Reset timeout
             //    _clearPocketTimeout = null;
@@ -319,16 +322,28 @@ namespace Questor.Modules
             //}
 
             // Is there a priority target out of range?
-            var target = Cache.Instance.PriorityTargets.OrderBy(t => t.Distance).Where(t => !(Cache.Instance.IgnoreTargets.Contains(t.Name.Trim()) && !Cache.Instance.TargetedBy.Any(w => w.IsWarpScramblingMe || w.IsNeutralizingMe || w.IsWebbingMe))).FirstOrDefault();
+            if (!NoMovement) //movement is ok
+            {
+                // Default Movement behavior
+                distancetoconsidertargets = range;
+            }
+            else //movement commands are not allowed so only target things in range of weapons
+            {
+                // NoMovement is taking effect here
+                distancetoconsidertargets = (int)Distance.BookmarksOnGridWithMe; //250k by default
+            }
+            
+            var target = Cache.Instance.PriorityTargets.OrderBy(t => t.Distance).Where(t => t.Distance < distancetoconsidertargets && !(Cache.Instance.IgnoreTargets.Contains(t.Name.Trim()) && !Cache.Instance.TargetedBy.Any(w => w.IsWarpScramblingMe || w.IsNeutralizingMe || w.IsWebbingMe))).FirstOrDefault();
+            
             if (target == null)
                 target_null = true;
             else
                 target_null = false;
-            // Or is there a target out of range that is targeting us?
-            target = target ?? Cache.Instance.TargetedBy.Where(t => !t.IsSentry && !t.IsContainer && t.IsNpc && t.CategoryId == (int)CategoryID.Entity && t.GroupId != (int)Group.LargeCollidableStructure && !Cache.Instance.IgnoreTargets.Contains(t.Name.Trim())).OrderBy(t => t.Distance).FirstOrDefault();
-            // Or is there any target out of range?
-            target = target ?? Cache.Instance.Entities.Where(t => !t.IsSentry && !t.IsContainer && t.IsNpc && t.CategoryId == (int) CategoryID.Entity && t.GroupId != (int) Group.LargeCollidableStructure && !Cache.Instance.IgnoreTargets.Contains(t.Name.Trim())).OrderBy(t => t.Distance).FirstOrDefault();
-            int targetedby = Cache.Instance.TargetedBy.Where(t => !t.IsSentry && !t.IsContainer && t.IsNpc && t.CategoryId == (int)CategoryID.Entity && t.GroupId != (int)Group.LargeCollidableStructure && !Cache.Instance.IgnoreTargets.Contains(t.Name.Trim())).Count();
+            // Or is there a target within distancetoconsidertargets that is targeting us?
+            target = target ?? Cache.Instance.TargetedBy.Where(t => t.Distance < distancetoconsidertargets && !t.IsSentry && !t.IsContainer && t.IsNpc && t.CategoryId == (int)CategoryID.Entity && t.GroupId != (int)Group.LargeCollidableStructure && !Cache.Instance.IgnoreTargets.Contains(t.Name.Trim())).OrderBy(t => t.Distance).FirstOrDefault();
+            // Or is there any target within distancetoconsidertargets?
+            target = target ?? Cache.Instance.Entities.Where(t => t.Distance < distancetoconsidertargets && !t.IsSentry && !t.IsContainer && t.IsNpc && t.CategoryId == (int)CategoryID.Entity && t.GroupId != (int)Group.LargeCollidableStructure && !Cache.Instance.IgnoreTargets.Contains(t.Name.Trim())).OrderBy(t => t.Distance).FirstOrDefault();
+            int targetedby = Cache.Instance.TargetedBy.Where(t => t.Distance < distancetoconsidertargets && !t.IsSentry && !t.IsContainer && t.IsNpc && t.CategoryId == (int)CategoryID.Entity && t.GroupId != (int)Group.LargeCollidableStructure && !Cache.Instance.IgnoreTargets.Contains(t.Name.Trim())).Count();
 
             if (target != null)
             {
@@ -353,26 +368,38 @@ namespace Questor.Modules
 
                 // Are we approaching the active (out of range) target?
                 // Wait for it (or others) to get into range
-
-                if (Settings.Instance.SpeedTank && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id))
-                    target.Orbit(Cache.Instance.OrbitDistance); 
-
-                if (!Settings.Instance.SpeedTank)
+                if (!NoMovement && !Settings.Instance.SpeedTank) //If nomovement is false then issue command to orbit and or move toward the target and stop when in range
                 {
-                    if (target.Distance > Cache.Instance.OrbitDistance + (int)Distance.OrbitDistanceCushion && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id))
+                    if (Settings.Instance.SpeedTank && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id))
                     {
-                        target.Approach(Cache.Instance.OrbitDistance);
-                        Logging.Log("MissionController.ClearPocket: Approaching target [" + target.Name + "][" + target.Id + "]");
+                        if (!NoMovement) //If nomovement is false then issue command to orbit and or move toward the target and stop when in range
+                        {
+                            target.Orbit(Cache.Instance.OrbitDistance);
+                        }
                     }
 
-                    if (target.Distance <= Cache.Instance.OrbitDistance && Cache.Instance.Approaching != null)
+                    if (!Settings.Instance.SpeedTank)
                     {
-                        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
-                        Cache.Instance.Approaching = null;
-                        Logging.Log("MissionController.ClearPocket: Stop ship, target is in orbit range");
+                        if (target.Distance > Cache.Instance.OrbitDistance + (int)Distance.OrbitDistanceCushion && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id))
+                        {
+                            if (!NoMovement) //If nomovement is false then issue command to orbit and or move toward the target and stop when in range
+                            {
+                                target.Approach(Cache.Instance.OrbitDistance);
+                                Logging.Log("MissionController.ClearPocket: Approaching target [" + target.Name + "][" + target.Id + "]");
+                            }
+                        }
+
+                        if (target.Distance <= Cache.Instance.OrbitDistance && Cache.Instance.Approaching != null)
+                        {
+                            if (!NoMovement) //If nomovement is false then issue command to orbit and or move toward the target and stop when in range
+                            {
+                                Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                                Cache.Instance.Approaching = null;
+                                Logging.Log("MissionController.ClearPocket: Stop ship, target is in orbit range");
+                            }
+                        }
                     }
                 }
-
                 //if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id)
                 //{
                 //    Logging.Log("MissionController.ClearPocket: Approaching target [" + target.Name + "][" + target.Id + "]");
