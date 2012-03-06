@@ -634,7 +634,7 @@ namespace Questor.Modules
                 return;
             }
 
-            if (Cache.Instance.TargetedBy.Any(t => !t.IsSentry))
+            if (Cache.Instance.TargetedBy.Any(t => !t.IsSentry && targetNames.Contains(t.Name)))
             {
                 // We are being attacked, break the kill order
                 if (Cache.Instance.RemovePriorityTargets(targets))
