@@ -464,6 +464,7 @@ namespace Questor.Modules
         {
             if (Cache.Instance.NormalApproch)
                 Cache.Instance.NormalApproch = false;
+
             var target = action.GetParameterValue("target");
 
             // No parameter? Although we shouldnt really allow it, assume its the acceleration gate :)
@@ -562,8 +563,11 @@ namespace Questor.Modules
             _waitingSince = DateTime.Now;
         }
 
-        private void KillAction(Action action)
+        private void AggroOnlyAction(Action action)
         {
+            if (Cache.Instance.NormalApproch)
+                Cache.Instance.NormalApproch = false;
+
             bool ignoreAttackers;
             if (!bool.TryParse(action.GetParameterValue("ignoreattackers"), out ignoreAttackers))
                 ignoreAttackers = false;
@@ -571,6 +575,91 @@ namespace Questor.Modules
             bool breakOnAttackers;
             if (!bool.TryParse(action.GetParameterValue("breakonattackers"), out breakOnAttackers))
                 breakOnAttackers = false;
+
+            bool nottheclosest;
+            if (!bool.TryParse(action.GetParameterValue("notclosest"), out nottheclosest))
+                nottheclosest = false;
+
+            int numbertoignore;
+            if (!int.TryParse(action.GetParameterValue("numbertoignore"), out numbertoignore))
+                numbertoignore = 0;
+
+            var targetNames = action.GetParameterValues("target");
+            // No parameter? Ignore kill action
+            if (targetNames.Count == 0)
+            {
+                Logging.Log("MissionController.AggroOnly: No targets defined!");
+
+                _currentAction++;
+                return;
+            }
+
+            var targets = Cache.Instance.Entities.Where(e => targetNames.Contains(e.Name));
+            if (targets.Count() == numbertoignore)
+            {
+                Logging.Log("MissionController.AggroOnly: All targets gone " + targetNames.Aggregate((current, next) => current + "[" + next + "]"));
+
+                // We killed it/them !?!?!? :)
+                _currentAction++;
+                return;
+            }
+
+            if (Cache.Instance.TargetedBy.Any(t => !t.IsSentry))
+            {
+                // We are being attacked, break the kill order
+                if (Cache.Instance.RemovePriorityTargets(targets))
+                    Logging.Log("MissionController.AggroOnly: Done with AggroOnly: We have aggro.");
+
+                foreach (var target in Cache.Instance.Targets.Where(e => targets.Any(t => t.Id == e.Id)))
+                {
+                    Logging.Log("MissionController.AggroOnly: Unlocking [" + target.Name + "][" + target.Id + "] Distance [" + target.Distance + "] due to aggro being obtained");
+                    target.UnlockTarget();
+                }
+
+                return;
+            }
+
+            if (!ignoreAttackers || breakOnAttackers)
+            {
+                // Apparently we are busy, wait for combat to clear attackers first
+                var targetedBy = Cache.Instance.TargetedBy;
+                if (targetedBy != null && targetedBy.Count(t => !t.IsSentry && t.Distance < Cache.Instance.WeaponRange) > 0)
+                    return;
+            }
+
+            var closest = targets.OrderBy(t => t.Distance).First();
+
+            if (nottheclosest)
+                closest = targets.OrderByDescending(t => t.Distance).First();
+
+           
+            if (!Cache.Instance.PriorityTargets.Any(pt => pt.Id == closest.Id))
+            {
+                Logging.Log("MissionController.AggroOnly: Adding [" + closest.Name + "][" + closest.Id + "] as a priority target");
+                Cache.Instance.AddPriorityTargets(new[] { closest }, Priority.PriorityKillTarget);
+            }            
+        }
+
+        private void KillAction(Action action)
+        {
+            if (Cache.Instance.NormalApproch)
+                Cache.Instance.NormalApproch = false;
+
+            bool ignoreAttackers;
+            if (!bool.TryParse(action.GetParameterValue("ignoreattackers"), out ignoreAttackers))
+                ignoreAttackers = false;
+
+            bool breakOnAttackers;
+            if (!bool.TryParse(action.GetParameterValue("breakonattackers"), out breakOnAttackers))
+                breakOnAttackers = false;
+
+            bool nottheclosest;
+            if (!bool.TryParse(action.GetParameterValue("notclosest"), out nottheclosest))
+                nottheclosest = false;
+
+            int numbertoignore;
+            if (!int.TryParse(action.GetParameterValue("numbertoignore"), out numbertoignore))
+                numbertoignore = 0;
 
             var targetNames = action.GetParameterValues("target");
             // No parameter? Ignore kill action
@@ -583,7 +672,7 @@ namespace Questor.Modules
             }
 
             var targets = Cache.Instance.Entities.Where(e => targetNames.Contains(e.Name));
-            if (targets.Count() == 0)
+            if (targets.Count() == numbertoignore)
             {
                 Logging.Log("MissionController.Kill: All targets killed " + targetNames.Aggregate((current, next) => current + "[" + next + "]"));
 
@@ -616,6 +705,10 @@ namespace Questor.Modules
             }
 
             var closest = targets.OrderBy(t => t.Distance).First();
+
+            if (nottheclosest)
+                closest = targets.OrderByDescending(t => t.Distance).First();
+
             if (closest.Distance < Cache.Instance.WeaponRange)
             {
                 if (!Cache.Instance.PriorityTargets.Any(pt => pt.Id == closest.Id))
@@ -647,6 +740,9 @@ namespace Questor.Modules
 
         private void KillOnceAction(Action action)
         {
+            if (Cache.Instance.NormalApproch)
+                Cache.Instance.NormalApproch = false;
+
             bool ignoreAttackers;
             if (!bool.TryParse(action.GetParameterValue("ignoreattackers"), out ignoreAttackers))
                 ignoreAttackers = false;
@@ -724,6 +820,9 @@ namespace Questor.Modules
 
         private void AttackClosestByNameAction(Action action)
         {
+            if (Cache.Instance.NormalApproch)
+                Cache.Instance.NormalApproch = false;
+
             var targetNames = action.GetParameterValues("target");
             // No parameter? Ignore kill action
             if (targetNames.Count == 0)
@@ -776,6 +875,9 @@ namespace Questor.Modules
 
         private void AttackClosestAction(Action action)
         {
+            if (Cache.Instance.NormalApproch)
+                Cache.Instance.NormalApproch = false;
+
             var targetNames = action.GetParameterValues("target");
             // No parameter? Ignore kill action
             if (targetNames.Count == 0)
