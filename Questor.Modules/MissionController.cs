@@ -751,6 +751,10 @@ namespace Questor.Modules
             if (!bool.TryParse(action.GetParameterValue("breakonattackers"), out breakOnAttackers))
                 breakOnAttackers = false;
 
+            bool nottheclosest;
+            if (!bool.TryParse(action.GetParameterValue("notclosest"), out nottheclosest))
+                nottheclosest = false;
+
             var targetNames = action.GetParameterValues("target");
             // No parameter? Ignore kill action
             if (targetNames.Count == 0)
@@ -763,9 +767,12 @@ namespace Questor.Modules
 
             //var targets = Cache.Instance.Entities.Where(e => targetNames.Contains(e.Name));
             var target = Cache.Instance.Entities.Where(e => targetNames.Contains(e.Name)).OrderBy(t => t.Distance).First(); 
+            if (nottheclosest)
+                target = Cache.Instance.Entities.Where(e => targetNames.Contains(e.Name)).OrderByDescending(t => t.Distance).First();
+
             if (target.HasExploded)
             {
-                Logging.Log("MissionController.KillOnce: All targets killed, has exploded ");
+                Logging.Log("MissionController.KillOnce: The target is dead, has exploded ");
 
                 // We killed it/them !?!?!? :)
                 _currentAction++;
@@ -773,7 +780,7 @@ namespace Questor.Modules
             }
             if (target.IsValid)
             {
-                Logging.Log("MissionController.KillOnce: All targets killed, not valid anymore ");
+                Logging.Log("MissionController.KillOnce: The target is dead, not valid anymore ");
 
                 // We killed it/them !?!?!? :)
                 _currentAction++;
@@ -820,6 +827,10 @@ namespace Questor.Modules
 
         private void AttackClosestByNameAction(Action action)
         {
+            bool nottheclosest;
+            if (!bool.TryParse(action.GetParameterValue("notclosest"), out nottheclosest))
+                nottheclosest = false; 
+            
             if (Cache.Instance.NormalApproch)
                 Cache.Instance.NormalApproch = false;
 
@@ -835,6 +846,9 @@ namespace Questor.Modules
 
             //var targets = Cache.Instance.Entities.Where(e => targetNames.Contains(e.Name));
             var target = Cache.Instance.Entities.Where(e => targetNames.Contains(e.Name)).OrderBy(t => t.Distance).First();
+            if (nottheclosest)
+                target = Cache.Instance.Entities.Where(e => targetNames.Contains(e.Name)).OrderByDescending(t => t.Distance).First();
+
             if (!target.IsValid)
             {
                 Logging.Log("MissionController.AttackClosestByName: All targets killed, not valid anymore ");
@@ -878,6 +892,10 @@ namespace Questor.Modules
             if (Cache.Instance.NormalApproch)
                 Cache.Instance.NormalApproch = false;
 
+            bool nottheclosest;
+            if (!bool.TryParse(action.GetParameterValue("notclosest"), out nottheclosest))
+                nottheclosest = false;
+
             var targetNames = action.GetParameterValues("target");
             // No parameter? Ignore kill action
             if (targetNames.Count == 0)
@@ -890,6 +908,8 @@ namespace Questor.Modules
 
             //var targets = Cache.Instance.Entities.Where(e => targetNames.Contains(e.Name));
             var target = Cache.Instance.Entities.OrderBy(t => t.Distance).First();
+            if (nottheclosest)
+                target = Cache.Instance.Entities.OrderByDescending(t => t.Distance).First();
             if (!target.IsValid)
             {
                 Logging.Log("MissionController.AttackClosest: All targets killed, not valid anymore ");
@@ -960,6 +980,8 @@ namespace Questor.Modules
             }
 
             var containers = Cache.Instance.Containers.Where(e => !Cache.Instance.LootedContainers.Contains(e.Id)).OrderBy(e => e.Distance);
+            //var containers = Cache.Instance.Containers.Where(e => !Cache.Instance.LootedContainers.Contains(e.Id)).OrderBy(e => e.Id);
+            //var containers = Cache.Instance.Containers.Where(e => !Cache.Instance.LootedContainers.Contains(e.Id)).OrderByDescending(e => e.Id);
             if (containers.Count() == 0)
             {
                 Logging.Log("MissionController.LootItem: We are done looting");
