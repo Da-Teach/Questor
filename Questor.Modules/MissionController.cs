@@ -217,7 +217,7 @@ namespace Questor.Modules
             
             //if (closest.Distance <= (int)Distance.CloseToGateActivationRange) // if your distance is less than the 'close enough' range, default is 7000 meters
             var closest = targets.OrderBy(t => t.Distance).First();
-            if (closest.Distance < 2300)
+            if (closest.Distance < (int)Distance.GateActivationRange)
             {
                 // Tell the drones module to retract drones
                 Cache.Instance.IsMissionPocketDone = true;
@@ -262,7 +262,7 @@ namespace Questor.Modules
                     State = MissionControllerState.NextPocket;
                 }
             }
-            else if (closest.Distance < 150000) //else if (closest.Distance < (int)Distance.WarptoDistance) //if we are inside warpto distance then approach
+            else if (closest.Distance < (int)Distance.WarptoDistance) //else if (closest.Distance < (int)Distance.WarptoDistance) //if we are inside warpto distance then approach
             {
                 // Move to the target
                 if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
