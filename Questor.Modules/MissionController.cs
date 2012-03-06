@@ -34,6 +34,7 @@ namespace Questor.Modules
         private DateTime _lastAlign;
         private DateTime _lastOrbit;
 
+        private bool target_null = false;
         public long AgentId { get; set; }
 
         public MissionController()
@@ -292,34 +293,42 @@ namespace Questor.Modules
 
         private void ClearPocketAction(Action action)
         {
-            var activeTargets = new List<EntityCache>();
-            activeTargets.AddRange(Cache.Instance.Targets);
-            activeTargets.AddRange(Cache.Instance.Targeting);
+            if (!Cache.Instance.NormalApproch)
+                Cache.Instance.NormalApproch = true;
 
+            //var activeTargets = new List<EntityCache>();
+            //activeTargets.AddRange(Cache.Instance.Targets);
+            //activeTargets.AddRange(Cache.Instance.Targeting);
+            //
             // Get lowest range
             var range = Math.Min(Cache.Instance.WeaponRange, Cache.Instance.DirectEve.ActiveShip.MaxTargetRange);
 
-            // We are obviously still killing stuff that's in range
-            if (activeTargets.Count(t => t.Distance < range && t.IsNpc && t.CategoryId == (int) CategoryID.Entity) > 0)
-            {
-                // Reset timeout
-                _clearPocketTimeout = null;
-
-                // If we are still moving, stop (we do not want to 'over-agro', if possible) (unless we are speed tanking)
-                if (Cache.Instance.Approaching != null && !Settings.Instance.SpeedTank)
-                {
-                    Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
-                    Cache.Instance.Approaching = null;
-                }
-                return;
-            }
+            //// We are obviously still killing stuff that's in range
+            //if (activeTargets.Count(t => t.Distance < range && t.IsNpc && t.CategoryId == (int) CategoryID.Entity) > 0)
+            //{
+            //    // Reset timeout
+            //    _clearPocketTimeout = null;
+            //
+            //    // If we are still moving, stop (we do not want to 'over-agro', if possible) (unless we are speed tanking)
+            //    if (Cache.Instance.Approaching != null && !Settings.Instance.SpeedTank)
+            //    {
+            //        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+            //        Cache.Instance.Approaching = null;
+            //    }
+            //    return;
+            //}
 
             // Is there a priority target out of range?
             var target = Cache.Instance.PriorityTargets.OrderBy(t => t.Distance).Where(t => !(Cache.Instance.IgnoreTargets.Contains(t.Name.Trim()) && !Cache.Instance.TargetedBy.Any(w => w.IsWarpScramblingMe || w.IsNeutralizingMe || w.IsWebbingMe))).FirstOrDefault();
+            if (target == null)
+                target_null = true;
+            else
+                target_null = false;
             // Or is there a target out of range that is targeting us?
             target = target ?? Cache.Instance.TargetedBy.Where(t => !t.IsSentry && !t.IsContainer && t.IsNpc && t.CategoryId == (int)CategoryID.Entity && t.GroupId != (int)Group.LargeCollidableStructure && !Cache.Instance.IgnoreTargets.Contains(t.Name.Trim())).OrderBy(t => t.Distance).FirstOrDefault();
             // Or is there any target out of range?
             target = target ?? Cache.Instance.Entities.Where(t => !t.IsSentry && !t.IsContainer && t.IsNpc && t.CategoryId == (int) CategoryID.Entity && t.GroupId != (int) Group.LargeCollidableStructure && !Cache.Instance.IgnoreTargets.Contains(t.Name.Trim())).OrderBy(t => t.Distance).FirstOrDefault();
+            int targetedby = Cache.Instance.TargetedBy.Where(t => !t.IsSentry && !t.IsContainer && t.IsNpc && t.CategoryId == (int)CategoryID.Entity && t.GroupId != (int)Group.LargeCollidableStructure && !Cache.Instance.IgnoreTargets.Contains(t.Name.Trim())).Count();
 
             if (target != null)
             {
@@ -329,6 +338,9 @@ namespace Questor.Modules
                 // Lock priority target if within weapons range
                 if (target.Distance < range)
                 {
+                    if (target_null && targetedby == 0)
+                        ReloadAll();
+
                     if (Cache.Instance.DirectEve.ActiveShip.MaxLockedTargets > 0)
                     {
                         Logging.Log("MissionController.ClearPocket: Targeting [" + target.Name + "][" + target.Id + "] - Distance [" + target.Distance + "]");
@@ -336,6 +348,8 @@ namespace Questor.Modules
                     }
                     return;
                 }
+                else
+                    ReloadAll();
 
                 // Are we approaching the active (out of range) target?
                 // Wait for it (or others) to get into range
@@ -359,26 +373,26 @@ namespace Questor.Modules
                     }
                 }
 
-                if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id)
-                {
-                    Logging.Log("MissionController.ClearPocket: Approaching target [" + target.Name + "][" + target.Id + "]");
-
-                    if (Settings.Instance.SpeedTank)
-                        target.Orbit(Cache.Instance.OrbitDistance);
-                    else
-                    {
-                        if(target.Distance > Cache.Instance.OrbitDistance + (int)Distance.OrbitDistanceCushion)
-                            target.Approach(Cache.Instance.OrbitDistance);
-                    	else
-                        {
-                            if(target.Distance <= Cache.Instance.OrbitDistance)
-                            {
-                                Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
-                                Cache.Instance.Approaching = null;
-                            }
-                        }
-                    }
-                }
+                //if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id)
+                //{
+                //    Logging.Log("MissionController.ClearPocket: Approaching target [" + target.Name + "][" + target.Id + "]");
+                //
+                //    if (Settings.Instance.SpeedTank)
+                //        target.Orbit(Cache.Instance.OrbitDistance);
+                //    else
+                //    {
+                //        if(target.Distance > Cache.Instance.OrbitDistance + (int)Distance.OrbitDistanceCushion)
+                //            target.Approach(Cache.Instance.OrbitDistance);
+                //    	else
+                //        {
+                //            if(target.Distance <= Cache.Instance.OrbitDistance)
+                //            {
+                //                Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                //                Cache.Instance.Approaching = null;
+                //            }
+                //        }
+                //    }
+                //}
 
                 return;
             }
@@ -400,6 +414,9 @@ namespace Questor.Modules
 
         private void MoveToBackgroundAction(Action action)
         {
+            if (Cache.Instance.NormalApproch)
+                Cache.Instance.NormalApproch = false;
+
             var target = action.GetParameterValue("target");
 
             // No parameter? Although we shouldnt really allow it, assume its the acceleration gate :)
@@ -445,6 +462,8 @@ namespace Questor.Modules
 
         private void MoveToAction(Action action)
         {
+            if (Cache.Instance.NormalApproch)
+                Cache.Instance.NormalApproch = false;
             var target = action.GetParameterValue("target");
 
             // No parameter? Although we shouldnt really allow it, assume its the acceleration gate :)
