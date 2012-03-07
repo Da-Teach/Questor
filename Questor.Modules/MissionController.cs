@@ -594,8 +594,9 @@ namespace Questor.Modules
                 {
                     Logging.Log("MissionController.AggroOnly: Unlocking [" + target.Name + "][" + target.Id + "] Distance [" + target.Distance + "] due to aggro being obtained");
                     target.UnlockTarget();
-                }
 
+                }
+                _currentAction++;
                 return;
             }
 
