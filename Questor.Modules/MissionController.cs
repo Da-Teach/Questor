@@ -414,6 +414,50 @@ namespace Questor.Modules
             _clearPocketTimeout = null;
         }
 
+        private void ClearWithinWeaponsRangeOnlyAction(Action action)
+        {
+             // Get lowest range
+            var range = Math.Min(Cache.Instance.WeaponRange, Cache.Instance.DirectEve.ActiveShip.MaxTargetRange);
+            var distancetoconsidertargets = range;
+            
+            var target = Cache.Instance.PriorityTargets.OrderBy(t => t.Distance).Where(t => t.Distance < distancetoconsidertargets && !(Cache.Instance.IgnoreTargets.Contains(t.Name.Trim()) && !Cache.Instance.TargetedBy.Any(w => w.IsWarpScramblingMe || w.IsNeutralizingMe || w.IsWebbingMe))).FirstOrDefault();
+
+            // Or is there a target within distancetoconsidertargets that is targeting us?
+            target = target ?? Cache.Instance.TargetedBy.Where(t => t.Distance < distancetoconsidertargets && !t.IsSentry && !t.IsContainer && t.IsNpc && t.CategoryId == (int)CategoryID.Entity && t.GroupId != (int)Group.LargeCollidableStructure && !Cache.Instance.IgnoreTargets.Contains(t.Name.Trim())).OrderBy(t => t.Distance).FirstOrDefault();
+            // Or is there any target within distancetoconsidertargets?
+            target = target ?? Cache.Instance.Entities.Where(t => t.Distance < distancetoconsidertargets && !t.IsSentry && !t.IsContainer && t.IsNpc && t.CategoryId == (int)CategoryID.Entity && t.GroupId != (int)Group.LargeCollidableStructure && !Cache.Instance.IgnoreTargets.Contains(t.Name.Trim())).OrderBy(t => t.Distance).FirstOrDefault();
+            int targetedby = Cache.Instance.TargetedBy.Where(t => t.Distance < distancetoconsidertargets && !t.IsSentry && !t.IsContainer && t.IsNpc && t.CategoryId == (int)CategoryID.Entity && t.GroupId != (int)Group.LargeCollidableStructure && !Cache.Instance.IgnoreTargets.Contains(t.Name.Trim())).Count();
+
+            // Reset timeout
+            _clearPocketTimeout = null;
+
+            // Lock priority target if within weapons range
+            if (target.Distance < range)
+            {
+                if (Cache.Instance.DirectEve.ActiveShip.MaxLockedTargets > 0)
+                {
+                    Logging.Log("MissionController.ClearPocket: Targeting [" + target.Name + "][" + target.Id + "] - Distance [" + target.Distance + "]");
+                    target.LockTarget();
+                }
+                return;
+            }
+            
+
+            // Do we have a timeout?  No, set it to now + 5 seconds
+            if (!_clearPocketTimeout.HasValue)
+                _clearPocketTimeout = DateTime.Now.AddSeconds(5);
+
+            // Are we in timeout?
+            if (DateTime.Now < _clearPocketTimeout.Value)
+                return;
+
+            Logging.Log("MissionController: ClearWithinWeaponsRangeOnlyAction is complete: no more targets in weapons range");
+            _currentAction++;
+
+            // Reset timeout
+            _clearPocketTimeout = null;
+        }
+
         private void MoveToBackgroundAction(Action action)
         {
             if (Cache.Instance.NormalApproch)
