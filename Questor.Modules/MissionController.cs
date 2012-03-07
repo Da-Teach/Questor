@@ -1031,12 +1031,20 @@ namespace Questor.Modules
 
         private void IgnoreAction(Action action)
         {
+            bool clear;
+            if (!bool.TryParse(action.GetParameterValue("clear"), out clear))
+                clear = false; 
+            
             var add = action.GetParameterValues("add");
             var remove = action.GetParameterValues("remove");
 
+            if (clear)
+                Cache.Instance.IgnoreTargets.Clear();
+            else
+            {
             add.ForEach(a => Cache.Instance.IgnoreTargets.Add(a.Trim()));
             remove.ForEach(a => Cache.Instance.IgnoreTargets.Remove(a.Trim()));
-
+            }
             Logging.Log("MissionController.Ignore: Updated ignore list");
             if (Cache.Instance.IgnoreTargets.Any())
                 Logging.Log("MissionController.Ignore: Currently ignoring: " + Cache.Instance.IgnoreTargets.Aggregate((current, next) => current + "[" + next + "]"));
