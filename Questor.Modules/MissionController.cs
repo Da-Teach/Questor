@@ -296,27 +296,27 @@ namespace Questor.Modules
             if (!Cache.Instance.NormalApproch)
                 Cache.Instance.NormalApproch = true;
 
-            //var activeTargets = new List<EntityCache>();
-            //activeTargets.AddRange(Cache.Instance.Targets);
-            //activeTargets.AddRange(Cache.Instance.Targeting);
-            //
+            var activeTargets = new List<EntityCache>();
+            activeTargets.AddRange(Cache.Instance.Targets);
+            activeTargets.AddRange(Cache.Instance.Targeting);
+            
             // Get lowest range
             var range = Math.Min(Cache.Instance.WeaponRange, Cache.Instance.DirectEve.ActiveShip.MaxTargetRange);
 
             //// We are obviously still killing stuff that's in range
-            //if (activeTargets.Count(t => t.Distance < range && t.IsNpc && t.CategoryId == (int) CategoryID.Entity) > 0)
-            //{
-            //    // Reset timeout
-            //    _clearPocketTimeout = null;
-            //
-            //    // If we are still moving, stop (we do not want to 'over-agro', if possible) (unless we are speed tanking)
-            //    if (Cache.Instance.Approaching != null && !Settings.Instance.SpeedTank)
-            //    {
-            //        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
-            //        Cache.Instance.Approaching = null;
-            //    }
-            //    return;
-            //}
+            if (activeTargets.Count(t => t.Distance < range && t.IsNpc && t.CategoryId == (int) CategoryID.Entity) > 0)
+            {
+                // Reset timeout
+                _clearPocketTimeout = null;
+            
+                // If we are still moving, stop (we do not want to 'over-agro', if possible) (unless we are speed tanking)
+                if (Cache.Instance.Approaching != null && !Settings.Instance.SpeedTank)
+                {
+                    Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                    Cache.Instance.Approaching = null;
+                }
+                return;
+            }
 
             // Is there a priority target out of range?
             var target = Cache.Instance.PriorityTargets.OrderBy(t => t.Distance).Where(t => !(Cache.Instance.IgnoreTargets.Contains(t.Name.Trim()) && !Cache.Instance.TargetedBy.Any(w => w.IsWarpScramblingMe || w.IsNeutralizingMe || w.IsWebbingMe))).FirstOrDefault();
@@ -375,26 +375,26 @@ namespace Questor.Modules
                             }
                         }
 
-                //if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id)
-                //{
-                //    Logging.Log("MissionController.ClearPocket: Approaching target [" + target.Name + "][" + target.Id + "]");
-                //
-                //    if (Settings.Instance.SpeedTank)
-                //        target.Orbit(Cache.Instance.OrbitDistance);
-                //    else
-                //    {
-                //        if(target.Distance > Cache.Instance.OrbitDistance + (int)Distance.OrbitDistanceCushion)
-                //            target.Approach(Cache.Instance.OrbitDistance);
-                //    	else
-                //        {
-                //            if(target.Distance <= Cache.Instance.OrbitDistance)
-                //            {
-                //                Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
-                //                Cache.Instance.Approaching = null;
-                //            }
-                //        }
-                //    }
-                //}
+                if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id)
+                {
+                    Logging.Log("MissionController.ClearPocket: Approaching target [" + target.Name + "][" + target.Id + "]");
+                
+                    if (Settings.Instance.SpeedTank)
+                        target.Orbit(Cache.Instance.OrbitDistance);
+                    else
+                    {
+                        if(target.Distance > Cache.Instance.OrbitDistance + (int)Distance.OrbitDistanceCushion)
+                            target.Approach(Cache.Instance.OrbitDistance);
+                    	else
+                        {
+                            if(target.Distance <= Cache.Instance.OrbitDistance)
+                            {
+                                Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                                Cache.Instance.Approaching = null;
+                            }
+                        }
+                    }
+                }
 
                 return;
             }
