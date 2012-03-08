@@ -422,7 +422,7 @@ namespace Questor
 
             if (_directEve.Login.AtLogin)
             {
-                if (DateTime.Now.Subtract(AppStarted).TotalSeconds > 20)
+                if (DateTime.Now.Subtract(AppStarted).TotalSeconds > 10)
                 {
                 Logging.Log("[Startup] Login account [" + _username + "]");
                 _directEve.Login.Login(_username, _password);
