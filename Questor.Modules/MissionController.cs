@@ -496,6 +496,10 @@ namespace Questor.Modules
             if (string.IsNullOrEmpty(target))
                 target = "Acceleration Gate";
 
+            int distancetoapp;
+            if (!int.TryParse(action.GetParameterValue("distance"), out distancetoapp))
+                distancetoapp = (int)Distance.GateActivationRange;
+
             var targets = Cache.Instance.EntitiesByName(target);
             if (targets == null || targets.Count() == 0)
             {
@@ -505,7 +509,7 @@ namespace Questor.Modules
             }
 
             var closest = targets.OrderBy(t => t.Distance).First();
-            if (closest.Distance < (int)Distance.GateActivationRange)
+            if (closest.Distance < distancetoapp)
             {
                 // We are close enough to whatever we needed to move to
                 _currentAction++;
