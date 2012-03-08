@@ -130,7 +130,7 @@
             // Are we currently viewing ore orders?
             if (marketWindow.DetailTypeId != oreid)
             {
-                // No, load the kernite orders
+                // No, load the ore orders
                 marketWindow.LoadTypeId(oreid);
 
 
@@ -142,7 +142,7 @@
 
             // Get the median sell price
             var type = Cache.Instance.InvTypesById[20];
-            var maxPrice = type.MedianSell*2;
+            var maxPrice = type.MedianSell*4;
 
             // Do we have orders that sell enough ore for the mission?
             var orders = marketWindow.SellOrders.Where(o => o.StationId == directEve.Session.StationId && o.Price < maxPrice);
@@ -157,7 +157,7 @@
                 return StorylineState.BlacklistAgent;
             }
 
-            // How much kernite do we still need?
+            // How much ore do we still need?
             var neededQuantity = orequantity - hangar.Items.Where(i => i.TypeId == oreid).Sum(i => i.Quantity);
             if (neededQuantity > 0)
             {
