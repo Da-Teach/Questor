@@ -174,6 +174,7 @@ namespace Questor.Modules
         public bool OpenWrecks = false;
         public bool NormalApproch = true;
         public bool CourierMission = false;
+        public string MissionName = "";
         public bool ConsoleLogOpened = false;
 
         public bool Local_safe(int max_bad, double stand)
