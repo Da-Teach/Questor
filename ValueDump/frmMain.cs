@@ -351,7 +351,7 @@ namespace ValueDump
                     break;
 
                 case ValueDumpState.StartQuickSell:
-                    if (DateTime.Now.Subtract(_lastExecute).TotalSeconds < 1)
+                    if (DateTime.Now.Subtract(_lastExecute).TotalSeconds < 5)
                         break;
                     _lastExecute = DateTime.Now;
 
