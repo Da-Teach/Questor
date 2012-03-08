@@ -63,6 +63,7 @@ namespace Questor.Modules
             {
                 Settings.Instance.PocketStatisticsFile = Path.Combine(Settings.Instance.PocketStatisticsPath, Cache.Instance.FilterPath(Cache.Instance.DirectEve.Me.Name) + " - " + currentPocketName + " - " + _pocket + " - PocketStatistics.csv");
 
+                if (!Directory.Exists(Settings.Instance.PocketStatisticsPath)) 
                 Directory.CreateDirectory(Settings.Instance.PocketStatisticsPath);
 
                 //
@@ -779,6 +780,10 @@ namespace Questor.Modules
             bool nottheclosest;
             if (!bool.TryParse(action.GetParameterValue("notclosest"), out nottheclosest))
                 nottheclosest = false;
+
+            int numbertoignore;
+            if (!int.TryParse(action.GetParameterValue("numbertoignore"), out numbertoignore))
+                numbertoignore = 0;
 
             var targetNames = action.GetParameterValues("target");
             // No parameter? Ignore kill action

@@ -26,6 +26,7 @@ namespace Questor.Modules
                 {
                     if (Settings.Instance.ConsoleLogPath != null && Settings.Instance.ConsoleLogFile != null)
                     {
+                        if (!Directory.Exists(Settings.Instance.ConsoleLogPath)) 
                         Directory.CreateDirectory(Settings.Instance.ConsoleLogPath);
 
                         line = "Questor: Writing to Daily Console Log ";

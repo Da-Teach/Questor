@@ -176,7 +176,8 @@ namespace Questor.Modules
         public bool CourierMission = false;
         public bool ConsoleLogOpened = false;
 
-        public bool Local_safe(int max_bad, double stand) {
+        public bool Local_safe(int max_bad, double stand)
+        {
             int number = 0;
             DirectChatWindow Local = (DirectChatWindow)GetWindowByName("Local");
             foreach(var LocalMember in Local.Members)
@@ -283,8 +284,8 @@ namespace Questor.Modules
         public DateTime lastKnownGoodConnectedTime { get; set; }
         public long totalMegaBytesOfMemoryUsed { get; set; }
         public double MyWalletBalance { get; set; }
-
-        public string CurrentAgent { 
+        public string CurrentAgent
+        {
             get
             {
                 if(AgentName == "")

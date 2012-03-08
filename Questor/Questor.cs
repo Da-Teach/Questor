@@ -250,6 +250,7 @@ namespace Questor
                             // prepare the Questor Session Log - keeps track of starts, restarts and exits, and hopefully the reasons
                             //
                             // Get the path
+                            if (!Directory.Exists(Settings.Instance.SessionsLogPath)) 
                             Directory.CreateDirectory(Settings.Instance.SessionsLogPath);
 
                             // Write the header
@@ -551,6 +552,7 @@ namespace Questor
                         Cache.Instance.SessionLPGenerated = (Cache.Instance.SessionLPGenerated + (Cache.Instance.Agent.LoyaltyPoints - LoyaltyPoints));
                         if (Settings.Instance.MissionStats1Log)
                         {
+                            if (!Directory.Exists(Settings.Instance.MissionStats1LogPath)) 
                             Directory.CreateDirectory(Settings.Instance.MissionStats1LogPath);
 
                             // Write the header
@@ -573,6 +575,7 @@ namespace Questor
                         }
                         if (Settings.Instance.MissionStats2Log)
                         {
+                            if (!Directory.Exists(Settings.Instance.MissionStats2LogPath)) 
                             Directory.CreateDirectory(Settings.Instance.MissionStats2LogPath);
 
                             // Write the header
@@ -596,6 +599,7 @@ namespace Questor
                         }
                         if (Settings.Instance.MissionStats3Log)
                         {
+                            if (!Directory.Exists(Settings.Instance.MissionStats3LogPath)) 
                             Directory.CreateDirectory(Settings.Instance.MissionStats3LogPath);
 
                             // Write the header
@@ -1179,6 +1183,7 @@ namespace Questor
 
                             // Get the path
 
+                            if (!Directory.Exists(Settings.Instance.SessionsLogPath))
                             Directory.CreateDirectory(Settings.Instance.SessionsLogPath);
 
                             Cache.Instance.SessionIskPerHrGenerated = (Cache.Instance.SessionIskGenerated / (Cache.Instance.SessionRunningTime / 60));
