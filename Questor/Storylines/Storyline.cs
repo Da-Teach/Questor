@@ -97,6 +97,7 @@
             if (mission == null)
             {
                 State = StorylineState.Done;
+                Cache.Instance.MissionName = "";
                 return;
             }
 
@@ -111,6 +112,7 @@
             }
 
             Logging.Log("Storyline: Going to do [" + mission.Name + "] for agent [" + agent.Name + "]");
+            Cache.Instance.MissionName = mission.Name;
 
             State = StorylineState.Arm;
             _storyline = _storylines[Cache.Instance.FilterPath(mission.Name)];

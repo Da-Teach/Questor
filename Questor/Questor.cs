@@ -1414,6 +1414,7 @@ namespace Questor
 
                     if (_agentInteraction.State == AgentInteractionState.Done)
                     {
+                        Cache.Instance.MissionName = "";
                         _agentInteraction.State = AgentInteractionState.Idle;
                         if (Cache.Instance.CourierMission)
                         {

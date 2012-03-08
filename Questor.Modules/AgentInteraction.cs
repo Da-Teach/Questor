@@ -297,6 +297,7 @@ namespace Questor.Modules
             else
                 Cache.Instance.CourierMission = false;
 
+            Cache.Instance.MissionName = missionName;
 
             if (mission.State == (int)MissionState.Offered)
             {
