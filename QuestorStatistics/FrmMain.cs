@@ -33,7 +33,7 @@ namespace QuestorStatistics
             System.IO.DirectoryInfo o = new System.IO.DirectoryInfo(LocalRuta);
             System.IO.FileInfo[] myfiles = null;
 
-            myfiles = o.GetFiles("*.Statistics.log");
+            myfiles = o.GetFiles("*.CustomDatedStatistics.log");
             for (int y = 0; y <= myfiles.Length - 1; y++)
             {
                 cmb1.Items.Add(myfiles[y].Name);
@@ -50,17 +50,22 @@ namespace QuestorStatistics
             _with1.Columns.Add("", 0, HorizontalAlignment.Right);
             _with1.Columns.Add("Date", 145, HorizontalAlignment.Left);
             _with1.Columns.Add("Mission", 190, HorizontalAlignment.Left);
-            _with1.Columns.Add("Time", 50, HorizontalAlignment.Right);
+            _with1.Columns.Add("Time", 40, HorizontalAlignment.Right);
             _with1.Columns.Add("Isk Bounty", 100, HorizontalAlignment.Right);
             _with1.Columns.Add("Bounty/Min", 80, HorizontalAlignment.Right);
             _with1.Columns.Add("Isk Loot", 100, HorizontalAlignment.Right);
-            _with1.Columns.Add("Loot/Min", 80, HorizontalAlignment.Right);
+            _with1.Columns.Add("Loot/Min", 60, HorizontalAlignment.Right);
             _with1.Columns.Add("LP", 80, HorizontalAlignment.Right);
             _with1.Columns.Add("LP/Min", 60, HorizontalAlignment.Right);
             _with1.Columns.Add("Total ISK/Min", 80, HorizontalAlignment.Right);
             _with1.Columns.Add("Lost Drones", 80, HorizontalAlignment.Right);
             _with1.Columns.Add("Ammo Consumption", 80, HorizontalAlignment.Right);
             _with1.Columns.Add("Ammo Value", 80, HorizontalAlignment.Right);
+            _with1.Columns.Add("Panics", 80, HorizontalAlignment.Right);
+            _with1.Columns.Add("Lowest Shield", 80, HorizontalAlignment.Right);
+            _with1.Columns.Add("Lowest Armor", 80, HorizontalAlignment.Right);
+            _with1.Columns.Add("Lowest Cap", 80, HorizontalAlignment.Right);
+            _with1.Columns.Add("Repair Cycles", 80, HorizontalAlignment.Right);
 
 
             var _with2 = LstMision;
@@ -146,6 +151,14 @@ namespace QuestorStatistics
                         _with3.SubItems.Add(Strings.Format(Convert.ToDouble("0"), "###,###,##0"));
                     }
                     AmmoStat = true;
+
+                    _with3.SubItems.Add(Datos[9]);
+                    _with3.SubItems.Add(Datos[10]);
+                    _with3.SubItems.Add(Datos[11]);
+                    _with3.SubItems.Add(Datos[12]);
+                    _with3.SubItems.Add(Datos[13]);
+                    _with3.SubItems.Add(Datos[14]);
+
                     Lst1.Items.Add(item);
   
                 }
