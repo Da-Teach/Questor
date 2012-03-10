@@ -217,7 +217,7 @@ namespace Questor.Modules
         public DamageType DamageType { get; set; }
 
         /// <summary>
-        ///   Best orbit distancefor the mission
+        ///   Best orbit distance for the mission
         /// </summary>
         public int OrbitDistance { get; set; }
 		

@@ -75,15 +75,15 @@ namespace Questor.Modules
                     File.AppendAllText(Settings.Instance.PocketStatisticsFile, "Date and Time;Mission Name and Pocket;Time to complete;Isk;panics;LowestShields;LowestArmor;LowestCapacitor;RepairCycles\r\n");
 
                 // Build the line
-                var pocketstats_line = DateTime.Now + ";";
-                pocketstats_line += currentPocketName + ";" + "pocket" + (_pocket) + ";";
-                pocketstats_line += ((int)DateTime.Now.Subtract(StartedPocket).TotalMinutes) + ";";
-                pocketstats_line += ((long)(Cache.Instance.DirectEve.Me.Wealth - Wealth)) + ";";
-                pocketstats_line += ((int)Cache.Instance.panic_attempts_this_pocket) + ";";
-                pocketstats_line += ((int)Cache.Instance.lowest_shield_percentage_this_pocket) + ";";
-                pocketstats_line += ((int)Cache.Instance.lowest_armor_percentage_this_pocket) + ";";
-                pocketstats_line += ((int)Cache.Instance.lowest_capacitor_percentage_this_pocket) + ";";
-                pocketstats_line += ((int)Cache.Instance.repair_cycle_time_this_pocket) + ";\r\n";
+                var pocketstats_line = DateTime.Now + ";";                                                 //Date
+                pocketstats_line += currentPocketName + ";" + "pocket" + (_pocket) + ";";                  //Mission Name and Pocket
+                pocketstats_line += ((int)DateTime.Now.Subtract(StartedPocket).TotalMinutes) + ";";        //Time to Complete
+                pocketstats_line += ((long)(Cache.Instance.DirectEve.Me.Wealth - Wealth)) + ";";           //Isk
+                pocketstats_line += ((int)Cache.Instance.panic_attempts_this_pocket) + ";";                //Panics
+                pocketstats_line += ((int)Cache.Instance.lowest_shield_percentage_this_pocket) + ";";      //LowestShields
+                pocketstats_line += ((int)Cache.Instance.lowest_armor_percentage_this_pocket) + ";";       //LowestArmor
+                pocketstats_line += ((int)Cache.Instance.lowest_capacitor_percentage_this_pocket) + ";";   //LowestCapacitor
+                pocketstats_line += ((int)Cache.Instance.repair_cycle_time_this_pocket) + ";\r\n";         //repairCycles
 
                 // The old pocket is finished
                 Logging.Log("MissionController: Writing pocket statistics to [ " + Settings.Instance.PocketStatisticsFile + "and clearing stats for next pocket");
