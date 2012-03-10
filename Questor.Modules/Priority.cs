@@ -11,13 +11,12 @@ namespace Questor.Modules
 {
     public enum Priority
     {
-        WarpScrambler = 0,
-        Webbing = 1,
-        TargetPainting = 2,
-        Neutralizing = 3,
-        Jamming = 4,
-        Dampening = 5,
-        TrackingDisrupting = 6,
-        PriorityKillTarget = 7
+        WarpScrambler = Settings.Instance.PriorityLevelOfWarpScrambling,
+        Webbing = Settings.Instance.PriorityLevelOfWebbing,
+        TargetPainting = Settings.Instance.PriorityLevelOfTargetPainting,
+        Neutralizing = Settings.Instance.PriorityLevelOfNeutralizing,
+        Jamming = Settings.Instance.PriorityLevelOfJamming,
+        Dampening = Settings.Instance.PriorityLevelOfTrackingDistrupting,
+        PriorityKillTarget = Settings.Instance.PriorityLevelOfPriorityKillTarget                             
     }
 }
