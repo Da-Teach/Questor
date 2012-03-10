@@ -24,18 +24,18 @@ namespace QuestorManager.Module
         {
             if (bookmark == null)
             {
-                Logging.Log("Traveler.BookmarkDestination: Invalid bookmark destination!");
+                Logging.Log("QuestorManager.BookmarkDestination: Invalid bookmark destination!");
 
                 SolarSystemId = DirectEve.Instance.Session.SolarSystemId ?? -1;
                 BookmarkId = -1;
                 return;
             }
 
-            Logging.Log("Traveler.BookmarkDestination: Destination set to bookmark [" + bookmark.Title + "]");
+            Logging.Log("QuestorManager.BookmarkDestination: Destination set to bookmark [" + bookmark.Title + "]");
             var location = GetBookmarkLocation(bookmark);
             if (location == null)
             {
-                Logging.Log("Traveler.BookmarkDestination: Invalid bookmark destination!");
+                Logging.Log("QuestorManager.BookmarkDestination: Invalid bookmark destination!");
 
                 SolarSystemId = DirectEve.Instance.Session.SolarSystemId ?? -1;
                 BookmarkId = -1;
@@ -84,7 +84,7 @@ namespace QuestorManager.Module
                     return true;
 
                 // We are apparently in a station that is incorrect
-                Logging.Log("Traveler.BookmarkDestination: We're docked in the wrong station, undocking");
+                Logging.Log("QuestorManager.BookmarkDestination: We're docked in the wrong station, undocking");
 
                 DirectEve.Instance.ExecuteCommand(DirectCmd.CmdExitStation);
                 nextAction = DateTime.Now.AddSeconds(30);
@@ -96,7 +96,7 @@ namespace QuestorManager.Module
             {
                 var arrived = StationDestination.PerformFinalDestinationTask(bookmark.Entity.Id, bookmark.Entity.Name, ref nextAction);
                 if (arrived)
-                    Logging.Log("Traveler.BookmarkDestination: Arrived at bookmark [" + bookmark.Title + "]");
+                    Logging.Log("QuestorManager.BookmarkDestination: Arrived at bookmark [" + bookmark.Title + "]");
                 return arrived;
             }
 
@@ -106,7 +106,7 @@ namespace QuestorManager.Module
                 // We are in a station, but not the correct station!
                 if (nextAction < DateTime.Now)
                 {
-                    Logging.Log("Traveler.BookmarkDestination: We're docked but our destination is in space, undocking");
+                    Logging.Log("QuestorManager.BookmarkDestination: We're docked but our destination is in space, undocking");
 
                     DirectEve.Instance.ExecuteCommand(DirectCmd.CmdExitStation);
                     nextAction = DateTime.Now.AddSeconds(30);
@@ -125,21 +125,21 @@ namespace QuestorManager.Module
             // This bookmark has no x / y / z, assume we are there.
             if (bookmark.X == -1 || bookmark.Y == -1 || bookmark.Z == -1)
             {
-                Logging.Log("Traveler.BookmarkDestination: Arrived at the bookmark [" + bookmark.Title + "][No XYZ]");
+                Logging.Log("QuestorManager.BookmarkDestination: Arrived at the bookmark [" + bookmark.Title + "][No XYZ]");
                 return true;
             }
 
             var distance = DirectEve.Instance.DistanceFromMe(bookmark.X ?? 0, bookmark.Y ?? 0, bookmark.Z ?? 0);
             if (distance < warpDistance)
             {
-                Logging.Log("Traveler.BookmarkDestination: Arrived at the bookmark [" + bookmark.Title + "]");
+                Logging.Log("QuestorManager.BookmarkDestination: Arrived at the bookmark [" + bookmark.Title + "]");
                 return true;
             }
 
             if (nextAction > DateTime.Now)
                 return false;
 
-            Logging.Log("Traveler.BookmarkDestination: Warping to bookmark [" + bookmark.Title + "]");
+            Logging.Log("QuestorManager.BookmarkDestination: Warping to bookmark [" + bookmark.Title + "]");
             bookmark.WarpTo();
             nextAction = DateTime.Now.AddSeconds(30);
             return false;
