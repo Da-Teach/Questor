@@ -24,6 +24,7 @@ namespace Questor.Modules
         private readonly Dictionary<long, DateTime> _lastWeaponReload = new Dictionary<long, DateTime>();
         private bool _isJammed;
         public CombatState State { get; set; }
+        private DateTime _lastOrbit;
 
         private int MaxCharges { get; set; }
 
@@ -276,7 +277,14 @@ namespace Questor.Modules
         {
 
             if (Settings.Instance.SpeedTank && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id))
-                target.Orbit(Cache.Instance.OrbitDistance);
+            {
+                if ((DateTime.Now.Subtract(_lastOrbit).TotalSeconds > 15))
+                {
+                    target.Orbit(Cache.Instance.OrbitDistance);
+                    Logging.Log("Combat: ActivateWeapons: Orbiting [" + target.Name + "]");
+                    _lastOrbit = DateTime.Now;
+                }
+            }
 
             if (!Settings.Instance.SpeedTank && Cache.Instance.NormalApproch)
             {

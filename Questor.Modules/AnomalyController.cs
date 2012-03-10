@@ -20,6 +20,7 @@ namespace Questor.Modules
         private bool _waiting;
         private DateTime _waitingSince;
         private DateTime _lastAlign;
+        private DateTime _lastOrbit;
     
         public long AgentId { get; set; }
 
@@ -135,7 +136,12 @@ namespace Questor.Modules
 
                 if (closest.Distance < (int)Distance.WayTooClose)
                 {
-                    closest.Orbit((int)Distance.GateActivationRange);
+                    if ((DateTime.Now.Subtract(_lastOrbit).TotalSeconds > 15))
+                    {
+                        closest.Orbit((int)Distance.GateActivationRange);
+                        Logging.Log("AnomolyController: Activate: initiating Orbit of [" + closest.Name + "] orbiting at [" + Cache.Instance.OrbitDistance + "]");
+                        _lastOrbit = DateTime.Now;
+                    }
                 }
                 Logging.Log(" dist " + closest.Distance);
                 if (closest.Distance >= (int)Distance.WayTooClose)
@@ -231,8 +237,15 @@ namespace Questor.Modules
                     Logging.Log("AnomalyController.ClearPocket: Approaching target [" + target.Name + "][" + target.Id + "]");
 
                     if (Settings.Instance.SpeedTank)
-                        target.Orbit(Cache.Instance.OrbitDistance);
-                    else 
+                    {
+                        if ((DateTime.Now.Subtract(_lastOrbit).TotalSeconds > 15))
+                        {
+                            target.Orbit(Cache.Instance.OrbitDistance);
+                            Logging.Log("AnomolyController: Clearpocket: initiating Orbit of [" + target.Name + "] orbiting at [" + Cache.Instance.OrbitDistance + "]");
+                            _lastOrbit = DateTime.Now;
+                        }
+                    }
+                    else
                     {
                         if (target.Distance > Cache.Instance.OrbitDistance + (int)Distance.OrbitDistanceCushion)
                             target.Approach(Cache.Instance.OrbitDistance);
@@ -241,7 +254,7 @@ namespace Questor.Modules
                             Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
                             Cache.Instance.Approaching = null;
                             Logging.Log("AnomalyController: ClearPocket: Stop Ship. we are in weapons range");
-                        }     
+                        }
                     }
                 }
 
@@ -421,16 +434,26 @@ namespace Questor.Modules
                     Logging.Log("AnomalyController.Kill: Approaching target [" + closest.Name + "][" + closest.Id + "]");
 
                     if (Settings.Instance.SpeedTank)
-                        closest.Orbit(Cache.Instance.OrbitDistance);
+                    {
+                        if ((DateTime.Now.Subtract(_lastOrbit).TotalSeconds > 15))
+                        {
+                            closest.Orbit(Cache.Instance.OrbitDistance);
+                            Logging.Log("AnomalyController: Kill: initiating Orbit of [" + closest.Name + "] orbiting at [" + Cache.Instance.OrbitDistance + "]");
+                            _lastOrbit = DateTime.Now;
+                        }
+                    }
                     else
                     {
                         if (closest.Distance > Cache.Instance.OrbitDistance + (int)Distance.OrbitDistanceCushion)
+                        {
                             closest.Approach(Cache.Instance.OrbitDistance);
+                            Logging.Log("AnomalyController: Kill: initiating Orbit of [" + closest.Name + "] orbiting at [" + Cache.Instance.OrbitDistance + "]");
+                        }
                         else
                         {
                             Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
                             Cache.Instance.Approaching = null;
-                            Logging.Log("AnomolyController: Kill: Stop ship, we are in weapons range");
+                            Logging.Log("AnomalyController: Kill: Stop ship, we are in weapons range");
                         }
                     }
                 }

@@ -46,6 +46,7 @@ namespace Questor
         private UnloadLoot _unloadLoot;
 
         private DateTime _lastAction;
+        private DateTime _lastOrbit;
         private DateTime _lastLocalWatchAction;
         private DateTime _lastWalletCheck;
         private DateTime _lastupdateofSessionRunningTime;
@@ -1071,7 +1072,12 @@ namespace Questor
                     }
                     else if (structure != null && structure.Distance < (int)Distance.TooCloseToStructure)
                     {
-                        structure.Orbit((int)Distance.SafeDistancefromStructure);
+                        if ((DateTime.Now.Subtract(_lastOrbit).TotalSeconds > 15))
+                        {
+                            structure.Orbit((int)Distance.SafeDistancefromStructure);
+                            Logging.Log("Questor: GotoBase: initiating Orbit of [" + structure.Name + "] orbiting at [" + Cache.Instance.OrbitDistance + "]");
+                            _lastOrbit = DateTime.Now;
+                        }
                     }
                     else
                     {
@@ -1598,8 +1604,10 @@ namespace Questor
                             closestWreck.Approach();
                     }
                     else if (closestWreck.Distance <= (int)Distance.SafeScoopRange && Cache.Instance.Approaching != null)
+                    {
                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
-
+                        Logging.Log("Questor: Salvage: Stop ship, ClosestWreck [" + closestWreck.Distance + "] is in scooprange + [" + (int)Distance.SafeScoopRange + "] and we were approaching");
+                    }
                     try
                     {
                         // Overwrite settings, as the 'normal' settings do not apply
@@ -1696,6 +1704,7 @@ namespace Questor
                 //    }
                 //    else if (closestWreck2.Distance <= (int)Distance.SafeScoopRange && Cache.Instance.Approaching != null)
                 //        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                //        Logging.Log("Questor: ScoopStep3WaitForWrecks: Stop ship, ClosestWreck [" + closestWreck2.Distance + "] is in scooprange + [" + (int)Distance.SafeScoopRange + "] and we were approaching");
                 //
                 //    try
                 //    {
@@ -1878,7 +1887,10 @@ namespace Questor
                             closestWreck.Approach();
                     }
                     else if (closestWreck.Distance <= (int)Distance.SafeScoopRange && Cache.Instance.Approaching != null)
+                    {
                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                        Logging.Log("Questor: SalvageOnly: Stop ship, ClosestWreck [" + closestWreck.Distance + "] is in scooprange + [" + (int)Distance.SafeScoopRange + "] and we were approaching");
+                    }
 
                     try
                     {
@@ -1962,7 +1974,11 @@ namespace Questor
                             closestWreck.Approach();
                     }
                     else if (closestWreck.Distance <= (int)Distance.SafeScoopRange && Cache.Instance.Approaching != null)
+                    {
                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                        Logging.Log("Questor: SalvageOnlyBookmarks: Stop ship, ClosestWreck [" + closestWreck.Distance + "] is in scooprange + [" + (int)Distance.SafeScoopRange + "] and we were approaching");
+                    }
+
                     try
                     {
                         // Overwrite settings, as the 'normal' settings do not apply

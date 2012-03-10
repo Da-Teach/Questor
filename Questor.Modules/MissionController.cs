@@ -232,10 +232,14 @@ namespace Questor.Modules
                 // this seemingly slowed down the exit from cetain missions for me for 2-3min as it had a command to orbit some random object
                 // after the "done" command
                 //
-                if ((closest.Distance < -10100) && (DateTime.Now.Subtract(_lastOrbit).TotalSeconds > 30))
+                if (closest.Distance < -10100)
                 {
-                    closest.Orbit(1000);
-                    _lastOrbit = DateTime.Now;
+                    if (DateTime.Now.Subtract(_lastOrbit).TotalSeconds > 15)
+                    {
+                        closest.Orbit(1000);
+                        Logging.Log("MissionController: Activate: We are too close to [" + closest.Name + "] Initiating orbit");
+                        _lastOrbit = DateTime.Now;
+                    }
                 }
                 //Logging.Log("MissionController: distance " + closest.Distance);
                 //if ((closest.Distance <= (int)Distance.TooCloseToStructure) && (DateTime.Now.Subtract(_lastOrbit).TotalSeconds > 30)) //-10100 meters (inside docking ring) - so close that we may get tangled in the structure on activation - move away
@@ -296,29 +300,9 @@ namespace Questor.Modules
         {
             if (!Cache.Instance.NormalApproch)
                 Cache.Instance.NormalApproch = true;
-
-            //var activeTargets = new List<EntityCache>();
-            //activeTargets.AddRange(Cache.Instance.Targets);
-            //activeTargets.AddRange(Cache.Instance.Targeting);
             
             // Get lowest range
             var range = Math.Min(Cache.Instance.WeaponRange, Cache.Instance.DirectEve.ActiveShip.MaxTargetRange);
-
-            //// We are obviously still killing stuff that's in range
-            //if (activeTargets.Count(t => t.Distance < range && t.IsNpc && t.CategoryId == (int) CategoryID.Entity) > 0)
-            //{
-            //    // Reset timeout
-            //    _clearPocketTimeout = null;
-            // 
-            //    // If we are still moving, stop (we do not want to 'over-agro', if possible) (unless we are speed tanking)
-            //    if (Cache.Instance.Approaching != null && !Settings.Instance.SpeedTank)
-            //    {
-            //        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
-            //        Cache.Instance.Approaching = null;
-            //        Logging.Log("MissionController.ClearPocket: Stop ship, target is in weapons range");
-            //    }
-            //    return;
-            //}
 
             // Is there a priority target out of range?
             var target = Cache.Instance.PriorityTargets.OrderBy(t => t.Distance).Where(t => !(Cache.Instance.IgnoreTargets.Contains(t.Name.Trim()) && !Cache.Instance.TargetedBy.Any(w => w.IsWarpScramblingMe || w.IsNeutralizingMe || w.IsWebbingMe))).FirstOrDefault();
@@ -360,8 +344,12 @@ namespace Questor.Modules
 
                 if (Settings.Instance.SpeedTank && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id))
                 {
-                    target.Orbit(Cache.Instance.OrbitDistance);
-                    Logging.Log("MissionController.ClearPocket: Initiating Orbit [" + target.Name + "][" + target.Id + "]");
+                    if ((DateTime.Now.Subtract(_lastOrbit).TotalSeconds > 15))
+                    {
+                        target.Orbit(Cache.Instance.OrbitDistance);
+                        Logging.Log("MissionController.ClearPocket: Initiating Orbit [" + target.Name + "][" + target.Id + "]");
+                        _lastOrbit = DateTime.Now;
+                    }
                 }
 
                 if (!Settings.Instance.SpeedTank) //we need to make sure that orbitrange is set to the range of the ship if it isnt specified in the character XML!!!!
@@ -529,6 +517,7 @@ namespace Questor.Modules
                 //{
                 //    //this should at least keep speed tanked ships from going poof if a mission XML uses moveto
                 //    closest.Orbit(Cache.Instance.OrbitDistance);
+                //    Logging.Log("MissionController: MoveTo: Initiating orbit after reaching target")
                 //}
             }
             else if (closest.Distance < (int)Distance.WarptoDistance)
@@ -673,7 +662,7 @@ namespace Questor.Modules
             {
                 Logging.Log("MissionController.AggroOnly: Adding [" + closest.Name + "][" + closest.Id + "] as a priority target");
                 Cache.Instance.AddPriorityTargets(new[] { closest }, Priority.PriorityKillTarget);
-            }            
+            }
         }
 
         private void KillAction(Action action)
@@ -706,6 +695,8 @@ namespace Questor.Modules
                 _currentAction++;
                 return;
             }
+
+            var range = Math.Min(Cache.Instance.WeaponRange, Cache.Instance.DirectEve.ActiveShip.MaxTargetRange);
 
             var targets = Cache.Instance.Entities.Where(e => targetNames.Contains(e.Name));
             if (targets.Count() == numbertoignore)
@@ -745,32 +736,55 @@ namespace Questor.Modules
             if (nottheclosest)
                 closest = targets.OrderByDescending(t => t.Distance).First();
 
-            if (closest.Distance < Cache.Instance.WeaponRange)
+            if (closest.Distance < range)
             {
                 if (!Cache.Instance.PriorityTargets.Any(pt => pt.Id == closest.Id))
                 {
                     Logging.Log("MissionController.Kill: Adding [" + closest.Name + "][" + closest.Id + "] as a priority target");
                     Cache.Instance.AddPriorityTargets(new[] {closest}, Priority.PriorityKillTarget);
                 }
-
-                if (Cache.Instance.Approaching != null && !Settings.Instance.SpeedTank)
+                
+                if (Cache.Instance.Approaching != null && !Settings.Instance.SpeedTank && (Settings.Instance.OptimalRange <= 0))
                 {
                     Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
                     Cache.Instance.Approaching = null;
                     Logging.Log("MissionController.Kill: Stop ship, target is in weapons range");
                 }
             }
-            else
+
+            //if optimalrange is setup and distance to target is less than 80% of optimalrange and we aren't speedtanking
+            if (Settings.Instance.OptimalRange > 0 && (closest.Distance < (Settings.Instance.OptimalRange * 0.8d)) && !Settings.Instance.SpeedTank)
+            {  
+                Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                Cache.Instance.Approaching = null;
+                Logging.Log("MissionController.Kill: Stop ship, target is in optimalRange");
+            }
+
+            //if distance to target is less than weapons range and we havent setup optimalrange OR we are inside optimalrange and optimalrange has been setup
+            if ((closest.Distance < range && Settings.Instance.OptimalRange <= 0) || (closest.Distance < Settings.Instance.OptimalRange + (int)Distance.OptimalRangeCushion) && Settings.Instance.OptimalRange > 0)
             {
-                // Move within 80% max distance
                 if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
                 {
-                    Logging.Log("MissionController.Kill: Approaching target [" + closest.Name + "][" + closest.Id + "]");
-
                     if (Settings.Instance.SpeedTank)
-                        closest.Orbit(Cache.Instance.OrbitDistance);
+                    {
+                        if ((DateTime.Now.Subtract(_lastOrbit).TotalSeconds > 15))
+                        {
+                            closest.Orbit(Cache.Instance.OrbitDistance);
+                            Logging.Log("MissionController.Kill: Initiating Orbit [" + closest.Name + "][" + closest.Id + "]");
+                            _lastOrbit = DateTime.Now;
+                        }
+                       
+                    }
+                    else if (Settings.Instance.OptimalRange > 0)
+                    {
+                        closest.Approach((int)(Settings.Instance.OptimalRange * 0.8d)); // Move within 80% of optimalrange
+                        Logging.Log("MissionController: Kill: initiating Approach of [" + closest.Name + "] distance: [" + closest.Distance + "] approaching to [" + (Settings.Instance.OptimalRange * 0.8d) + "]");
+                    }
                     else
-                        closest.Approach((int) (Cache.Instance.WeaponRange*0.8d));
+                    {
+                        closest.Approach((int)(Cache.Instance.WeaponRange * 0.8d)); // Move within 80% of range
+                        Logging.Log("MissionController: Kill: initiating Approach of [" + closest.Name + "] distance: [" + closest.Distance + "] approaching to [" + (Settings.Instance.OptimalRange * 0.8d) + "]");
+                    }
                 }
             }
         }
@@ -865,9 +879,19 @@ namespace Questor.Modules
                     Logging.Log("MissionController.KillOnce: Approaching target [" + target.Name + "][" + target.Id + "]");
 
                     if (Settings.Instance.SpeedTank)
-                        target.Orbit(Cache.Instance.OrbitDistance);
+                    {
+                        if (DateTime.Now.Subtract(_lastOrbit).TotalSeconds > 15)
+                        {
+                            target.Orbit(Cache.Instance.OrbitDistance);
+                            Logging.Log("MissionController: killonce: initiating orbit");
+                            _lastOrbit = DateTime.Now;
+                        }
+                    }
                     else
+                    {
                         target.Approach((int)(Cache.Instance.WeaponRange * 0.8d));
+                        Logging.Log("MissionController: killonce: approaching");
+                    }
                 }
             }
         }
@@ -880,6 +904,8 @@ namespace Questor.Modules
             
             if (Cache.Instance.NormalApproch)
                 Cache.Instance.NormalApproch = false;
+
+            var range = Math.Min(Cache.Instance.WeaponRange, Cache.Instance.DirectEve.ActiveShip.MaxTargetRange);
 
             var targetNames = action.GetParameterValues("target");
             // No parameter? Ignore kill action
@@ -905,7 +931,7 @@ namespace Questor.Modules
                 return;
             }
 
-            if (target.Distance < Cache.Instance.WeaponRange)
+            if (target.Distance < range)
             {
                 if (!Cache.Instance.PriorityTargets.Any(pt => pt.Id == target.Id))
                 {
@@ -913,24 +939,48 @@ namespace Questor.Modules
                     Cache.Instance.AddPriorityTargets(new[] { target }, Priority.PriorityKillTarget);
                 }
 
-                if (Cache.Instance.Approaching != null && !Settings.Instance.SpeedTank)
+                if (Cache.Instance.Approaching != null && !Settings.Instance.SpeedTank && (Settings.Instance.OptimalRange <= 0))
                 {
-                    //Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
-                    //Cache.Instance.Approaching = null;
-                    //Logging.Log("MissionController.AttackClosestByRange: Stop ship, target is in weapons range");
+                    Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                    Cache.Instance.Approaching = null;
+                    Logging.Log("MissionController.AttackClosestByName: Stop ship, target is in weapons range");
                 }
             }
-            else
+
+            //if optimalrange is setup and distance to target is less than 80% of optimalrange and we aren't speedtanking
+            if (Settings.Instance.OptimalRange > 0 && (target.Distance < (Settings.Instance.OptimalRange * 0.8d)) && !Settings.Instance.SpeedTank)
             {
-                // Move within 80% max distance
+                Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                Cache.Instance.Approaching = null;
+                Logging.Log("MissionController.AttackClosestByName: Stop ship, target is in optimalRange");
+            }
+
+            //if distance to target is less than weapons range and we havent setup optimalrange OR we are inside optimalrange and optimalrange has been setup
+            if ((target.Distance < range && Settings.Instance.OptimalRange <= 0) || (target.Distance < Settings.Instance.OptimalRange + (int)Distance.OptimalRangeCushion) && Settings.Instance.OptimalRange > 0)
+            {
                 if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id)
                 {
                     Logging.Log("MissionController.AttackClosestByName: Approaching target [" + target.Name + "][" + target.Id + "]");
 
                     if (Settings.Instance.SpeedTank)
-                        target.Orbit(Cache.Instance.OrbitDistance);
+                    {
+                        if (DateTime.Now.Subtract(_lastOrbit).TotalSeconds > 15)
+                        {
+                            target.Orbit(Cache.Instance.OrbitDistance); //orbit
+                            Logging.Log("MissionController: AttackClosestByName: initiating Orbit of [" + target.Name + "] orbiting at [" + Cache.Instance.OrbitDistance + "]");
+                            _lastOrbit = DateTime.Now;
+                        }
+                    }
+                    else if (Settings.Instance.OptimalRange > 0)
+                    {
+                        target.Approach((int)(Settings.Instance.OptimalRange * 0.8d)); // Move within 80% of optimalrange
+                        Logging.Log("MissionController: AttackClosestByName: initiating Approach of [" + target.Name + "] distance: [" + target.Distance + "] approaching to [" + (Settings.Instance.OptimalRange * 0.8d) + "]");
+                    }
                     else
-                        target.Approach((int)(Cache.Instance.WeaponRange * 0.8d));
+                    {
+                        target.Approach((int)(Cache.Instance.WeaponRange * 0.8d)); // Move within 80% of range
+                        Logging.Log("MissionController: AttackClosestByName: initiating Approach of [" + target.Name + "] distance: [" + target.Distance + "] approaching to [" + (Settings.Instance.OptimalRange * 0.8d) + "]");
+                    }
                 }
             }
         }
@@ -943,6 +993,8 @@ namespace Questor.Modules
             bool nottheclosest;
             if (!bool.TryParse(action.GetParameterValue("notclosest"), out nottheclosest))
                 nottheclosest = false;
+
+            var range = Math.Min(Cache.Instance.WeaponRange, Cache.Instance.DirectEve.ActiveShip.MaxTargetRange);
 
             var targetNames = action.GetParameterValues("target");
             // No parameter? Ignore kill action
@@ -967,34 +1019,57 @@ namespace Questor.Modules
                 return;
             }
 
-            if (target.Distance < Cache.Instance.WeaponRange)
+            if (target.Distance < range)
             {
                 if (!Cache.Instance.PriorityTargets.Any(pt => pt.Id == target.Id))
                 {
                     Logging.Log("MissionController.AttackClosest: Adding [" + target.Name + "][" + target.Id + "] as a priority target");
                     Cache.Instance.AddPriorityTargets(new[] { target }, Priority.PriorityKillTarget);
-                    //Cache.Instance.RemovePriorityTargets(target);
-
                 }
 
-                if (Cache.Instance.Approaching != null && !Settings.Instance.SpeedTank)
+                if (Cache.Instance.Approaching != null && !Settings.Instance.SpeedTank && (Settings.Instance.OptimalRange <= 0))
                 {
-                    //Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
-                    //Cache.Instance.Approaching = null;
-                    //Logging.Log("MissionController.AttackClosest: Stop ship, target is in weapons range");
+                    Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                    Cache.Instance.Approaching = null;
+                    Logging.Log("MissionController.AttackClosest: Stop ship, target is in weapons range");
                 }
             }
-            else
+
+            //if optimalrange is setup and distance to target is less than 80% of optimalrange and we aren't speedtanking
+            if (Settings.Instance.OptimalRange > 0 && (target.Distance < (Settings.Instance.OptimalRange * 0.8d)) && !Settings.Instance.SpeedTank)
             {
-                // Move within 80% max distance
+                Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                Cache.Instance.Approaching = null;
+                Logging.Log("MissionController.AttackClosest: Stop ship, target is in optimalRange");
+            }
+
+            //if distance to target is less than weapons range and we havent setup optimalrange OR we are inside optimalrange and optimalrange has been setup
+            if ((target.Distance < range && Settings.Instance.OptimalRange <= 0) || (target.Distance < Settings.Instance.OptimalRange + (int)Distance.OptimalRangeCushion) && Settings.Instance.OptimalRange > 0)
+            {
                 if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id)
                 {
                     Logging.Log("MissionController.AttackClosest: Approaching target [" + target.Name + "][" + target.Id + "]");
 
                     if (Settings.Instance.SpeedTank)
-                        target.Orbit(Cache.Instance.OrbitDistance);
+                    {
+                        if (DateTime.Now.Subtract(_lastOrbit).TotalSeconds > 15)
+                        {
+                            target.Orbit(Cache.Instance.OrbitDistance); //orbit
+                            Logging.Log("MissionController: AttackClosest: initiating Orbit of [" + target.Name + "] orbiting at [" + Cache.Instance.OrbitDistance + "]");
+                            _lastOrbit = DateTime.Now;
+                            
+                        }
+                    }
+                    else if (Settings.Instance.OptimalRange > 0)
+                    {
+                        target.Approach((int)(Settings.Instance.OptimalRange * 0.8d)); // Move within 80% of optimalrange
+                        Logging.Log("MissionController: AttackClosest: initiating Approach of [" + target.Name + "] distance: [" + target.Distance + "] approaching to [" + (Settings.Instance.OptimalRange * 0.8d) + "]");
+                    }
                     else
-                        target.Approach((int)(Cache.Instance.WeaponRange * 0.8d));
+                    {
+                        target.Approach((int)(Cache.Instance.WeaponRange * 0.8d)); // Move within 80% of range
+                        Logging.Log("MissionController: AttackClosest: initiating Approach of [" + target.Name + "] distance: [" + target.Distance + "] approaching to [" + (Settings.Instance.OptimalRange * 0.8d) + "]");
+                    }
                 }
             }
         }
