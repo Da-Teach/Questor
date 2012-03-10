@@ -297,27 +297,28 @@ namespace Questor.Modules
             if (!Cache.Instance.NormalApproch)
                 Cache.Instance.NormalApproch = true;
 
-            var activeTargets = new List<EntityCache>();
-            activeTargets.AddRange(Cache.Instance.Targets);
-            activeTargets.AddRange(Cache.Instance.Targeting);
+            //var activeTargets = new List<EntityCache>();
+            //activeTargets.AddRange(Cache.Instance.Targets);
+            //activeTargets.AddRange(Cache.Instance.Targeting);
             
             // Get lowest range
             var range = Math.Min(Cache.Instance.WeaponRange, Cache.Instance.DirectEve.ActiveShip.MaxTargetRange);
 
             //// We are obviously still killing stuff that's in range
-            if (activeTargets.Count(t => t.Distance < range && t.IsNpc && t.CategoryId == (int) CategoryID.Entity) > 0)
-            {
-                // Reset timeout
-                _clearPocketTimeout = null;
-            
-                // If we are still moving, stop (we do not want to 'over-agro', if possible) (unless we are speed tanking)
-                if (Cache.Instance.Approaching != null && !Settings.Instance.SpeedTank)
-                {
-                    Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
-                    Cache.Instance.Approaching = null;
-                }
-                return;
-            }
+            //if (activeTargets.Count(t => t.Distance < range && t.IsNpc && t.CategoryId == (int) CategoryID.Entity) > 0)
+            //{
+            //    // Reset timeout
+            //    _clearPocketTimeout = null;
+            // 
+            //    // If we are still moving, stop (we do not want to 'over-agro', if possible) (unless we are speed tanking)
+            //    if (Cache.Instance.Approaching != null && !Settings.Instance.SpeedTank)
+            //    {
+            //        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+            //        Cache.Instance.Approaching = null;
+            //        Logging.Log("MissionController.ClearPocket: Stop ship, target is in weapons range");
+            //    }
+            //    return;
+            //}
 
             // Is there a priority target out of range?
             var target = Cache.Instance.PriorityTargets.OrderBy(t => t.Distance).Where(t => !(Cache.Instance.IgnoreTargets.Contains(t.Name.Trim()) && !Cache.Instance.TargetedBy.Any(w => w.IsWarpScramblingMe || w.IsNeutralizingMe || w.IsWebbingMe))).FirstOrDefault();
@@ -360,7 +361,7 @@ namespace Questor.Modules
                     if (Settings.Instance.SpeedTank && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id))
                             target.Orbit(Cache.Instance.OrbitDistance);
 
-                    if (!Settings.Instance.SpeedTank)
+                    if (!Settings.Instance.SpeedTank) //we need to make sure that orbitrange is set to the range of the ship if it isnt specified in the character XML!!!!
                     {
                         if (target.Distance > Cache.Instance.OrbitDistance + (int)Distance.OrbitDistanceCushion && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id))
                         {
@@ -375,28 +376,6 @@ namespace Questor.Modules
                                 Logging.Log("MissionController.ClearPocket: Stop ship, target is in orbit range");
                             }
                         }
-
-                if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id)
-                {
-                    Logging.Log("MissionController.ClearPocket: Approaching target [" + target.Name + "][" + target.Id + "]");
-                
-                    if (Settings.Instance.SpeedTank)
-                        target.Orbit(Cache.Instance.OrbitDistance);
-                    else
-                    {
-                        if(target.Distance > Cache.Instance.OrbitDistance + (int)Distance.OrbitDistanceCushion)
-                            target.Approach(Cache.Instance.OrbitDistance);
-                    	else
-                        {
-                            if(target.Distance <= Cache.Instance.OrbitDistance)
-                            {
-                                Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
-                                Cache.Instance.Approaching = null;
-                            }
-                        }
-                    }
-                }
-
                 return;
             }
 
@@ -464,6 +443,10 @@ namespace Questor.Modules
             if (Cache.Instance.NormalApproch)
                 Cache.Instance.NormalApproch = false;
 
+            //int distancetoapp;
+            //if (!int.TryParse(action.GetParameterValue("distance"), out distancetoapp))
+            //    distancetoapp = (int)Distance.GateActivationRange;
+
             var target = action.GetParameterValue("target");
 
             // No parameter? Although we shouldnt really allow it, assume its the acceleration gate :)
@@ -516,8 +499,10 @@ namespace Questor.Modules
 
                 if (Cache.Instance.Approaching != null)
                 {
+                    
                     Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
                     Cache.Instance.Approaching = null;
+                    Logging.Log("MissionController.MoveTo: Stop ship, we are [" + distancetoapp + "] from [" + closest.Name + "]");
                 }
                 //if (Settings.Instance.SpeedTank)
                 //{
@@ -751,6 +736,7 @@ namespace Questor.Modules
                 {
                     Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
                     Cache.Instance.Approaching = null;
+                    Logging.Log("MissionController.Kill: Stop ship, target is in weapons range");
                 }
             }
             else
@@ -770,6 +756,11 @@ namespace Questor.Modules
 
         private void KillOnceAction(Action action)
         {
+
+            Logging.Log("This action (KillOnce) is not yet enabled: proceeding to next action");
+            _currentAction++;
+            return; 
+            
             if (Cache.Instance.NormalApproch)
                 Cache.Instance.NormalApproch = false;
 
@@ -840,8 +831,9 @@ namespace Questor.Modules
 
                 if (Cache.Instance.Approaching != null && !Settings.Instance.SpeedTank)
                 {
-                    //Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
-                    //Cache.Instance.Approaching = null;
+                    Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                    Cache.Instance.Approaching = null;
+                    Logging.Log("MissionController.KillOnce: Stop ship, target is in weapons range");
                 }
             }
             else
@@ -904,6 +896,7 @@ namespace Questor.Modules
                 {
                     //Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
                     //Cache.Instance.Approaching = null;
+                    //Logging.Log("MissionController.AttackClosestByRange: Stop ship, target is in weapons range");
                 }
             }
             else
@@ -967,6 +960,7 @@ namespace Questor.Modules
                 {
                     //Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
                     //Cache.Instance.Approaching = null;
+                    //Logging.Log("MissionController.AttackClosest: Stop ship, target is in weapons range");
                 }
             }
             else

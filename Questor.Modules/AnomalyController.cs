@@ -197,6 +197,7 @@ namespace Questor.Modules
                  {
                      Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
                      Cache.Instance.Approaching = null;
+                     Logging.Log("AnomalyController: ClearPocket: Stop Ship. we are in weapons range");
                  }*/
                 return;
             }
@@ -239,6 +240,7 @@ namespace Questor.Modules
                         {
                             Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
                             Cache.Instance.Approaching = null;
+                            Logging.Log("AnomalyController: ClearPocket: Stop Ship. we are in weapons range");
                         }     
                     }
                 }
@@ -287,6 +289,7 @@ namespace Questor.Modules
                 {
                     Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
                     Cache.Instance.Approaching = null;
+                    Logging.Log("AnomolyController: MoveTo: Stop ship, we are in range");
                 }
             }
             else if (closest.Distance < (int)Distance.WarptoDistance)
@@ -427,6 +430,7 @@ namespace Questor.Modules
                         {
                             Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
                             Cache.Instance.Approaching = null;
+                            Logging.Log("AnomolyController: Kill: Stop ship, we are in weapons range");
                         }
                     }
                 }
