@@ -49,12 +49,12 @@ namespace QuestorManager.Module
                 var location = DirectEve.Instance.Navigation.GetLocation(solarSystemId);
                 if (location.IsValid)
                 {
-                    Logging.Log("Traveler: Setting destination to [" + location.Name + "]");
+                    Logging.Log("QuestorManager: Setting destination to [" + location.Name + "]");
                     location.SetDestination();
                 }
                 else
                 {
-                    Logging.Log("Traveler: Error setting solar system destination [" + solarSystemId + "]");
+                    Logging.Log("QuestorManager: Error setting solar system destination [" + solarSystemId + "]");
                     State = TravelerState.Error;
                 }
 
@@ -88,7 +88,7 @@ namespace QuestorManager.Module
             if (entity == null)
             {
                 // not found, that cant be true?!?!?!?!
-                Logging.Log("Traveler: Error [Stargate (" + locationName + ")] not found, most likely lag waiting 15 seconds.");
+                Logging.Log("QuestorManager: Error [Stargate (" + locationName + ")] not found, most likely lag waiting 15 seconds.");
                 _nextAction = DateTime.Now.AddSeconds(15);
                 return;
             }
@@ -96,7 +96,7 @@ namespace QuestorManager.Module
             // Warp to, approach or jump the stargate
             if (entity.Distance < 2500)
             {
-                Logging.Log("Traveler: Jumping to [" + locationName + "]");
+                Logging.Log("QuestorManager: Jumping to [" + locationName + "]");
                 entity.Jump();
 
                 _nextAction = DateTime.Now.AddSeconds(15);
@@ -105,7 +105,7 @@ namespace QuestorManager.Module
                 entity.Approach();
             else
             {
-                Logging.Log("Traveler: Warping to [Stargate (" + locationName + ")]");
+                Logging.Log("QuestorManager: Warping to [Stargate (" + locationName + ")]");
                 entity.WarpTo();
 
                 _nextAction = DateTime.Now.AddSeconds(5);

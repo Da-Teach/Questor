@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<mission>
+  <bring>Guristas Diamond Tag</bring>
+  <pockets>
+    <pocket id="0">
+      <damagetype>Kinetic</damagetype>
+    </pocket>
+    <pocket id="5">
+      <damagetype>Kinetic</damagetype>
+      <actions>
+        <action name="Ignore">
+          <parameter name="Add" value="Guristas War Installation" />
+        </action>
+        <action name="WaitUntilTargeted">
+          <parameter name="Timeout" value="15" />
+        </action>
+        <action name="ClearPocket" />
+        <action name="Activate">
+          <parameter name="target" value="Acceleration Gate" />
+        </action>
+      </actions>
+    </pocket>
+    <pocket id="6">
+      <damagetype>Kinetic</damagetype>
+      <actions>
+        <action name="WaitUntilTargeted">
+          <parameter name="Timeout" value="15" />
+        </action>
+        <action name="ClearPocket" />
+        <action name="Kill">
+          <parameter name="Target" value="Guristas Storage Facility" />
+        </action>
+        <action name="Loot" />
+        <action name="Done" />
+      </actions>
+    </pocket>
+  </pockets>
+</mission>

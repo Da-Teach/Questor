@@ -20,7 +20,7 @@ namespace QuestorManager.Module
 
         public SolarSystemDestination(long solarSystemId)
         {
-            Logging.Log("Traveler.SolarSystemDestination: Destination set to solar system id [" + solarSystemId + "]");
+            Logging.Log("QuestorManager.SolarSystemDestination: Destination set to solar system id [" + solarSystemId + "]");
             SolarSystemId = solarSystemId;
         }
 
@@ -31,7 +31,7 @@ namespace QuestorManager.Module
             {
                 if (_nextAction < DateTime.Now)
                 {
-                    Logging.Log("Traveler.SolarSystemDestination: Exiting station");
+                    Logging.Log("QuestorManager.SolarSystemDestination: Exiting station");
 
                     DirectEve.Instance.ExecuteCommand(DirectCmd.CmdExitStation);
                     _nextAction = DateTime.Now.AddSeconds(30);
@@ -42,7 +42,7 @@ namespace QuestorManager.Module
             }
 
             // The task was to get to the solar system, we're threre :)
-            Logging.Log("Traveler.SolarSystemDestination: Arrived in system");
+            Logging.Log("QuestorManager.SolarSystemDestination: Arrived in system");
             return true;
         }
     }

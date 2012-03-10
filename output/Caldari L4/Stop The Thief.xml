@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<mission>
+  <pockets>
+    <pocket id="0">
+      <damagetype>Thermal</damagetype>
+      <actions>
+        <action name="Ignore">
+          <parameter name="Add" value="Mercenary Overlord" />
+        </action>
+        <action name="ClearPocket" />
+        <action name="Ignore">
+          <parameter name="Remove" value="Mercenary Overlord" />
+        </action>
+        <action name="ClearPocket" />
+        <action name="LootItem">
+          <parameter name="Target" value="Cargo Container" />
+          <parameter name="Item" value="Reports" />
+        </action>
+        <action name="Done" />
+      </actions>
+    </pocket>
+  </pockets>
+</mission>

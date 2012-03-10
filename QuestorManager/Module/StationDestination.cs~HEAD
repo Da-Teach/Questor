@@ -24,7 +24,7 @@ namespace QuestorManager.Module
             var station = DirectEve.Instance.Navigation.GetLocation(stationId);
             if (station == null || !station.ItemId.HasValue || !station.SolarSystemId.HasValue)
             {
-                Logging.Log("Traveler.StationDestination: Invalid station id [" + stationId + "]");
+                Logging.Log("QuestorManager.StationDestination: Invalid station id [" + stationId + "]");
 
                 SolarSystemId = DirectEve.Instance.Session.SolarSystemId ?? -1;
                 StationId = -1;
@@ -32,16 +32,18 @@ namespace QuestorManager.Module
                 return;
             }
 
-            Logging.Log("Traveler.StationDestination: Destination set to [" + station.Name + "]");
+            Logging.Log("QuestorManager.StationDestination: Destination set to [" + station.Name + "]");
 
             StationId = stationId;
             StationName = station.Name;
             SolarSystemId = station.SolarSystemId.Value;
+            Logging.Log(station.SolarSystemId.Value + " " + stationId + " " + station.Name);
         }
 
         public StationDestination(long solarSystemId, long stationId, string stationName)
         {
-            Logging.Log("Traveler.StationDestination: Destination set to [" + stationName + "]");
+            Logging.Log("QuestorManager.StationDestination: Destination set to [" + stationName + "]");
+            Logging.Log(solarSystemId + " " + stationId + " " + stationName);
 
             SolarSystemId = solarSystemId;
             StationId = stationId;
@@ -60,7 +62,7 @@ namespace QuestorManager.Module
         {
             if (DirectEve.Instance.Session.IsInStation && DirectEve.Instance.Session.StationId == stationId)
             {
-                Logging.Log("Traveler.StationDestination: Arrived in station");
+                Logging.Log("QuestorManager.StationDestination: Arrived in station");
                 return true;
             }
 
@@ -69,7 +71,7 @@ namespace QuestorManager.Module
                 // We are in a station, but not the correct station!
                 if (nextAction < DateTime.Now)
                 {
-                    Logging.Log("Traveler.StationDestination: We're docked in the wrong station, undocking");
+                    Logging.Log("QuestorManager.StationDestination: We're docked in the wrong station, undocking");
 
                     DirectEve.Instance.ExecuteCommand(DirectCmd.CmdExitStation);
                     nextAction = DateTime.Now.AddSeconds(30);
@@ -97,14 +99,14 @@ namespace QuestorManager.Module
 
             if (entity.Distance < 2500)
             {
-                Logging.Log("Traveler.StationDestination: Dock at [" + entity.Name + "]");
+                Logging.Log("QuestorManager.StationDestination: Dock at [" + entity.Name + "]");
                 entity.Dock();
             }
             else if (entity.Distance < 150000)
                 entity.Approach();
             else
             {
-                Logging.Log("Traveler.StationDestination: Warp to and dock at [" + entity.Name + "]");
+                Logging.Log("QuestorManager.StationDestination: Warp to and dock at [" + entity.Name + "]");
                 entity.WarpToAndDock();
             }
 

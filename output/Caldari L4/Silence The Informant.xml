@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<mission>
+  <pockets>
+    <pocket id="0">
+      <actions>
+        <action name="Activate">
+          <parameter name="target" value="Acceleration Gate" />
+        </action>
+      </actions>
+    </pocket>
+    <pocket id="1">
+      <damagetype>Kinetic</damagetype>
+      <actions>
+        <action name="ClearPocket" />
+        <!-- <action name="Loot" /> -->
+        <action name="Activate">
+          <parameter name="target" value="Acceleration Gate" />
+        </action>
+      </actions>
+    </pocket>
+    <pocket id="2">
+      <damagetype>Kinetic</damagetype>
+      <actions>
+        <action name="ClearPocket" />
+        <action name="Activate">
+          <parameter name="target" value="Acceleration Gate" />
+        </action>
+      </actions>
+    </pocket>
+    <pocket id="3">
+      <damagetype>Kinetic</damagetype>
+      <actions>
+        <action name="ClearPocket" />
+        <action name="Kill">
+          <parameter name="target" value="Road House" />
+        </action>
+        <action name="Loot" />
+        <action name="Done" />
+      </actions>
+    </pocket>
+  </pockets>
+</mission>

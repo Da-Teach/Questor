@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <mission>
+  <damagetypes>
+    <damagetype>Kinetic</damagetype>
+  </damagetypes>
   <pockets>
     <pocket id="0">
       <damagetype>Kinetic</damagetype>
@@ -9,6 +12,9 @@
         </action>
         <action name="Kill">
           <parameter name="Target" value="Core Rear Admiral" />
+        </action>
+        <action name="Kill">
+          <parameter name="Target" value="Core Admiral" />
         </action>
         <action name="Kill">
           <parameter name="Target" value="Guardian Veteran" />
@@ -39,6 +45,7 @@
         </action>
         <action name="ClearPocket" />
         <action name="Loot">
+          <parameter name="Target" value="Damaged Heron" />
           <parameter name="Item" value="Ship's Crew" />
         </action>
         <action name="Activate">

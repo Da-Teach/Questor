@@ -23,7 +23,7 @@ namespace QuestorManager.Module
         {
             if (bookmark == null)
             {
-                Logging.Log("Traveler.MissionBookmarkDestination: Invalid mission bookmark!");
+                Logging.Log("QuestorManager.MissionBookmarkDestination: Invalid mission bookmark!");
 
                 AgentId = -1;
                 Title = null;
@@ -31,7 +31,7 @@ namespace QuestorManager.Module
                 return;
             }
 
-            Logging.Log("Traveler.MissionBookmarkDestination: Destination set to mission bookmark [" + bookmark.Title + "]");
+            Logging.Log("QuestorManager.MissionBookmarkDestination: Destination set to mission bookmark [" + bookmark.Title + "]");
             AgentId = bookmark.AgentId ?? -1;
             Title = bookmark.Title;
             SolarSystemId = bookmark.SolarSystemId ?? -1;
