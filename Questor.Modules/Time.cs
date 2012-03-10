@@ -35,6 +35,9 @@ namespace Questor.Modules
         TravelerExitStationAmIInSpaceYet_seconds = 7,     // Traveler - Exit Station before you are in spce delay, units: seconds. Default is 7
         TravelerNoStargatesFoundRetryDelay_seconds = 15,  // Traveler could not find any stargates, retry when this time has elapsed, units: seconds. Default is 15
         TravelerJumpedGateNextCommandDelay_seconds = 15,  // Traveler jumped a gate - delay before assuming we have loaded grid, units: seconds. Default is 15
-        TravelerInWarpedNextCommandDelay_seconds = 15     // Traveler is in warp - delay before processing another command, units: seconds. Default is 15
+        TravelerInWarpedNextCommandDelay_seconds = 15,    // Traveler is in warp - delay before processing another command, units: seconds. Default is 15
+        WrecksDisappearAfter_minutes = 110,               // This is used to determine how long a wreck will be in space: usually to delay salvaging until a later time, units: minutes. Default is 120 minutes (2 hours)
+        AverageTimeToCompleteAMission_minutes = 30,       // This is an average time for all missions, all races, all shiptypes... it is used to determine whn to do things like salvage. units: minutes. Default is 30 
+        AverageTimetoSalvageMultipleMissions_minutes = 15 // This is the averge time it will take to salvage the multiple mission chaine we plan on salvagingall in one go. 
      }
 }

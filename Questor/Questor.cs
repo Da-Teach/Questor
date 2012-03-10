@@ -1459,7 +1459,27 @@ namespace Questor
                         if (_combat.State != CombatState.OutOfAmmo && Settings.Instance.AfterMissionSalvaging && Cache.Instance.BookmarksByLabel(Settings.Instance.BookmarkPrefix + " ").Count > 0 && (mission == null || mission.State == (int)MissionState.Offered))
                         {
                             FinishedMission = DateTime.Now;
-                            State = QuestorState.BeginAfterMissionSalvaging;
+                            if (Settings.Instance.SalvageMultpleMissionsinOnePass) // Salvage only after multiple missions have been completed
+                            {   
+                                //if we can still complete another mission before the Wrecks disappear and still have time to salvage
+                                if (DateTime.Now.Subtract(FinishedSalvaging).Minutes > ((int)Time.WrecksDisappearAfter_minutes - (int)Time.AverageTimeToCompleteAMission_minutes - (int)Time.AverageTimetoSalvageMultipleMissions_minutes))
+                                {
+                                    Logging.Log("Questor: UnloadLoot: The last after mission salvaging session was [" + DateTime.Now.Subtract(FinishedSalvaging).Minutes + "] ago ");
+                                    Logging.Log("Questor: UnloadLoot: we are after mision salvaging again because it has been at least [" + ((int)Time.WrecksDisappearAfter_minutes - (int)Time.AverageTimeToCompleteAMission_minutes - (int)Time.AverageTimetoSalvageMultipleMissions_minutes) + "] min since the last session. ");
+                                    State = QuestorState.BeginAfterMissionSalvaging;
+                                }
+                                else
+                                {
+                                    Logging.Log("Questor: UnloadLoot: The last after mission salvaging session was [" + DateTime.Now.Subtract(FinishedSalvaging).Minutes + "] ago ");
+                                    Logging.Log("Questor: UnloadLoot: we are going to the next mission because it has not been [" + ((int)Time.WrecksDisappearAfter_minutes - (int)Time.AverageTimeToCompleteAMission_minutes - (int)Time.AverageTimetoSalvageMultipleMissions_minutes) + "] min since the last session. ");
+                                    FinishedMission = DateTime.Now;
+                                    State = QuestorState.Idle;
+                                }
+                            }
+                            else // Normal Salvaging
+                            {
+                                State = QuestorState.BeginAfterMissionSalvaging;
+                            }
                             return;
                         }
                         else if (_combat.State == CombatState.OutOfAmmo)
@@ -1467,7 +1487,7 @@ namespace Questor
                             State = QuestorState.Start;
                             return;
                         }
-                        else
+                        else //If we arent after mission salvaging and we arent out of ammo we must be done. 
                         {
                             FinishedMission = DateTime.Now;
                             StartedSalvaging = DateTime.Now;
