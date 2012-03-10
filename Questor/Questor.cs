@@ -518,6 +518,7 @@ namespace Questor
                         {
                             Logging.Log("Questor: Time to stop.  Quitting game.");
                             Cache.Instance.ReasonToStopQuestor = "StopTimeSpecified and reached.";
+                            AutoStart = false;
                             Cache.Instance.CloseQuestorCMDLogoff = false;
                             Cache.Instance.CloseQuestorCMDExitGame = true;
                             Cache.Instance.SessionState = "Exiting";
@@ -667,6 +668,7 @@ namespace Questor
                         //LavishScript.ExecuteCommand("exit");
                         Cache.Instance.ReasonToStopQuestor = "Settings: ExitWhenIdle is true, and we are idle... exiting";
                         Logging.Log(Cache.Instance.ReasonToStopQuestor);
+                        AutoStart = false;
                         Cache.Instance.CloseQuestorCMDLogoff = false;
                         Cache.Instance.CloseQuestorCMDExitGame = true;
                         Cache.Instance.SessionState = "Exiting";
