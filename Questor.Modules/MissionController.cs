@@ -64,7 +64,7 @@ namespace Questor.Modules
                 Settings.Instance.PocketStatisticsFile = Path.Combine(Settings.Instance.PocketStatisticsPath, Cache.Instance.FilterPath(Cache.Instance.DirectEve.Me.Name) + " - " + currentPocketName + " - " + _pocket + " - PocketStatistics.csv");
 
                 if (!Directory.Exists(Settings.Instance.PocketStatisticsPath)) 
-                Directory.CreateDirectory(Settings.Instance.PocketStatisticsPath);
+                    Directory.CreateDirectory(Settings.Instance.PocketStatisticsPath);
 
                 //
                 // this is writing down stats from the PREVIOUS pocket (if any?!)
@@ -358,24 +358,45 @@ namespace Questor.Modules
                 // Are we approaching the active (out of range) target?
                 // Wait for it (or others) to get into range
 
-                    if (Settings.Instance.SpeedTank && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id))
-                            target.Orbit(Cache.Instance.OrbitDistance);
+                if (Settings.Instance.SpeedTank && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id))
+                {
+                    target.Orbit(Cache.Instance.OrbitDistance);
+                    Logging.Log("MissionController.ClearPocket: Initiating Orbit [" + target.Name + "][" + target.Id + "]");
+                }
 
-                    if (!Settings.Instance.SpeedTank) //we need to make sure that orbitrange is set to the range of the ship if it isnt specified in the character XML!!!!
+                if (!Settings.Instance.SpeedTank) //we need to make sure that orbitrange is set to the range of the ship if it isnt specified in the character XML!!!!
+                {
+                    if (Settings.Instance.OptimalRange >= 0)
                     {
-                        if (target.Distance > Cache.Instance.OrbitDistance + (int)Distance.OrbitDistanceCushion && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id))
+                        if (target.Distance > Settings.Instance.OptimalRange + (int)Distance.OptimalRangeCushion && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id))
                         {
-                                target.Approach(Cache.Instance.OrbitDistance);
-                                Logging.Log("MissionController.ClearPocket: Approaching target [" + target.Name + "][" + target.Id + "]");
-                            }
-
-                        if (target.Distance <= Cache.Instance.OrbitDistance && Cache.Instance.Approaching != null)
-                        {
-                                Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
-                                Cache.Instance.Approaching = null;
-                                Logging.Log("MissionController.ClearPocket: Stop ship, target is in orbit range");
-                            }
+                            target.Approach(Settings.Instance.OptimalRange);
+                            Logging.Log("MissionController.ClearPocket: Using Optimal Range: Approaching target [" + target.Name + "][" + target.Id + "]");
                         }
+
+                        if (target.Distance <= Settings.Instance.OptimalRange && Cache.Instance.Approaching != null)
+                        {
+                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                            Cache.Instance.Approaching = null;
+                            Logging.Log("MissionController.ClearPocket: Using Optimal Range: Stop ship, target is in orbit range");
+                        }
+                    }
+                    else
+                    {
+                        if (target.Distance > range && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id))
+                        {
+                            target.Approach((int)(Cache.Instance.WeaponRange * 0.8d));
+                            Logging.Log("MissionController.ClearPocket: Using Weapons Range: Approaching target [" + target.Name + "][" + target.Id + "]");
+                        }
+
+                        if (target.Distance <= range && Cache.Instance.Approaching != null)
+                        {
+                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                            Cache.Instance.Approaching = null;
+                            Logging.Log("MissionController.ClearPocket: Using Weapons Range: Stop ship, target is in orbit range");
+                        }
+                    }
+                }
                 return;
             }
 
@@ -1090,8 +1111,8 @@ namespace Questor.Modules
                 Cache.Instance.IgnoreTargets.Clear();
             else
             {
-            add.ForEach(a => Cache.Instance.IgnoreTargets.Add(a.Trim()));
-            remove.ForEach(a => Cache.Instance.IgnoreTargets.Remove(a.Trim()));
+                add.ForEach(a => Cache.Instance.IgnoreTargets.Add(a.Trim()));
+                remove.ForEach(a => Cache.Instance.IgnoreTargets.Remove(a.Trim()));
             }
             Logging.Log("MissionController.Ignore: Updated ignore list");
             if (Cache.Instance.IgnoreTargets.Any())
