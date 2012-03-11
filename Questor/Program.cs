@@ -424,11 +424,11 @@ namespace Questor
             {
                 if (DateTime.Now.Subtract(AppStarted).TotalSeconds > 10)
                 {
-                Logging.Log("[Startup] Login account [" + _username + "]");
-                _directEve.Login.Login(_username, _password);
-                Logging.Log("[Startup] Waiting for Character Selection Screen");
-                _pulsedelay = (int)Time.QuestorBeforeLoginPulseDelay_milliseconds;
-                return;
+                    Logging.Log("[Startup] Login account [" + _username + "]");
+                    _directEve.Login.Login(_username, _password);
+                    Logging.Log("[Startup] Waiting for Character Selection Screen");
+                    _pulsedelay = (int)Time.QuestorBeforeLoginPulseDelay_milliseconds;
+                    return;
                 }
             }
 

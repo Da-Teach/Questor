@@ -84,8 +84,8 @@ namespace Questor.Modules
             if (charge == null)
                 return false;
 
-            // We are reloading, wait at least 11 seconds
-            if (_lastWeaponReload.ContainsKey(weapon.ItemId) && DateTime.Now < _lastWeaponReload[weapon.ItemId].AddSeconds(22))
+            // We are reloading, wait Time.ReloadWeaponDelayBeforeUsable_seconds (see time.cs)
+            if (_lastWeaponReload.ContainsKey(weapon.ItemId) && DateTime.Now < _lastWeaponReload[weapon.ItemId].AddSeconds((int)Time.ReloadWeaponDelayBeforeUsable_seconds))
                 return false;
             _lastWeaponReload[weapon.ItemId] = DateTime.Now;
 
@@ -122,8 +122,8 @@ namespace Questor.Modules
                 return false;
             }
 
-            // Get the best possible ammo
-            var ammo = correctAmmo.Where(a => a.Range > entity.Distance).OrderBy(a => a.Range).FirstOrDefault();
+            // Get the best possible ammo - energy weapons change ammo near instantly
+            var ammo = correctAmmo.Where(a => a.Range > (entity.Distance)).OrderBy(a => a.Range).FirstOrDefault(); //default
 
             // We do not have any ammo left that can hit targets at that range!
             if (ammo == null)
@@ -310,7 +310,7 @@ namespace Questor.Modules
             foreach (var weapon in weapons)
             {
                 // dont waste ammo on small target if you use autocannon or siege i hope you use drone
-                if (Settings.Instance.DontShootFrigatesWithSiegeorAutoCannons) //this defaults to false and needs to be changes in your characters settings xml file if you want to enable this option
+                if (Settings.Instance.DontShootFrigatesWithSiegeorAutoCannons) //this defaults to false and needs to be changed in your characters settings xml file if you want to enable this option
                 {
                     if (Settings.Instance.WeaponGroupId == 55 || Settings.Instance.WeaponGroupId == 508 || Settings.Instance.WeaponGroupId == 506)
                     {

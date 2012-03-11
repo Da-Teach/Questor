@@ -311,10 +311,10 @@ namespace Questor.Modules
                 if(agent == null)
                 {
                     agent = Settings.Instance.AgentsList.OrderBy(j => j.Priorit).FirstOrDefault();
-                    IsAgentLoop = true;
+                    IsAgentLoop = true; //this literally means we have no agents available at the moment (decline timer likely)
                 }
                 else
-                    IsAgentLoop = false;
+                    IsAgentLoop = false; //this literally means we DO have agents available (at least one agents decline timer has expired and is clear to use)
 
                 return agent.Name;
             }

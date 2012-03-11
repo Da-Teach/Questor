@@ -557,7 +557,7 @@ namespace Questor
                         if (Settings.Instance.MissionStats1Log)
                         {
                             if (!Directory.Exists(Settings.Instance.MissionStats1LogPath)) 
-                            Directory.CreateDirectory(Settings.Instance.MissionStats1LogPath);
+                                Directory.CreateDirectory(Settings.Instance.MissionStats1LogPath);
 
                             // Write the header
                             if (!File.Exists(Settings.Instance.MissionStats1LogFile))
@@ -604,7 +604,7 @@ namespace Questor
                         if (Settings.Instance.MissionStats3Log)
                         {
                             if (!Directory.Exists(Settings.Instance.MissionStats3LogPath)) 
-                            Directory.CreateDirectory(Settings.Instance.MissionStats3LogPath);
+                                Directory.CreateDirectory(Settings.Instance.MissionStats3LogPath);
 
                             // Write the header
                             if (!File.Exists(Settings.Instance.MissionStats3LogFile))
@@ -1197,7 +1197,7 @@ namespace Questor
                             // Get the path
 
                             if (!Directory.Exists(Settings.Instance.SessionsLogPath))
-                            Directory.CreateDirectory(Settings.Instance.SessionsLogPath);
+                                Directory.CreateDirectory(Settings.Instance.SessionsLogPath);
 
                             Cache.Instance.SessionIskPerHrGenerated = ((int)Cache.Instance.SessionIskGenerated / (DateTime.Now.Subtract(_questorStarted).TotalMinutes / 60));
                             Cache.Instance.SessionLootPerHrGenerated = ((int)Cache.Instance.SessionLootGenerated / (DateTime.Now.Subtract(_questorStarted).TotalMinutes / 60));
