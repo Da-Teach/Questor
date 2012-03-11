@@ -760,8 +760,8 @@ namespace Questor.Modules
                 Logging.Log("MissionController.Kill: Stop ship, target is in optimalRange");
             }
 
-            //if distance to target is less than weapons range and we havent setup optimalrange OR we are inside optimalrange and optimalrange has been setup
-            if ((closest.Distance < range && Settings.Instance.OptimalRange <= 0) || (closest.Distance < Settings.Instance.OptimalRange + (int)Distance.OptimalRangeCushion) && Settings.Instance.OptimalRange > 0)
+            //if distance to target is more than weapons range and we havent setup optimalrange OR we are inside optimalrange and optimalrange has been setup
+            if ((closest.Distance > range && Settings.Instance.OptimalRange <= 0) || (closest.Distance > Settings.Instance.OptimalRange + (int)Distance.OptimalRangeCushion) && Settings.Instance.OptimalRange > 0)
             {
                 if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
                 {
@@ -955,8 +955,8 @@ namespace Questor.Modules
                 Logging.Log("MissionController.AttackClosestByName: Stop ship, target is in optimalRange");
             }
 
-            //if distance to target is less than weapons range and we havent setup optimalrange OR we are inside optimalrange and optimalrange has been setup
-            if ((target.Distance < range && Settings.Instance.OptimalRange <= 0) || (target.Distance < Settings.Instance.OptimalRange + (int)Distance.OptimalRangeCushion) && Settings.Instance.OptimalRange > 0)
+            //if distance to target is more than weapons range and we havent setup optimalrange OR we are inside optimalrange and optimalrange has been setup
+            if ((target.Distance > range && Settings.Instance.OptimalRange <= 0) || (target.Distance > Settings.Instance.OptimalRange + (int)Distance.OptimalRangeCushion) && Settings.Instance.OptimalRange > 0)
             {
                 if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id)
                 {
@@ -1043,8 +1043,8 @@ namespace Questor.Modules
                 Logging.Log("MissionController.AttackClosest: Stop ship, target is in optimalRange");
             }
 
-            //if distance to target is less than weapons range and we havent setup optimalrange OR we are inside optimalrange and optimalrange has been setup
-            if ((target.Distance < range && Settings.Instance.OptimalRange <= 0) || (target.Distance < Settings.Instance.OptimalRange + (int)Distance.OptimalRangeCushion) && Settings.Instance.OptimalRange > 0)
+            //if distance to target is more than weapons range and we havent setup optimalrange OR we are inside optimalrange and optimalrange has been setup
+            if ((target.Distance > range && Settings.Instance.OptimalRange <= 0) || (target.Distance > Settings.Instance.OptimalRange + (int)Distance.OptimalRangeCushion) && Settings.Instance.OptimalRange > 0)
             {
                 if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id)
                 {
