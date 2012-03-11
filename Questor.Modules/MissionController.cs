@@ -33,6 +33,7 @@ namespace Questor.Modules
         private DateTime _waitingSince;
         private DateTime _lastAlign;
         private DateTime _lastOrbit;
+        private DateTime _lastReload;
 
         private bool target_null = false;
         public long AgentId { get; set; }
@@ -260,8 +261,12 @@ namespace Questor.Modules
                         BookmarkPocketForSalvaging();
 
                     // Reload weapons and activate gate to move to the next pocket
-                    Logging.Log("MissionController: ReloadALL: Reload before moving to next pocket");
-                    ReloadAll();
+                    if (DateTime.Now.Subtract(_lastReload).TotalSeconds > 20)
+                    {
+                        Logging.Log("MissionController: ReloadALL: Reload before moving to next pocket");
+                        ReloadAll();
+                        _lastReload = DateTime.Now;
+                    }
                     Logging.Log("MissionController: closest.Activate: [" + closest.Name + "] Move to next pocket after reload command and change state to 'NextPocket'");
                     closest.Activate();
 
@@ -330,10 +335,11 @@ namespace Questor.Modules
                 // Lock priority target if within weapons range
                 if (target.Distance < range)
                 {
-                    if (target_null && targetedby == 0)
+                    if (target_null && targetedby == 0 && DateTime.Now.Subtract(_lastReload).TotalSeconds > 20)
                     {
                         Logging.Log("MissionController: ReloadALL: Reload if [" + target_null + "] && [" + targetedby + "] == 0 AND [" + target.Distance + "] < [" + range + "]");
                         ReloadAll();
+                        _lastReload = DateTime.Now;
 					}
 
                     if (Cache.Instance.DirectEve.ActiveShip.MaxLockedTargets > 0)
@@ -352,7 +358,12 @@ namespace Questor.Modules
                 }
                 else
                 {
-                    ReloadAll();
+                    if (DateTime.Now.Subtract(_lastReload).TotalSeconds > 20)
+                    {
+                        Logging.Log("MissionController: ReloadAll: Reload weapons");
+                        ReloadAll();
+                        _lastReload = DateTime.Now;
+                    }
                 }
 
                 // Are we approaching the active (out of range) target?
@@ -1280,8 +1291,12 @@ namespace Questor.Modules
                         BookmarkPocketForSalvaging();
 
                     // Reload weapons
-                    Logging.Log("MissionController: ReloadAll: Reload becasue ActionState is Done - Reloading Weapons.");
-                    ReloadAll();
+                    if (DateTime.Now.Subtract(_lastReload).TotalSeconds > 20)
+                    {
+                        Logging.Log("MissionController: ReloadAll: Reload becasue ActionState is Done - Reloading Weapons.");
+                        ReloadAll();
+                        _lastReload = DateTime.Now;
+                    }
 
                     State = MissionControllerState.Done;
                     break;
