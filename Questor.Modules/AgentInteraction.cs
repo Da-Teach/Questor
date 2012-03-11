@@ -95,7 +95,6 @@ namespace Questor.Modules
             {
                 if (DateTime.Now.Subtract(_waitingonagentwindowtimer2).TotalSeconds > 30)
                 {
-                    //agentWindow //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     Logging.Log("AgentInteraction: ReplyToAgent: agentWindow == null : waiting");
                     if (DateTime.Now.Subtract(_waitingonagentwindowtimer2).TotalSeconds > 60)
                     {
