@@ -260,11 +260,13 @@ namespace Questor.Modules
                         BookmarkPocketForSalvaging();
 
                     // Reload weapons and activate gate to move to the next pocket
+                    Logging.Log("MissionController: ReloadALL: Reload before moving to next pocket");
                     ReloadAll();
+                    Logging.Log("MissionController: closest.Activate: [" + closest.Name + "] Move to next pocket after reload command and change state to 'NextPocket'");
                     closest.Activate();
 
                     // Do not change actions, if NextPocket gets a timeout (>2 mins) then it reverts to the last action
-                    Logging.Log("MissionController.Activate: Activate [" + closest.Name + "] and change state to 'NextPocket'");
+                    
 
                     _lastActivateAction = DateTime.Now;
                     State = MissionControllerState.NextPocket;
@@ -293,6 +295,7 @@ namespace Questor.Modules
                 if (DateTime.Now.Subtract(_lastAlign ).TotalMinutes > (int)Time.LastAlignDelay_minutes)
                 {
                     // Only happens if we are asked to Activate something that is outside Distance.CloseToGateActivationRange (default is: 6k)
+                    Logging.Log("MissionController: closest.AlignTo: [" + closest.Name + "] This only happens if we are asked to Activate something that is outside [" + Distance.CloseToGateActivationRange + "]");
                     closest.AlignTo();
                     _lastAlign = DateTime.Now;
                 }
@@ -328,7 +331,10 @@ namespace Questor.Modules
                 if (target.Distance < range)
                 {
                     if (target_null && targetedby == 0)
+                    {
+                        Logging.Log("MissionController: ReloadALL: Reload if [" + target_null + "] && [" + targetedby + "] == 0 AND [" + target.Distance + "] < [" + range + "]");
                         ReloadAll();
+					}
 
                     if (Cache.Instance.DirectEve.ActiveShip.MaxLockedTargets > 0)
                     {
@@ -1274,6 +1280,7 @@ namespace Questor.Modules
                         BookmarkPocketForSalvaging();
 
                     // Reload weapons
+                    Logging.Log("MissionController: ReloadAll: Reload becasue ActionState is Done - Reloading Weapons.");
                     ReloadAll();
 
                     State = MissionControllerState.Done;
