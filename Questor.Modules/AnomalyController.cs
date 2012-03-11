@@ -47,6 +47,8 @@ namespace Questor.Modules
             if (ammo == null)
                 return;
 
+            Cache.Instance.TimeSpentReloading_seconds = Cache.Instance.TimeSpentReloading_seconds + (int)Time.ReloadWeaponDelayBeforeUsable_seconds;
+
             foreach (var weapon in weapons)
             {
 
@@ -224,8 +226,15 @@ namespace Questor.Modules
                 {
                     if (Cache.Instance.DirectEve.ActiveShip.MaxLockedTargets > 0)
                     {
-                        Logging.Log("AnomalyController.ClearPocket: Targeting [" + target.Name + "][" + target.Id + "] - Distance [" + target.Distance + "]");
-                        target.LockTarget();
+                        if (target.IsTarget) //This target is already targeted no need to target it again
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            Logging.Log("AnomalyController.ClearPocket: Targeting [" + target.Name + "][" + target.Id + "] - Distance [" + target.Distance + "]");
+                            target.LockTarget();
+                        }
                     }
                     return;
                 }

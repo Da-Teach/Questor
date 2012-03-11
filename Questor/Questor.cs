@@ -98,6 +98,7 @@ namespace Questor
             Cache.Instance.DirectEve = _directEve;
 
             Cache.Instance.StopTimeSpecified = Program.stopTimeSpecified;
+            Cache.Instance.MaxRuntime = Program.maxRuntime;
             Cache.Instance.StopTime = Program._stopTime;
             _questorStarted = DateTime.Now;
 
@@ -182,8 +183,6 @@ namespace Questor
             _salvage.LootEverything = Settings.Instance.LootEverything;
         }
 
-
-
         private void OnFrame(object sender, EventArgs e)
         {
             var watch = new Stopwatch();
@@ -256,7 +255,7 @@ namespace Questor
                             //
                             // Get the path
                             if (!Directory.Exists(Settings.Instance.SessionsLogPath)) 
-                            Directory.CreateDirectory(Settings.Instance.SessionsLogPath);
+                                Directory.CreateDirectory(Settings.Instance.SessionsLogPath);
 
                             // Write the header
                             if (!File.Exists(Settings.Instance.SessionsLogFile))
@@ -607,12 +606,12 @@ namespace Questor
 
                             // The mission is finished
                             File.AppendAllText(Settings.Instance.MissionStats1LogFile, line);
-                            Logging.Log("Questor: is writing mission log1 to  [ " + Settings.Instance.MissionStats1LogFile);
+                            Logging.Log("Questor: writing mission log1 to  [ " + Settings.Instance.MissionStats1LogFile);
                         }
                         if (Settings.Instance.MissionStats2Log)
                         {
                             if (!Directory.Exists(Settings.Instance.MissionStats2LogPath)) 
-                            Directory.CreateDirectory(Settings.Instance.MissionStats2LogPath);
+                                Directory.CreateDirectory(Settings.Instance.MissionStats2LogPath);
 
                             // Write the header
                             if (!File.Exists(Settings.Instance.MissionStats2LogFile))
@@ -630,7 +629,7 @@ namespace Questor
                             line2 += ((int)AmmoValue) + ";\r\n";                                                // Ammo Value
 
                             // The mission is finished
-                            Logging.Log("Questor: is writing mission log2 to [ " + Settings.Instance.MissionStats2LogFile);
+                            Logging.Log("Questor: writing mission log2 to [ " + Settings.Instance.MissionStats2LogFile);
                             File.AppendAllText(Settings.Instance.MissionStats2LogFile, line2);
                         }
                         if (Settings.Instance.MissionStats3Log)
@@ -662,7 +661,7 @@ namespace Questor
 
 
                             // The mission is finished
-                            Logging.Log("Questor: is writing mission log3 to  [ " + Settings.Instance.MissionStats3LogFile);
+                            Logging.Log("Questor: writing mission log3 to  [ " + Settings.Instance.MissionStats3LogFile);
                             File.AppendAllText(Settings.Instance.MissionStats3LogFile, line3);
                         }
                         // Disable next log line

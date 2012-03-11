@@ -24,7 +24,8 @@ namespace Questor.Modules
         private readonly Dictionary<long, DateTime> _lastWeaponReload = new Dictionary<long, DateTime>();
         private bool _isJammed;
         public CombatState State { get; set; }
-        private DateTime _lastOrbit;
+        private DateTime _lastOrbit  { get; set; }
+        private DateTime _lastLoggingAction { get; set; }
 
         private int MaxCharges { get; set; }
 
@@ -92,11 +93,21 @@ namespace Questor.Modules
             // Reload or change ammo
             if (weapon.Charge != null && weapon.Charge.TypeId == charge.TypeId)
             {
+                if (DateTime.Now.Subtract(_lastLoggingAction).TotalSeconds > 10)
+                { 
+                    Cache.Instance.TimeSpentReloading_seconds = Cache.Instance.TimeSpentReloading_seconds + (int)Time.ReloadWeaponDelayBeforeUsable_seconds;
+                    _lastLoggingAction = DateTime.Now;
+                }
                 Logging.Log("Combat: Reloading [" + weapon.ItemId + "] with [" + charge.TypeName + "][" + charge.TypeId + "]");
                 weapon.ReloadAmmo(charge);
             }
             else
             {
+                if (DateTime.Now.Subtract(_lastLoggingAction).TotalSeconds > 10)
+                {
+                    Cache.Instance.TimeSpentReloading_seconds = Cache.Instance.TimeSpentReloading_seconds + (int)Time.ReloadWeaponDelayBeforeUsable_seconds;
+                    _lastLoggingAction = DateTime.Now;
+                }
                 Logging.Log("Combat: Changing [" + weapon.ItemId + "] with [" + charge.TypeName + "][" + charge.TypeId + "]");
                 weapon.ChangeAmmo(charge);
             }
@@ -197,6 +208,8 @@ namespace Questor.Modules
             if (ammo == null)
                 return;
 
+            Cache.Instance.TimeSpentReloading_seconds = Cache.Instance.TimeSpentReloading_seconds + (int)Time.ReloadWeaponDelayBeforeUsable_seconds;
+
             foreach (var weapon in weapons)
             {
                 if (weapon.CurrentCharges >= weapon.MaxCharges)
@@ -211,7 +224,7 @@ namespace Questor.Modules
 
                 if (weapon.Charge.TypeId == charge.TypeId)
                 {
-                    Logging.Log("MissionController: Reloading All [" + weapon.ItemId + "] with [" + charge.TypeName + "][" + charge.TypeId + "]");
+                    Logging.Log("Combat: ReloadingAll [" + weapon.ItemId + "] with [" + charge.TypeName + "][" + charge.TypeId + "]");
                     weapon.ReloadAmmo(charge);
                 }
 
@@ -602,9 +615,17 @@ namespace Questor.Modules
                 if (highValueTargets.Count >= maxHighValueTarget)
                     break;
 
-                Logging.Log("Combat: Targeting priority target [" + entity.Name + "][" + entity.Id + "]{" + highValueTargets.Count + "} - Distance [" + entity.Distance + "]");
-                entity.LockTarget();
-                highValueTargets.Add(entity);
+                if (entity.IsTarget) //This target is already targeted no need to target it again
+                {
+                    return;
+                }
+                else
+                {
+                    Logging.Log("Combat: Targeting priority target [" + entity.Name + "][" + entity.Id + "]{" + highValueTargets.Count + "} - Distance [" + entity.Distance + "]");
+                    entity.LockTarget();
+                    highValueTargets.Add(entity);
+                }
+                
             }
 
             foreach (var entity in highValueTargetingMe)
@@ -613,9 +634,16 @@ namespace Questor.Modules
                 if (highValueTargets.Count >= maxHighValueTarget)
                     break;
 
-                Logging.Log("Combat: Targeting high value target [" + entity.Name + "][" + entity.Id + "]{" + highValueTargets.Count + "} - Distance [" + entity.Distance + "]");
-                entity.LockTarget();
-                highValueTargets.Add(entity);
+                if (entity.IsTarget) //This target is already targeted no need to target it again
+                {
+                    return;
+                }
+                else
+                {
+                    Logging.Log("Combat: Targeting high value target [" + entity.Name + "][" + entity.Id + "]{" + highValueTargets.Count + "} - Distance [" + entity.Distance + "]");
+                    entity.LockTarget();
+                    highValueTargets.Add(entity);
+                }
             }
 
             foreach (var entity in lowValueTargetingMe)
@@ -624,9 +652,17 @@ namespace Questor.Modules
                 if (lowValueTargets.Count >= maxLowValueTarget)
                     break;
 
-                Logging.Log("Combat: Targeting low value target [" + entity.Name + "][" + entity.Id + "]{" + lowValueTargets.Count + "} - Distance [" + entity.Distance + "]");
-                entity.LockTarget();
-                lowValueTargets.Add(entity);
+                if (entity.IsTarget) //This target is already targeted no need to target it again
+                {
+                    return;
+                }
+                else
+                {
+                    Logging.Log("Combat: Targeting low value target [" + entity.Name + "][" + entity.Id + "]{" + lowValueTargets.Count + "} - Distance [" + entity.Distance + "]");
+                    entity.LockTarget();
+                    lowValueTargets.Add(entity);
+                }
+                
             }
         }
 
