@@ -834,7 +834,7 @@ namespace Questor.Modules
             
             if (Cache.Instance.DirectEve.ActiveShip.Entity.Velocity > 9999999) //this concept with a relatively more realistic speed should be used in places to make sure speed tanks are moving
             {
-                if (Cache.Instance.NormalApproch)
+                /* if (Cache.Instance.NormalApproch)
                     Cache.Instance.NormalApproch = false;
 
                 bool ignoreAttackers;
@@ -938,7 +938,7 @@ namespace Questor.Modules
                             Logging.Log("MissionController: killonce: approaching");
                         }
                     }
-                }
+                } */
             }
         }
 
