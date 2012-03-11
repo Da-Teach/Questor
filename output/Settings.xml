@@ -295,14 +295,4 @@
   <!-- Enable of Disable the PocketStatistics logs: each and every pocket of missions will generate a seperate log with completion times and other statistics for your XML tuning pleasure -->
   <PocketStatistics>true</PocketStatistics><!-- default is: true -->
   
-  <!--		Priority Active Target Settings	 -->
-  <warpScrammingPriority>0</warpScrammingPriority>
-  <webbingPriority>1</webbingPriority>
-  <targetPaintingPriority>2</targetPaintingPriority>
-  <neutPriority>3</neutPriority>
-  <jammingPriority>4</jammingPriority>
-  <dampeningPriority>5</dampeningPriority>
-  <trackingDistruptingPriority>6</trackingDistruptingPriority>
-  <priorityKillTargetPriority>7</priorityKillTargetPriority>
-  
 </settings>

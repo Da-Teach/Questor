@@ -28,8 +28,13 @@ namespace Questor.Modules
         public const string Accept = "Accept";
         public const string Decline = "Decline";
         public const string Close = "Close";
-        private DateTime _lastMissionOpenRequest;
+        private DateTime _lastJournalOpenRequest;
         private DateTime _nextAgentAction;
+        //private DateTime _waitingOnAgentResponse;
+        private DateTime _waitingonmissiontimer = DateTime.Now;
+        private DateTime _waitingonagentwindowtimer = DateTime.Now;
+        private DateTime _waitingonagentwindowtimer2 = DateTime.Now;
+        private DateTime _waitingonagentwindowtimer3 = DateTime.Now;
 
         public bool waitDecline { get; set; }
         public float minStandings { get; set; }
@@ -87,7 +92,20 @@ namespace Questor.Modules
 
             var responses = agentWindow.AgentResponses;
             if (responses == null || responses.Count == 0)
+            {
+                if (DateTime.Now.Subtract(_waitingonagentwindowtimer2).TotalSeconds > 30)
+                {
+                    //agentWindow //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    Logging.Log("AgentInteraction: ReplyToAgent: agentWindow == null : waiting");
+                    if (DateTime.Now.Subtract(_waitingonagentwindowtimer2).TotalSeconds > 60)
+                    {
+                        Logging.Log("AgentInteraction: ReplyToAgent: agentWindow == null : trying to close the agent window");
+                        agentWindow.Close();
+                        _waitingonagentwindowtimer = DateTime.Now;
+                    }
+                }
                 return;
+            }
 
             var request = responses.FirstOrDefault(r => r.Text.Contains(RequestMission));
             var complete = responses.FirstOrDefault(r => r.Text.Contains(CompleteMission));
@@ -186,22 +204,54 @@ namespace Questor.Modules
         {
             var agentWindow = Agent.Window;
             if (agentWindow == null || !agentWindow.IsReady)
+            {
+                if (DateTime.Now.Subtract(_waitingonagentwindowtimer).TotalSeconds > 60)
+                {
+                    Logging.Log("AgentInteraction: WaitForMission: agentWindow == null : waiting");
+                    _waitingonagentwindowtimer = DateTime.Now;
+                    if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) > 7)
+                    {
+                        Cache.Instance.CloseQuestorCMDLogoff = false;
+                        Cache.Instance.CloseQuestorCMDExitGame = true;
+                        Cache.Instance.ReasonToStopQuestor = "AgentInteraction: WaitforMission: Journal would not open/refresh- journalwindows was null: restarting EVE Session";
+                        Logging.Log(Cache.Instance.ReasonToStopQuestor);
+                        Cache.Instance.SessionState = "Quitting";
+                    }
+                }
                 return;
+            }
 
             var journalWindow = Cache.Instance.GetWindowByName("journal");
             if (journalWindow == null)
             {
-                if (DateTime.Now.Subtract(_lastMissionOpenRequest).TotalSeconds > 10)
+                if (DateTime.Now.Subtract(_lastJournalOpenRequest).TotalSeconds > 30)
                 {
                     Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenJournal);
-                    _lastMissionOpenRequest = DateTime.Now;
+                    _lastJournalOpenRequest = DateTime.Now;
+
                 }
                 return;
             }
 
             var mission = Cache.Instance.DirectEve.AgentMissions.FirstOrDefault(m => m.AgentId == AgentId);
             if (mission == null)
+            { 
+                if (DateTime.Now.Subtract(_waitingonmissiontimer).TotalSeconds > 60)
+                {
+                    Logging.Log("AgentInteraction: WaitForMission: mission == null : waiting");
+                    _waitingonmissiontimer = DateTime.Now;
+                    if (Math.Round(DateTime.Now.Subtract(Cache.Instance.lastKnownGoodConnectedTime).TotalMinutes) > 7)
+                    {
+                        Cache.Instance.CloseQuestorCMDLogoff = false;
+                        Cache.Instance.CloseQuestorCMDExitGame = true;
+                        Cache.Instance.ReasonToStopQuestor = "AgentInteraction: WaitforMission: Journal would not open/refresh - mission was null: restarting EVE Session";
+                        Logging.Log(Cache.Instance.ReasonToStopQuestor);
+                        Cache.Instance.SessionState = "Quitting";
+                    }
+                }
+
                 return;
+            }
 
             var missionName = Cache.Instance.FilterPath(mission.Name);
 
@@ -394,7 +444,7 @@ namespace Questor.Modules
                     int secondsToWait = ((hours * 3600) + (minutes * 60) + 60);
                     var current_agent = Settings.Instance.AgentsList.FirstOrDefault(i => i.Name == Cache.Instance.CurrentAgent);
 
-                    if (standings <= minStandings && Cache.Instance.IsAgentLoop)
+                    if (standings <= minStandings && !Cache.Instance.IsAgentLoop)
                     {
                         _nextAgentAction = DateTime.Now.AddSeconds(secondsToWait);
                         Logging.Log("AgentInteraction: Current standings at or below minimum.  Waiting " + (secondsToWait / 60) + " minutes to try decline again.");
@@ -406,7 +456,7 @@ namespace Questor.Modules
                     }
 
                     //add timer to current agent
-                    if (!Cache.Instance.IsAgentLoop && Settings.Instance.MultiAgentSupport)
+                    if (Cache.Instance.IsAgentLoop && Settings.Instance.MultiAgentSupport)
                     {
                         current_agent.Decline_timer = DateTime.Now.AddSeconds(secondsToWait);
                         CloseConversation();

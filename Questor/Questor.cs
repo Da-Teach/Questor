@@ -46,9 +46,12 @@ namespace Questor
         private UnloadLoot _unloadLoot;
 
         private DateTime _lastAction;
+        private DateTime _lastOrbit;
         private DateTime _lastLocalWatchAction;
         private DateTime _lastWalletCheck;
         private DateTime _lastupdateofSessionRunningTime;
+        private DateTime _lastCheckWindowsAction;
+        private DateTime _lastTimeCheckAction;
         private DateTime _questorStarted;
         private Random _random;
         private int _randomDelay;
@@ -95,6 +98,7 @@ namespace Questor
             Cache.Instance.DirectEve = _directEve;
 
             Cache.Instance.StopTimeSpecified = Program.stopTimeSpecified;
+            Cache.Instance.MaxRuntime = Program.maxRuntime;
             Cache.Instance.StopTime = Program._stopTime;
             _questorStarted = DateTime.Now;
 
@@ -179,8 +183,6 @@ namespace Questor
             _salvage.LootEverything = Settings.Instance.LootEverything;
         }
 
-
-
         private void OnFrame(object sender, EventArgs e)
         {
             var watch = new Stopwatch();
@@ -253,7 +255,7 @@ namespace Questor
                             //
                             // Get the path
                             if (!Directory.Exists(Settings.Instance.SessionsLogPath)) 
-                            Directory.CreateDirectory(Settings.Instance.SessionsLogPath);
+                                Directory.CreateDirectory(Settings.Instance.SessionsLogPath);
 
                             // Write the header
                             if (!File.Exists(Settings.Instance.SessionsLogFile))
@@ -284,89 +286,93 @@ namespace Questor
                     }
                 }
             }
-            
-            foreach (var window in Cache.Instance.Windows)
+
+            if (DateTime.Now.Subtract(_lastCheckWindowsAction).TotalSeconds < (int)Time.CheckForWindows_seconds) //default is a 15 second interval
             {
-                // Telecom messages are generally mission info messages
-                if (window.Name == "telecom")
+                _lastCheckWindowsAction = DateTime.Now;
+                foreach (var window in Cache.Instance.Windows)
                 {
-                    Logging.Log("Questor: Closing telecom message...");
-                    Logging.Log("Questor: Content of telecom window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
-                    window.Close();
-                }
-
-                // Modal windows must be closed
-                // But lets only close known modal windows
-                if (window.Name == "modal")
-                {
-                    bool close = false;
-                    bool restart = false;
-                    if (!string.IsNullOrEmpty(window.Html))
+                    // Telecom messages are generally mission info messages
+                    if (window.Name == "telecom")
                     {
-                        // Server going down
-                        close |= window.Html.Contains("Please make sure your characters are out of harm");
-                        close |= window.Html.Contains("the servers are down for 30 minutes each day for maintenance and updates");
-                        if (window.Html.Contains("The socket was closed"))
-                        {
-                            Logging.Log("Questor: This window indicates we are disconnected: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
-                            //Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdLogOff); //this causes the questor window to not re-appear
-                            Cache.Instance.CloseQuestorCMDLogoff = false;
-                            Cache.Instance.CloseQuestorCMDExitGame = true;
-                            Cache.Instance.ReasonToStopQuestor = "The socket was closed";
-                            Cache.Instance.SessionState = "Quitting";
-                            State = QuestorState.CloseQuestor;
-                            break;
-                        }
-
-                        // In space "shit"
-                        close |= window.Html.Contains("Item cannot be moved back to a loot container.");
-                        close |= window.Html.Contains("you do not have the cargo space");
-                        close |= window.Html.Contains("cargo units would be required to complete this operation.");
-                        close |= window.Html.Contains("You are too far away from the acceleration gate to activate it!");
-                        close |= window.Html.Contains("maximum distance is 2500 meters");
-                        // Stupid warning, lets see if we can find it
-                        close |= window.Html.Contains("Do you wish to proceed with this dangerous action?");
-                        // Yes we know the mission isnt complete, Questor will just redo the mission
-                        close |= window.Html.Contains("Please check your mission journal for further information.");
-                        close |= window.Html.Contains("weapons in that group are already full");
-                        close |= window.Html.Contains("You have to be at the drop off location to deliver the items in person");
-                        // Lag :/
-                        close |= window.Html.Contains("This gate is locked!");
-                        close |= window.Html.Contains("The Zbikoki's Hacker Card");
-                        close |= window.Html.Contains(" units free.");
-                        close |= window.Html.Contains("already full");
-                        //
-                        // restart the client if these are encountered
-                        //
-                        restart |= window.Html.Contains("Local cache is corrupt");
-                        restart |= window.Html.Contains("Local session information is corrupt");
-                        restart |= window.Html.Contains("The connection to the server was closed"); 										//CONNECTION LOST
-                        restart |= window.Html.Contains("server was closed");  																//CONNECTION LOST
-                        restart |= window.Html.Contains("The socket was closed"); 															//CONNECTION LOST
-                        restart |= window.Html.Contains("The connection was closed"); 														//CONNECTION LOST
-                        restart |= window.Html.Contains("Connection to server lost"); 														//INFORMATION
-                        restart |= window.Html.Contains("The user connection has been usurped on the proxy"); 								//CONNECTION LOST
-                        restart |= window.Html.Contains("The transport has not yet been connected, or authentication was not successful"); 	//CONNECTION LOST
-                        //_pulsedelay = 20;
-                    }
-
-                    if (close)
-                    {
-                        Logging.Log("Questor: Closing modal window...");
-                        Logging.Log("Questor: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
+                        Logging.Log("Questor: Closing telecom message...");
+                        Logging.Log("Questor: Content of telecom window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
                         window.Close();
                     }
 
-                    if (restart)
+                    // Modal windows must be closed
+                    // But lets only close known modal windows
+                    if (window.Name == "modal")
                     {
-                        Logging.Log("Questor: Restarting eve...");
-                        Logging.Log("Questor: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
-                        Cache.Instance.CloseQuestorCMDLogoff = false;
-                        Cache.Instance.CloseQuestorCMDExitGame = true;
-                        Cache.Instance.ReasonToStopQuestor = "A message from ccp indicated we were disonnected";
-                        Cache.Instance.SessionState = "Quitting - lag";
-                        State = QuestorState.CloseQuestor;
-                        continue;
+                        bool close = false;
+                        bool restart = false;
+                        if (!string.IsNullOrEmpty(window.Html))
+                        {
+                            // Server going down
+                            close |= window.Html.Contains("Please make sure your characters are out of harm");
+                            close |= window.Html.Contains("the servers are down for 30 minutes each day for maintenance and updates");
+                            if (window.Html.Contains("The socket was closed"))
+                            {
+                                Logging.Log("Questor: This window indicates we are disconnected: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
+                                //Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdLogOff); //this causes the questor window to not re-appear
+                                Cache.Instance.CloseQuestorCMDLogoff = false;
+                                Cache.Instance.CloseQuestorCMDExitGame = true;
+                                Cache.Instance.ReasonToStopQuestor = "The socket was closed";
+                                Cache.Instance.SessionState = "Quitting";
+                                State = QuestorState.CloseQuestor;
+                                break;
+                            }
+
+                            // In space "shit"
+                            close |= window.Html.Contains("Item cannot be moved back to a loot container.");
+                            close |= window.Html.Contains("you do not have the cargo space");
+                            close |= window.Html.Contains("cargo units would be required to complete this operation.");
+                            close |= window.Html.Contains("You are too far away from the acceleration gate to activate it!");
+                            close |= window.Html.Contains("maximum distance is 2500 meters");
+                            // Stupid warning, lets see if we can find it
+                            close |= window.Html.Contains("Do you wish to proceed with this dangerous action?");
+                            // Yes we know the mission isnt complete, Questor will just redo the mission
+                            close |= window.Html.Contains("Please check your mission journal for further information.");
+                            close |= window.Html.Contains("weapons in that group are already full");
+                            close |= window.Html.Contains("You have to be at the drop off location to deliver the items in person");
+                            // Lag :/
+                            close |= window.Html.Contains("This gate is locked!");
+                            close |= window.Html.Contains("The Zbikoki's Hacker Card");
+                            close |= window.Html.Contains(" units free.");
+                            close |= window.Html.Contains("already full");
+                            //
+                            // restart the client if these are encountered
+                            //
+                            restart |= window.Html.Contains("Local cache is corrupt");
+                            restart |= window.Html.Contains("Local session information is corrupt");
+                            restart |= window.Html.Contains("The connection to the server was closed"); 										//CONNECTION LOST
+                            restart |= window.Html.Contains("server was closed");  																//CONNECTION LOST
+                            restart |= window.Html.Contains("The socket was closed"); 															//CONNECTION LOST
+                            restart |= window.Html.Contains("The connection was closed"); 														//CONNECTION LOST
+                            restart |= window.Html.Contains("Connection to server lost"); 														//INFORMATION
+                            restart |= window.Html.Contains("The user connection has been usurped on the proxy"); 								//CONNECTION LOST
+                            restart |= window.Html.Contains("The transport has not yet been connected, or authentication was not successful"); 	//CONNECTION LOST
+                            //_pulsedelay = 20;
+                        }
+
+                        if (close)
+                        {
+                            Logging.Log("Questor: Closing modal window...");
+                            Logging.Log("Questor: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
+                            window.Close();
+                        }
+
+                        if (restart)
+                        {
+                            Logging.Log("Questor: Restarting eve...");
+                            Logging.Log("Questor: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
+                            Cache.Instance.CloseQuestorCMDLogoff = false;
+                            Cache.Instance.CloseQuestorCMDExitGame = true;
+                            Cache.Instance.ReasonToStopQuestor = "A message from ccp indicated we were disonnected";
+                            Cache.Instance.SessionState = "Quitting - lag";
+                            State = QuestorState.CloseQuestor;
+                            continue;
+                        }
                     }
                 }
             }
@@ -511,12 +517,46 @@ namespace Questor
             switch (State)
             {
                 case QuestorState.Idle:
-                    if (Cache.Instance.StopTimeSpecified)
+
+                    // Every 5 min of idle check and make sure we arent supposed to stop... 
+                    if (Math.Round(DateTime.Now.Subtract(_lastTimeCheckAction).TotalMinutes) > 5)
                     {
-                        if (DateTime.Now >= Cache.Instance.StopTime)
+                        
+                        if (DateTime.Now.Subtract(_questorStarted).Minutes > Cache.Instance.MaxRuntime)
                         {
-                            Logging.Log("Questor: Time to stop.  Quitting game.");
-                            Cache.Instance.ReasonToStopQuestor = "StopTimeSpecified and reached.";
+                            _lastTimeCheckAction = DateTime.Now;
+                            // quit questor
+                            Logging.Log("Questor: Maximum runtime exceeded.  Quiting...");
+                            Cache.Instance.ReasonToStopQuestor = "Maximum runtime specified and reached.";
+                            AutoStart = false;
+                            Cache.Instance.CloseQuestorCMDLogoff = false;
+                            Cache.Instance.CloseQuestorCMDExitGame = true;
+                            Cache.Instance.SessionState = "Exiting";
+                            State = QuestorState.CloseQuestor;
+                            return;
+                        }
+                        if (Cache.Instance.StopTimeSpecified)
+                        {
+                            _lastTimeCheckAction = DateTime.Now;
+                            if (DateTime.Now >= Cache.Instance.StopTime)
+                            {
+                                Logging.Log("Questor: Time to stop.  Quitting game.");
+                                Cache.Instance.ReasonToStopQuestor = "StopTimeSpecified and reached.";
+                                AutoStart = false;
+                                Cache.Instance.CloseQuestorCMDLogoff = false;
+                                Cache.Instance.CloseQuestorCMDExitGame = true;
+                                Cache.Instance.SessionState = "Exiting";
+                                State = QuestorState.CloseQuestor;
+                                return;
+                            }
+                        }
+                        if (ExitWhenIdle && !AutoStart)
+                        {
+                            
+                            //LavishScript.ExecuteCommand("exit");
+                            Cache.Instance.ReasonToStopQuestor = "Settings: ExitWhenIdle is true, and we are idle... exiting";
+                            Logging.Log(Cache.Instance.ReasonToStopQuestor);
+                            AutoStart = false;
                             Cache.Instance.CloseQuestorCMDLogoff = false;
                             Cache.Instance.CloseQuestorCMDExitGame = true;
                             Cache.Instance.SessionState = "Exiting";
@@ -534,13 +574,6 @@ namespace Questor
                         break;
                     }
 
-                    if (DateTime.Now.Subtract(Program.startTime).Minutes > Program.maxRuntime)
-                    {
-                        // quit questor
-                        Logging.Log("Questor: Maximum runtime exceeded.  Quiting...");
-                        Application.Exit();
-                    }
-                    
                     mission = Cache.Instance.GetAgentMission(Cache.Instance.AgentId);
                     if (!string.IsNullOrEmpty(Mission) && (mission == null || mission.Name != Mission || mission.State != (int)MissionState.Accepted))
                     {
@@ -555,7 +588,7 @@ namespace Questor
                         if (Settings.Instance.MissionStats1Log)
                         {
                             if (!Directory.Exists(Settings.Instance.MissionStats1LogPath)) 
-                            Directory.CreateDirectory(Settings.Instance.MissionStats1LogPath);
+                                Directory.CreateDirectory(Settings.Instance.MissionStats1LogPath);
 
                             // Write the header
                             if (!File.Exists(Settings.Instance.MissionStats1LogFile))
@@ -573,12 +606,12 @@ namespace Questor
 
                             // The mission is finished
                             File.AppendAllText(Settings.Instance.MissionStats1LogFile, line);
-                            Logging.Log("Questor: is writing mission log1 to  [ " + Settings.Instance.MissionStats1LogFile);
+                            Logging.Log("Questor: writing mission log1 to  [ " + Settings.Instance.MissionStats1LogFile);
                         }
                         if (Settings.Instance.MissionStats2Log)
                         {
                             if (!Directory.Exists(Settings.Instance.MissionStats2LogPath)) 
-                            Directory.CreateDirectory(Settings.Instance.MissionStats2LogPath);
+                                Directory.CreateDirectory(Settings.Instance.MissionStats2LogPath);
 
                             // Write the header
                             if (!File.Exists(Settings.Instance.MissionStats2LogFile))
@@ -596,13 +629,13 @@ namespace Questor
                             line2 += ((int)AmmoValue) + ";\r\n";                                                // Ammo Value
 
                             // The mission is finished
-                            Logging.Log("Questor: is writing mission log2 to [ " + Settings.Instance.MissionStats2LogFile);
+                            Logging.Log("Questor: writing mission log2 to [ " + Settings.Instance.MissionStats2LogFile);
                             File.AppendAllText(Settings.Instance.MissionStats2LogFile, line2);
                         }
                         if (Settings.Instance.MissionStats3Log)
                         {
                             if (!Directory.Exists(Settings.Instance.MissionStats3LogPath)) 
-                            Directory.CreateDirectory(Settings.Instance.MissionStats3LogPath);
+                                Directory.CreateDirectory(Settings.Instance.MissionStats3LogPath);
 
                             // Write the header
                             if (!File.Exists(Settings.Instance.MissionStats3LogFile))
@@ -628,7 +661,7 @@ namespace Questor
 
 
                             // The mission is finished
-                            Logging.Log("Questor: is writing mission log3 to  [ " + Settings.Instance.MissionStats3LogFile);
+                            Logging.Log("Questor: writing mission log3 to  [ " + Settings.Instance.MissionStats3LogFile);
                             File.AppendAllText(Settings.Instance.MissionStats3LogFile, line3);
                         }
                         // Disable next log line
@@ -659,18 +692,6 @@ namespace Questor
                             State = QuestorState.Cleanup;
                             return;
                         }
-
-                    }
-                    else if (ExitWhenIdle)
-                    {
-                        //LavishScript.ExecuteCommand("exit");
-                        Cache.Instance.ReasonToStopQuestor = "Settings: ExitWhenIdle is true, and we are idle... exiting";
-                        Logging.Log(Cache.Instance.ReasonToStopQuestor);
-                        Cache.Instance.CloseQuestorCMDLogoff = false;
-                        Cache.Instance.CloseQuestorCMDExitGame = true;
-                        Cache.Instance.SessionState = "Exiting";
-                        State = QuestorState.CloseQuestor;
-                        return;
                     }
                     break;
 
@@ -754,6 +775,10 @@ namespace Questor
                         Cache.Instance.lowest_armor_percentage_this_mission = 101;
                         Cache.Instance.lowest_capacitor_percentage_this_mission = 101;
                         Cache.Instance.repair_cycle_time_this_mission = 0;
+                        Cache.Instance.TimeSpentReloading_seconds = 0;   // this will need to be added to whenever we reload or switch ammo
+                        Cache.Instance.TimeSpentInMission_seconds = 0;   // from landing on grid (loading mission actions) to going to base (changing to gotbase state)
+                        Cache.Instance.TimeSpentInMissionInRange = 0;    // time spent toally out of range, no targets
+                        Cache.Instance.TimeSpentInMissionOutOfRange = 0; // time sprnt in range - with targets to kill (or no targets?!)
                     }
 
                     _agentInteraction.ProcessState();
@@ -1071,7 +1096,12 @@ namespace Questor
                     }
                     else if (structure != null && structure.Distance < (int)Distance.TooCloseToStructure)
                     {
-                        structure.Orbit((int)Distance.SafeDistancefromStructure);
+                        if ((DateTime.Now.Subtract(_lastOrbit).TotalSeconds > 15))
+                        {
+                            structure.Orbit((int)Distance.SafeDistancefromStructure);
+                            Logging.Log("Questor: GotoBase: initiating Orbit of [" + structure.Name + "] orbiting at [" + Cache.Instance.OrbitDistance + "]");
+                            _lastOrbit = DateTime.Now;
+                        }
                     }
                     else
                     {
@@ -1189,7 +1219,7 @@ namespace Questor
                             // Get the path
 
                             if (!Directory.Exists(Settings.Instance.SessionsLogPath))
-                            Directory.CreateDirectory(Settings.Instance.SessionsLogPath);
+                                Directory.CreateDirectory(Settings.Instance.SessionsLogPath);
 
                             Cache.Instance.SessionIskPerHrGenerated = ((int)Cache.Instance.SessionIskGenerated / (DateTime.Now.Subtract(_questorStarted).TotalMinutes / 60));
                             Cache.Instance.SessionLootPerHrGenerated = ((int)Cache.Instance.SessionLootGenerated / (DateTime.Now.Subtract(_questorStarted).TotalMinutes / 60));
@@ -1453,7 +1483,27 @@ namespace Questor
                         if (_combat.State != CombatState.OutOfAmmo && Settings.Instance.AfterMissionSalvaging && Cache.Instance.BookmarksByLabel(Settings.Instance.BookmarkPrefix + " ").Count > 0 && (mission == null || mission.State == (int)MissionState.Offered))
                         {
                             FinishedMission = DateTime.Now;
-                            State = QuestorState.BeginAfterMissionSalvaging;
+                            if (Settings.Instance.SalvageMultpleMissionsinOnePass) // Salvage only after multiple missions have been completed
+                            {   
+                                //if we can still complete another mission before the Wrecks disappear and still have time to salvage
+                                if (DateTime.Now.Subtract(FinishedSalvaging).Minutes > ((int)Time.WrecksDisappearAfter_minutes - (int)Time.AverageTimeToCompleteAMission_minutes - (int)Time.AverageTimetoSalvageMultipleMissions_minutes))
+                                {
+                                    Logging.Log("Questor: UnloadLoot: The last after mission salvaging session was [" + DateTime.Now.Subtract(FinishedSalvaging).Minutes + "] ago ");
+                                    Logging.Log("Questor: UnloadLoot: we are after mision salvaging again because it has been at least [" + ((int)Time.WrecksDisappearAfter_minutes - (int)Time.AverageTimeToCompleteAMission_minutes - (int)Time.AverageTimetoSalvageMultipleMissions_minutes) + "] min since the last session. ");
+                                    State = QuestorState.BeginAfterMissionSalvaging;
+                                }
+                                else
+                                {
+                                    Logging.Log("Questor: UnloadLoot: The last after mission salvaging session was [" + DateTime.Now.Subtract(FinishedSalvaging).Minutes + "] ago ");
+                                    Logging.Log("Questor: UnloadLoot: we are going to the next mission because it has not been [" + ((int)Time.WrecksDisappearAfter_minutes - (int)Time.AverageTimeToCompleteAMission_minutes - (int)Time.AverageTimetoSalvageMultipleMissions_minutes) + "] min since the last session. ");
+                                    FinishedMission = DateTime.Now;
+                                    State = QuestorState.Idle;
+                                }
+                            }
+                            else // Normal Salvaging
+                            {
+                                State = QuestorState.BeginAfterMissionSalvaging;
+                            }
                             return;
                         }
                         else if (_combat.State == CombatState.OutOfAmmo)
@@ -1461,7 +1511,7 @@ namespace Questor
                             State = QuestorState.Start;
                             return;
                         }
-                        else
+                        else //If we arent after mission salvaging and we arent out of ammo we must be done. 
                         {
                             FinishedMission = DateTime.Now;
                             StartedSalvaging = DateTime.Now;
@@ -1598,8 +1648,10 @@ namespace Questor
                             closestWreck.Approach();
                     }
                     else if (closestWreck.Distance <= (int)Distance.SafeScoopRange && Cache.Instance.Approaching != null)
+                    {
                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
-
+                        Logging.Log("Questor: Salvage: Stop ship, ClosestWreck [" + closestWreck.Distance + "] is in scooprange + [" + (int)Distance.SafeScoopRange + "] and we were approaching");
+                    }
                     try
                     {
                         // Overwrite settings, as the 'normal' settings do not apply
@@ -1696,6 +1748,7 @@ namespace Questor
                 //    }
                 //    else if (closestWreck2.Distance <= (int)Distance.SafeScoopRange && Cache.Instance.Approaching != null)
                 //        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                //        Logging.Log("Questor: ScoopStep3WaitForWrecks: Stop ship, ClosestWreck [" + closestWreck2.Distance + "] is in scooprange + [" + (int)Distance.SafeScoopRange + "] and we were approaching");
                 //
                 //    try
                 //    {
@@ -1878,7 +1931,10 @@ namespace Questor
                             closestWreck.Approach();
                     }
                     else if (closestWreck.Distance <= (int)Distance.SafeScoopRange && Cache.Instance.Approaching != null)
+                    {
                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                        Logging.Log("Questor: SalvageOnly: Stop ship, ClosestWreck [" + closestWreck.Distance + "] is in scooprange + [" + (int)Distance.SafeScoopRange + "] and we were approaching");
+                    }
 
                     try
                     {
@@ -1962,7 +2018,11 @@ namespace Questor
                             closestWreck.Approach();
                     }
                     else if (closestWreck.Distance <= (int)Distance.SafeScoopRange && Cache.Instance.Approaching != null)
+                    {
                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                        Logging.Log("Questor: SalvageOnlyBookmarks: Stop ship, ClosestWreck [" + closestWreck.Distance + "] is in scooprange + [" + (int)Distance.SafeScoopRange + "] and we were approaching");
+                    }
+
                     try
                     {
                         // Overwrite settings, as the 'normal' settings do not apply

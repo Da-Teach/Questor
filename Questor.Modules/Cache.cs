@@ -176,6 +176,10 @@ namespace Questor.Modules
         public bool CourierMission = false;
         public string MissionName = "";
         public bool ConsoleLogOpened = false;
+        public int TimeSpentReloading_seconds = 0;
+        public int TimeSpentInMission_seconds = 0;
+        public int TimeSpentInMissionInRange = 0;
+        public int TimeSpentInMissionOutOfRange = 0;
 
         public bool Local_safe(int max_bad, double stand)
         {
@@ -217,7 +221,7 @@ namespace Questor.Modules
         public DamageType DamageType { get; set; }
 
         /// <summary>
-        ///   Best orbit distancefor the mission
+        ///   Best orbit distance for the mission
         /// </summary>
         public int OrbitDistance { get; set; }
 		
@@ -311,10 +315,10 @@ namespace Questor.Modules
                 if(agent == null)
                 {
                     agent = Settings.Instance.AgentsList.OrderBy(j => j.Priorit).FirstOrDefault();
-                    IsAgentLoop = true;
+                    IsAgentLoop = true; //this literally means we have no agents available at the moment (decline timer likely)
                 }
                 else
-                    IsAgentLoop = false;
+                    IsAgentLoop = false; //this literally means we DO have agents available (at least one agents decline timer has expired and is clear to use)
 
                 return agent.Name;
             }
@@ -600,6 +604,7 @@ namespace Questor.Modules
         public bool? MissionUseDrones;
         public bool StopTimeSpecified { get; set; }
         public DateTime StopTime { get; set; }
+        public int MaxRuntime { get; set; }
         public bool CloseQuestorCMDLogoff = false;
         public bool CloseQuestorCMDExitGame = true;
         public string ReasonToStopQuestor { get; set; }

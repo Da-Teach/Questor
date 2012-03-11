@@ -58,11 +58,13 @@ namespace Questor.Modules
                     break;
 
                 case ArmState.NotEnoughDrones:
+                    //This is logged in questor.cs - do not double log
                     //Logging.Log("Arm: Armstate.NotEnoughDrones");
                     //State = ArmState.Idle;
                     break;
                 
                 case ArmState.NotEnoughAmmo:
+                    //This is logged in questor.cs - do not double log
                     //Logging.Log("Arm: Armstate.NotEnoughAmmo");
                     //State = ArmState.Idle;
                     break;

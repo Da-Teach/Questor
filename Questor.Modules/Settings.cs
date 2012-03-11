@@ -93,6 +93,7 @@ namespace Questor.Modules
 		public string LootContainer { get; set; }
 
         public bool CreateSalvageBookmarks { get; set; }
+        public bool SalvageMultpleMissionsinOnePass { get; set; }
         public string BookmarkPrefix { get; set; }
         public string UndockPrefix { get; set; }
         public int UndockDelay { get; set; }
@@ -225,17 +226,6 @@ namespace Questor.Modules
 
         public int? WindowXPosition { get; set; }
         public int? WindowYPosition { get; set; }
-
-        //Priority List
-        public int PriorityLevelOfWarpScrambling { get; set; }
-        public int PriorityLevelOfWebbing { get; set; }
-        public int PriorityLevelOfTargetPainting { get; set; }
-        public int PriorityLevelOfNeutralizing { get; set; }
-        public int PriorityLevelOfJamming { get; set; }
-        public int PriorityLevelOfDampening { get; set; }
-        public int PriorityLevelOfTrackingDistrupting { get; set; }
-        public int PriorityLevelOfPriorityKillTarget { get; set; }
-
         public event EventHandler<EventArgs> SettingsLoaded;
 
         public void LoadSettings()
@@ -336,15 +326,6 @@ namespace Questor.Modules
                 DroneRecallCapacitorPct = 0;
                 LongRangeDroneRecallCapacitorPct = 0;
 
-                PriorityLevelOfWarpScrambling = 0;
-                PriorityLevelOfWebbing = 0;
-                PriorityLevelOfTargetPainting = 0;
-                PriorityLevelOfNeutralizing = 0;
-                PriorityLevelOfJamming = 0;
-                PriorityLevelOfDampening = 0;
-                PriorityLevelOfTrackingDistrupting = 0;
-                PriorityLevelOfPriorityKillTarget = 0;
-
                 UseGatesInSalvage = false;
 
                 Blacklist.Clear();
@@ -409,6 +390,7 @@ namespace Questor.Modules
             BookmarkPrefix = (string) xml.Element("bookmarkPrefix") ?? "Salvage:";
             MinimumWreckCount = (int?) xml.Element("minimumWreckCount") ?? 1;
             AfterMissionSalvaging = (bool?) xml.Element("afterMissionSalvaging") ?? false;
+            SalvageMultpleMissionsinOnePass = (bool?)xml.Element("salvageMultpleMissionsinOnePass") ?? false;
             UnloadLootAtStation = (bool?) xml.Element("unloadLootAtStation") ?? false;
 
             //AgentName = (string) xml.Element("agentName");
@@ -546,15 +528,6 @@ namespace Questor.Modules
             LongRangeDroneRecallShieldPct = (int?) xml.Element("longRangeDroneRecallShieldPct") ?? 0;
             LongRangeDroneRecallArmorPct = (int?) xml.Element("longRangeDroneRecallArmorPct") ?? 0;
             LongRangeDroneRecallCapacitorPct = (int?) xml.Element("longRangeDroneRecallCapacitorPct") ?? 0;
-
-            PriorityLevelOfWarpScrambling = (int?)xml.Element("warpScrammingPriority") ?? 0;
-            PriorityLevelOfWebbing = (int?)xml.Element("webbingPriority") ?? 1;
-            PriorityLevelOfTargetPainting = (int?)xml.Element("targetPaintingPriority") ?? 2;
-            PriorityLevelOfNeutralizing = (int?)xml.Element("neutPriority") ?? 3;
-            PriorityLevelOfJamming = (int?)xml.Element("jammingPriority") ?? 4;
-            PriorityLevelOfDampening = (int?)xml.Element("dampeningPriority") ?? 5;
-            PriorityLevelOfTrackingDistrupting = (int?)xml.Element("trackingDistruptingPriority") ?? 6;
-            PriorityLevelOfPriorityKillTarget = (int?)xml.Element("priorityKillTargetPriority") ?? 7;
 
             MaterialsForWarOreID = (int?)xml.Element("MaterialsForWarOreID") ?? 20;
             MaterialsForWarOreQty = (int?)xml.Element("MaterialsForWarOreQty") ?? 8000;

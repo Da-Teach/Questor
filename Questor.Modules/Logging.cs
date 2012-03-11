@@ -27,7 +27,7 @@ namespace Questor.Modules
                     if (Settings.Instance.ConsoleLogPath != null && Settings.Instance.ConsoleLogFile != null)
                     {
                         if (!Directory.Exists(Settings.Instance.ConsoleLogPath)) 
-                        Directory.CreateDirectory(Settings.Instance.ConsoleLogPath);
+                            Directory.CreateDirectory(Settings.Instance.ConsoleLogPath);
 
                         line = "Questor: Writing to Daily Console Log ";
                         InnerSpace.Echo(string.Format("{0:HH:mm:ss} {1}", DateTime.Now, line));
