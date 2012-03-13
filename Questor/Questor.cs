@@ -52,6 +52,7 @@ namespace Questor
         private DateTime _lastupdateofSessionRunningTime;
         private DateTime _lastCheckWindowsAction;
         private DateTime _lastTimeCheckAction;
+        private DateTime _lastWarpTo;
         private DateTime _questorStarted;
         private Random _random;
         private int _randomDelay;
@@ -1642,7 +1643,13 @@ namespace Questor
                     if (closestWreck.Distance > (int)Distance.SafeScoopRange && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closestWreck.Id))
                     {
                         if (closestWreck.Distance > (int)Distance.WarptoDistance)
-                            closestWreck.WarpTo();
+                        {
+                            if (DateTime.Now.Subtract(_lastWarpTo).TotalSeconds > 10)
+                            {
+                                closestWreck.WarpTo();
+
+                            }
+                        }
                         else
                             closestWreck.Approach();
                     }
@@ -1805,7 +1812,11 @@ namespace Questor
                     else
                     {
                         // Probably never happens
-                        closest.WarpTo();
+                        if (DateTime.Now.Subtract(_lastWarpTo).TotalSeconds > 10)
+                        {
+                            closest.WarpTo();
+                            _lastWarpTo = DateTime.Now;
+                        }
                     }
                     _lastPulse = DateTime.Now.AddSeconds(10);
                     break;
@@ -1925,7 +1936,11 @@ namespace Questor
                     if (closestWreck.Distance > (int)Distance.SafeScoopRange && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closestWreck.Id))
                     {
                         if (closestWreck.Distance > (int)Distance.WarptoDistance)
-                            closestWreck.WarpTo();
+                            if (DateTime.Now.Subtract(_lastWarpTo).TotalSeconds > 10)
+                            {
+                                closestWreck.WarpTo();
+                                _lastWarpTo = DateTime.Now;
+                            }
                         else
                             closestWreck.Approach();
                     }
@@ -2012,7 +2027,11 @@ namespace Questor
                     if (closestWreck.Distance > (int)Distance.SafeScoopRange && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closestWreck.Id))
                     {
                         if (closestWreck.Distance > (int)Distance.WarptoDistance)
-                            closestWreck.WarpTo();
+                            if (DateTime.Now.Subtract(_lastWarpTo).TotalSeconds > 10)
+                            {
+                                closestWreck.WarpTo();
+                                _lastWarpTo = DateTime.Now;
+                            }
                         else
                             closestWreck.Approach();
                     }

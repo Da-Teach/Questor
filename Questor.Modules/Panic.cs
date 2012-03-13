@@ -21,6 +21,7 @@ namespace Questor.Modules
         private double _lastNormalZ;
 
         private DateTime _resumeTime;
+        private DateTime _lastWarpTo;
         private bool _delayedResume;
         private int _randomDelay;
 
@@ -172,7 +173,13 @@ namespace Questor.Modules
                             break;
 
                         if (station.Distance > (int)Distance.WarptoDistance)
-                            station.WarpTo();
+                        {
+                            if (DateTime.Now.Subtract(_lastWarpTo).TotalSeconds > 5)
+                            {
+                                station.WarpTo();
+                                _lastWarpTo = DateTime.Now;
+                            }
+                        }
                         else
                             station.Dock();
 
@@ -187,8 +194,13 @@ namespace Questor.Modules
                     {
                         if (Cache.Instance.InWarp)
                             break;
-
-                        Cache.Instance.Star.WarpTo();
+                        
+                        if (DateTime.Now.Subtract(_lastWarpTo).TotalSeconds > 5)
+                        {
+                            Cache.Instance.Star.WarpTo();
+                            _lastWarpTo = DateTime.Now;
+                        }
+                        
                     }
                     else
                     {
