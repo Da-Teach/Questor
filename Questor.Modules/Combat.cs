@@ -305,7 +305,7 @@ namespace Questor.Modules
                 }
             }
 
-            if (DontMoveMyShip) //why would we want the ship to move if we arent speed tanking and the mission XML isnt telling us to move?
+            if (!DontMoveMyShip) //why would we want the ship to move if we arent speed tanking and the mission XML isnt telling us to move?
             {
                 if (!Settings.Instance.SpeedTank) //we need to make sure that orbitrange is set to the range of the ship if it isnt specified in the character XML!!!!
                 {
