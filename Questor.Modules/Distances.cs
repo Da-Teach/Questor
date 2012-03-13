@@ -13,8 +13,8 @@ namespace Questor.Modules
     {
         ScoopRange = 2490,
         SafeScoopRange = ScoopRange - 700,
-        TooCloseToStructure = 3000,
-        SafeDistancefromStructure = 3000,
+        TooCloseToStructure = 4000,
+        SafeDistancefromStructure = 10000,
         WarptoDistance = 152000,
         NextPocketDistance = 100000, // If we moved more then 100km, assume next Pocket
         GateActivationRange = 2300,
