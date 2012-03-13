@@ -288,30 +288,57 @@ namespace Questor.Modules
         /// </summary>
         private void ActivateWeapons(EntityCache target)
         {
+            var DontMoveMyShip = true; // This may become an  XML setting at some point. 
+            //
+            // Do we really want a non-mission action moving the ship around at all!! (other than speed tanking)?
+            //
+            // Get lowest range
+            var range = Math.Min(Cache.Instance.WeaponRange, Cache.Instance.DirectEve.ActiveShip.MaxTargetRange);
 
             if (Settings.Instance.SpeedTank && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id))
             {
                 if ((DateTime.Now.Subtract(_lastOrbit).TotalSeconds > 15))
                 {
                     target.Orbit(Cache.Instance.OrbitDistance);
-                    Logging.Log("Combat: ActivateWeapons: Orbiting [" + target.Name + "]");
+                    Logging.Log("Combat.ActivateWeapons: Initiating Orbit [" + target.Name + "][" + target.Id + "]");
                     _lastOrbit = DateTime.Now;
                 }
             }
 
-            if (!Settings.Instance.SpeedTank && Cache.Instance.NormalApproch)
+            if (DontMoveMyShip) //why would we want the ship to move if we arent speed tanking and the mission XML isnt telling us to move?
             {
-                if (target.Distance > Cache.Instance.OrbitDistance + (int)Distance.OrbitDistanceCushion && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id))
+                if (!Settings.Instance.SpeedTank) //we need to make sure that orbitrange is set to the range of the ship if it isnt specified in the character XML!!!!
                 {
-                    target.Approach(Cache.Instance.OrbitDistance);
-                    Logging.Log("Combat.ActivateWeapons: Approaching target [" + target.Name + "][" + target.Id + "]");
-                }
+                    if (Settings.Instance.OptimalRange >= 0)
+                    {
+                        if (target.Distance > Settings.Instance.OptimalRange + (int)Distance.OptimalRangeCushion && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id))
+                        {
+                            target.Approach(Settings.Instance.OptimalRange);
+                            Logging.Log("Combat.ActivateWeapons:: Using Optimal Range: Approaching target [" + target.Name + "][" + target.Id + "]");
+                        }
 
-                if (target.Distance <= Cache.Instance.OrbitDistance && Cache.Instance.Approaching != null)
-                {
-                    Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
-                    Cache.Instance.Approaching = null;
-                    Logging.Log("Combat.ActivateWeapons: Stop ship, target is in orbit range");
+                        if (target.Distance <= Settings.Instance.OptimalRange && Cache.Instance.Approaching != null)
+                        {
+                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                            Cache.Instance.Approaching = null;
+                            Logging.Log("Combat.ActivateWeapons: Using Optimal Range: Stop ship, target is in orbit range");
+                        }
+                    }
+                    else
+                    {
+                        if (target.Distance > range && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id))
+                        {
+                            target.Approach((int)(Cache.Instance.WeaponRange * 0.8d));
+                            Logging.Log("Combat.ActivateWeapons: Using Weapons Range: Approaching target [" + target.Name + "][" + target.Id + "]");
+                        }
+
+                        if (target.Distance <= range && Cache.Instance.Approaching != null)
+                        {
+                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
+                            Cache.Instance.Approaching = null;
+                            Logging.Log("Combat.ActivateWeapons: Using Weapons Range: Stop ship, target is in orbit range");
+                        }
+                    }
                 }
             }
 
