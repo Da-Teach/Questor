@@ -340,7 +340,7 @@ namespace Questor.Modules
                         Logging.Log("MissionController: ReloadALL: Reload if [" + target_null + "] && [" + targetedby + "] == 0 AND [" + target.Distance + "] < [" + range + "]");
                         ReloadAll();
                         _lastReload = DateTime.Now;
-					}
+                    }
 
                     if (Cache.Instance.DirectEve.ActiveShip.MaxLockedTargets > 0)
                     {
@@ -1323,6 +1323,10 @@ namespace Questor.Modules
 
                 case ActionState.MoveToBackground:
                     MoveToBackgroundAction(action);
+                    break;
+                
+                case ActionState.ClearWithinWeaponsRangeOnly:
+                    ClearWithinWeaponsRangeOnlyAction(action);
                     break;
 
                 case ActionState.Loot:
