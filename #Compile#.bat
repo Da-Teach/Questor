@@ -9,10 +9,12 @@ set msbuild4=%systemroot%\Microsoft.Net\FrameWork\v4.0.30319\msbuild.exe
 ::
 
 ::
-:: clear existing DLLs and EVEs from the previous build
+:: clear existing DLLs and EVEs from the previous build(s)
 ::
-del .\questor\bin\debug\*.* /Q
-del .\questor.modules\bin\debug\*.* /Q
+del .\bin\debug\*.* /Q
+del .\bin\debug\*.* /Q
+del .\bin\release\*.* /Q
+del .\bin\release\*.* /Q
 ::
 :: Build Project 1
 ::
@@ -58,7 +60,8 @@ pause
 ::
 set nameofproject=QuestorManager
 set csproj=.\QuestorManager\QuestorManager.csproj
-"%msbuild4%" "%csproj%" /p:configuration="%releasetype%" /target:Clean;Build
+::"%msbuild4%" "%csproj%" /p:configuration="%releasetype%" /target:Clean;Build
+"%msbuild4%" "%csproj%" /p:configuration="%releasetype%"
 Echo Done building %nameofproject% - see above for any errors - 6 of 7 builds
 pause
 ::
@@ -78,28 +81,26 @@ pause
 ::%pathtomsbuild4%\msbuild %%csproj% /p:configuration="%releasetype%" /target:Clean;Build
 ::Echo Done building %nameofproject% - see above for any errors - 7 of 7 builds
 ::pause
+
 if not exist output mkdir output >>nul 2>>nul
 :: Echo deleting old build from the output directory
 del .\output\*.exe /Q >>nul 2>>nul
 del .\output\*.dll /Q >>nul 2>>nul
-del .\output\*.xml /Q >>nul 2>>nul
+::
+:: DO NOT delete the XMLs as this is the ONLY directory they exist in now. 
+::
+::del .\output\*.xml /Q >>nul 2>>nul
 
-:: Echo Adding new build to the output directory
-copy .\questor\bin\debug\*.exe .\output\*.exe >>nul 2>>nul
-copy .\questor\bin\debug\*.dll .\output\*.dll >>nul 2>>nul
-copy .\gotobm\bin\debug\*.exe .\output\*.exe >>nul 2>>nul
-copy .\questorstatistics\bin\debug\*.exe .\output\*.exe >>nul 2>>nul
-copy .\updateinvtypes\bin\debug\*.exe .\output\*.exe >>nul 2>>nul
-copy .\valuedump\bin\debug\*.exe .\output\*.exe >>nul 2>>nul
-copy .\BuyLPI\bin\debug\*.exe .\output\*.exe >>nul 2>>nul
-copy .\Traveler\bin\debug\*.exe .\output\*.exe >>nul 2>>nul
-copy .\QuestorManager\bin\debug\*.exe .\output\*.exe >>nul 2>>nul
-::copy .\QuestorSettings\bin\debug\*.exe .\output\*.exe >>nul 2>>nul
-Echo Copying mostly static files...
-copy .\questor\invtypes.xml .\output\
-copy .\questor\ShipTargetValues.xml .\output\
-copy .\questor\factions.xml .\output\
-copy .\questor\settings.xml .\output\settings-template-rename-to-charactername.xml
+::
+:: Eventually all EXEs and DLLs will be in the following common directory...
+::
+copy .\bin\%releasetype%\*.exe .\output\ >>nul 2>>nul
+copy .\bin\%releasetype%\*.dll .\output\ >>nul 2>>nul
+::Echo Copying mostly static files...
+::copy .\questor\invtypes.xml .\output\
+::copy .\questor\ShipTargetValues.xml .\output\
+::copy .\questor\factions.xml .\output\
+::copy .\questor\settings.xml .\output\settings-template-rename-to-charactername.xml
 Echo.
 Echo use #TransferToLiveCopy#.bat to move the new build into place for testing 
 Echo.
