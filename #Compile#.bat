@@ -20,7 +20,7 @@ del .\bin\release\*.* /Q
 ::
 set nameofproject=BUYLPI
 set csproj=.\BuyLPI\BuyLPI.csproj
-"%msbuild35%" "%csproj%" /p:configuration="%releasetype%" /target:Clean;Build
+"%msbuild4%" "%csproj%" /p:configuration="%releasetype%" /target:Clean;Build
 Echo Done building %nameofproject% - see above for any errors - 1 of 7 builds
 pause
 ::
@@ -28,7 +28,7 @@ pause
 ::
 set nameofproject=Questor
 set csproj=.\questor\Questor.csproj
-"%msbuild35%" "%csproj%" /p:configuration="%releasetype%" /target:Clean;Build
+"%msbuild4%" "%csproj%" /p:configuration="%releasetype%" /target:Clean;Build
 Echo Done building %nameofproject% - see above for any errors - 2 of 7 builds
 pause
 ::
@@ -36,7 +36,7 @@ pause
 ::
 set nameofproject=Questor.Modules
 set csproj=.\Questor.Modules\Questor.Modules.csproj
-"%msbuild35%" "%csproj%" /p:configuration="%releasetype%" /target:Clean;Build
+"%msbuild4%" "%csproj%" /p:configuration="%releasetype%" /target:Clean;Build
 Echo Done building %nameofproject% - see above for any errors - 3 of 7 builds
 pause
 ::
@@ -44,7 +44,7 @@ pause
 ::
 set nameofproject=updateinvtypes
 set csproj=.\updateinvtypes\UpdateInvTypes.csproj
-"%msbuild35%" "%csproj%" /p:configuration="%releasetype%" /target:Clean;Build
+"%msbuild4%" "%csproj%" /p:configuration="%releasetype%" /target:Clean;Build
 Echo Done building %nameofproject% - see above for any errors - 4 of 7 builds
 pause
 ::
@@ -52,7 +52,7 @@ pause
 ::
 set nameofproject=valuedump
 set csproj=.\valuedump\ValueDump.csproj
-"%msbuild35%" "%csproj%" /p:configuration="%releasetype%" /target:Clean;Build
+"%msbuild4%" "%csproj%" /p:configuration="%releasetype%" /target:Clean;Build
 Echo Done building %nameofproject% - see above for any errors - 5 of 7 builds
 pause
 ::
