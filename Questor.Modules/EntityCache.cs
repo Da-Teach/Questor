@@ -597,7 +597,7 @@ namespace Questor.Modules
                 _directEntity.WarpToAndDock();
         }
 
-        internal void Dock()
+        public void Dock()
         {
             if (_directEntity != null)
                 _directEntity.Dock();
