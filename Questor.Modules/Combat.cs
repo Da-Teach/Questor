@@ -309,7 +309,7 @@ namespace Questor.Modules
             {
                 if (!Settings.Instance.SpeedTank) //we need to make sure that orbitrange is set to the range of the ship if it isnt specified in the character XML!!!!
                 {
-                    if (Settings.Instance.OptimalRange >= 0)
+                    if (Settings.Instance.OptimalRange != 0)
                     {
                         if (target.Distance > Settings.Instance.OptimalRange + (int)Distance.OptimalRangeCushion && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id))
                         {

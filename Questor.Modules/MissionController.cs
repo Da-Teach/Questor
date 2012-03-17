@@ -311,9 +311,17 @@ namespace Questor.Modules
         {
             if (!Cache.Instance.NormalApproch)
                 Cache.Instance.NormalApproch = true;
-            
+
+            int distancetoclear;
+            if (!int.TryParse(action.GetParameterValue("distance"), out distancetoclear))
+                distancetoclear = (int)Distance.GateActivationRange;
+
             // Get lowest range
             var range = Math.Min(Cache.Instance.WeaponRange, Cache.Instance.DirectEve.ActiveShip.MaxTargetRange);
+            if (distancetoclear != 0 && distancetoclear != -2147483648 && distancetoclear != 2147483647)
+            {
+                range = Math.Min(range, distancetoclear);
+            }
 
             // Is there a priority target out of range?
             var target = Cache.Instance.PriorityTargets.OrderBy(t => t.Distance).Where(t => !(Cache.Instance.IgnoreTargets.Contains(t.Name.Trim()) && !Cache.Instance.TargetedBy.Any(w => w.IsWarpScramblingMe || w.IsNeutralizingMe || w.IsWebbingMe))).FirstOrDefault();
@@ -381,7 +389,7 @@ namespace Questor.Modules
 
                 if (!Settings.Instance.SpeedTank) //we need to make sure that orbitrange is set to the range of the ship if it isnt specified in the character XML!!!!
                 {
-                    if (Settings.Instance.OptimalRange >= 0)
+                    if (Settings.Instance.OptimalRange != 0)
                     {
                         if (target.Distance > Settings.Instance.OptimalRange + (int)Distance.OptimalRangeCushion && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id))
                         {
@@ -542,7 +550,6 @@ namespace Questor.Modules
 
                 if (Cache.Instance.Approaching != null)
                 {
-                    
                     Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
                     Cache.Instance.Approaching = null;
                     Logging.Log("MissionController.MoveTo: Stop ship, we are [" + distancetoapp + "] from [" + closest.Name + "]");
@@ -578,9 +585,9 @@ namespace Questor.Modules
 
                 if (DateTime.Now.Subtract(_lastAlign ).TotalMinutes > (int)Time.LastAlignDelay_minutes)
                 {
-                // Probably never happens
-                closest.AlignTo();
-                _lastAlign = DateTime.Now;
+                    // Probably never happens
+                    closest.AlignTo();
+                    _lastAlign = DateTime.Now;
                 }
             }
         }
