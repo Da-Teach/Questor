@@ -420,6 +420,14 @@ namespace Questor.Modules
                         var standingValue = standingMatch.Groups["standing"].Value;
                         standingValue = standingValue.Replace('.', ','); // necessary for systems w/ comma-delimited number formatting
                         standings = float.Parse(standingValue);
+                        if (minStandings > 10)
+                        {
+                            standings = standings / 10;
+                        }
+                        if (minStandings > 10)
+                        {
+                            minStandings = minStandings / 10;
+                        }
                         Logging.Log("AgentInteraction: Agent decline timer detected. Current standings: " + standings + ". Minimum standings: " + minStandings);
                     }
 
