@@ -188,7 +188,6 @@ namespace Questor
         private void OnFrame(object sender, EventArgs e)
         {
             var watch = new Stopwatch();
-
             // Only pulse state changes every 1.5s
             if (DateTime.Now.Subtract(_lastPulse).TotalMilliseconds < (int)Time.QuestorPulse_milliseconds) //default: 1500ms
                 return;
@@ -2011,8 +2010,8 @@ namespace Questor
                         } while (true);
                         if (bookmarks.Count == 0)
                         {
-                            Logging.Log("Salvage: We have salvaged all bookmarks. Waiting. ");
-                            State = QuestorState.Error;
+                            Logging.Log("Salvage: We have salvaged all bookmarks. Going to nearest station. ");
+                            State = QuestorState.GotoNearestStation;
                         }
                         else
                         {
@@ -2045,7 +2044,7 @@ namespace Questor
                     {
                         // Overwrite settings, as the 'normal' settings do not apply
                         _salvage.MaximumWreckTargets = Math.Min(Cache.Instance.DirectEve.ActiveShip.MaxLockedTargets,
-                        Cache.Instance.DirectEve.Me.MaxLockedTargets);
+                            Cache.Instance.DirectEve.Me.MaxLockedTargets);
                         _salvage.ReserveCargoCapacity = 80;
                         _salvage.LootEverything = true;
                         _salvage.ProcessState();
@@ -2110,6 +2109,37 @@ namespace Questor
                             }
                         }
                     }
+                    break;
+                case QuestorState.GotoNearestStation:
+                    var station = Cache.Instance.Stations.OrderBy(x=>x.Distance).FirstOrDefault();
+                    if (station != null)
+                    {
+                        if (station.Distance > (int)Distance.WarptoDistance)
+                        {
+                            station.WarpToAndDock();
+                            State = QuestorState.Salvage;
+                            break;
+                        }
+                        else
+                        {
+                           
+                            if (station.Distance < 1900)
+                            {
+                                station.Dock();
+ 
+                            }
+                            else
+                            {
+                                if (Cache.Instance.DirectEve.ActiveShip.Entity.Mode == 1)
+                                {
+                                    if (Cache.Instance.Approaching.Id != station.Id)
+                                        station.Approach();
+                                }
+                                else station.Approach();
+                            }
+                        }
+                    }
+                    else State=QuestorState.Error;
                     break;
             }
         }
