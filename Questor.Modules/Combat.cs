@@ -643,7 +643,7 @@ namespace Questor.Modules
                 if (highValueTargets.Count >= maxHighValueTarget)
                     break;
 
-                if (entity.IsTarget) //This target is already targeted no need to target it again
+                if (entity.IsTarget || entity.IsTargeting) //This target is already targeted no need to target it again
                 {
                     return;
                 }
@@ -662,7 +662,7 @@ namespace Questor.Modules
                 if (highValueTargets.Count >= maxHighValueTarget)
                     break;
 
-                if (entity.IsTarget) //This target is already targeted no need to target it again
+                if (entity.IsTarget || entity.IsTargeting) //This target is already targeted no need to target it again
                 {
                     return;
                 }
@@ -680,7 +680,7 @@ namespace Questor.Modules
                 if (lowValueTargets.Count >= maxLowValueTarget)
                     break;
 
-                if (entity.IsTarget) //This target is already targeted no need to target it again
+                if (entity.IsTarget || entity.IsTargeting) //This target is already targeted no need to target it again
                 {
                     return;
                 }

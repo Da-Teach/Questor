@@ -352,8 +352,8 @@ namespace Questor.Modules
                     }
 
                     if (Cache.Instance.DirectEve.ActiveShip.MaxLockedTargets > 0)
-                    {
-                        if (target.IsTarget) //This target is already targeted no need to target it again
+                    { 
+                        if (target.IsTarget || target.IsTargeting) //This target is already targeted no need to target it again
                         {
                             return;
                         }
@@ -461,7 +461,7 @@ namespace Questor.Modules
             {
                 if (Cache.Instance.DirectEve.ActiveShip.MaxLockedTargets > 0)
                 {
-                        if (target.IsTarget) //This target is already targeted no need to target it again
+                    if (target.IsTarget || target.IsTargeting) //This target is already targeted no need to target it again
                         {
                             return;
                         }
