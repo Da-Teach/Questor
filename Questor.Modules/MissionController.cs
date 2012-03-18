@@ -233,7 +233,7 @@ namespace Questor.Modules
 
                 //
                 // this is a bad idea for a speed tank, we ought to somehow cache the object they are orbiting/approaching, etc
-                // this seemingly slowed down the exit from cetain missions for me for 2-3min as it had a command to orbit some random object
+                // this seemingly slowed down the exit from certain missions for me for 2-3min as it had a command to orbit some random object
                 // after the "done" command
                 //
                 if (closest.Distance < -10100)
@@ -291,7 +291,7 @@ namespace Questor.Modules
 
                 }
             }
-            else //we must be outside warpto distance, but we are likley in a deadspace so align to the target
+            else //we must be outside warpto distance, but we are likely in a deadspace so align to the target
             {
                 // We cant warp if we have drones out
                 if (Cache.Instance.ActiveDrones.Count() > 0)
@@ -388,7 +388,7 @@ namespace Questor.Modules
                     }
                 }
 
-                if (!Settings.Instance.SpeedTank) //we need to make sure that orbitrange is set to the range of the ship if it isnt specified in the character XML!!!!
+                if (!Settings.Instance.SpeedTank) //we need to make sure that orbitrange is set to the range of the ship if it isn't specified in the character XML!!!!
                 {
                     if (Settings.Instance.OptimalRange != 0)
                     {
@@ -501,7 +501,7 @@ namespace Questor.Modules
 
             var target = action.GetParameterValue("target");
 
-            // No parameter? Although we shouldnt really allow it, assume its the acceleration gate :)
+            // No parameter? Although we shouldn't really allow it, assume its the acceleration gate :)
             if (string.IsNullOrEmpty(target))
                 target = "Acceleration Gate";
 
@@ -527,7 +527,7 @@ namespace Questor.Modules
 
             var target = action.GetParameterValue("target");
 
-            // No parameter? Although we shouldnt really allow it, assume its the acceleration gate :)
+            // No parameter? Although we shouldn't really allow it, assume its the acceleration gate :)
             if (string.IsNullOrEmpty(target))
                 target = "Acceleration Gate";
 
@@ -754,7 +754,7 @@ namespace Questor.Modules
             {
                 // We are being attacked, break the kill order
                 if (Cache.Instance.RemovePriorityTargets(targets))
-                    Logging.Log("MissionController.Kill: Breaking off kill order, new spawn has arived!");
+                    Logging.Log("MissionController.Kill: Breaking off kill order, new spawn has arrived!");
 
                 foreach (var target in Cache.Instance.Targets.Where(e => targets.Any(t => t.Id == e.Id)))
                 {
@@ -802,7 +802,7 @@ namespace Questor.Modules
                 Logging.Log("MissionController.Kill: Stop ship, target is in optimalRange");
             }
 
-            //if distance to target is more than weapons range and we havent setup optimalrange OR we are inside optimalrange and optimalrange has been setup
+            //if distance to target is more than weapons range and we haven't setup optimalrange OR we are inside optimalrange and optimalrange has been setup
             if ((closest.Distance > range && Settings.Instance.OptimalRange <= 0) || (closest.Distance > Settings.Instance.OptimalRange + (int)Distance.OptimalRangeCushion) && Settings.Instance.OptimalRange > 0)
             {
 
@@ -1303,7 +1303,7 @@ namespace Questor.Modules
                     // Reload weapons
                     if (DateTime.Now.Subtract(_lastReload).TotalSeconds > 20)
                     {
-                        Logging.Log("MissionController: ReloadAll: Reload becasue ActionState is Done - Reloading Weapons.");
+                        Logging.Log("MissionController: ReloadAll: Reload because ActionState is Done - Reloading Weapons.");
                         ReloadAll();
                         _lastReload = DateTime.Now;
                     }

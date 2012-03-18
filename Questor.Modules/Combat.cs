@@ -16,7 +16,7 @@ namespace Questor.Modules
 
     /// <summary>
     ///   The combat class will target and kill any NPC that is targeting the questor.
-    ///   It will also kill any NPC that is targeted but not agressing the questor.
+    ///   It will also kill any NPC that is targeted but not aggressing the questor.
     /// </summary>
     public class Combat
     {
@@ -235,7 +235,7 @@ namespace Questor.Modules
         /// <summary> Returns true if it can activate the weapon on the target
         /// </summary>
         /// <remarks>
-        ///   The idea behind this function is that a target that explodes isnt being fired on within 5 seconds
+        ///   The idea behind this function is that a target that explodes isn't being fired on within 5 seconds
         /// </remarks>
         /// <param name = "module"></param>
         /// <param name = "entity"></param>
@@ -305,9 +305,9 @@ namespace Questor.Modules
                 }
             }
 
-            if (!DontMoveMyShip) //why would we want the ship to move if we arent speed tanking and the mission XML isnt telling us to move?
+            if (!DontMoveMyShip) //why would we want the ship to move if we aren't speed tanking and the mission XML isn't telling us to move?
             {
-                if (!Settings.Instance.SpeedTank) //we need to make sure that orbitrange is set to the range of the ship if it isnt specified in the character XML!!!!
+                if (!Settings.Instance.SpeedTank) //we need to make sure that orbitrange is set to the range of the ship if it isn't specified in the character XML!!!!
                 {
                     if (Settings.Instance.OptimalRange != 0)
                     {
@@ -349,7 +349,7 @@ namespace Questor.Modules
             // Get distance of the target and compare that with the ammo currently loaded
             foreach (var weapon in weapons)
             {
-                // dont waste ammo on small target if you use autocannon or siege i hope you use drone
+                // don't waste ammo on small target if you use autocannon or siege i hope you use drone
                 if (Settings.Instance.DontShootFrigatesWithSiegeorAutoCannons) //this defaults to false and needs to be changed in your characters settings xml file if you want to enable this option
                 {
                     if (Settings.Instance.WeaponGroupId == 55 || Settings.Instance.WeaponGroupId == 508 || Settings.Instance.WeaponGroupId == 506)
@@ -415,12 +415,12 @@ namespace Questor.Modules
                     continue;
                 }
 
-                // No, check ammo type and if thats correct, activate weapon
+                // No, check ammo type and if that is correct, activate weapon
                 if (ReloadAmmo(weapon, target) && CanActivate(weapon, target, true))
                 {
                     Logging.Log("Combat: Activating weapon [" + weapon.ItemId + "] on [" + target.Name + "][ID: " + target.Id + "][" + Math.Round(target.Distance/1000,0) + "k away]");
                     weapon.Activate(target.Id);
-                    //More human behaviour
+                    //More human behavior
                     //System.Threading.Thread.Sleep(333);
 
                     //we know we are connected if we were able to get this far - update the lastknownGoodConnectedTime
@@ -556,7 +556,7 @@ namespace Questor.Modules
 
             if (_isJammed)
             {
-                // Clear targeting list as it doesnt apply
+                // Clear targeting list as it doesn't apply
                 Cache.Instance.TargetingIDs.Clear();
                 Logging.Log("Combat: We are no longer jammed, retargeting");
             }
@@ -566,7 +566,7 @@ namespace Questor.Modules
             // ???bounty tracking code goes here???
             //
 
-            // Whats the range that we can target at
+            // What is the range that we can target at
             var maxRange = Math.Min(Cache.Instance.DirectEve.ActiveShip.MaxTargetRange, Cache.Instance.WeaponRange);
 
             // Get a list of combat targets (combine targets + targeting)
@@ -590,7 +590,7 @@ namespace Questor.Modules
                 else continue;
 
                 target.UnlockTarget();
-                //More human behaviour
+                //More human behavior
                 //System.Threading.Thread.Sleep(333);
                 combatTargets.RemoveAt(i);
             }

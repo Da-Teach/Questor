@@ -244,7 +244,7 @@ namespace Questor.Modules
                     break;
 
                 case PanicState.Resume:
-                    // Dont do anything here
+                    // Don't do anything here
                     break;
             }
         }

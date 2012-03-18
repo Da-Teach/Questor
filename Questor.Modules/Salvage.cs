@@ -64,7 +64,7 @@ namespace Questor.Modules
                 if (tractorBeam.IsActive && (wreck == null || wreck.Distance <= (int)Distance.SafeScoopRange))
                 {
                     tractorBeam.Deactivate();
-                    //More human behaviour
+                    //More human behavior
                     //System.Threading.Thread.Sleep(333);
                 }
                 // Remove the tractor beam as a possible beam to activate
@@ -126,7 +126,7 @@ namespace Questor.Modules
 
                 Logging.Log("Salvage: Activating salvager [" + salvager.ItemId + "] on [" + wreck.Name + "][ID: " + wreck.Id + "]");
                 salvager.Activate(wreck.Id);
-                //More human behaviour
+                //More human behavior
                 //System.Threading.Thread.Sleep(333);
             }
         }
@@ -394,7 +394,7 @@ namespace Questor.Modules
                             // Mark this item as moved
                             moveTheseItems.Add(wl.DirectItem);
 
-                            // Substract (now) free volume
+                            // Subtract (now) free volume
                             freeCargoCapacity += wl.TotalVolume;
 
                             // We freed up enough space?

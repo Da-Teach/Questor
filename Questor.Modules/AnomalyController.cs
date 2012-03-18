@@ -408,7 +408,7 @@ namespace Questor.Modules
             {
                 // We are being attacked, break the kill order
                 if (Cache.Instance.RemovePriorityTargets(targets))
-                    Logging.Log("AnomalyController.Kill: Breaking off kill order, new spawn has arived!");
+                    Logging.Log("AnomalyController.Kill: Breaking off kill order, new spawn has arrived!");
 
                 foreach (var target in Cache.Instance.Targets.Where(e => targets.Any(t => t.Id == e.Id)))
                 {

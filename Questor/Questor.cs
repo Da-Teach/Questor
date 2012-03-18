@@ -264,7 +264,7 @@ namespace Questor
                     
                     if (Settings.Instance.SessionsLog)
                     {
-                        if (Cache.Instance.DirectEve.Me.Wealth != 0 || Cache.Instance.DirectEve.Me.Wealth != -2147483648) // this hopefully resolves having negative maxint in the session logs occassionally
+                        if (Cache.Instance.DirectEve.Me.Wealth != 0 || Cache.Instance.DirectEve.Me.Wealth != -2147483648) // this hopefully resolves having negative maxint in the session logs occasionally
                         {
                             //
                             // prepare the Questor Session Log - keeps track of starts, restarts and exits, and hopefully the reasons
@@ -384,7 +384,7 @@ namespace Questor
             {
                 State = QuestorState.CloseQuestor;
             }
-            // Defense is more important then pause, rest (even panic) isnt!
+            // Defense is more important then pause, rest (even panic) isn't!
             // Panic always runs, not just in space
             watch.Reset();
             watch.Start();
@@ -443,7 +443,7 @@ namespace Questor
             {
                 case QuestorState.Idle:
 
-                    // Every 5 min of idle check and make sure we arent supposed to stop... 
+                    // Every 5 min of idle check and make sure we aren't supposed to stop... 
                     if (Math.Round(DateTime.Now.Subtract(_lastTimeCheckAction).TotalMinutes) > 5)
                     {
                         _lastTimeCheckAction = DateTime.Now;
@@ -521,11 +521,11 @@ namespace Questor
    
                     if (AutoStart)
                     {
-                        // Dont start missions hour before downtime
+                        // Don't start missions hour before downtime
                         if (DateTime.UtcNow.Hour == 10)
                             break;
 
-                        // Dont start missions in downtime
+                        // Don't start missions in downtime
                         if (DateTime.UtcNow.Hour == 11 && DateTime.UtcNow.Minute < 15)
                             break;
 
@@ -997,7 +997,7 @@ namespace Questor
                     Logging.Log("Questor: EVE instance: totalMegaBytesOfMemoryUsed - " + Cache.Instance.totalMegaBytesOfMemoryUsed + " MB");
 
                     // If Questor window not visible, schedule a restart of questor in the uplink so that the GUI will start normally
-                    if (!m_Parent.Visible && CloseQuestorflag) //GUI isnt visible and CloseQuestorflag is true, so that his code block only runs once
+                    if (!m_Parent.Visible && CloseQuestorflag) //GUI isn't visible and CloseQuestorflag is true, so that his code block only runs once
                     {
                         CloseQuestorflag = false;
                         //m_Parent.Visible = true; //this does not work for some reason - innerspace bug?
@@ -1362,7 +1362,7 @@ namespace Questor
                             State = QuestorState.Start;
                             return;
                         }
-                        else //If we arent after mission salvaging and we arent out of ammo we must be done. 
+                        else //If we aren't after mission salvaging and we aren't out of ammo we must be done. 
                         {
                             Statistics.Instance.FinishedMission = DateTime.Now;
                             Statistics.Instance.StartedSalvaging = DateTime.Now;
@@ -1432,7 +1432,7 @@ namespace Questor
 
                     if (Settings.Instance.UnloadLootAtStation && SalvageCargo.IsReady && (SalvageCargo.Capacity - SalvageCargo.UsedCapacity) < 100)
                     {
-                        Logging.Log("Salvage: We are full, goto base to unload");
+                        Logging.Log("Salvage: We are full, go to base to unload");
                         State = QuestorState.GotoBase;
                         break;
                     }
@@ -1460,7 +1460,7 @@ namespace Questor
 
                         if (bookmarks.Count == 0 && !GatesInRoom)
                         {
-                            Logging.Log("Salvage: We have salvaged all bookmarks, goto base");
+                            Logging.Log("Salvage: We have salvaged all bookmarks, go to base");
                             Cache.Instance.SalvageAll = false;
                             State = QuestorState.GotoBase;
                             return;
@@ -1470,7 +1470,7 @@ namespace Questor
 
                             if (!GatesInRoom)
                             {
-                                Logging.Log("Salvage: Goto the next salvage bookmark");
+                                Logging.Log("Salvage: Go to the next salvage bookmark");
 
                                 State = QuestorState.GotoSalvageBookmark;
                                 _traveler.Destination = new BookmarkDestination(bookmarks.OrderBy(b => b.CreatedOn).First());
@@ -1583,7 +1583,7 @@ namespace Questor
                 //
                 //    //if (MyScoopshipCargo.IsReady && (MyScoopshipCargo.Capacity - MyScoopshipCargo.UsedCapacity) < 3500)
                 //    //{
-                //    //Logging.Log("Salvage: We are full, goto base to unload");
+                //    //Logging.Log("Salvage: We are full, go to base to unload");
                 //    //this needs to be changed to dock at the closest station
                 //    //State = QuestorState . DockAtNearestStation;
                 //    //    break;
@@ -1869,7 +1869,7 @@ namespace Questor
                         }
                         else
                         {
-                            Logging.Log("Salvage: Goto the next salvage bookmark");
+                            Logging.Log("Salvage: Go to the next salvage bookmark");
                             _traveler.Destination = new BookmarkDestination(bookmarks.OrderBy(b => b.CreatedOn).First());
                             State = QuestorState.GotoSalvageOnlyBookmark;
                             return;
@@ -1938,7 +1938,7 @@ namespace Questor
                     {
                         _traveler.ProcessState();
                         //we know we are connected if we were able to arm the ship - update the lastknownGoodConnectedTime
-                        //we also assume you are connected during a manul set of questor into travel mode (safe assumption considering someone is at the kb)
+                        //we also assume you are connected during a manual set of questor into travel mode (safe assumption considering someone is at the kb)
                         Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
                         Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
 
@@ -1946,7 +1946,7 @@ namespace Questor
                         {
                             if (_missionController.State == MissionControllerState.Error)
                             {
-                                Logging.Log("Questor stopped: (questor.cs) an error has occured");
+                                Logging.Log("Questor stopped: (questor.cs) an error has occurred");
                                 State = QuestorState.Error;
                                 return;
                             }
