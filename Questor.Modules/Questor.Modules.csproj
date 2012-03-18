@@ -89,6 +89,10 @@
     <Compile Include="CharSchedule.cs" />
     <Compile Include="AnomalyControllerState.cs" />
     <Compile Include="AnomalyController.cs" />
+    <Compile Include="CleanupState.cs" />
+    <Compile Include="Cleanup.cs" />
+    <Compile Include="StatisticsState.cs" />
+    <Compile Include="Statistics.cs" />
     <Compile Include="SelectAgent.cs" />
     <Compile Include="ScanInteraction.cs" />
     <Compile Include="ScanInteractionState.cs" />

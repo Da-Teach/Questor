@@ -39,6 +39,8 @@ namespace Questor
         private MissionController _missionController;
         private Panic _panic;
         private Storyline _storyline;
+        private Cleanup _cleanup;
+        private Statistics _statistics;
 
         //private Scoop _scoop;
         private Salvage _salvage;
@@ -50,7 +52,7 @@ namespace Questor
         private DateTime _lastLocalWatchAction;
         private DateTime _lastWalletCheck;
         private DateTime _lastupdateofSessionRunningTime;
-        private DateTime _lastCheckWindowsAction;
+        //private DateTime _lastCheckWindowsAction;
         private DateTime _lastTimeCheckAction;
         private DateTime _lastWarpTo;
         private DateTime _questorStarted;
@@ -89,6 +91,8 @@ namespace Questor
             _drones = new Drones();
             _panic = new Panic();
             _storyline = new Storyline();
+            _cleanup = new Cleanup();
+            _statistics = new Statistics();
 
             Settings.Instance.SettingsLoaded += SettingsLoaded;
 
@@ -113,7 +117,7 @@ namespace Questor
         public bool Disable3D { get; set; }
         public bool ValidSettings { get; set; }
         public bool ExitWhenIdle { get; set; }
-        public bool LogPathsNotSetupYet = true;
+        //public bool LogPathsNotSetupYet = true;
         public bool CloseQuestorCMDUplink = true;
         public bool CloseQuestorflag = true;
         public DateTime _CloseQuestorDelay { get; set; }
@@ -123,17 +127,17 @@ namespace Questor
         public string CharacterName { get; set; }
 
         // Statistics information
-        public DateTime StartedMission { get; set; }
-        public DateTime FinishedMission { get; set; }
-        public DateTime StartedSalvaging { get; set; }
-        public DateTime FinishedSalvaging { get; set; }
+        //public DateTime StartedMission { get; set; }
+        //public DateTime FinishedMission { get; set; }
+        //public DateTime StartedSalvaging { get; set; }
+        //public DateTime FinishedSalvaging { get; set; }
 
-        public string Mission { get; set; }
-        public double LootValue { get; set; }
-        public int LoyaltyPoints { get; set; }
-        public int LostDrones { get; set; }
-        public double AmmoValue { get; set; }
-        public double AmmoConsumption { get; set; }
+        //public string Mission { get; set; }
+        //public double LootValue { get; set; }
+        //public int LoyaltyPoints { get; set; }
+        //public int LostDrones { get; set; }
+        //public double AmmoValue { get; set; }
+        //public double AmmoConsumption { get; set; }
 
         public void SettingsLoaded(object sender, EventArgs e)
         {
@@ -223,6 +227,18 @@ namespace Questor
                 }
                 return;
             }
+            
+            // Start _cleanup.ProcessState
+            // Description: Closes Windows, and eventually other things considered 'cleanup' useful to more than just Questor(Missions) but also Anomolies, Mining, etc
+            //
+            watch.Reset();
+            watch.Start();
+            _cleanup.ProcessState();
+            watch.Stop();
+            if (Settings.Instance.DebugPerformance)
+                Logging.Log("Cleanup.ProcessState took " + watch.ElapsedMilliseconds + "ms");
+            // Done
+            // Cleanup State: ProcessState
 
             if (DateTime.Now.Subtract(_lastupdateofSessionRunningTime).TotalSeconds < (int)Time.SessionRunningTimeUpdate_seconds)
             {
@@ -287,94 +303,6 @@ namespace Questor
                     }
                 }
             }
-
-            
-            foreach (var window in Cache.Instance.Windows)
-            {
-                // Telecom messages are generally mission info messages
-                if (window.Name == "telecom")
-                {
-                    Logging.Log("Questor: Closing telecom message...");
-                    Logging.Log("Questor: Content of telecom window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
-                    window.Close();
-                }
-
-                // Modal windows must be closed
-                // But lets only close known modal windows
-                if (window.Name == "modal")
-                {
-                    bool close = false;
-                    bool restart = false;
-                    if (!string.IsNullOrEmpty(window.Html))
-                    {
-                        // Server going down
-                        close |= window.Html.Contains("Please make sure your characters are out of harm");
-                        close |= window.Html.Contains("the servers are down for 30 minutes each day for maintenance and updates");
-                        if (window.Html.Contains("The socket was closed"))
-                        {
-                            Logging.Log("Questor: This window indicates we are disconnected: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
-                            //Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdLogOff); //this causes the questor window to not re-appear
-                            Cache.Instance.CloseQuestorCMDLogoff = false;
-                            Cache.Instance.CloseQuestorCMDExitGame = true;
-                            Cache.Instance.ReasonToStopQuestor = "The socket was closed";
-                            Cache.Instance.SessionState = "Quitting";
-                            State = QuestorState.CloseQuestor;
-                            break;
-                        }
-
-                        // In space "shit"
-                        close |= window.Html.Contains("Item cannot be moved back to a loot container.");
-                        close |= window.Html.Contains("you do not have the cargo space");
-                        close |= window.Html.Contains("cargo units would be required to complete this operation.");
-                        close |= window.Html.Contains("You are too far away from the acceleration gate to activate it!");
-                        close |= window.Html.Contains("maximum distance is 2500 meters");
-                        // Stupid warning, lets see if we can find it
-                        close |= window.Html.Contains("Do you wish to proceed with this dangerous action?");
-                        // Yes we know the mission isnt complete, Questor will just redo the mission
-                        close |= window.Html.Contains("Please check your mission journal for further information.");
-                        close |= window.Html.Contains("weapons in that group are already full");
-                        close |= window.Html.Contains("You have to be at the drop off location to deliver the items in person");
-                        // Lag :/
-                        close |= window.Html.Contains("This gate is locked!");
-                        close |= window.Html.Contains("The Zbikoki's Hacker Card");
-                        close |= window.Html.Contains(" units free.");
-                        close |= window.Html.Contains("already full");
-                        //
-                        // restart the client if these are encountered
-                        //
-                        restart |= window.Html.Contains("Local cache is corrupt");
-                        restart |= window.Html.Contains("Local session information is corrupt");
-                        restart |= window.Html.Contains("The connection to the server was closed"); 										//CONNECTION LOST
-                        restart |= window.Html.Contains("server was closed");  																//CONNECTION LOST
-                        restart |= window.Html.Contains("The socket was closed"); 															//CONNECTION LOST
-                        restart |= window.Html.Contains("The connection was closed"); 														//CONNECTION LOST
-                        restart |= window.Html.Contains("Connection to server lost"); 														//INFORMATION
-                        restart |= window.Html.Contains("The user connection has been usurped on the proxy"); 								//CONNECTION LOST
-                        restart |= window.Html.Contains("The transport has not yet been connected, or authentication was not successful"); 	//CONNECTION LOST
-                        //_pulsedelay = 20;
-                    }
-
-                    if (close)
-                    {
-                        Logging.Log("Questor: Closing modal window...");
-                        Logging.Log("Questor: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
-                        window.Close();
-                    }
-
-                    if (restart)
-                    {
-                        Logging.Log("Questor: Restarting eve...");
-                        Logging.Log("Questor: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
-                        Cache.Instance.CloseQuestorCMDLogoff = false;
-                        Cache.Instance.CloseQuestorCMDExitGame = true;
-                        Cache.Instance.ReasonToStopQuestor = "A message from ccp indicated we were disonnected";
-                        Cache.Instance.SessionState = "Quitting - lag";
-                        State = QuestorState.CloseQuestor;
-                        continue;
-                    }
-                }
-            }
-            
 
             if (!Paused)
             {
@@ -569,104 +497,29 @@ namespace Questor
                         State = QuestorState.DelayedGotoBase;
                         break;
                     }
-                    
-                    if (MissionLoggingCompleted == false)
-                    {
-                        MissionLoggingCompleted = true;
-                        mission = Cache.Instance.GetAgentMission(Cache.Instance.AgentId);
-                        if (!string.IsNullOrEmpty(Mission) && (mission == null || mission.Name != Mission || mission.State != (int)MissionState.Accepted))
-                        {
-                            // Do not save statistics if loyalty points == -1
-                            // Seeing as we completed a mission, we will have loyalty points for this agent
-                            if (Cache.Instance.Agent.LoyaltyPoints == -1)
-                                return;
 
-                            Cache.Instance.SessionIskGenerated = (Cache.Instance.SessionIskGenerated + (Cache.Instance.DirectEve.Me.Wealth - Cache.Instance.Wealth));
-                            Cache.Instance.SessionLootGenerated = (Cache.Instance.SessionLootGenerated + (int)LootValue);
-                            Cache.Instance.SessionLPGenerated = (Cache.Instance.SessionLPGenerated + (Cache.Instance.Agent.LoyaltyPoints - LoyaltyPoints));
-                            if (Settings.Instance.MissionStats1Log)
-                            {
-                                if (!Directory.Exists(Settings.Instance.MissionStats1LogPath))
-                                    Directory.CreateDirectory(Settings.Instance.MissionStats1LogPath);
-
-                                // Write the header
-                                if (!File.Exists(Settings.Instance.MissionStats1LogFile))
-                                    File.AppendAllText(Settings.Instance.MissionStats1LogFile, "Date;Mission;TimeMission;TimeSalvage;TotalTime;Isk;Loot;LP;\r\n");
-
-                                // Build the line
-                                var line = DateTime.Now + ";";                                                      // Date
-                                line += Mission + ";";                                                              // Mission
-                                line += ((int)FinishedMission.Subtract(StartedMission).TotalMinutes) + ";";         // TimeMission
-                                line += ((int)DateTime.Now.Subtract(FinishedMission).TotalMinutes) + ";";           // Time Doing After Mission Salvaging
-                                line += ((int)DateTime.Now.Subtract(StartedMission).TotalMinutes) + ";";            // Total Time doing Mission
-                                line += ((int)(Cache.Instance.DirectEve.Me.Wealth - Cache.Instance.Wealth)) + ";";  // Isk (ballance difference from start and finish of mission: is not accurate as the wallet ticks from bounty kills are every x minuts)
-                                line += ((int)LootValue) + ";";                                                     // Loot
-                                line += (Cache.Instance.Agent.LoyaltyPoints - LoyaltyPoints) + ";\r\n";             // LP
-
-                                // The mission is finished
-                                File.AppendAllText(Settings.Instance.MissionStats1LogFile, line);
-                                Logging.Log("Questor: writing mission log1 to  [ " + Settings.Instance.MissionStats1LogFile);
-                            }
-                            if (Settings.Instance.MissionStats2Log)
-                            {
-                                if (!Directory.Exists(Settings.Instance.MissionStats2LogPath))
-                                    Directory.CreateDirectory(Settings.Instance.MissionStats2LogPath);
-
-                                // Write the header
-                                if (!File.Exists(Settings.Instance.MissionStats2LogFile))
-                                    File.AppendAllText(Settings.Instance.MissionStats2LogFile, "Date;Mission;Time;Isk;Loot;LP;LostDrones;AmmoConsumption;AmmoValue\r\n");
-
-                                // Build the line
-                                var line2 = string.Format("{0:MM/dd/yyyy HH:mm:ss}", DateTime.Now) + ";";           // Date
-                                line2 += Mission + ";";                                                             // Mission
-                                line2 += ((int)FinishedMission.Subtract(StartedMission).TotalMinutes) + ";";        // TimeMission
-                                line2 += ((int)(Cache.Instance.DirectEve.Me.Wealth - Cache.Instance.Wealth)) + ";"; // Isk
-                                line2 += ((int)LootValue) + ";";                                                    // Loot
-                                line2 += (Cache.Instance.Agent.LoyaltyPoints - LoyaltyPoints) + ";";                // LP
-                                line2 += ((int)LostDrones) + ";";                                                   // Lost Drones
-                                line2 += ((int)AmmoConsumption) + ";";                                              // Ammo Consumption
-                                line2 += ((int)AmmoValue) + ";\r\n";                                                // Ammo Value
-
-                                // The mission is finished
-                                Logging.Log("Questor: writing mission log2 to [ " + Settings.Instance.MissionStats2LogFile);
-                                File.AppendAllText(Settings.Instance.MissionStats2LogFile, line2);
-                            }
-                            if (Settings.Instance.MissionStats3Log)
-                            {
-                                if (!Directory.Exists(Settings.Instance.MissionStats3LogPath))
-                                    Directory.CreateDirectory(Settings.Instance.MissionStats3LogPath);
-
-                                // Write the header
-                                if (!File.Exists(Settings.Instance.MissionStats3LogFile))
-                                    File.AppendAllText(Settings.Instance.MissionStats3LogFile, "Date;Mission;Time;Isk;Loot;LP;LostDrones;AmmoConsumption;AmmoValue;Panics;LowestShield;LowestArmor;LowestCap;RepairCycles\r\n");
-
-                                // Build the line
-                                var line3 = DateTime.Now + ";";                                                      // Date
-                                line3 += Mission + ";";                                                              // Mission
-                                line3 += ((int)FinishedMission.Subtract(StartedMission).TotalMinutes) + ";";         // TimeMission
-                                line3 += ((long)(Cache.Instance.DirectEve.Me.Wealth - Cache.Instance.Wealth)) + ";"; // Isk
-                                line3 += ((long)LootValue) + ";";                                                    // Loot
-                                line3 += ((long)Cache.Instance.Agent.LoyaltyPoints - LoyaltyPoints) + ";";           // LP
-                                line3 += ((int)LostDrones) + ";";                                                    // Lost Drones
-                                line3 += ((int)AmmoConsumption) + ";";                                               // Ammo Consumption
-                                line3 += ((int)AmmoValue) + ";";                                                     // Ammo Value
-                                line3 += ((int)Cache.Instance.panic_attempts_this_mission) + ";";                    // Panics
-                                line3 += ((int)Cache.Instance.lowest_shield_percentage_this_mission) + ";";          // Lowest Shield %
-                                line3 += ((int)Cache.Instance.lowest_armor_percentage_this_mission) + ";";           // Lowest Armor %
-                                line3 += ((int)Cache.Instance.lowest_capacitor_percentage_this_mission) + ";";       // Lowest Capacitor %
-                                line3 += ((int)Cache.Instance.repair_cycle_time_this_mission) + ";";                 // repair Cycle Time
-                                line3 += ((int)FinishedSalvaging.Subtract(StartedSalvaging).TotalMinutes) + ";"; // After Mission Salvaging Time
-                                line3 += ((int)FinishedSalvaging.Subtract(StartedSalvaging).TotalMinutes) + ((int)FinishedMission.Subtract(StartedMission).TotalMinutes) + ";\r\n"; // Total Time, Mission + After Mission Salvaging (if any)
-
-                                // The mission is finished
-                                Logging.Log("Questor: writing mission log3 to  [ " + Settings.Instance.MissionStats3LogFile);
-                                File.AppendAllText(Settings.Instance.MissionStats3LogFile, line3);
-                            }
-                            // Disable next log line
-                            Mission = null;
-                        }
-                    }
-
+                    // only attempt to write the mission statistics logs if one of the mission stats logs is enabled in settings
+                    //if (Settings.Instance.MissionStats1Log || Settings.Instance.MissionStats3Log || Settings.Instance.MissionStats3Log)
+                    //{   
+                        //
+                        // Start _statistics.ProcessState
+                        // Description: Closes Windows, and eventually other things considered 'cleanup' useful to more than just Questor(Missions) but also Anomalies, Mining, etc
+                        //
+                        watch.Reset();
+                        watch.Start();
+                        _statistics.State = StatisticsState.MissionLog;
+                        if (Settings.Instance.DebugStates)
+                            Logging.Log("statistics.State = " + _statistics.State);
+                        _statistics.ProcessState(); 
+                        watch.Stop();
+                        if (Settings.Instance.DebugPerformance)
+                            Logging.Log("statistics.ProcessState took " + watch.ElapsedMilliseconds + "ms");
+                        if (Settings.Instance.DebugStates)
+                            Logging.Log("statistics.State = " + _statistics.State);
+                        // Done
+                        // Statistics State: ProcessState
+                    //}
+   
                     if (AutoStart)
                     {
                         // Dont start missions hour before downtime
@@ -758,16 +611,16 @@ namespace Questor
                         _agentInteraction.State = AgentInteractionState.StartConversation;
                         _agentInteraction.Purpose = AgentInteractionPurpose.StartMission;
 
-                        // Update statistic values
+                        // Update statistic values - these should be cleared in statistics.cs!!!!!!!!!!!!
                         Cache.Instance.Wealth = Cache.Instance.DirectEve.Me.Wealth;
-                        LootValue = 0;
-                        LoyaltyPoints = Cache.Instance.Agent.LoyaltyPoints;
-                        StartedMission = DateTime.Now;
-                        FinishedMission = DateTime.MaxValue;
-                        Mission = string.Empty;
-                        LostDrones = 0;
-                        AmmoConsumption = 0;
-                        AmmoValue = 0;
+                        Statistics.Instance.LootValue = 0;
+                        Statistics.Instance.LoyaltyPoints = Cache.Instance.Agent.LoyaltyPoints;
+                        Statistics.Instance.StartedMission = DateTime.Now;
+                        Statistics.Instance.FinishedMission = DateTime.MaxValue;
+                        Cache.Instance.MissionName = string.Empty;
+                        Statistics.Instance.LostDrones = 0;
+                        Statistics.Instance.AmmoConsumption = 0;
+                        Statistics.Instance.AmmoValue = 0;
 
                         Cache.Instance.panic_attempts_this_mission = 0;
                         Cache.Instance.lowest_shield_percentage_this_mission = 101;
@@ -787,12 +640,12 @@ namespace Questor
 
                     if (_agentInteraction.State == AgentInteractionState.Done)
                     {
-                        mission = Cache.Instance.GetAgentMission(Cache.Instance.AgentId);
-                        if (mission != null)
+                        Cache.Instance.mission = Cache.Instance.GetAgentMission(Cache.Instance.AgentId);
+                        if (Cache.Instance.mission != null)
                         {
                             // Update loyalty points again (the first time might return -1)
-                            LoyaltyPoints = Cache.Instance.Agent.LoyaltyPoints;
-                            Mission = mission.Name;
+                            Statistics.Instance.LoyaltyPoints = Cache.Instance.Agent.LoyaltyPoints;
+                            Cache.Instance.MissionName = Cache.Instance.mission.Name;
                         }
 
                         _agentInteraction.State = AgentInteractionState.Idle;
@@ -952,6 +805,7 @@ namespace Questor
 
                 case QuestorState.GotoMission:
                     Cache.Instance.OpenWrecks = false;
+                    Statistics.Instance.MissionLoggingCompleted = false;
                     var missionDestination = _traveler.Destination as MissionBookmarkDestination;
                     if (missionDestination == null || missionDestination.AgentId != Cache.Instance.AgentId) // We assume that this will always work "correctly" (tm)
                         _traveler.Destination = new MissionBookmarkDestination(Cache.Instance.GetMissionBookmark(Cache.Instance.AgentId, "Encounter"));
@@ -1121,11 +975,11 @@ namespace Questor
                         }
                         if (_traveler.State == TravelerState.AtDestination)
                         {
-                            mission = Cache.Instance.GetAgentMission(Cache.Instance.AgentId);
+                            Cache.Instance.mission = Cache.Instance.GetAgentMission(Cache.Instance.AgentId);
 
                             if (_missionController.State == MissionControllerState.Error)
                                 State = QuestorState.Error;
-                            else if (_combat.State != CombatState.OutOfAmmo && mission != null && mission.State == (int)MissionState.Accepted)
+                            else if (_combat.State != CombatState.OutOfAmmo && Cache.Instance.mission != null && Cache.Instance.mission.State == (int)MissionState.Accepted)
                                 State = QuestorState.CompleteMission;
                             else
                                 State = QuestorState.UnloadLoot;
@@ -1233,7 +1087,7 @@ namespace Questor
                             var line = DateTime.Now + ";";                                  // Date
                             line += Cache.Instance.SessionRunningTime + ";";                // RunningTime
                             line += Cache.Instance.SessionState + ";";                      // SessionState
-                            line += Mission + ";";                                          // LastMission
+                            line += Cache.Instance.MissionName + ";";                                          // LastMission
                             line += ((int)Cache.Instance.DirectEve.Me.Wealth + ";");        // WalletBalance
                             line += ((int)Cache.Instance.totalMegaBytesOfMemoryUsed + ";"); // MemoryUsage
                             line += Cache.Instance.ReasonToStopQuestor + ";";               // Reason to Stop Questor
@@ -1389,13 +1243,13 @@ namespace Questor
                                 if (Cache.Instance.InvTypesById.ContainsKey(Settings.Instance.DroneTypeId))
                                 {
                                     var drone = Cache.Instance.InvTypesById[Settings.Instance.DroneTypeId];
-                                    LostDrones = (int)Math.Floor((droneBay.Capacity - droneBay.UsedCapacity) / drone.Volume);
-                                    Logging.Log("DroneStats: Logging the number of lost drones: " + LostDrones.ToString());
+                                    Statistics.Instance.LostDrones = (int)Math.Floor((droneBay.Capacity - droneBay.UsedCapacity) / drone.Volume);
+                                    Logging.Log("DroneStats: Logging the number of lost drones: " + Statistics.Instance.LostDrones.ToString());
 
                                     if (!File.Exists(Settings.Instance.DroneStatslogFile))
                                         File.AppendAllText(Settings.Instance.DroneStatslogFile, "Mission;Number of lost drones\r\n");
-                                    var droneline = Mission + ";";
-                                    droneline += ((int)LostDrones) + ";\r\n";
+                                    var droneline = Cache.Instance.MissionName + ";";
+                                    droneline += ((int)Statistics.Instance.LostDrones) + ";\r\n";
                                     File.AppendAllText(Settings.Instance.DroneStatslogFile, droneline);
                                 }
                                 else
@@ -1426,8 +1280,8 @@ namespace Questor
                         {
                             var Ammo1 = Settings.Instance.Ammo.Where(a => a.TypeId == item.TypeId).FirstOrDefault();
                             var AmmoType = Cache.Instance.InvTypesById[item.TypeId];
-                            AmmoConsumption = (Ammo1.Quantity - item.Quantity);
-                            AmmoValue = (AmmoType.MedianSell ?? 0) * AmmoConsumption;
+                            Statistics.Instance.AmmoConsumption = (Ammo1.Quantity - item.Quantity);
+                            Statistics.Instance.AmmoValue = ((int?)AmmoType.MedianSell ?? 0) * (int)Statistics.Instance.AmmoConsumption;
                         }
                         Logging.Log("AgentInteraction: Start Conversation [Complete Mission]");
 
@@ -1442,7 +1296,7 @@ namespace Questor
 
                     if (_agentInteraction.State == AgentInteractionState.Done)
                     {
-                        Cache.Instance.MissionName = "";
+                        // Cache.Instance.MissionName = String.Empty;  // Do Not clear the 'current' mission name until after we have done the mission logging
                         _agentInteraction.State = AgentInteractionState.Idle;
                         if (Cache.Instance.CourierMission)
                         {
@@ -1475,26 +1329,26 @@ namespace Questor
                         _unloadLoot.State = UnloadLootState.Idle;
 
                         // Update total loot value
-                        LootValue += _unloadLoot.LootValue;
+                        Statistics.Instance.LootValue += (int)_unloadLoot.LootValue;
 
-                        mission = Cache.Instance.GetAgentMission(Cache.Instance.AgentId);
-                        if (_combat.State != CombatState.OutOfAmmo && Settings.Instance.AfterMissionSalvaging && Cache.Instance.BookmarksByLabel(Settings.Instance.BookmarkPrefix + " ").Count > 0 && (mission == null || mission.State == (int)MissionState.Offered))
+                        Cache.Instance.mission = Cache.Instance.GetAgentMission(Cache.Instance.AgentId);
+                        if (_combat.State != CombatState.OutOfAmmo && Settings.Instance.AfterMissionSalvaging && Cache.Instance.BookmarksByLabel(Settings.Instance.BookmarkPrefix + " ").Count > 0 && (Cache.Instance.mission == null || Cache.Instance.mission.State == (int)MissionState.Offered))
                         {
-                            FinishedMission = DateTime.Now;
+                            Statistics.Instance.FinishedMission = DateTime.Now;
                             if (Settings.Instance.SalvageMultpleMissionsinOnePass) // Salvage only after multiple missions have been completed
                             {   
                                 //if we can still complete another mission before the Wrecks disappear and still have time to salvage
-                                if (DateTime.Now.Subtract(FinishedSalvaging).Minutes > ((int)Time.WrecksDisappearAfter_minutes - (int)Time.AverageTimeToCompleteAMission_minutes - (int)Time.AverageTimetoSalvageMultipleMissions_minutes))
+                                if (DateTime.Now.Subtract(Statistics.Instance.FinishedSalvaging).Minutes > ((int)Time.WrecksDisappearAfter_minutes - (int)Time.AverageTimeToCompleteAMission_minutes - (int)Time.AverageTimetoSalvageMultipleMissions_minutes))
                                 {
-                                    Logging.Log("Questor: UnloadLoot: The last after mission salvaging session was [" + DateTime.Now.Subtract(FinishedSalvaging).Minutes + "] ago ");
-                                    Logging.Log("Questor: UnloadLoot: we are after mision salvaging again because it has been at least [" + ((int)Time.WrecksDisappearAfter_minutes - (int)Time.AverageTimeToCompleteAMission_minutes - (int)Time.AverageTimetoSalvageMultipleMissions_minutes) + "] min since the last session. ");
+                                    Logging.Log("Questor: UnloadLoot: The last after mission salvaging session was [" + DateTime.Now.Subtract(Statistics.Instance.FinishedSalvaging).Minutes + "] ago ");
+                                    Logging.Log("Questor: UnloadLoot: we are after mission salvaging again because it has been at least [" + ((int)Time.WrecksDisappearAfter_minutes - (int)Time.AverageTimeToCompleteAMission_minutes - (int)Time.AverageTimetoSalvageMultipleMissions_minutes) + "] min since the last session. ");
                                     State = QuestorState.BeginAfterMissionSalvaging;
                                 }
                                 else
                                 {
-                                    Logging.Log("Questor: UnloadLoot: The last after mission salvaging session was [" + DateTime.Now.Subtract(FinishedSalvaging).Minutes + "] ago ");
+                                    Logging.Log("Questor: UnloadLoot: The last after mission salvaging session was [" + DateTime.Now.Subtract(Statistics.Instance.FinishedSalvaging).Minutes + "] ago ");
                                     Logging.Log("Questor: UnloadLoot: we are going to the next mission because it has not been [" + ((int)Time.WrecksDisappearAfter_minutes - (int)Time.AverageTimeToCompleteAMission_minutes - (int)Time.AverageTimetoSalvageMultipleMissions_minutes) + "] min since the last session. ");
-                                    FinishedMission = DateTime.Now;
+                                    Statistics.Instance.FinishedMission = DateTime.Now;
                                     State = QuestorState.Idle;
                                 }
                             }
@@ -1511,9 +1365,9 @@ namespace Questor
                         }
                         else //If we arent after mission salvaging and we arent out of ammo we must be done. 
                         {
-                            FinishedMission = DateTime.Now;
-                            StartedSalvaging = DateTime.Now;
-                            FinishedSalvaging = DateTime.Now;
+                            Statistics.Instance.FinishedMission = DateTime.Now;
+                            Statistics.Instance.StartedSalvaging = DateTime.Now;
+                            Statistics.Instance.FinishedSalvaging = DateTime.Now;
                             State = QuestorState.Idle;
                             return;
                         }

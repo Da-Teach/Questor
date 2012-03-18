@@ -58,8 +58,8 @@ namespace Questor.Modules
             // We arent suppose to create bookmarks
             //if (!Settings.Instance.LogBounties)
             //    return;
-            var mission = Cache.Instance.GetAgentMission(AgentId);
-            var currentPocketName = Cache.Instance.FilterPath(mission.Name);
+            Cache.Instance.mission = Cache.Instance.GetAgentMission(AgentId);
+            var currentPocketName = Cache.Instance.FilterPath(Cache.Instance.mission.Name);
             if (Settings.Instance.PocketStatistics)
             {
                 Settings.Instance.PocketStatisticsFile = Path.Combine(Settings.Instance.PocketStatisticsPath, Cache.Instance.FilterPath(Cache.Instance.DirectEve.Me.Name) + " - " + currentPocketName + " - " + _pocket + " - PocketStatistics.csv");

@@ -180,6 +180,7 @@ namespace Questor.Modules
         public int TimeSpentInMission_seconds = 0;
         public int TimeSpentInMissionInRange = 0;
         public int TimeSpentInMissionOutOfRange = 0;
+        public DirectAgentMission mission;
 
         public bool Local_safe(int max_bad, double stand)
         {

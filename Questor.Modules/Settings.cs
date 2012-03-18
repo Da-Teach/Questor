@@ -586,23 +586,35 @@ namespace Questor.Modules
             }
 
             logpath = (Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\log\\" + Cache.Instance.DirectEve.Me.Name + "\\");
-            ConsoleLogPath = logpath;
-            ConsoleLogFile = (logpath + "\\Console\\" + string.Format("{0:MM-dd-yyyy}", DateTime.Today) + "-" + Cache.Instance.DirectEve.Me.Name + "-" + "console" + ".log");
-            SessionsLogPath = logpath;
-            SessionsLogFile = (logpath + Cache.Instance.DirectEve.Me.Name + ".Sessions.log");
-            DroneStatsLogPath = logpath;
-            DroneStatslogFile = (logpath + Cache.Instance.DirectEve.Me.Name + ".DroneStats.log");
-            WreckLootStatisticsPath = logpath;
-            WreckLootStatisticsFile = (logpath + Cache.Instance.DirectEve.Me.Name + ".WreckLootStatisticsDump.log");
+            //logpath_s = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\log\\";
+            ConsoleLogPath = Path.Combine(logpath + "Console\\");
+            ConsoleLogFile = Path.Combine(ConsoleLogPath + string.Format("{0:MM-dd-yyyy}", DateTime.Today) + "-" + Cache.Instance.DirectEve.Me.Name + "-" + "console" + ".log");
+            SessionsLogPath = Path.Combine(logpath);
+            SessionsLogFile = Path.Combine(SessionsLogPath + Cache.Instance.DirectEve.Me.Name + ".Sessions.log");
+            DroneStatsLogPath = Path.Combine(logpath);
+            DroneStatslogFile = Path.Combine(DroneStatsLogPath + Cache.Instance.DirectEve.Me.Name + ".DroneStats.log");
+            WreckLootStatisticsPath = Path.Combine(logpath);
+            WreckLootStatisticsFile = Path.Combine(WreckLootStatisticsPath + Cache.Instance.DirectEve.Me.Name + ".WreckLootStatisticsDump.log");
             MissionStats1LogPath = Path.Combine(logpath, "missionstats\\");
-            MissionStats1LogFile = (MissionStats1LogPath + Cache.Instance.DirectEve.Me.Name + ".Statistics.log");
+            MissionStats1LogFile = Path.Combine(MissionStats1LogPath + "\\" + Cache.Instance.DirectEve.Me.Name + ".Statistics.log");
             MissionStats2LogPath = Path.Combine(logpath, "missionstats\\");
-            MissionStats2LogFile = (MissionStats2LogPath + Cache.Instance.DirectEve.Me.Name + ".DatedStatistics.log");
+            MissionStats2LogFile = Path.Combine(MissionStats2LogPath + "\\" + Cache.Instance.DirectEve.Me.Name + ".DatedStatistics.log");
             MissionStats3LogPath = Path.Combine(logpath, "missionstats\\");
-            MissionStats3LogFile = (MissionStats3LogPath + Cache.Instance.DirectEve.Me.Name + ".CustomDatedStatistics.csv");
+            MissionStats3LogFile = Path.Combine(MissionStats3LogPath + "\\" + Cache.Instance.DirectEve.Me.Name + ".CustomDatedStatistics.csv");
             PocketStatisticsPath = Path.Combine(logpath, "pocketstats\\");
-            PocketStatisticsFile = Path.Combine(PocketStatisticsPath, "pocketstats - generic");
+            PocketStatisticsFile = Path.Combine(PocketStatisticsPath,"pocketstats - generic");
+            //create all the logging directories even if they arent configured to be used - we can adjust this later if it really bugs ppl to have some potentially empty directories. 
+            Directory.CreateDirectory(logpath);
 
+            Directory.CreateDirectory(ConsoleLogPath); 
+            Directory.CreateDirectory(SessionsLogPath);
+            Directory.CreateDirectory(DroneStatsLogPath);
+            Directory.CreateDirectory(WreckLootStatisticsPath);
+            Directory.CreateDirectory(MissionStats1LogPath);
+            Directory.CreateDirectory(MissionStats2LogPath);
+            Directory.CreateDirectory(MissionStats3LogPath);
+            Directory.CreateDirectory(PocketStatisticsPath);
+            
             if (SettingsLoaded != null)
                 SettingsLoaded(this, new EventArgs());
         }
