@@ -166,7 +166,7 @@ namespace Questor.Modules
                     }
 
                     // We leave the panicking state once we actually start warping off
-                    var station = Cache.Instance.Stations.FirstOrDefault();
+                    var station = Cache.Instance.Stations.OrderBy(x => x.Distance).FirstOrDefault();
                     if (station != null)
                     {
                         if (Cache.Instance.InWarp)
