@@ -376,11 +376,11 @@ namespace Questor.Modules
 
         private static DirectAgentMissionBookmark GetMissionBookmark(long agentId, string title)
         {
-            var mission = Cache.Instance.GetAgentMission(agentId);
-            if (mission == null)
+            Cache.Instance.mission = Cache.Instance.GetAgentMission(agentId);
+            if (Cache.Instance.mission == null)
                 return null;
 
-            return mission.Bookmarks.FirstOrDefault(b => b.Title == title);
+            return Cache.Instance.mission.Bookmarks.FirstOrDefault(b => b.Title == title);
         }
 
         public override bool PerformFinalDestinationTask()

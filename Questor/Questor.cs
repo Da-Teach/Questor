@@ -122,7 +122,6 @@ namespace Questor
         public bool CloseQuestorflag = true;
         public DateTime _CloseQuestorDelay { get; set; }
         private bool CloseQuestor10SecWarningDone = false;
-        private bool MissionLoggingCompleted = false;
 
         public string CharacterName { get; set; }
 
@@ -439,7 +438,7 @@ namespace Questor
             if (Cache.Instance.InWarp)
                 return;
 
-            DirectAgentMission mission;
+            //DirectAgentMission mission;
             switch (State)
             {
                 case QuestorState.Idle:
@@ -1375,7 +1374,7 @@ namespace Questor
                     break;
 
                 case QuestorState.BeginAfterMissionSalvaging:
-                    StartedSalvaging = DateTime.Now;
+                    Statistics.Instance.StartedSalvaging = DateTime.Now;
                     _GatesPresent = false;
                     Cache.Instance.OpenWrecks = true;
                     if (_arm.State == ArmState.Idle)
