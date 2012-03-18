@@ -626,6 +626,7 @@ namespace Questor.Modules
             {
                 // Unlock any target
                 var target = lowValueTargets.OrderByDescending(t => t.Distance).First();
+                Logging.Log("Combat: unlocking low value target [" + target.Name + "][ID:" + target.Id + "]{" + lowValueTargets.Count + "} [" + Math.Round(target.Distance/1000,0) + "k away]");
                 target.UnlockTarget();
                 lowValueTargets.Remove(target);
             }
@@ -730,10 +731,10 @@ namespace Questor.Modules
                     var target = GetTarget();
                     if (target != null)
                     {
-                        ActivateWeapons(target);
                         ActivateTargetPainters(target);
                         ActivateStasisWeb(target);
                         ActivateNos(target);
+                        ActivateWeapons(target);
                     }
                     break;
 
