@@ -98,7 +98,7 @@ namespace Questor.Modules
                     Cache.Instance.TimeSpentReloading_seconds = Cache.Instance.TimeSpentReloading_seconds + (int)Time.ReloadWeaponDelayBeforeUsable_seconds;
                     _lastLoggingAction = DateTime.Now;
                 }
-                Logging.Log("Combat: Reloading [" + weapon.ItemId + "] with [" + charge.TypeName + "][" + charge.TypeId + "]");
+                Logging.Log("Combat: Reloading [" + weapon.ItemId + "] with [" + charge.TypeName + "][TypeID: " + charge.TypeId + "]");
                 weapon.ReloadAmmo(charge);
             }
             else
@@ -108,7 +108,7 @@ namespace Questor.Modules
                     Cache.Instance.TimeSpentReloading_seconds = Cache.Instance.TimeSpentReloading_seconds + (int)Time.ReloadWeaponDelayBeforeUsable_seconds;
                     _lastLoggingAction = DateTime.Now;
                 }
-                Logging.Log("Combat: Changing [" + weapon.ItemId + "] with [" + charge.TypeName + "][" + charge.TypeId + "]");
+                Logging.Log("Combat: Changing [" + weapon.ItemId + "] with [" + charge.TypeName + "][TypeID: " + charge.TypeId + "]");
                 weapon.ChangeAmmo(charge);
             }
 
@@ -157,12 +157,12 @@ namespace Questor.Modules
             // Reload or change ammo
             if (weapon.Charge != null && weapon.Charge.TypeId == charge.TypeId)
             {
-                Logging.Log("Combat: Reloading [" + weapon.ItemId + "] with [" + charge.TypeName + "][" + charge.TypeId + "]");
+                Logging.Log("Combat: Reloading [" + weapon.ItemId + "] with [" + charge.TypeName + "][TypeID: " + charge.TypeId + "]");
                 weapon.ReloadAmmo(charge);
             }
             else
             {
-                Logging.Log("Combat: Changing [" + weapon.ItemId + "] with [" + charge.TypeName + "][" + charge.TypeId + "]");
+                Logging.Log("Combat: Changing [" + weapon.ItemId + "] with [" + charge.TypeName + "][TypeID: " + charge.TypeId + "]");
                 weapon.ChangeAmmo(charge);
             }
 
@@ -224,7 +224,7 @@ namespace Questor.Modules
 
                 if (weapon.Charge.TypeId == charge.TypeId)
                 {
-                    Logging.Log("Combat: ReloadingAll [" + weapon.ItemId + "] with [" + charge.TypeName + "][" + charge.TypeId + "]");
+                    Logging.Log("Combat: ReloadingAll [" + weapon.ItemId + "] with [" + charge.TypeName + "][TypeID: " + charge.TypeId + "]");
                     weapon.ReloadAmmo(charge);
                 }
 
@@ -300,7 +300,7 @@ namespace Questor.Modules
                 if ((DateTime.Now.Subtract(_lastOrbit).TotalSeconds > 15))
                 {
                     target.Orbit(Cache.Instance.OrbitDistance);
-                    Logging.Log("Combat.ActivateWeapons: Initiating Orbit [" + target.Name + "][" + target.Id + "]");
+                    Logging.Log("Combat.ActivateWeapons: Initiating Orbit [" + target.Name + "][ID: " + target.Id + "]");
                     _lastOrbit = DateTime.Now;
                 }
             }
@@ -314,7 +314,7 @@ namespace Questor.Modules
                         if (target.Distance > Settings.Instance.OptimalRange + (int)Distance.OptimalRangeCushion && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id))
                         {
                             target.Approach(Settings.Instance.OptimalRange);
-                            Logging.Log("Combat.ActivateWeapons:: Using Optimal Range: Approaching target [" + target.Name + "][" + target.Id + "]");
+                            Logging.Log("Combat.ActivateWeapons:: Using Optimal Range: Approaching target [" + target.Name + "][ID: " + target.Id + "]");
                         }
 
                         if (target.Distance <= Settings.Instance.OptimalRange && Cache.Instance.Approaching != null)
@@ -329,7 +329,7 @@ namespace Questor.Modules
                         if (target.Distance > range && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id))
                         {
                             target.Approach((int)(Cache.Instance.WeaponRange * 0.8d));
-                            Logging.Log("Combat.ActivateWeapons: Using Weapons Range: Approaching target [" + target.Name + "][" + target.Id + "]");
+                            Logging.Log("Combat.ActivateWeapons: Using Weapons Range: Approaching target [" + target.Name + "][ID: " + target.Id + "]");
                         }
 
                         if (target.Distance <= range && Cache.Instance.Approaching != null)
@@ -418,7 +418,7 @@ namespace Questor.Modules
                 // No, check ammo type and if thats correct, activate weapon
                 if (ReloadAmmo(weapon, target) && CanActivate(weapon, target, true))
                 {
-                    Logging.Log("Combat: Activating weapon [" + weapon.ItemId + "] on [" + target.Name + "][" + target.Id + "]");
+                    Logging.Log("Combat: Activating weapon [" + weapon.ItemId + "] on [" + target.Name + "][ID: " + target.Id + "][" + Math.Round(target.Distance/1000,0) + "k away]");
                     weapon.Activate(target.Id);
                     //More human behaviour
                     //System.Threading.Thread.Sleep(333);
@@ -455,7 +455,7 @@ namespace Questor.Modules
 
                 if (CanActivate(painter, target, false))
                 {
-                    Logging.Log("Combat: Activating painter [" + painter.ItemId + "] on [" + target.Name + "][" + target.Id + "]");
+                    Logging.Log("Combat: Activating painter [" + painter.ItemId + "] on [" + target.Name + "][ID: " + target.Id + "][" + Math.Round(target.Distance/1000,0) + "k away]");
                     painter.Activate(target.Id);
                 }
             }
@@ -483,19 +483,19 @@ namespace Questor.Modules
                 // Are we deactivating?
                 if (nos.IsDeactivating)
                     continue;
-                //Logging.Log("Combat: Distances Target[ " + target.Distance + " Optimal[" + nos.OptimalRange.ToString()+"]");
+                //Logging.Log("Combat: Distances Target[ " + Math.Round(target.Distance,0) + " Optimal[" + nos.OptimalRange.ToString()+"]");
                 // Target is out of Nos range
                 if (target.Distance >= Settings.Instance.NosDistance)
                     continue;
 
                 if (CanActivate(nos, target, false))
                 {
-                    Logging.Log("Combat: Nos  [" + nos.ItemId + "] on [" + target.Name + "][" + target.Id + "]");
+                    Logging.Log("Combat: Nos  [" + nos.ItemId + "] on [" + target.Name + "][ID: " + target.Id + "][" + Math.Round(target.Distance/1000,0) + "k away]");
                     nos.Activate(target.Id);
                 }
                 else
                 {
-                    Logging.Log("Combat: Cannot Activate Nos [" + nos.ItemId + "] on [" + target.Name + "][" + target.Id + "]");
+                    Logging.Log("Combat: Cannot Activate Nos [" + nos.ItemId + "] on [" + target.Name + "][ID: " + target.Id + "][" + Math.Round(target.Distance / 1000, 0) + "k away]");
                 }
             }
         }
@@ -529,7 +529,7 @@ namespace Questor.Modules
 
                 if (CanActivate(web, target, false))
                 {
-                    Logging.Log("Combat: Activating stasis web [" + web.ItemId + "] on [" + target.Name + "][" + target.Id + "]");
+                    Logging.Log("Combat: Activating stasis web [" + web.ItemId + "] on [" + target.Name + "][ID: " + target.Id + "]");
                     web.Activate(target.Id);
                 }
             }
@@ -581,11 +581,11 @@ namespace Questor.Modules
                 var target = combatTargets[i];
                 if (target.Distance > maxRange*1.5d)
                 {
-                    Logging.Log("Combat: Target [" + target.Name + "][" + target.Id + "] out of range - Distance [" + target.Distance + "]");
+                    Logging.Log("Combat: Target [" + target.Name + "][ID: " + target.Id + "] out of range [" + Math.Round(target.Distance/1000,0) + "k away]");
                 }
                 else if (Cache.Instance.IgnoreTargets.Contains(target.Name.Trim()))
                 {
-                    Logging.Log("Combat: Target [" + target.Name + "][" + target.Id + "] on ignore list - Distance [" + target.Distance + "]");
+                    Logging.Log("Combat: Target [" + target.Name + "][ID: " + target.Id + "] on ignore list [" + Math.Round(target.Distance/1000,0) + "k away]");
                 }
                 else continue;
 
@@ -616,6 +616,7 @@ namespace Questor.Modules
                 if (target == null)
                     break;
 
+                Logging.Log("Combat: unlocking high value target [" + target.Name + "][ID:" + target.Id + "]{" + highValueTargets.Count + "} [" + Math.Round(target.Distance/1000,0) + "k away]");
                 target.UnlockTarget();
                 highValueTargets.Remove(target);
             }
@@ -648,7 +649,7 @@ namespace Questor.Modules
                 }
                 else
                 {
-                    Logging.Log("Combat: Targeting priority target [" + entity.Name + "][" + entity.Id + "]{" + highValueTargets.Count + "} - Distance [" + entity.Distance + "]");
+                    Logging.Log("Combat: Targeting priority target [" + entity.Name + "][ID:" + entity.Id + "]{" + highValueTargets.Count + "} [" + Math.Round(entity.Distance/1000,0) + "k away]");
                     entity.LockTarget();
                     highValueTargets.Add(entity);
                 }
@@ -667,7 +668,7 @@ namespace Questor.Modules
                 }
                 else
                 {
-                    Logging.Log("Combat: Targeting high value target [" + entity.Name + "][" + entity.Id + "]{" + highValueTargets.Count + "} - Distance [" + entity.Distance + "]");
+                    Logging.Log("Combat: Targeting high value target [" + entity.Name + "][ID:" + entity.Id + "]{" + highValueTargets.Count + "} [" + Math.Round(entity.Distance/1000,0) + "k away]");
                     entity.LockTarget();
                     highValueTargets.Add(entity);
                 }
@@ -685,7 +686,7 @@ namespace Questor.Modules
                 }
                 else
                 {
-                    Logging.Log("Combat: Targeting low value target [" + entity.Name + "][" + entity.Id + "]{" + lowValueTargets.Count + "} - Distance [" + entity.Distance + "]");
+                    Logging.Log("Combat: Targeting low value target [" + entity.Name + "][ID:" + entity.Id + "]{" + lowValueTargets.Count + "} [" + Math.Round(entity.Distance/1000,0) + "k away]");
                     entity.LockTarget();
                     lowValueTargets.Add(entity);
                 }

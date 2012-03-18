@@ -176,6 +176,7 @@ namespace Questor.Modules
                         {
                             if (DateTime.Now.Subtract(_lastWarpTo).TotalSeconds > 5)
                             {
+                                Logging.Log("Panic: Warping to [" + station.Name + "] which is [" + Math.Round(station.Distance / 1000, 0) + "k away]");
                                 station.WarpTo();
                                 _lastWarpTo = DateTime.Now;
                             }
@@ -197,6 +198,7 @@ namespace Questor.Modules
                         
                         if (DateTime.Now.Subtract(_lastWarpTo).TotalSeconds > 5)
                         {
+                            Logging.Log("Panic: Warping to [" + Cache.Instance.Star.Name + "] which is [" + Math.Round(Cache.Instance.Star.Distance/1000, 0) + "k away]");
                             Cache.Instance.Star.WarpTo();
                             _lastWarpTo = DateTime.Now;
                         }

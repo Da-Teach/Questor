@@ -1492,12 +1492,13 @@ namespace Questor
                     }
 
                     var closestWreck = Cache.Instance.UnlootedContainers.First();
-                    if (closestWreck.Distance > (int)Distance.SafeScoopRange && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closestWreck.Id))
+                    if (Math.Round(closestWreck.Distance,0) > (int)Distance.SafeScoopRange && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closestWreck.Id))
                     {
                         if (closestWreck.Distance > (int)Distance.WarptoDistance)
                         {
                             if (DateTime.Now.Subtract(_lastWarpTo).TotalSeconds > 10)
                             {
+                                Logging.Log("Salvage: Warping to [" + closestWreck.Name + "] which is [" + Math.Round(closestWreck.Distance/1000,0) +"k away]");
                                 closestWreck.WarpTo();
 
                             }
@@ -1508,18 +1509,18 @@ namespace Questor
                     else if (closestWreck.Distance <= (int)Distance.SafeScoopRange && Cache.Instance.Approaching != null)
                     {
                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
-                        Logging.Log("Questor: Salvage: Stop ship, ClosestWreck [" + closestWreck.Distance + "] is in scooprange + [" + (int)Distance.SafeScoopRange + "] and we were approaching");
+                        Logging.Log("Questor: Salvage: Stop ship, ClosestWreck [" + Math.Round(closestWreck.Distance,0) + "] is in scooprange + [" + (int)Distance.SafeScoopRange + "] and we were approaching");
                     }
                     try
                     {
                         // Overwrite settings, as the 'normal' settings do not apply
                         _salvage.MaximumWreckTargets = Math.Min(Cache.Instance.DirectEve.ActiveShip.MaxLockedTargets, Cache.Instance.DirectEve.Me.MaxLockedTargets);
-                        //Logging.Log("number of max cache ship: " + Cache.Instance.DirectEve.ActiveShip.MaxLockedTargets);
-                        //Logging.Log("number of max cache me: " + Cache.Instance.DirectEve.Me.MaxLockedTargets);
-                        //Logging.Log("number of max math.min: " + _salvage.MaximumWreckTargets);
                         _salvage.ReserveCargoCapacity = 80;
                         _salvage.LootEverything = true;
                         _salvage.ProcessState();
+                        //Logging.Log("number of max cache ship: " + Cache.Instance.DirectEve.ActiveShip.MaxLockedTargets);
+                        //Logging.Log("number of max cache me: " + Cache.Instance.DirectEve.Me.MaxLockedTargets);
+                        //Logging.Log("number of max math.min: " + _salvage.MaximumWreckTargets);
                     }
                     finally
                     {
@@ -1657,7 +1658,7 @@ namespace Questor
                         // Move to the target
                         if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
                         {
-                            Logging.Log("Salvage: Approaching target [" + closest.Name + "][" + closest.Id + "]");
+                            Logging.Log("Salvage: Approaching target [" + closest.Name + "][ID: " + closest.Id + "][" + Math.Round(closest.Distance / 1000, 0) + "k away]");
                             closest.Approach();
                         }
                     }
@@ -1666,6 +1667,7 @@ namespace Questor
                         // Probably never happens
                         if (DateTime.Now.Subtract(_lastWarpTo).TotalSeconds > 10)
                         {
+                            Logging.Log("Salvage: Warping to [" + closest.Name + "] which is [" + Math.Round(closest.Distance/1000, 0) + "k away]");
                             closest.WarpTo();
                             _lastWarpTo = DateTime.Now;
                         }
@@ -1682,7 +1684,7 @@ namespace Questor
                         Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
                         Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
 
-                        Logging.Log("Salvage: We've moved to the next Pocket [" + distance + "]");
+                        Logging.Log("Salvage: We've moved to the next Pocket [" + Math.Round(distance/1000,0) + "k away]");
 
                         State = QuestorState.Salvage;
                         return;
@@ -1789,6 +1791,7 @@ namespace Questor
                         if (closestWreck.Distance > (int)Distance.WarptoDistance)
                             if (DateTime.Now.Subtract(_lastWarpTo).TotalSeconds > 10)
                             {
+                                Logging.Log("Salvage: Warping to [" + closestWreck.Name + "] which is [" + Math.Round(closestWreck.Distance, 0) + "] meters away");
                                 closestWreck.WarpTo();
                                 _lastWarpTo = DateTime.Now;
                             }
@@ -1798,7 +1801,7 @@ namespace Questor
                     else if (closestWreck.Distance <= (int)Distance.SafeScoopRange && Cache.Instance.Approaching != null)
                     {
                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
-                        Logging.Log("Questor: SalvageOnly: Stop ship, ClosestWreck [" + closestWreck.Distance + "] is in scooprange + [" + (int)Distance.SafeScoopRange + "] and we were approaching");
+                        Logging.Log("Questor: SalvageOnly: Stop ship, ClosestWreck [" + Math.Round(closestWreck.Distance,0) + "] is in scooprange + [" + (int)Distance.SafeScoopRange + "] and we were approaching");
                     }
 
                     try
@@ -1880,6 +1883,7 @@ namespace Questor
                         if (closestWreck.Distance > (int)Distance.WarptoDistance)
                             if (DateTime.Now.Subtract(_lastWarpTo).TotalSeconds > 10)
                             {
+                                Logging.Log("Salvage: Warping to [" + closestWreck.Name + "] which is [" + Math.Round(closestWreck.Distance/1000, 0) + "k away]");
                                 closestWreck.WarpTo();
                                 _lastWarpTo = DateTime.Now;
                             }
@@ -1889,7 +1893,7 @@ namespace Questor
                     else if (closestWreck.Distance <= (int)Distance.SafeScoopRange && Cache.Instance.Approaching != null)
                     {
                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
-                        Logging.Log("Questor: SalvageOnlyBookmarks: Stop ship, ClosestWreck [" + closestWreck.Distance + "] is in scooprange + [" + (int)Distance.SafeScoopRange + "] and we were approaching");
+                        Logging.Log("Questor: SalvageOnlyBookmarks: Stop ship, ClosestWreck [" + Math.Round(closestWreck.Distance,0) + "] is in scooprange + [" + (int)Distance.SafeScoopRange + "] and we were approaching");
                     }
 
                     try

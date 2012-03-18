@@ -91,12 +91,12 @@ namespace Questor.Modules
 
                     if (corpAmmoHangar != null || corpLootHangar != null)
                     {
-                        Logging.Log("UnloadLoot: Opening corporation hangar");
+                        //Logging.Log("UnloadLoot: Opening corporation hangar");
                         State = UnloadLootState.OpenCorpHangar;
                     }
                     else
                     {
-                        Logging.Log("UnloadLoot: CommonMissionCompletionitems");
+                        //Logging.Log("UnloadLoot: CommonMissionCompletionitems");
                         State = UnloadLootState.MoveCommonMissionCompletionitems;
                     }
                     break;
@@ -109,6 +109,7 @@ namespace Questor.Modules
                         if (corpHangar.Window == null)
                         {
                             // No, command it to open
+                            Logging.Log("UnloadLoot: Opening corporation hangar");
                             Cache.Instance.DirectEve.OpenCorporationHangar();
                             break;
                         }
@@ -117,7 +118,7 @@ namespace Questor.Modules
                             break;
                     }
 
-                    Logging.Log("UnloadLoot: Moving CommonMissionCompletionitems");
+                    Logging.Log("UnloadLoot: Moving Common Mission Completion items");
                     State = UnloadLootState.MoveCommonMissionCompletionitems;
                     break;
                 

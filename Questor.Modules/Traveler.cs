@@ -50,12 +50,12 @@ namespace Questor.Modules
                 var location = Cache.Instance.DirectEve.Navigation.GetLocation(solarSystemId);
                 if (location.IsValid)
                 {
-                    Logging.Log("Traveler: (traveler.cs) Setting destination to [" + location.Name + "]");
+                    Logging.Log("Traveler: Setting destination to [" + location.Name + "]");
                     location.SetDestination();
                 }
                 else
                 {
-                    Logging.Log("Traveler: (traveler.cs) Error setting solar system destination [" + solarSystemId + "]");
+                    Logging.Log("Traveler: Error setting solar system destination [" + solarSystemId + "]");
                     State = TravelerState.Error;
                 }
 
@@ -86,7 +86,7 @@ namespace Questor.Modules
                 if (entities.Count() == 0)
                 {
                     // not found, that cant be true?!?!?!?!
-                    Logging.Log("Traveler: (traveler.cs) Error [Stargate (" + locationName + ")] not found, most likely lag waiting 15 seconds.");
+                    Logging.Log("Traveler: Error [Stargate (" + locationName + ")] not found, most likely lag waiting 15 seconds.");
                     _nextTravelerAction = DateTime.Now.AddSeconds((int)Time.TravelerNoStargatesFoundRetryDelay_seconds);
                     return;
                 }
@@ -95,16 +95,17 @@ namespace Questor.Modules
                 var entity = entities.First();
                 if (entity.Distance < (int)Distance.DecloakRange)
                 {
-                    Logging.Log("Traveler: (traveler.cs) Jumping to [" + locationName + "]");
+                    Logging.Log("Traveler: Jumping to [" + locationName + "]");
                     entity.Jump();
 
                     _nextTravelerAction = DateTime.Now.AddSeconds((int)Time.TravelerJumpedGateNextCommandDelay_seconds);
                 }
                 else if (entity.Distance < (int)Distance.WarptoDistance)
-                    entity.Approach();
+                    entity.Approach(); //you could use a negative approach distance here but ultimately that is a bad idea.. Id like to go toward the entity without approaching it so we would end up inside the docking ring (eventually)
+                   
                 else
                 {
-                    Logging.Log("Traveler: (traveler.cs) Warping to [Stargate (" + locationName + ")]");
+                    Logging.Log("Traveler: Warping to [Stargate (" + locationName + ")]");
                     entity.WarpTo();
                     _nextTravelerAction = DateTime.Now.AddSeconds((int)Time.TravelerInWarpedNextCommandDelay_seconds);
                 }

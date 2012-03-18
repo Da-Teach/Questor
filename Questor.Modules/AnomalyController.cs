@@ -65,7 +65,7 @@ namespace Questor.Modules
 
                 if (weapon.Charge.TypeId == charge.TypeId)
                 {
-                    Logging.Log("AnomalyController: Reloading All [" + weapon.ItemId + "] with [" + charge.TypeName + "][" + charge.TypeId + "]");
+                    Logging.Log("AnomalyController: Reloading All [" + weapon.ItemId + "] with [" + charge.TypeName + "][TypeID: " + charge.TypeId + "]");
 
                     weapon.ReloadAmmo(charge);
                 }
@@ -168,7 +168,7 @@ namespace Questor.Modules
                 // Move to the target
                 if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
                 {
-                    Logging.Log("AnomalyController.Activate: Approaching target [" + closest.Name + "][" + closest.Id + "]");
+                    Logging.Log("AnomalyController.Activate: Approaching target [" + closest.Name + "][ID: " + closest.Id + "]");
                     closest.Approach();
                 }
             }
@@ -232,7 +232,7 @@ namespace Questor.Modules
                         }
                         else
                         {
-                            Logging.Log("AnomalyController.ClearPocket: Targeting [" + target.Name + "][" + target.Id + "] - Distance [" + target.Distance + "]");
+                            Logging.Log("AnomalyController.ClearPocket: Targeting [" + target.Name + "][ID: " + target.Id + "][" + Math.Round(target.Distance/1000,0) + "k away]");
                             target.LockTarget();
                         }
                     }
@@ -243,7 +243,7 @@ namespace Questor.Modules
                 // Wait for it (or others) to get into range
                 if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != target.Id)
                 {
-                    Logging.Log("AnomalyController.ClearPocket: Approaching target [" + target.Name + "][" + target.Id + "]");
+                    Logging.Log("AnomalyController.ClearPocket: Approaching target [" + target.Name + "][ID: " + target.Id + "]");
 
                     if (Settings.Instance.SpeedTank)
                     {
@@ -319,7 +319,7 @@ namespace Questor.Modules
                 // Move to the target
                 if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
                 {
-                    Logging.Log("AnomalyController.MoveTo: Approaching target [" + closest.Name + "][" + closest.Id + "]");
+                    Logging.Log("AnomalyController.MoveTo: Approaching target [" + closest.Name + "][ID: " + closest.Id + "]");
                     closest.Approach();
                 }
             }
@@ -412,7 +412,7 @@ namespace Questor.Modules
 
                 foreach (var target in Cache.Instance.Targets.Where(e => targets.Any(t => t.Id == e.Id)))
                 {
-                    Logging.Log("AnomalyController.Kill: Unlocking [" + target.Name + "][" + target.Id + "] due to kill order being put on hold");
+                    Logging.Log("AnomalyController.Kill: Unlocking [" + target.Name + "][ID: " + target.Id + "] due to kill order being put on hold");
                     target.UnlockTarget();
                 }
 
@@ -432,7 +432,7 @@ namespace Questor.Modules
             {
                 if (!Cache.Instance.PriorityTargets.Any(pt => pt.Id == closest.Id))
                 {
-                    Logging.Log("AnomalyController.Kill: Adding [" + closest.Name + "][" + closest.Id + "] as a priority target");
+                    Logging.Log("AnomalyController.Kill: Adding [" + closest.Name + "][ID: " + closest.Id + "] as a priority target");
                     Cache.Instance.AddPriorityTargets(new[] {closest}, Priority.PriorityKillTarget);
                 }
             }
@@ -440,7 +440,7 @@ namespace Questor.Modules
             {
                 if (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id)
                 {
-                    Logging.Log("AnomalyController.Kill: Approaching target [" + closest.Name + "][" + closest.Id + "]");
+                    Logging.Log("AnomalyController.Kill: Approaching target [" + closest.Name + "][ID: " + closest.Id + "]");
 
                     if (Settings.Instance.SpeedTank)
                     {
@@ -502,7 +502,7 @@ namespace Questor.Modules
             var closest = containers.FirstOrDefault(c => targetNames.Contains(c.Name)) ?? containers.First();
             if (closest.Distance > (int)Distance.SafeScoopRange && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id))
             {
-                Logging.Log("AnomalyController.LootItem: Approaching target [" + closest.Name + "][" + closest.Id + "]");
+                Logging.Log("AnomalyController.LootItem: Approaching target [" + closest.Name + "][ID: " + closest.Id + "]");
                 closest.Approach();
             }
         }
@@ -546,7 +546,7 @@ namespace Questor.Modules
             var closest = containers.FirstOrDefault(c => targetNames.Contains(c.Name)) ?? containers.First();
             if (closest.Distance > (int)Distance.SafeScoopRange && (Cache.Instance.Approaching == null || Cache.Instance.Approaching.Id != closest.Id))
             {
-                Logging.Log("AnomalyController.Loot: Approaching target [" + closest.Name + "][" + closest.Id + "]");
+                Logging.Log("AnomalyController.Loot: Approaching target [" + closest.Name + "][ID: " + closest.Id + "]");
                 closest.Approach();
             }
         }
@@ -732,7 +732,7 @@ namespace Questor.Modules
                     var distance = Cache.Instance.DistanceFromMe(_lastX, _lastY, _lastZ);
                     if (distance > (int)Distance.NextPocketDistance)
                     {
-                        Logging.Log("AnomalyController: We've moved to the next Pocket [" + distance + "]");
+                        Logging.Log("AnomalyController: We've moved to the next Pocket [" + Math.Round(distance/1000,0) + "k away]");
 
                         // If we moved more then 100km, assume next Pocket
                         _pocket++;
