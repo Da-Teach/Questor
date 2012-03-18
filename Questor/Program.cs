@@ -422,7 +422,7 @@ namespace Questor
 
             if (_directEve.Login.AtLogin)
             {
-                if (DateTime.Now.Subtract(AppStarted).TotalSeconds > 10)
+                if (DateTime.Now.Subtract(AppStarted).TotalSeconds > 15)
                 {
                     Logging.Log("[Startup] Login account [" + _username + "]");
                     _directEve.Login.Login(_username, _password);
@@ -434,14 +434,17 @@ namespace Questor
 
             if (_directEve.Login.AtCharacterSelection && _directEve.Login.IsCharacterSelectionReady)
             {
-                foreach (var slot in _directEve.Login.CharacterSlots)
+                if (DateTime.Now.Subtract(AppStarted).TotalSeconds > 30)
                 {
-                    if (slot.CharId.ToString() != _character && string.Compare(slot.CharName, _character, true) != 0)
-                        continue;
+                    foreach (var slot in _directEve.Login.CharacterSlots)
+                    {
+                        if (slot.CharId.ToString() != _character && string.Compare(slot.CharName, _character, true) != 0)
+                            continue;
 
-                    Logging.Log("[Startup] Activating character [" + slot.CharName + "]");
-                    slot.Activate();
-                    return;
+                        Logging.Log("[Startup] Activating character [" + slot.CharName + "]");
+                        slot.Activate();
+                        return;
+                    }
                 }
 
                 Logging.Log("[Startup] Character id/name [" + _character + "] not found, retrying in 10 seconds");
