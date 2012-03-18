@@ -288,7 +288,7 @@ namespace Questor.Modules
                         _lastApproachAction = DateTime.Now;
                     closest.Approach();
                     }
-                    
+
                 }
             }
             else //we must be outside warpto distance, but we are likley in a deadspace so align to the target
@@ -296,8 +296,8 @@ namespace Questor.Modules
                 // We cant warp if we have drones out
                 if (Cache.Instance.ActiveDrones.Count() > 0)
                     return;
-                    
-                if (DateTime.Now.Subtract(_lastAlign ).TotalMinutes > (int)Time.LastAlignDelay_minutes)
+
+                if (DateTime.Now.Subtract(_lastAlign).TotalMinutes > (int)Time.LastAlignDelay_minutes)
                 {
                     // Only happens if we are asked to Activate something that is outside Distance.CloseToGateActivationRange (default is: 6k)
                     Logging.Log("MissionController: closest.AlignTo: [" + closest.Name + "] This only happens if we are asked to Activate something that is outside [" + Distance.CloseToGateActivationRange + "]");
@@ -311,13 +311,14 @@ namespace Questor.Modules
         {
             if (!Cache.Instance.NormalApproch)
                 Cache.Instance.NormalApproch = true;
-
-            int distancetoclear;
-            if (!int.TryParse(action.GetParameterValue("distance"), out distancetoclear))
-                distancetoclear = (int)Distance.GateActivationRange;
-
+            
             // Get lowest range
             var range = Math.Min(Cache.Instance.WeaponRange, Cache.Instance.DirectEve.ActiveShip.MaxTargetRange);
+            
+            int distancetoclear;
+            if (!int.TryParse(action.GetParameterValue("distance"), out distancetoclear))
+                distancetoclear = (int)range;
+            
             if (distancetoclear != 0 && distancetoclear != -2147483648 && distancetoclear != 2147483647)
             {
                 range = Math.Min(range, distancetoclear);
