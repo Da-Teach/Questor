@@ -1147,6 +1147,7 @@ namespace Questor.Modules
 
         private void LootItemAction(Action action)
         {
+            Cache.Instance.MissionLoot = true;
             var items = action.GetParameterValues("item");
             var targetNames = action.GetParameterValues("target");
                 // if we arent generally looting we need to re-enable the opening of wrecks to
@@ -1170,6 +1171,7 @@ namespace Questor.Modules
                 Logging.Log("MissionController.LootItem: We are done looting");
                     // now that we've completed this action revert OpenWrecks to false
                     Cache.Instance.OpenWrecks = false;
+                    Cache.Instance.MissionLoot = false;
                 _currentAction++;
                 return;
             }
