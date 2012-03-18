@@ -496,9 +496,9 @@ namespace Questor.Modules
             if (Cache.Instance.NormalApproch)
                 Cache.Instance.NormalApproch = false;
 
-            //int distancetoapp;
-            //if (!int.TryParse(action.GetParameterValue("distance"), out distancetoapp))
-            //    distancetoapp = (int)Distance.GateActivationRange;
+            int distancetoapp;
+            if (!int.TryParse(action.GetParameterValue("distance"), out distancetoapp))
+                distancetoapp = (int)Distance.GateActivationRange;
 
             var target = action.GetParameterValue("target");
 
