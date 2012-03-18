@@ -800,7 +800,6 @@ namespace Questor
                     break;
 
                 case QuestorState.GotoMission:
-                    Cache.Instance.OpenWrecks = false;
                     Statistics.Instance.MissionLoggingCompleted = false;
                     var missionDestination = _traveler.Destination as MissionBookmarkDestination;
                     if (missionDestination == null || missionDestination.AgentId != Cache.Instance.AgentId) // We assume that this will always work "correctly" (tm)
@@ -838,7 +837,7 @@ namespace Questor
                     break;
 
                 case QuestorState.Scanning:
-                    //_localwatch.ProcessState();
+                    _localwatch.ProcessState();
                     _scanInteraction.ProcessState();
                     if (_scanInteraction.State == ScanInteractionState.Idle)
                         _scanInteraction.State = ScanInteractionState.Scan;
@@ -1049,6 +1048,10 @@ namespace Questor
                         _combat.ProcessState();
                     }
                     _traveler.ProcessState();
+                    if (Settings.Instance.DebugStates)
+                    {
+                        Logging.Log("Traveler.State = " + _traveler.State);
+                    }
                     if (_traveler.State == TravelerState.AtDestination)
                     {
                         //Logging.Log("QuestorState.CloseQuestor: At Station: Docked");
