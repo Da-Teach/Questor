@@ -468,8 +468,8 @@ namespace Questor.Modules
                     continue;
 
                 // Don't even try to open a wreck if you are speed tanking and you aren't processing a loot action
-                //if (Settings.Instance.SpeedTank == true && Cache.Instance.OpenWrecks == false)
-                //    continue;
+                if (Settings.Instance.SpeedTank == true && Cache.Instance.OpenWrecks == false)
+                    continue;
 
                 // Don't even try to open a wreck if you are specified LootEverything as false and you aren't processing a loot action
                 //      this is currently commented out as it would keep golems and other non-speed tanked ships from looting the field as they cleared

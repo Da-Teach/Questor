@@ -737,7 +737,7 @@ namespace Questor
                         first_start = false;
                         break;
                     }
-
+                    Cache.Instance.OpenWrecks = false;
                     if (_agentInteraction.State == AgentInteractionState.Idle)
                     {
                         if (Settings.Instance.CharacterMode == "salvage")
@@ -1007,7 +1007,6 @@ namespace Questor
                     break;
 
                 case QuestorState.ExecuteMission:
-                    Cache.Instance.OpenWrecks = false;
                     watch.Reset();
                     watch.Start();
                     _combat.ProcessState();
@@ -1845,7 +1844,6 @@ namespace Questor
                     break;
 
                 case QuestorState.Storyline:
-                    Cache.Instance.OpenWrecks = false;
                     _storyline.ProcessState();
 
                     if (_storyline.State == StorylineState.Done)
