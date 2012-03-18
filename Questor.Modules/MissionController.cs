@@ -1464,6 +1464,10 @@ namespace Questor.Modules
                     }
 
                     var action = _pocketActions[_currentAction];
+                    if (action.ToString() != Cache.Instance.CurrentPocketAction)
+                    {
+                        Cache.Instance.CurrentPocketAction = action.ToString();
+                    }
                     var currentAction = _currentAction;
                     PerformAction(action);
 

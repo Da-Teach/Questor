@@ -155,9 +155,35 @@ namespace Questor
                 Top = Settings.Instance.WindowYPosition.Value;
                 Settings.Instance.WindowYPosition = null;
             }
-
-
-             if (Cache.Instance.ExtConsole != null)
+            if (_questor.State == QuestorState.ExecuteMission)
+            {
+                var newlblCurrentPocketActiontext = "[ " + Cache.Instance.CurrentPocketAction + " ] Action";
+                if (lblCurrentPocketAction.Text != newlblCurrentPocketActiontext)
+                    lblCurrentPocketAction.Text = newlblCurrentPocketActiontext;
+            }
+            else if (_questor.State == QuestorState.Salvage)
+            {
+                var newlblCurrentPocketActiontext = "[ " + "Salvaging" + " ] ";
+                if (lblCurrentPocketAction.Text != newlblCurrentPocketActiontext)
+                    lblCurrentPocketAction.Text = newlblCurrentPocketActiontext;
+            }
+            else
+            {
+                var newlblCurrentPocketActiontext = "[ " + "" + " ] ";
+                if (lblCurrentPocketAction.Text != newlblCurrentPocketActiontext)
+                    lblCurrentPocketAction.Text = newlblCurrentPocketActiontext;
+            }
+            if (Cache.Instance.MissionName != string.Empty)
+            {
+                var newlblCurrentMissionInfotext = "[ " + Cache.Instance.MissionName + " ][ " + Math.Round(DateTime.Now.Subtract(Statistics.Instance.StartedMission).TotalMinutes,0) + " min]";
+                if (lblCurrentMissionInfo.Text != newlblCurrentMissionInfotext)
+                    lblCurrentMissionInfo.Text = newlblCurrentMissionInfotext;
+            }
+            else
+            {
+                lblCurrentMissionInfo.Text = "No Mission Selected Yet";
+            }
+            if (Cache.Instance.ExtConsole != null)
             {  
                 if (txtExtConsole.Lines.Count() >= Settings.Instance.maxLineConsole)
                     txtExtConsole.Text = "";

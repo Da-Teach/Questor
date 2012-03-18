@@ -289,6 +289,7 @@ namespace Questor.Modules
         public DateTime lastKnownGoodConnectedTime { get; set; }
         public long totalMegaBytesOfMemoryUsed { get; set; }
         public double MyWalletBalance { get; set; }
+        public string CurrentPocketAction { get; set; }
         public string CurrentAgent
         {
             get
