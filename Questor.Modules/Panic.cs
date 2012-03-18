@@ -183,7 +183,6 @@ namespace Questor.Modules
                         }
                         else
                             station.Dock();
-
                         break;
                     }
 

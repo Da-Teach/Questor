@@ -192,7 +192,6 @@ namespace Questor.Modules
                 float[] corporation = {DirectEve.Standings.GetPersonalRelationship(LocalMember.CorporationId), DirectEve.Standings.GetCorporationRelationship(LocalMember.CorporationId), DirectEve.Standings.GetAllianceRelationship(LocalMember.CorporationId)};
                 float[] personal = {DirectEve.Standings.GetPersonalRelationship(LocalMember.CharacterId), DirectEve.Standings.GetCorporationRelationship(LocalMember.CharacterId), DirectEve.Standings.GetAllianceRelationship(LocalMember.CharacterId)};
 
-
                 if(alliance.Min() <= stand || corporation.Min() <= stand || personal.Min() <= stand)
                 {
                     Logging.Log("Cache.WatchLocal: Bad Standing Pilot Detected: [ " + LocalMember.Name + "] " + " [ " + number + " ] so far... of [ " + max_bad + " ] allowed");

@@ -73,8 +73,6 @@ namespace Questor
 
             _random = new Random();
 
-            //_debugmodule = new DebugModule();
-
             //_scoop = new Scoop();
             _salvage = new Salvage();
             _defense = new Defense();
@@ -416,7 +414,6 @@ namespace Questor
                 if (State == QuestorState.StorylinePanic)
                 {
                     State = QuestorState.Storyline;
-
                     if (_storyline.StorylineHandler is GenericCombatStoryline)
                         (_storyline.StorylineHandler as GenericCombatStoryline).State = GenericCombatStorylineState.GotoMission;
                 }
@@ -627,9 +624,9 @@ namespace Questor
                         Cache.Instance.lowest_capacitor_percentage_this_mission = 101;
                         Cache.Instance.repair_cycle_time_this_mission = 0;
                         Cache.Instance.TimeSpentReloading_seconds = 0;   // this will need to be added to whenever we reload or switch ammo
-                        Cache.Instance.TimeSpentInMission_seconds = 0;   // from landing on grid (loading mission actions) to going to base (changing to gotbase state)
-                        Cache.Instance.TimeSpentInMissionInRange = 0;    // time spent toally out of range, no targets
-                        Cache.Instance.TimeSpentInMissionOutOfRange = 0; // time sprnt in range - with targets to kill (or no targets?!)
+                        Cache.Instance.TimeSpentInMission_seconds = 0;   // from landing on grid (loading mission actions) to going to base (changing to gotobase state)
+                        Cache.Instance.TimeSpentInMissionInRange = 0;    // time spent totally out of range, no targets
+                        Cache.Instance.TimeSpentInMissionOutOfRange = 0; // time spent in range - with targets to kill (or no targets?!)
                     }
 
                     _agentInteraction.ProcessState();
@@ -830,7 +827,6 @@ namespace Questor
                         // Seeing as we just warped to the mission, start the mission controller
                         _missionController.State = MissionControllerState.Start;
                         _combat.State = CombatState.CheckTargets;
-
                         _traveler.Destination = null;
                     }
                     break;
@@ -935,9 +931,7 @@ namespace Questor
                     }
                     break;
 
-
                 case QuestorState.GotoBase:
-
                     // anti bump
                     var structure = Cache.Instance.Entities.Where(i => i.GroupId == (int)Group.LargeCollidableStructure).OrderBy(t => t.Distance).FirstOrDefault();
                     if (Cache.Instance.TargetedBy.Any(t => t.IsWarpScramblingMe))
@@ -960,13 +954,11 @@ namespace Questor
                         var baseDestination = _traveler.Destination as StationDestination;
                         if (baseDestination == null || baseDestination.StationId != Cache.Instance.Agent.StationId)
                             _traveler.Destination = new StationDestination(Cache.Instance.Agent.SolarSystemId, Cache.Instance.Agent.StationId, Cache.Instance.DirectEve.GetLocationName(Cache.Instance.Agent.StationId));
-
                         if (Cache.Instance.PriorityTargets.Any(pt => pt != null && pt.IsValid))
                         {
                             Logging.Log("GotoBase: Priority targets found, engaging!");
                             _combat.ProcessState();
                         }
-
                         _traveler.ProcessState();
                         if (Settings.Instance.DebugStates)
                         {
@@ -1051,7 +1043,6 @@ namespace Questor
                     var baseDestination2 = _traveler.Destination as StationDestination;
                     if (baseDestination2 == null || baseDestination2.StationId != Cache.Instance.Agent.StationId)
                         _traveler.Destination = new StationDestination(Cache.Instance.Agent.SolarSystemId, Cache.Instance.Agent.StationId, Cache.Instance.DirectEve.GetLocationName(Cache.Instance.Agent.StationId));
-
                     if (Cache.Instance.PriorityTargets.Any(pt => pt != null && pt.IsValid))
                     {
                         Logging.Log("QuestorState.CloseQuestor: GoToBase: Priority targets found, engaging!");
@@ -1106,6 +1097,7 @@ namespace Questor
                             Logging.Log("Questor is stopping because: " + Cache.Instance.ReasonToStopQuestor);
                             Settings.Instance.SessionsLog = false; //so we don't write the sessionlog more than once per session
                         }
+
                         if (AutoStart)
                         {
                             if (Cache.Instance.CloseQuestorCMDLogoff)
@@ -1258,7 +1250,6 @@ namespace Questor
                             }
                         }
                         // Lost drone statistics stuff ends here
-
 
                         // Ammo Consumption statistics
                         // Is cargo open?
@@ -1499,7 +1490,6 @@ namespace Questor
                             {
                                 Logging.Log("Salvage: Warping to [" + closestWreck.Name + "] which is [" + Math.Round(closestWreck.Distance/1000,0) +"k away]");
                                 closestWreck.WarpTo();
-
                             }
                         }
                         else

@@ -134,6 +134,7 @@ namespace Questor.Modules
 
                 if (_lastWeaponReload.ContainsKey(weapon.ItemId) && DateTime.Now < _lastWeaponReload[weapon.ItemId].AddSeconds((int)Time.ReloadWeaponDelayBeforeUsable_seconds))
                     return;
+
                 _lastWeaponReload[weapon.ItemId] = DateTime.Now;
 
                 if (weapon.Charge.TypeId == charge.TypeId)
@@ -1250,7 +1251,7 @@ namespace Questor.Modules
         {
             bool clear;
             if (!bool.TryParse(action.GetParameterValue("clear"), out clear))
-                clear = false; 
+                clear = false;
             
             var add = action.GetParameterValues("add");
             var remove = action.GetParameterValues("remove");

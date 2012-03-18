@@ -266,7 +266,6 @@ namespace Questor.Modules
                         }
                     }
                 }
-
                 return;
             }
 
