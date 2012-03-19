@@ -119,8 +119,8 @@ namespace Questor.Modules
 
                     if (!string.IsNullOrEmpty(Settings.Instance.UndockPrefix))
                     {
+                        var bookmarks = Cache.Instance.BookmarksByLabel(Settings.Instance.UndockPrefix).OrderByDescending(b => b.CreatedOn).Where(b => b.LocationId == Cache.Instance.DirectEve.Session.SolarSystemId);
                         //var bookmarks = Cache.Instance.DirectEve.Bookmarks.Where(b => b.LocationId == Cache.Instance.DirectEve.Session.SolarSystemId).Where(b => b.Title.Contains(Cache.Instance.DirectEve.GetLocationName(Cache.Instance.DirectEve.Session.StationId ?? 0)) && b.Title.Contains(Settings.Instance.UndockPrefix));
-                        var bookmarks = Cache.Instance.DirectEve.Bookmarks.Where(b => b.Title.Contains(Cache.Instance.DirectEve.GetLocationName(Cache.Instance.DirectEve.Session.StationId ?? 0)) && b.Title.Contains(Settings.Instance.UndockPrefix));
                         if (bookmarks != null && bookmarks.Count() > 0)
                         {
                             localundockBookmark = bookmarks.FirstOrDefault();
@@ -131,7 +131,7 @@ namespace Questor.Modules
                             }
                             else Logging.Log("TravelerDestination.StationDestination: undock bookmark [" + localundockBookmark.Title + "] is usable: it has coords");
                         }
-                        else Logging.Log("TravelerDestination.StationDestination: undock bookmark does not exist: " + Cache.Instance.DirectEve.GetLocationName((long)Cache.Instance.DirectEve.Session.StationId) + " and " + Settings.Instance.UndockPrefix + " did not both exist in a bookmark");
+                        else Logging.Log("TravelerDestination.StationDestination: you do not have an undock bookmark that has the prefix: " + Settings.Instance.UndockPrefix + " in local"); //+ Cache.Instance.DirectEve.GetLocationName((long)Cache.Instance.DirectEve.Session.StationId) + " and " + Settings.Instance.UndockPrefix + " did not both exist in a bookmark");
                     }
                     else Logging.Log("TravelerDestination.StationDestination: UndockPrefix is not configured");
                     Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdExitStation);
@@ -168,7 +168,7 @@ namespace Questor.Modules
                     return false;
                 }
             }
-            else Logging.Log("TravelerDestination.BookmarkDestination: undock bookmark missing: " + Cache.Instance.DirectEve.GetLocationName((long)Cache.Instance.DirectEve.Session.StationId) + " and " + Settings.Instance.UndockPrefix + " did not both exist in a bookmark");
+            //else Logging.Log("TravelerDestination.BookmarkDestination: undock bookmark missing: " + Cache.Instance.DirectEve.GetLocationName((long)Cache.Instance.DirectEve.Session.StationId) + " and " + Settings.Instance.UndockPrefix + " did not both exist in a bookmark");
 
             var entity = Cache.Instance.EntitiesByName(stationName).FirstOrDefault();
             if (entity == null)
@@ -247,20 +247,20 @@ namespace Questor.Modules
                 Logging.Log("TravelerDestination.BookmarkDestination: We're docked in the wrong station, undocking");
                 if (!string.IsNullOrEmpty(Settings.Instance.UndockPrefix))
                 {
-                    var bookmarks = Cache.Instance.DirectEve.Bookmarks.Where(b => b.Title.Contains(Cache.Instance.DirectEve.GetLocationName(Cache.Instance.DirectEve.Session.StationId ?? 0)) && b.Title.Contains(Settings.Instance.UndockPrefix));
+                    var bookmarks = Cache.Instance.BookmarksByLabel(Settings.Instance.UndockPrefix).OrderByDescending(b => b.CreatedOn).Where(b => b.LocationId == Cache.Instance.DirectEve.Session.SolarSystemId);
                     if (bookmarks != null && bookmarks.Count() > 0)
                     {
                         undockBookmark = bookmarks.FirstOrDefault();
                         if (undockBookmark.X == null || undockBookmark.Y == null || undockBookmark.Z == null)
                         {
-                            Logging.Log("TravelerDestination.StationDestination: undock bookmark [" + undockBookmark.Title + "] is unusable: it has no coords");
+                            Logging.Log("TravelerDestination.BookmarkDestination: undock bookmark [" + undockBookmark.Title + "] is unusable: it has no coords");
                             undockBookmark = null;
                         }
-                        else Logging.Log("TravelerDestination.StationDestination: undock bookmark [" + undockBookmark.Title + "] is usable: it has coords");
+                        else Logging.Log("TravelerDestination.BookmarkDestination: undock bookmark [" + undockBookmark.Title + "] is usable: it has coords");
                     }
-                    else Logging.Log("TravelerDestination.StationDestination: undock bookmark does not exist");
+                    else Logging.Log("TravelerDestination.BookmarkDestination: you do not have an undock bookmark that contains [" + Settings.Instance.UndockPrefix + "] in local");
                 }
-                else Logging.Log("TravelerDestination.StationDestination: UndockPrefix is not configured");
+                else Logging.Log("TravelerDestination.BookmarkDestination: UndockPrefix is not configured");
                 Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdExitStation);
                 nextAction = DateTime.Now.AddSeconds((int)Time.TravelerExitStationAmIInSpaceYet_seconds);
                 return false;
@@ -377,11 +377,11 @@ namespace Questor.Modules
 
         private static DirectAgentMissionBookmark GetMissionBookmark(long agentId, string title)
         {
-            Cache.Instance.mission = Cache.Instance.GetAgentMission(agentId);
-            if (Cache.Instance.mission == null)
+            var mission = Cache.Instance.GetAgentMission(agentId);
+            if (mission == null)
                 return null;
 
-            return Cache.Instance.mission.Bookmarks.FirstOrDefault(b => b.Title == title);
+            return mission.Bookmarks.FirstOrDefault(b => b.Title == title);
         }
 
         public override bool PerformFinalDestinationTask()
