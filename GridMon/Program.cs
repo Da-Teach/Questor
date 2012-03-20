@@ -36,6 +36,7 @@ namespace GridMon
             Log("GridMon finished.");
         }
 
+
         private static void Log(string line, params object[] parms)
         {
             line = string.Format(line, parms);
@@ -54,41 +55,18 @@ namespace GridMon
             }
 
             foreach (var entity in _directEve.Entities)
-                LogEntity("Entity[" + entity.Id + "].{0}: {1}", entity);
-
-            _nextAction = DateTime.Now.AddMilliseconds(10000);
+                if (entity.IsPc == true)
+                    LogEntity("{0} {1} {2} {3} {4} {5}", entity);
+                    // AppendSQL
+                    
+            _nextAction = DateTime.Now.AddMilliseconds(5000);
         }
 
         private static void LogEntity(string format, DirectEntity entity)
         {
             if (entity == null)
                 return;
-
-            Log(format, "Id", entity.Id);
-            Log(format, "OwnerId", entity.OwnerId);
-            Log(format, "CorpId", entity.CorpId);
-            Log(format, "AllianceId", entity.AllianceId);
-
-            Log(format, "FollowId", entity.FollowId);
-
-            Log(format, "IsNpc", entity.IsNpc);
-            Log(format, "IsPc", entity.IsPc);
-
-            Log(format, "TypeId", entity.TypeId);
-            Log(format, "GroupId", entity.GroupId);
-            Log(format, "TypeName", entity.TypeName);
-            Log(format, "Name", entity.Name);
-            Log(format, "GivenName", entity.GivenName);
-
-            Log(format, "Distance", entity.Distance);
-            Log(format, "Velocity", entity.Velocity);
-
-            Log(format, "IsAttacking", entity.IsAttacking);
-            Log(format, "IsCloaked", entity.IsCloaked);
-            Log(format, "IsNeutralizingMe", entity.IsNeutralizingMe);
-            Log(format, "IsJammingMe", entity.IsJammingMe);
-            Log(format, "IsWebbingMe", entity.IsWebbingMe);
-            Log(format, "IsSensorDampeningMe", entity.IsSensorDampeningMe);
+            Log(format, entity.Id, entity.Name, entity.CorpId, entity.AllianceId, entity.TypeName, entity.GivenName);
         }
 
     }
