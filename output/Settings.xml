@@ -205,7 +205,7 @@
   <orbitDistance>5000</orbitDistance>
 
   <!-- if you are not speed tanking then this value is used to determine where you are 'in range' if it is set. If you want your max range to be in range leave this blank: if you are in a gunboat you probably want to use this -->
-  <optimalRange></optimalRange>
+  <optimalRange>0</optimalRange>
   
   <!-- Activate shield booster or armor rep when shields/armor drop below this percentage -->
   <activateRepairModules>65</activateRepairModules>
