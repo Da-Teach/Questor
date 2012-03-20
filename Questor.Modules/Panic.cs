@@ -194,8 +194,14 @@ namespace Questor.Modules
                     {
                         if (Cache.Instance.InWarp)
                             break;
-                        
-                        if (DateTime.Now.Subtract(_lastWarpTo).TotalSeconds > 5)
+
+                        if (Cache.Instance.TargetedBy.Where(t => t.IsWarpScramblingMe).Count() > 0)
+                        {
+                            Logging.Log("Panic: We are still warp scrambled!"); //This runs every 'tick' so we should see it every 1.5 seconds or so
+                            _lastWarpScrambled = DateTime.Now;
+                        }
+                        else
+                            if (DateTime.Now.Subtract(_lastWarpTo).TotalSeconds > 5 | DateTime.Now.Subtract(_lastWarpScrambled).TotalSeconds < 10) //this will effectively spam warpto as soon as you are free of warp disruption if you were warp disrupted in the past 10 seconds
                         {
                             Logging.Log("Panic: Warping to [" + Cache.Instance.Star.Name + "] which is [" + Math.Round(Cache.Instance.Star.Distance/1000, 0) + "k away]");
                             Cache.Instance.Star.WarpTo();
