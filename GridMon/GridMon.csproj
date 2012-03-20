@@ -63,6 +63,10 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DirectEve, Version=1.0.0.0, Culture=neutral, PublicKeyToken=da3f88affe6c7b6d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\DirectEve\DirectEve.dll</HintPath>
+    </Reference>
     <Reference Include="Lavish.InnerSpace, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9029a3ab4cbe108d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Program Files (x86)\Innerspace\Lavish.InnerSpace.dll</HintPath>
@@ -79,10 +83,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\DirectEve\DirectEve\DirectEve.csproj">
-      <Project>{E8585D05-804D-40EA-AE64-5DD4F3EC6E43}</Project>
-      <Name>DirectEve</Name>
-    </ProjectReference>
+    <Content Include="gmcfg.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="CopyToInnerSpace" BeforeTargets="AfterBuild">
