@@ -22,6 +22,7 @@ namespace Questor.Modules
 
         private DateTime _resumeTime;
         private DateTime _lastWarpTo;
+        private DateTime _lastWarpScrambled;
         private bool _delayedResume;
         private int _randomDelay;
 
