@@ -62,7 +62,7 @@ namespace Questor.Modules
             var currentPocketName = Cache.Instance.FilterPath(Cache.Instance.mission.Name);
             if (Settings.Instance.PocketStatistics)
             {
-                if {Settings.Instance.PocketStatsUseIndividualFilesPerPocket)
+                if (Settings.Instance.PocketStatsUseIndividualFilesPerPocket)
                 {
                         Settings.Instance.PocketStatisticsFile = Path.Combine(Settings.Instance.PocketStatisticsPath, Cache.Instance.FilterPath(Cache.Instance.DirectEve.Me.Name) + " - " + currentPocketName + " - " + _pocket + " - PocketStatistics.csv");
                 }
