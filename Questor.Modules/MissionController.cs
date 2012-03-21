@@ -62,8 +62,10 @@ namespace Questor.Modules
             var currentPocketName = Cache.Instance.FilterPath(Cache.Instance.mission.Name);
             if (Settings.Instance.PocketStatistics)
             {
-                Settings.Instance.PocketStatisticsFile = Path.Combine(Settings.Instance.PocketStatisticsPath, Cache.Instance.FilterPath(Cache.Instance.DirectEve.Me.Name) + " - " + currentPocketName + " - " + _pocket + " - PocketStatistics.csv");
-
+                if {Settings.Instance.PocketStatsUseIndividualFilesPerPocket)
+                {
+                        Settings.Instance.PocketStatisticsFile = Path.Combine(Settings.Instance.PocketStatisticsPath, Cache.Instance.FilterPath(Cache.Instance.DirectEve.Me.Name) + " - " + currentPocketName + " - " + _pocket + " - PocketStatistics.csv");
+                }
                 if (!Directory.Exists(Settings.Instance.PocketStatisticsPath)) 
                     Directory.CreateDirectory(Settings.Instance.PocketStatisticsPath);
 
@@ -77,7 +79,8 @@ namespace Questor.Modules
 
                 // Build the line
                 var pocketstats_line = DateTime.Now + ";";                                                 //Date
-                pocketstats_line += currentPocketName + ";" + "pocket" + (_pocket) + ";";                  //Mission Name and Pocket
+                pocketstats_line += currentPocketName + ";";                                               //Mission Name
+                pocketstats_line += "pocket" + (_pocket) + ";";                                            //Pocket number
                 pocketstats_line += ((int)DateTime.Now.Subtract(StartedPocket).TotalMinutes) + ";";        //Time to Complete
                 pocketstats_line += ((long)(Cache.Instance.DirectEve.Me.Wealth - Wealth)) + ";";           //Isk
                 pocketstats_line += ((int)Cache.Instance.panic_attempts_this_pocket) + ";";                //Panics

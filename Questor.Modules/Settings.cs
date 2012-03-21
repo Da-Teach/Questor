@@ -156,6 +156,7 @@ namespace Questor.Modules
         public bool   PocketStatistics { get; set; }
         public string PocketStatisticsPath { get; set; }
         public string PocketStatisticsFile { get; set; }
+        public bool PocketStatsUseIndividualFilesPerPocket = true;
 
         public List<FactionFitting> FactionFitting { get; private set; }
         public List<AgentsList> AgentsList { get; set; }
@@ -416,6 +417,7 @@ namespace Questor.Modules
             MissionStats2Log = (bool?)xml.Element("MissionStats2Log") ?? true;
             MissionStats3Log = (bool?)xml.Element("MissionStats3Log") ?? true;
             PocketStatistics = (bool?)xml.Element("PocketStatistics") ?? true;
+            PocketStatsUseIndividualFilesPerPocket = (bool?)xml.Element("PocketStatsUseIndividualFilesPerPocket") ?? true;
 
             var missionsPath = (string) xml.Element("missionsPath");
             MissionsPath = !string.IsNullOrEmpty(missionsPath) ? Path.Combine(path, missionsPath) : Path.Combine(path, "Missions");
@@ -602,7 +604,7 @@ namespace Questor.Modules
             MissionStats3LogPath = Path.Combine(logpath, "missionstats\\");
             MissionStats3LogFile = Path.Combine(MissionStats3LogPath + "\\" + Cache.Instance.DirectEve.Me.Name + ".CustomDatedStatistics.csv");
             PocketStatisticsPath = Path.Combine(logpath, "pocketstats\\");
-            PocketStatisticsFile = Path.Combine(PocketStatisticsPath,"pocketstats - generic");
+            PocketStatisticsFile = Path.Combine(PocketStatisticsPath,"pocketstats-combined.csv");
             //create all the logging directories even if they arent configured to be used - we can adjust this later if it really bugs ppl to have some potentially empty directories. 
             Directory.CreateDirectory(logpath);
 
