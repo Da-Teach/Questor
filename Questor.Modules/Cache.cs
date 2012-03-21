@@ -608,6 +608,7 @@ namespace Questor.Modules
         public int MaxRuntime { get; set; }
         public bool CloseQuestorCMDLogoff = false;
         public bool CloseQuestorCMDExitGame = true;
+        public bool GotoBaseNow = false;
         public string ReasonToStopQuestor { get; set; }
         public string SessionState { get; set; }
         public double SessionIskGenerated { get; set; }

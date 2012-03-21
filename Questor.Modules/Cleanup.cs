@@ -30,8 +30,8 @@
                         // Telecom messages are generally mission info messages: close them
                         if (window.Name == "telecom")
                         {
-                            Logging.Log("Questor: Closing telecom message...");
-                            Logging.Log("Questor: Content of telecom window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
+                            Logging.Log("Cleanup: Closing telecom message...");
+                            Logging.Log("Cleanup: Content of telecom window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
                             window.Close();
                         }
 
@@ -41,14 +41,20 @@
                         {
                             bool close = false;
                             bool restart = false;
+                            bool gotobasenow = false;
                             if (!string.IsNullOrEmpty(window.Html))
                             {
+                                // Server going down /unscheduled/ potentially very soon! 
+                                // CCP does not reboot in the middle of the day because the server is behaving
+                                // dock now to avoid problems
+                                gotobasenow |= window.Html.Contains("for a short unscheduled reboot");
+                                
                                 // Server going down
                                 close |= window.Html.Contains("Please make sure your characters are out of harm");
                                 close |= window.Html.Contains("the servers are down for 30 minutes each day for maintenance and updates");
                                 if (window.Html.Contains("The socket was closed"))
                                 {
-                                    Logging.Log("Questor: This window indicates we are disconnected: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
+                                    Logging.Log("Cleanup: This window indicates we are disconnected: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
                                     //Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdLogOff); //this causes the questor window to not re-appear
                                     Cache.Instance.CloseQuestorCMDLogoff = false;
                                     Cache.Instance.CloseQuestorCMDExitGame = true;
@@ -86,24 +92,40 @@
                                 restart |= window.Html.Contains("Connection to server lost"); 														//INFORMATION
                                 restart |= window.Html.Contains("The user connection has been usurped on the proxy"); 								//CONNECTION LOST
                                 restart |= window.Html.Contains("The transport has not yet been connected, or authentication was not successful"); 	//CONNECTION LOST
-                                //_pulsedelay = 20;
                             }
 
                             if (close)
                             {
-                                Logging.Log("Questor: Closing modal window...");
-                                Logging.Log("Questor: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
+                                Logging.Log("Cleanup: Closing modal window...");
+                                Logging.Log("Cleanup: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
                                 window.Close();
                             }
 
                             if (restart)
                             {
-                                Logging.Log("Questor: Restarting eve...");
-                                Logging.Log("Questor: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
+                                Logging.Log("Cleanup: Restarting eve...");
+                                Logging.Log("Cleanup: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
                                 Cache.Instance.CloseQuestorCMDLogoff = false;
                                 Cache.Instance.CloseQuestorCMDExitGame = true;
                                 Cache.Instance.ReasonToStopQuestor = "A message from ccp indicated we were disonnected";
                                 Cache.Instance.SessionState = "Quitting";
+                                window.Close();
+                                continue;
+                            }
+                            if (gotobasenow)
+                            {
+                                Logging.Log("Cleanup: Evidentally the cluster is dieing... and CCP is restarting the server");
+                                Logging.Log("Cleanup: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
+                                Cache.Instance.GotoBaseNow = true;
+                                Settings.Instance.AutoStart = false;
+                                //
+                                // do not close eve, let the shutdown of the server do that
+                                //
+                                //Cache.Instance.CloseQuestorCMDLogoff = false;
+                                //Cache.Instance.CloseQuestorCMDExitGame = true;
+                                //Cache.Instance.ReasonToStopQuestor = "A message from ccp indicated we were disonnected";
+                                //Cache.Instance.SessionState = "Quitting";
+                                window.Close();
                                 continue;
                             }
                         }

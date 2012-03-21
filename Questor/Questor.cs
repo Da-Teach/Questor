@@ -382,6 +382,10 @@ namespace Questor
             {
                 State = QuestorState.CloseQuestor;
             }
+            if (Cache.Instance.GotoBaseNow == true)
+            {
+                State = QuestorState.GotoBase;
+            }
             // Defense is more important then pause, rest (even panic) isn't!
             // Panic always runs, not just in space
             watch.Reset();
