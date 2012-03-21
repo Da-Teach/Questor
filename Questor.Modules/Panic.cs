@@ -22,6 +22,7 @@ namespace Questor.Modules
 
         private DateTime _resumeTime;
         private DateTime _lastWarpTo;
+        private DateTime _lastDockedorJumping;
         private DateTime _lastWarpScrambled;
         private bool _delayedResume;
         private int _randomDelay;
@@ -34,108 +35,116 @@ namespace Questor.Modules
             switch (State)
             {
                 case PanicState.Normal:
-                    if (Cache.Instance.DirectEve.ActiveShip.Entity != null)
+                    if (!Cache.Instance.InSpace)
                     {
-                        _lastNormalX = Cache.Instance.DirectEve.ActiveShip.Entity.X;
-                        _lastNormalY = Cache.Instance.DirectEve.ActiveShip.Entity.Y;
-                        _lastNormalZ = Cache.Instance.DirectEve.ActiveShip.Entity.Z;
+                        _lastDockedorJumping = DateTime.Now;
                     }
 
-                    if (Cache.Instance.DirectEve.ActiveShip.GroupId == (int)Group.Capsule)
+                    if (DateTime.Now.AddSeconds(3) > _lastDockedorJumping)
                     {
-                        Logging.Log("Panic: You are in a Capsule, you must have died :(");
-                        State = PanicState.StartPanicking;
-                    }
-                    else if (InMission && Cache.Instance.InSpace && Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage < Settings.Instance.MinimumCapacitorPct && Cache.Instance.DirectEve.ActiveShip.GroupId != 31)
-                    {
-                        // Only check for cap-panic while in a mission, not while doing anything else
-                        Logging.Log("Panic: Start panicking, capacitor [" + Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage + "%] below [" + Settings.Instance.MinimumCapacitorPct + "%]");
-                        //Questor.panic_attempts_this_mission;
-                        Cache.Instance.panic_attempts_this_mission = (Cache.Instance.panic_attempts_this_mission + 1);
-                        Cache.Instance.panic_attempts_this_pocket = (Cache.Instance.panic_attempts_this_pocket + 1);
-                        State = PanicState.StartPanicking;
-                    }
-                    else if (Cache.Instance.InSpace && Cache.Instance.DirectEve.ActiveShip.ShieldPercentage < Settings.Instance.MinimumShieldPct)
-                    {
-                        Logging.Log("Panic: Start panicking, shield [" + Cache.Instance.DirectEve.ActiveShip.ShieldPercentage + "%] below [" + Settings.Instance.MinimumShieldPct + "%]");
-                        Cache.Instance.panic_attempts_this_mission = (Cache.Instance.panic_attempts_this_mission + 1);
-                        Cache.Instance.panic_attempts_this_pocket = (Cache.Instance.panic_attempts_this_pocket + 1);
-                        State = PanicState.StartPanicking;
-                    }
-                    else if (Cache.Instance.InSpace && Cache.Instance.DirectEve.ActiveShip.ArmorPercentage < Settings.Instance.MinimumArmorPct)
-                    {
-                        Logging.Log("Panic: Start panicking, armor [" + Cache.Instance.DirectEve.ActiveShip.ArmorPercentage + "%] below [" + Settings.Instance.MinimumArmorPct + "%]");
-                        Cache.Instance.panic_attempts_this_mission = (Cache.Instance.panic_attempts_this_mission + 1);
-                        Cache.Instance.panic_attempts_this_pocket = (Cache.Instance.panic_attempts_this_pocket + 1);
-                        State = PanicState.StartPanicking;
-                    }
-
-                    _delayedResume = false;
-                    if (InMission)
-                    {
-                        var frigates = Cache.Instance.Entities.Count(e => e.IsFrigate && e.IsPlayer);
-                        var cruisers = Cache.Instance.Entities.Count(e => e.IsCruiser && e.IsPlayer);
-                        var battlecruisers = Cache.Instance.Entities.Count(e => e.IsBattlecruiser && e.IsPlayer);
-                        var battleships = Cache.Instance.Entities.Count(e => e.IsBattleship && e.IsPlayer);
-
-                        if (Settings.Instance.FrigateInvasionLimit > 0 && frigates >= Settings.Instance.FrigateInvasionLimit)
+                        if (Cache.Instance.DirectEve.ActiveShip.Entity != null)
                         {
-                            _delayedResume = true;
+                            _lastNormalX = Cache.Instance.DirectEve.ActiveShip.Entity.X;
+                            _lastNormalY = Cache.Instance.DirectEve.ActiveShip.Entity.Y;
+                            _lastNormalZ = Cache.Instance.DirectEve.ActiveShip.Entity.Z;
+                        }
 
+                        if (Cache.Instance.DirectEve.ActiveShip.GroupId == (int)Group.Capsule)
+                        {
+                            Logging.Log("Panic: You are in a Capsule, you must have died :(");
+                            State = PanicState.StartPanicking;
+                        }
+                        else if (InMission && Cache.Instance.InSpace && Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage < Settings.Instance.MinimumCapacitorPct && Cache.Instance.DirectEve.ActiveShip.GroupId != 31)
+                        {
+                            // Only check for cap-panic while in a mission, not while doing anything else
+                            Logging.Log("Panic: Start panicking, capacitor [" + Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage + "%] below [" + Settings.Instance.MinimumCapacitorPct + "%]");
+                            //Questor.panic_attempts_this_mission;
                             Cache.Instance.panic_attempts_this_mission = (Cache.Instance.panic_attempts_this_mission + 1);
                             Cache.Instance.panic_attempts_this_pocket = (Cache.Instance.panic_attempts_this_pocket + 1);
                             State = PanicState.StartPanicking;
-                            Logging.Log("Panic: Start panicking, mission invaded by [" + frigates + "] frigates");
                         }
-
-                        if (Settings.Instance.CruiserInvasionLimit > 0 && cruisers >= Settings.Instance.CruiserInvasionLimit)
+                        else if (Cache.Instance.InSpace && Cache.Instance.DirectEve.ActiveShip.ShieldPercentage < Settings.Instance.MinimumShieldPct)
                         {
-                            _delayedResume = true;
-
+                            Logging.Log("Panic: Start panicking, shield [" + Cache.Instance.DirectEve.ActiveShip.ShieldPercentage + "%] below [" + Settings.Instance.MinimumShieldPct + "%]");
                             Cache.Instance.panic_attempts_this_mission = (Cache.Instance.panic_attempts_this_mission + 1);
                             Cache.Instance.panic_attempts_this_pocket = (Cache.Instance.panic_attempts_this_pocket + 1);
                             State = PanicState.StartPanicking;
-                            Logging.Log("Panic: Start panicking, mission invaded by [" + cruisers + "] cruisers");
                         }
-
-                        if (Settings.Instance.BattlecruiserInvasionLimit > 0 && battlecruisers >= Settings.Instance.BattlecruiserInvasionLimit)
+                        else if (Cache.Instance.InSpace && Cache.Instance.DirectEve.ActiveShip.ArmorPercentage < Settings.Instance.MinimumArmorPct)
                         {
-                            _delayedResume = true;
-
+                            Logging.Log("Panic: Start panicking, armor [" + Cache.Instance.DirectEve.ActiveShip.ArmorPercentage + "%] below [" + Settings.Instance.MinimumArmorPct + "%]");
                             Cache.Instance.panic_attempts_this_mission = (Cache.Instance.panic_attempts_this_mission + 1);
                             Cache.Instance.panic_attempts_this_pocket = (Cache.Instance.panic_attempts_this_pocket + 1);
                             State = PanicState.StartPanicking;
-                            Logging.Log("Panic: Start panicking, mission invaded by [" + battlecruisers + "] battlecruisers");
                         }
 
-                        if (Settings.Instance.BattleshipInvasionLimit > 0 && battleships >= Settings.Instance.BattleshipInvasionLimit)
+                        _delayedResume = false;
+                        if (InMission)
                         {
-                            _delayedResume = true;
+                            var frigates = Cache.Instance.Entities.Count(e => e.IsFrigate && e.IsPlayer);
+                            var cruisers = Cache.Instance.Entities.Count(e => e.IsCruiser && e.IsPlayer);
+                            var battlecruisers = Cache.Instance.Entities.Count(e => e.IsBattlecruiser && e.IsPlayer);
+                            var battleships = Cache.Instance.Entities.Count(e => e.IsBattleship && e.IsPlayer);
 
-                            Cache.Instance.panic_attempts_this_mission = (Cache.Instance.panic_attempts_this_mission + 1);
-                            Cache.Instance.panic_attempts_this_pocket = (Cache.Instance.panic_attempts_this_pocket + 1);
-                            State = PanicState.StartPanicking;
-                            Logging.Log("Panic: Start panicking, mission invaded by [" + battleships + "] battleships");
+                            if (Settings.Instance.FrigateInvasionLimit > 0 && frigates >= Settings.Instance.FrigateInvasionLimit)
+                            {
+                                _delayedResume = true;
+
+                                Cache.Instance.panic_attempts_this_mission = (Cache.Instance.panic_attempts_this_mission + 1);
+                                Cache.Instance.panic_attempts_this_pocket = (Cache.Instance.panic_attempts_this_pocket + 1);
+                                State = PanicState.StartPanicking;
+                                Logging.Log("Panic: Start panicking, mission invaded by [" + frigates + "] frigates");
+                            }
+
+                            if (Settings.Instance.CruiserInvasionLimit > 0 && cruisers >= Settings.Instance.CruiserInvasionLimit)
+                            {
+                                _delayedResume = true;
+
+                                Cache.Instance.panic_attempts_this_mission = (Cache.Instance.panic_attempts_this_mission + 1);
+                                Cache.Instance.panic_attempts_this_pocket = (Cache.Instance.panic_attempts_this_pocket + 1);
+                                State = PanicState.StartPanicking;
+                                Logging.Log("Panic: Start panicking, mission invaded by [" + cruisers + "] cruisers");
+                            }
+
+                            if (Settings.Instance.BattlecruiserInvasionLimit > 0 && battlecruisers >= Settings.Instance.BattlecruiserInvasionLimit)
+                            {
+                                _delayedResume = true;
+
+                                Cache.Instance.panic_attempts_this_mission = (Cache.Instance.panic_attempts_this_mission + 1);
+                                Cache.Instance.panic_attempts_this_pocket = (Cache.Instance.panic_attempts_this_pocket + 1);
+                                State = PanicState.StartPanicking;
+                                Logging.Log("Panic: Start panicking, mission invaded by [" + battlecruisers + "] battlecruisers");
+                            }
+
+                            if (Settings.Instance.BattleshipInvasionLimit > 0 && battleships >= Settings.Instance.BattleshipInvasionLimit)
+                            {
+                                _delayedResume = true;
+
+                                Cache.Instance.panic_attempts_this_mission = (Cache.Instance.panic_attempts_this_mission + 1);
+                                Cache.Instance.panic_attempts_this_pocket = (Cache.Instance.panic_attempts_this_pocket + 1);
+                                State = PanicState.StartPanicking;
+                                Logging.Log("Panic: Start panicking, mission invaded by [" + battleships + "] battleships");
+                            }
+
+                            if (_delayedResume)
+                            {
+                                _randomDelay = (Settings.Instance.InvasionRandomDelay > 0 ? _random.Next(Settings.Instance.InvasionRandomDelay) : 0);
+                                _randomDelay += Settings.Instance.InvasionMinimumDelay;
+                            }
                         }
 
-                        if (_delayedResume)
+                        Cache.Instance.AddPriorityTargets(Cache.Instance.TargetedBy.Where(t => t.IsWarpScramblingMe), Priority.WarpScrambler);
+                        if (Settings.Instance.SpeedTank)
                         {
-                            _randomDelay = (Settings.Instance.InvasionRandomDelay > 0 ? _random.Next(Settings.Instance.InvasionRandomDelay) : 0);
-                            _randomDelay += Settings.Instance.InvasionMinimumDelay;
+                            Cache.Instance.AddPriorityTargets(Cache.Instance.TargetedBy.Where(t => t.IsWebbingMe), Priority.Webbing);
+                            Cache.Instance.AddPriorityTargets(Cache.Instance.TargetedBy.Where(t => t.IsTargetPaintingMe), Priority.TargetPainting);
                         }
+                        Cache.Instance.AddPriorityTargets(Cache.Instance.TargetedBy.Where(t => t.IsNeutralizingMe), Priority.Neutralizing);
+                        Cache.Instance.AddPriorityTargets(Cache.Instance.TargetedBy.Where(t => t.IsJammingMe), Priority.Jamming);
+                        Cache.Instance.AddPriorityTargets(Cache.Instance.TargetedBy.Where(t => t.IsSensorDampeningMe), Priority.Dampening);
+                        if (Cache.Instance.Modules.Any(m => m.IsTurret))
+                            Cache.Instance.AddPriorityTargets(Cache.Instance.TargetedBy.Where(t => t.IsTrackingDisruptingMe), Priority.TrackingDisrupting);
                     }
-
-                    Cache.Instance.AddPriorityTargets(Cache.Instance.TargetedBy.Where(t => t.IsWarpScramblingMe), Priority.WarpScrambler);
-                    if (Settings.Instance.SpeedTank)
-                    {
-                        Cache.Instance.AddPriorityTargets(Cache.Instance.TargetedBy.Where(t => t.IsWebbingMe), Priority.Webbing);
-                        Cache.Instance.AddPriorityTargets(Cache.Instance.TargetedBy.Where(t => t.IsTargetPaintingMe), Priority.TargetPainting);
-                    }
-                    Cache.Instance.AddPriorityTargets(Cache.Instance.TargetedBy.Where(t => t.IsNeutralizingMe), Priority.Neutralizing);
-                    Cache.Instance.AddPriorityTargets(Cache.Instance.TargetedBy.Where(t => t.IsJammingMe), Priority.Jamming);
-                    Cache.Instance.AddPriorityTargets(Cache.Instance.TargetedBy.Where(t => t.IsSensorDampeningMe), Priority.Dampening);
-                    if (Cache.Instance.Modules.Any(m => m.IsTurret))
-                        Cache.Instance.AddPriorityTargets(Cache.Instance.TargetedBy.Where(t => t.IsTrackingDisruptingMe), Priority.TrackingDisrupting);
                     break;
 
                 // NOTE: The difference between Panicking and StartPanicking is that the bot will move to "Panic" state once in warp & Panicking 
@@ -167,7 +176,7 @@ namespace Questor.Modules
                     }
 
                     // We leave the panicking state once we actually start warping off
-                    var station = Cache.Instance.Stations.OrderBy(x => x.Distance).FirstOrDefault();
+                    var station = Cache.Instance.Stations.FirstOrDefault();
                     if (station != null)
                     {
                         if (Cache.Instance.InWarp)
@@ -187,7 +196,7 @@ namespace Questor.Modules
                         break;
                     }
 
-                    // Whats this you say?  No star?
+                    // What is this you say?  No star?
                     if (Cache.Instance.Star == null)
                         break;
 
