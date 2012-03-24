@@ -396,7 +396,7 @@ namespace Questor.Modules
 
             //AgentName = (string) xml.Element("agentName");
 
-            bookmarkWarpOut = (string)xml.Element("bookmarkWarpOut") ?? "insta";
+            bookmarkWarpOut = (string)xml.Element("bookmarkWarpOut") ?? "";
 
             EVEProcessMemoryCeiling = (int?)xml.Element("EVEProcessMemoryCeiling") ?? 900;
             EVEProcessMemoryCeilingLogofforExit = (string)xml.Element("EVEProcessMemoryCeilingLogofforExit") ?? "exit";
