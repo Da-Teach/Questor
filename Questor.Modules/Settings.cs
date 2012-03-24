@@ -440,16 +440,30 @@ namespace Questor.Modules
             var agentList = xml.Element("agentsList");
             if(agentList != null)
             {
-                int i = 0;
-                foreach (var agent in agentList.Elements("agentList"))
+                if (agentList.HasElements)
                 {
-                    AgentsList.Add(new AgentsList(agent));
-                    i++;
+                   
+                    int i = 0;
+                    foreach (var agent in agentList.Elements("agentList"))
+                    {
+                        AgentsList.Add(new AgentsList(agent));
+                        i++;
+                    }
+                    if (i >= 2)
+                    {
+                        MultiAgentSupport = true;
+                        Logging.Log("Settings: Found more than one agent in your character XML: MultiAgentSupport is true");
+                    }
+                    else
+                    {
+                        MultiAgentSupport = false;
+                        Logging.Log("Settings: Found only one agent in your character XML: MultiAgentSupport is false");
+                    }
                 }
-                if (i >= 2)
-                    MultiAgentSupport = true;
                 else
-                    MultiAgentSupport = false;
+                {
+                    Logging.Log("Settings: agentList exists in your characters config but no agents were listed.");
+                }
             }
             else
                 Logging.Log("Settings: Error! No Agents List specified.");
