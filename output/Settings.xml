@@ -204,7 +204,7 @@
   <!-- The range used by SpeedTank -->
   <orbitDistance>5000</orbitDistance>
 
-  <!-- if you are not speed tanking then this value is used to determine where you are 'in range' if it is set. If you want your max range to be in range leave this blank: if you are in a gunboat you probably want to use this -->
+  <!-- if you are not speed tanking then this value is used to determine where you are 'in range' if it is set. If you want your maximum range to be 'in range' leave this at 0: if you are in a gunboat you probably want this set to your optimal range-->
   <optimalRange>0</optimalRange>
   
   <!-- Activate shield booster or armor rep when shields/armor drop below this percentage -->
