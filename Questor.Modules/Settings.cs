@@ -130,7 +130,7 @@ namespace Questor.Modules
         public bool WreckBlackListSmallWrecks { get; set; }
         public bool WreckBlackListMediumWrecks { get; set; }
 
-        public string logpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        public string logpath { get; set; }
 
         public bool   SessionsLog { get; set; }
         public string SessionsLogPath { get; set; }
