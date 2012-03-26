@@ -1967,7 +1967,7 @@ namespace Questor
                     {
                         Logging.Log("Questor: We have completed the storyline, returning to base");
 
-                        if (State == QuestorState.SalvageNextPocket)
+                        if (State == QuestorState.Storyline)
                         {
                             State = QuestorState.GotoBase;
                         }
