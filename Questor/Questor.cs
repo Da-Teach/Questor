@@ -68,6 +68,8 @@ namespace Questor
         private double _lastZ;
         private bool _GatesPresent;
         private bool first_start = true;
+        public  bool panicstatereset = false;
+
         DateTime nextAction = DateTime.Now;
 
         public Questor(frmMain form1)
@@ -422,6 +424,11 @@ namespace Questor
 
                 if (Settings.Instance.DebugStates)
                     Logging.Log("State = " + State);
+                if (panicstatereset)
+                {
+                    _panic.State = PanicState.Normal;
+                    panicstatereset = false;
+                }
             }
             else if (_panic.State == PanicState.Resume)
             {

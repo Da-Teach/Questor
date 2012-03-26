@@ -17,9 +17,8 @@ namespace Questor
     public partial class frmMain : Form
     {
         private Questor _questor;
-        private Panic _panic;
         private DateTime _lastlogmessage;
-            
+
         public frmMain()
         {
             InitializeComponent();
@@ -184,16 +183,22 @@ namespace Questor
                 if (lblCurrentPocketAction.Text != newlblCurrentPocketActiontext)
                     lblCurrentPocketAction.Text = newlblCurrentPocketActiontext;
             }
-            if (Cache.Instance.MissionName != string.Empty)
+            var missionXmlPath = Path.Combine(Settings.Instance.MissionsPath, Cache.Instance.MissionName + ".xml");
+            if (Cache.Instance.MissionName != string.Empty && File.Exists(missionXmlPath))
             {
                 var newlblCurrentMissionInfotext = "[ " + Cache.Instance.MissionName + " ][ " + Math.Round(DateTime.Now.Subtract(Statistics.Instance.StartedMission).TotalMinutes,0) + " min][ #" + Statistics.Instance.MissionsThisSession + " ]";
                 if (lblCurrentMissionInfo.Text != newlblCurrentMissionInfotext)
                     lblCurrentMissionInfo.Text = newlblCurrentMissionInfotext;
                 buttonOpenMissionXML.Enabled = true;
             }
-            else
+            else if (Cache.Instance.MissionName != string.Empty)
             {
                 lblCurrentMissionInfo.Text = "No Mission Selected Yet";
+                buttonOpenMissionXML.Enabled = false;
+            }
+            else
+            {
+                //lblCurrentMissionInfo.Text = "No Mission XML exists for this mission";
                 buttonOpenMissionXML.Enabled = false;
             }
             if (Cache.Instance.ExtConsole != null)
@@ -268,7 +273,7 @@ namespace Questor
         {
             _questor.State = (QuestorState)Enum.Parse(typeof(QuestorState), QuestorStateComboBox.Text);
             // If you are at the controls enough to change states... assume that panic needs to do nothing
-            _panic.State = PanicState.Resume;
+            _questor.panicstatereset = true;
         }
 
         private void AutoStartCheckBox_CheckedChanged(object sender, EventArgs e)
