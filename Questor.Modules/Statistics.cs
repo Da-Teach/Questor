@@ -68,7 +68,7 @@
                     //    _lastAction = DateTime.Now;
                     //    return;
                     //}
-                    if (DateTime.Now.Subtract(Statistics.Instance.FinishedSalvaging).TotalMinutes > 10 || DateTime.Now.Subtract(Cache.Instance.StartTime).TotalMinutes > 5) //FinishedSalvaging is the later of the 2 timestamps (FinishedMission and FinishedSalvaging), if you aren't after mission salvaging this timestamp is the same as FinishedMission
+                    if (DateTime.Now.Subtract(Statistics.Instance.FinishedSalvaging).TotalMinutes > 10 || DateTime.Now.Subtract(Cache.Instance.StartTime).TotalMinutes < 5) //FinishedSalvaging is the later of the 2 timestamps (FinishedMission and FinishedSalvaging), if you aren't after mission salvaging this timestamp is the same as FinishedMission
                     {
                         Logging.Log("Statistics: It is unlikely a mission has been run... No Mission log will be written.");
                         Statistics.Instance.MissionLoggingCompleted = true; //if the mission was completed more than 10 min ago assume the logging has been done already.
