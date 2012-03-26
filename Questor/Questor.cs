@@ -112,9 +112,7 @@ namespace Questor
 
         public QuestorState State { get; set; }
 
-        public bool AutoStart { get; set; }
         public bool Paused { get; set; }
-        public bool Disable3D { get; set; }
         public bool ValidSettings { get; set; }
         public bool ExitWhenIdle { get; set; }
         //public bool LogPathsNotSetupYet = true;
@@ -142,9 +140,6 @@ namespace Questor
         {
             ApplySettings();
             ValidateSettings();
-
-            AutoStart = Settings.Instance.AutoStart;
-            Disable3D = Settings.Instance.Disable3D;
         }
 
         public void ValidateSettings()
@@ -214,8 +209,8 @@ namespace Questor
             CharacterName = Cache.Instance.DirectEve.Me.Name;
 
             // Check 3D rendering
-            if (Cache.Instance.DirectEve.Session.IsInSpace && Cache.Instance.DirectEve.Rendering3D != !Disable3D)
-                Cache.Instance.DirectEve.Rendering3D = !Disable3D;
+            if (Cache.Instance.DirectEve.Session.IsInSpace && Cache.Instance.DirectEve.Rendering3D != !Settings.Instance.Disable3D)
+                Cache.Instance.DirectEve.Rendering3D = !Settings.Instance.Disable3D;
 
             // Invalid settings, quit while we're ahead
             if (!ValidSettings)
@@ -457,7 +452,7 @@ namespace Questor
                             // quit questor
                             Logging.Log("Questor: Maximum runtime exceeded.  Quiting...");
                             Cache.Instance.ReasonToStopQuestor = "Maximum runtime specified and reached.";
-                            AutoStart = false;
+                            Settings.Instance.AutoStart = false;
                             Cache.Instance.CloseQuestorCMDLogoff = false;
                             Cache.Instance.CloseQuestorCMDExitGame = true;
                             Cache.Instance.SessionState = "Exiting";
@@ -470,7 +465,7 @@ namespace Questor
                             {
                                 Logging.Log("Questor: Time to stop.  Quitting game.");
                                 Cache.Instance.ReasonToStopQuestor = "StopTimeSpecified and reached.";
-                                AutoStart = false;
+                                Settings.Instance.AutoStart = false;
                                 Cache.Instance.CloseQuestorCMDLogoff = false;
                                 Cache.Instance.CloseQuestorCMDExitGame = true;
                                 Cache.Instance.SessionState = "Exiting";
@@ -478,13 +473,11 @@ namespace Questor
                                 return;
                             }
                         }
-                        if (ExitWhenIdle && !AutoStart)
+                        if (ExitWhenIdle && !Settings.Instance.AutoStart)
                         {
-                            
-                            //LavishScript.ExecuteCommand("exit");
                             Cache.Instance.ReasonToStopQuestor = "Settings: ExitWhenIdle is true, and we are idle... exiting";
                             Logging.Log(Cache.Instance.ReasonToStopQuestor);
-                            AutoStart = false;
+                            Settings.Instance.AutoStart = false;
                             Cache.Instance.CloseQuestorCMDLogoff = false;
                             Cache.Instance.CloseQuestorCMDExitGame = true;
                             Cache.Instance.SessionState = "Exiting";
@@ -1138,7 +1131,7 @@ namespace Questor
                             Settings.Instance.SessionsLog = false; //so we don't write the sessionlog more than once per session
                         }
 
-                        if (AutoStart)
+                        if (Settings.Instance.AutoStart)
                         {
                             if (Cache.Instance.CloseQuestorCMDLogoff)
                             {
@@ -1809,7 +1802,7 @@ namespace Questor
 
                         Logging.Log("Salvage: We have salvaged all bookmarks, waiting.");
                         State = QuestorState.Idle;
-                        AutoStart = false;
+                        Settings.Instance.AutoStart = false;
                         Paused = true;
                         return;
                     }
