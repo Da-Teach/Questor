@@ -878,6 +878,8 @@ namespace Questor
                     break;
 
                 case QuestorState.WaitingforBadGuytoGoAway:
+                    Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                    Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
                     if(DateTime.Now.Subtract(_lastLocalWatchAction).Minutes < (int)Time.WaitforBadGuytoGoAway_minutes)
                         break;
                     if (State == QuestorState.WaitingforBadGuytoGoAway)
@@ -964,6 +966,8 @@ namespace Questor
                     break;
 
                 case QuestorState.CombatHelper:
+                    Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                    Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
                     _combat.ProcessState();
                     _drones.ProcessState();
                     _salvage.ProcessState();
@@ -981,6 +985,8 @@ namespace Questor
                     break;
 
                 case QuestorState.CombatHelper_anomaly:
+                    Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                    Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
                     _combat.ProcessState();
                     _drones.ProcessState();
                     _salvage.ProcessState();
@@ -1903,7 +1909,7 @@ namespace Questor
                     var distance = Cache.Instance.DistanceFromMe(_lastX, _lastY, _lastZ);
                     if (distance > (int)Distance.NextPocketDistance)
                     {
-                        //we know we are connected if we were able to arm the ship - update the lastknownGoodConnectedTime
+                        //we know we are connected here...
                         Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
                         Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
 
@@ -2055,6 +2061,8 @@ namespace Questor
                         _salvage.ReserveCargoCapacity = 80;
                         _salvage.LootEverything = true;
                         _salvage.ProcessState();
+                        Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                        Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
                     }
                     finally
                     {
