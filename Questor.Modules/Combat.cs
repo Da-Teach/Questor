@@ -420,9 +420,6 @@ namespace Questor.Modules
                 {
                     Logging.Log("Combat: Activating weapon [" + weapon.ItemId + "] on [" + target.Name + "][ID: " + target.Id + "][" + Math.Round(target.Distance/1000,0) + "k away]");
                     weapon.Activate(target.Id);
-                    //More human behavior
-                    //System.Threading.Thread.Sleep(333);
-
                     //we know we are connected if we were able to get this far - update the lastknownGoodConnectedTime
                     Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
                     Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
@@ -590,8 +587,6 @@ namespace Questor.Modules
                 else continue;
 
                 target.UnlockTarget();
-                //More human behavior
-                //System.Threading.Thread.Sleep(333);
                 combatTargets.RemoveAt(i);
             }
 

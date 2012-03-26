@@ -54,9 +54,10 @@ namespace Questor.Modules
                         }
                     }
                 }
+                //
+                // at this point the module should be active but isn't: activate it, set the delay and return. The process will resume on the next tick
+                //
                 module.Click();
-                //More human behaviour
-                //System.Threading.Thread.Sleep(333);
             }
         }
 

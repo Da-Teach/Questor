@@ -167,7 +167,7 @@ namespace Questor.Modules
                 {
                     Logging.Log("AgentInteraction: Waiting for mission");
 
-                    State = AgentInteractionState.WaitForMission; // Dont say anything, wait for the mission
+                    State = AgentInteractionState.WaitForMission; // Do not say anything, wait for the mission
                     _nextAgentAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());
                 }
                 else
