@@ -470,7 +470,7 @@ namespace Questor
                     if (Math.Round(DateTime.Now.Subtract(_lastTimeCheckAction).TotalMinutes) > 5)
                     {
                         _lastTimeCheckAction = DateTime.Now;
-                        if (DateTime.Now.Subtract(_questorStarted).Minutes > Cache.Instance.MaxRuntime)
+                        if (DateTime.Now.Subtract(_questorStarted).TotalMinutes > Cache.Instance.MaxRuntime)
                         {
                             // quit questor
                             Logging.Log("Questor: Maximum runtime exceeded.  Quiting...");
@@ -888,7 +888,7 @@ namespace Questor
                 case QuestorState.WaitingforBadGuytoGoAway:
                     Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
                     Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
-                    if(DateTime.Now.Subtract(_lastLocalWatchAction).Minutes < (int)Time.WaitforBadGuytoGoAway_minutes)
+                    if(DateTime.Now.Subtract(_lastLocalWatchAction).TotalMinutes < (int)Time.WaitforBadGuytoGoAway_minutes)
                         break;
                     if (State == QuestorState.WaitingforBadGuytoGoAway)
                     {
@@ -1548,9 +1548,9 @@ namespace Questor
                             if (Settings.Instance.SalvageMultpleMissionsinOnePass) // Salvage only after multiple missions have been completed
                             {   
                                 //if we can still complete another mission before the Wrecks disappear and still have time to salvage
-                                if (DateTime.Now.Subtract(Statistics.Instance.FinishedSalvaging).Minutes > ((int)Time.WrecksDisappearAfter_minutes - (int)Time.AverageTimeToCompleteAMission_minutes - (int)Time.AverageTimetoSalvageMultipleMissions_minutes))
+                                if (DateTime.Now.Subtract(Statistics.Instance.FinishedSalvaging).TotalMinutes > ((int)Time.WrecksDisappearAfter_minutes - (int)Time.AverageTimeToCompleteAMission_minutes - (int)Time.AverageTimetoSalvageMultipleMissions_minutes))
                                 {
-                                    Logging.Log("Questor: UnloadLoot: The last after mission salvaging session was [" + DateTime.Now.Subtract(Statistics.Instance.FinishedSalvaging).Minutes + "] ago ");
+                                    Logging.Log("Questor: UnloadLoot: The last after mission salvaging session was [" + DateTime.Now.Subtract(Statistics.Instance.FinishedSalvaging).TotalMinutes + "] ago ");
                                     Logging.Log("Questor: UnloadLoot: we are after mission salvaging again because it has been at least [" + ((int)Time.WrecksDisappearAfter_minutes - (int)Time.AverageTimeToCompleteAMission_minutes - (int)Time.AverageTimetoSalvageMultipleMissions_minutes) + "] min since the last session. ");
                                     if (State == QuestorState.UnloadLoot)
                                     {
@@ -1559,7 +1559,7 @@ namespace Questor
                                 }
                                 else
                                 {
-                                    Logging.Log("Questor: UnloadLoot: The last after mission salvaging session was [" + DateTime.Now.Subtract(Statistics.Instance.FinishedSalvaging).Minutes + "] ago ");
+                                    Logging.Log("Questor: UnloadLoot: The last after mission salvaging session was [" + DateTime.Now.Subtract(Statistics.Instance.FinishedSalvaging).TotalMinutes + "] ago ");
                                     Logging.Log("Questor: UnloadLoot: we are going to the next mission because it has not been [" + ((int)Time.WrecksDisappearAfter_minutes - (int)Time.AverageTimeToCompleteAMission_minutes - (int)Time.AverageTimetoSalvageMultipleMissions_minutes) + "] min since the last session. ");
                                     Statistics.Instance.FinishedMission = DateTime.Now;
                                     if (State == QuestorState.UnloadLoot)
