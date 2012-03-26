@@ -175,12 +175,14 @@ namespace Questor.Modules
         public bool NormalApproch = true;
         public bool CourierMission = false;
         public string MissionName = "";
+        public int MissionsThisSession = 0;
         public bool ConsoleLogOpened = false;
         public int TimeSpentReloading_seconds = 0;
         public int TimeSpentInMission_seconds = 0;
         public int TimeSpentInMissionInRange = 0;
         public int TimeSpentInMissionOutOfRange = 0;
         public DirectAgentMission mission;
+        public bool DroneStatsWritten { get; set; }
 
         public bool Local_safe(int max_bad, double stand)
         {
@@ -605,6 +607,7 @@ namespace Questor.Modules
         public bool? MissionUseDrones;
         public bool StopTimeSpecified { get; set; }
         public DateTime StopTime { get; set; }
+        public DateTime StartTime { get; set; }
         public int MaxRuntime { get; set; }
         public bool CloseQuestorCMDLogoff = false;
         public bool CloseQuestorCMDExitGame = true;

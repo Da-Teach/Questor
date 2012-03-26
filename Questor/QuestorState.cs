@@ -12,6 +12,7 @@ namespace Questor
     public enum QuestorState
     {
         Idle,
+        MissionStatistics,
         DelayedStart,
         Cleanup,
         Start,

@@ -23,7 +23,7 @@ namespace Questor.Modules
         /// </summary>
         public static Settings Instance = new Settings();
 
-        private string _characterName;
+        public string _characterName;
         private DateTime _lastModifiedDate;
         private Random ramdom = new Random();
 
@@ -227,26 +227,27 @@ namespace Questor.Modules
 
         public int? WindowXPosition { get; set; }
         public int? WindowYPosition { get; set; }
+
+        public string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        public string characterName { get; private set; }
+        public string settingsPath { get; private set; }
         public event EventHandler<EventArgs> SettingsLoaded;
 
         public void LoadSettings()
         {
-            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var settingsPath = Path.Combine(path, Cache.Instance.FilterPath(_characterName) + ".xml");
-
             var repairstopwatch = new Stopwatch();
-
-            var reloadSettings = _characterName != Cache.Instance.DirectEve.Me.Name;
-            if (File.Exists(settingsPath))
-                reloadSettings = _lastModifiedDate != File.GetLastWriteTime(settingsPath);
+            Settings.Instance.characterName = Cache.Instance.DirectEve.Me.Name;
+            Settings.Instance.settingsPath = Path.Combine(Settings.Instance.path, Cache.Instance.FilterPath(Settings.Instance.characterName) + ".xml");
+            var reloadSettings = Settings.Instance.characterName != Cache.Instance.DirectEve.Me.Name;
+            if (File.Exists(Settings.Instance.settingsPath))
+                reloadSettings = _lastModifiedDate != File.GetLastWriteTime(Settings.Instance.settingsPath);
 
             if (!reloadSettings)
                 return;
 
-            _characterName = Cache.Instance.DirectEve.Me.Name;
             _lastModifiedDate = File.GetLastWriteTime(settingsPath);
 
-            if (!File.Exists(settingsPath))
+            if (!File.Exists(Settings.Instance.settingsPath)) //if the settings file does not exist initialize these values. Should we not halt when missing the settings XML?
             {
                 // Clear settings
                 //AgentName = string.Empty;
@@ -337,46 +338,48 @@ namespace Questor.Modules
                 return;
             }
 
-            var xml = XDocument.Load(settingsPath).Root;
+            var xml = XDocument.Load(Settings.Instance.settingsPath).Root;
+            //
+            // these are listed by feature and should likely be re-ordered to reflect that
+            //
+            DebugStates = (bool?) xml.Element("debugStates") ?? false;                                           //enables more console logging having to do with the sub-states within each state
+            DebugPerformance = (bool?) xml.Element("debugPerformance") ?? false;                                 //enabled more console logging having to do with the time it takes to execute each state
 
-            DebugStates = (bool?) xml.Element("debugStates") ?? false;
-            DebugPerformance = (bool?) xml.Element("debugPerformance") ?? false;
+            CharacterMode = (string) xml.Element("characterMode") ?? "dps";                                      //other option is "salvage"
 
-            CharacterMode = (string) xml.Element("characterMode") ?? "dps"; //other option is "salvage"
+            AutoStart = (bool?) xml.Element("autoStart") ?? false;                                               // auto Start enabled or disabled by default?
 
-            AutoStart = (bool?) xml.Element("autoStart") ?? false;
-
-            SaveConsoleLog = (bool?)xml.Element("saveLog") ?? true;
-
-            maxLineConsole = (int?)xml.Element("maxLineConsole") ?? 1000;
-            waitDecline = (bool?) xml.Element("waitDecline") ?? false;
-
-            Disable3D = (bool?)xml.Element("disable3D") ?? true;
+            SaveConsoleLog = (bool?)xml.Element("saveLog") ?? true;                                              // save the console log to file
+            maxLineConsole = (int?)xml.Element("maxLineConsole") ?? 1000;                                        // maximum console log lines to show in the GUI
+                        
+            Disable3D = (bool?)xml.Element("disable3D") ?? false;                                                // Disable3d graphics while in space
 
             RandomDelay = (int?) xml.Element("randomDelay") ?? 0;
             MinimumDelay = (int?)xml.Element("minimumDelay") ?? 0;
-			minStandings = (float?) xml.Element("minStandings") ?? 10;
 
-            UseGatesInSalvage = (bool?)xml.Element("useGatesInSalvage") ?? false;
+            minStandings = (float?) xml.Element("minStandings") ?? 10;
+            waitDecline = (bool?)xml.Element("waitDecline") ?? false;
+
+            UseGatesInSalvage = (bool?)xml.Element("useGatesInSalvage") ?? false;                               // if our mission does not despawn (likely someone in the mission looting our stuff?) use the gates when salvaging to get to our bookmarks
 
             UseLocalWatch = (bool?)xml.Element("UseLocalWatch") ?? true;
             LocalBadStandingPilotsToTolerate = (int?)xml.Element("LocalBadStandingPilotsToTolerate") ?? 1;
             LocalBadStandingLevelToConsiderBad = (double?)xml.Element("LocalBadStandingLevelToConsiderBad") ?? -0.1;
 
-            BattleshipInvasionLimit = (int?)xml.Element("battleshipInvasionLimit") ?? 0;
-            BattlecruiserInvasionLimit = (int?)xml.Element("battlecruiserInvasionLimit") ?? 0;
-            CruiserInvasionLimit = (int?)xml.Element("cruiserInvasionLimit") ?? 0;
-            FrigateInvasionLimit = (int?)xml.Element("frigateInvasionLimit") ?? 0;
-            InvasionRandomDelay = (int?)xml.Element("invasionRandomDelay") ?? 0;
-            InvasionMinimumDelay = (int?)xml.Element("invasionMinimumDelay") ?? 0;
+            BattleshipInvasionLimit = (int?)xml.Element("battleshipInvasionLimit") ?? 0;                        // if this number of battleships lands on grid while in a mission we will enter panic
+            BattlecruiserInvasionLimit = (int?)xml.Element("battlecruiserInvasionLimit") ?? 0;                  // if this number of battlecruisers lands on grid while in a mission we will enter panic
+            CruiserInvasionLimit = (int?)xml.Element("cruiserInvasionLimit") ?? 0;                              // if this number of cruisers lands on grid while in a mission we will enter panic
+            FrigateInvasionLimit = (int?)xml.Element("frigateInvasionLimit") ?? 0;                              // if this number of frigates lands on grid while in a mission we will enter panic
+            InvasionRandomDelay = (int?)xml.Element("invasionRandomDelay") ?? 0;                                // random relay to stay docked
+            InvasionMinimumDelay = (int?)xml.Element("invasionMinimumDelay") ?? 0;                              // minimum delay to stay docked
 
-            EnableStorylines = (bool?) xml.Element("enableStorylines") ?? false;
-            IskPerLP = (double?)xml.Element("IskPerLP") ?? 600;
+            EnableStorylines = (bool?) xml.Element("enableStorylines") ?? false; 
+            IskPerLP = (double?)xml.Element("IskPerLP") ?? 600;                                                 //used in value calculations
 
-            UndockDelay = (int?)xml.Element("undockdelay") ?? 10;
-            UndockPrefix = (string) xml.Element("undockprefix") ?? "Insta";
-            WindowXPosition = (int?) xml.Element("windowXPosition") ?? 1600;
-            WindowYPosition = (int?) xml.Element("windowYPosition") ?? 1050;
+            UndockDelay = (int?)xml.Element("undockdelay") ?? 10;                                               //Delay when undocking - not in use
+            UndockPrefix = (string) xml.Element("undockprefix") ?? "Insta";                                     //Undock bookmark prefix - used by traveler - not in use
+            WindowXPosition = (int?) xml.Element("windowXPosition") ?? 1600;                                    //windows position (needs to be changed, default is off screen)
+            WindowYPosition = (int?)xml.Element("windowYPosition") ?? 1050;                                     //windows position (needs to be changed, default is off screen)
 
             CombatShipName = (string) xml.Element("combatShipName") ?? "";
             SalvageShipName = (string) xml.Element("salvageShipName") ?? "";
@@ -612,14 +615,14 @@ namespace Questor.Modules
             WreckLootStatisticsPath = Path.Combine(logpath);
             WreckLootStatisticsFile = Path.Combine(WreckLootStatisticsPath + Cache.Instance.DirectEve.Me.Name + ".WreckLootStatisticsDump.log");
             MissionStats1LogPath = Path.Combine(logpath, "missionstats\\");
-            MissionStats1LogFile = Path.Combine(MissionStats1LogPath + "\\" + Cache.Instance.DirectEve.Me.Name + ".Statistics.log");
+            MissionStats1LogFile = Path.Combine(MissionStats1LogPath +  Cache.Instance.DirectEve.Me.Name + ".Statistics.log");
             MissionStats2LogPath = Path.Combine(logpath, "missionstats\\");
-            MissionStats2LogFile = Path.Combine(MissionStats2LogPath + "\\" + Cache.Instance.DirectEve.Me.Name + ".DatedStatistics.log");
+            MissionStats2LogFile = Path.Combine(MissionStats2LogPath + Cache.Instance.DirectEve.Me.Name + ".DatedStatistics.log");
             MissionStats3LogPath = Path.Combine(logpath, "missionstats\\");
-            MissionStats3LogFile = Path.Combine(MissionStats3LogPath + "\\" + Cache.Instance.DirectEve.Me.Name + ".CustomDatedStatistics.csv");
+            MissionStats3LogFile = Path.Combine(MissionStats3LogPath + Cache.Instance.DirectEve.Me.Name + ".CustomDatedStatistics.csv");
             PocketStatisticsPath = Path.Combine(logpath, "pocketstats\\");
-            PocketStatisticsFile = Path.Combine(PocketStatisticsPath,"pocketstats-combined.csv");
-            //create all the logging directories even if they arent configured to be used - we can adjust this later if it really bugs ppl to have some potentially empty directories. 
+            PocketStatisticsFile = Path.Combine(PocketStatisticsPath + Cache.Instance.DirectEve.Me.Name + "pocketstats-combined.csv");
+            //create all the logging directories even if they aren't configured to be used - we can adjust this later if it really bugs people to have some potentially empty directories. 
             Directory.CreateDirectory(logpath);
 
             Directory.CreateDirectory(ConsoleLogPath); 

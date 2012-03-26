@@ -55,6 +55,7 @@ namespace Questor
         //private DateTime _lastCheckWindowsAction;
         private DateTime _lastTimeCheckAction;
         private DateTime _lastWarpTo;
+        public DateTime _lastFrame;
         private DateTime _questorStarted;
         private Random _random;
         private int _randomDelay;
@@ -103,6 +104,7 @@ namespace Questor
             Cache.Instance.StopTimeSpecified = Program.stopTimeSpecified;
             Cache.Instance.MaxRuntime = Program.maxRuntime;
             Cache.Instance.StopTime = Program._stopTime;
+            Cache.Instance.StartTime = Program.startTime;
             _questorStarted = DateTime.Now;
 
             _directEve.OnFrame += OnFrame;
@@ -189,6 +191,7 @@ namespace Questor
         private void OnFrame(object sender, EventArgs e)
         {
             var watch = new Stopwatch();
+            _lastFrame = DateTime.Now;
             // Only pulse state changes every 1.5s
             if (DateTime.Now.Subtract(_lastPulse).TotalMilliseconds < (int)Time.QuestorPulse_milliseconds) //default: 1500ms
                 return;

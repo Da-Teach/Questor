@@ -31,7 +31,7 @@ namespace Questor
         public static List<CharSchedule> CharSchedules { get; private set; }
         private static int _pulsedelay = (int)Time.QuestorBeforeLoginPulseDelay_milliseconds;
 
-        private static DateTime AppStarted = DateTime.Now;
+        public static DateTime AppStarted = DateTime.Now;
         private static string _username;
         private static string _password;
         private static string _character;

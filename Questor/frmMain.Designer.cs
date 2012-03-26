@@ -38,13 +38,33 @@
             this.StartButton = new System.Windows.Forms.Button();
             this.PauseCheckBox = new System.Windows.Forms.CheckBox();
             this.Disable3DCheckBox = new System.Windows.Forms.CheckBox();
-            this.txtExtConsole = new System.Windows.Forms.TextBox();
-            this.txtComand = new System.Windows.Forms.TextBox();
-            this.chkShowConsole = new System.Windows.Forms.CheckBox();
+            this.chkShowDetails = new System.Windows.Forms.CheckBox();
             this.lblMissionName = new System.Windows.Forms.Label();
             this.lblCurrentMissionInfo = new System.Windows.Forms.Label();
             this.lblPocketAction = new System.Windows.Forms.Label();
             this.lblCurrentPocketAction = new System.Windows.Forms.Label();
+            this.buttonQuestormanager = new System.Windows.Forms.Button();
+            this.buttonQuestorStatistics = new System.Windows.Forms.Button();
+            this.buttonSettingsXML = new System.Windows.Forms.Button();
+            this.tabInterface1 = new System.Windows.Forms.TabControl();
+            this.Console = new System.Windows.Forms.TabPage();
+            this.txtComand = new System.Windows.Forms.TextBox();
+            this.txtExtConsole = new System.Windows.Forms.TextBox();
+            this.LiveSettings = new System.Windows.Forms.TabPage();
+            this.LiveScheduling = new System.Windows.Forms.TabPage();
+            this.dateTimePickerStopTime = new System.Windows.Forms.DateTimePicker();
+            this.lblStopTime = new System.Windows.Forms.Label();
+            this.lblMaxRuntime2 = new System.Windows.Forms.Label();
+            this.textBoxMaxRunTime = new System.Windows.Forms.TextBox();
+            this.dateTimePickerStartTime = new System.Windows.Forms.DateTimePicker();
+            this.lblMaxRunTime1 = new System.Windows.Forms.Label();
+            this.lblStartTime1 = new System.Windows.Forms.Label();
+            this.tabCurrentMission = new System.Windows.Forms.TabPage();
+            this.buttonOpenMissionXML = new System.Windows.Forms.Button();
+            this.buttonOpenLogDirectory = new System.Windows.Forms.Button();
+            this.tabInterface1.SuspendLayout();
+            this.Console.SuspendLayout();
+            this.LiveScheduling.SuspendLayout();
             this.SuspendLayout();
             // 
             // AutoStartCheckBox
@@ -74,6 +94,7 @@
             this.DamageTypeComboBox.Size = new System.Drawing.Size(130, 21);
             this.DamageTypeComboBox.TabIndex = 4;
             this.DamageTypeComboBox.SelectedIndexChanged += new System.EventHandler(this.DamageTypeComboBox_SelectedIndexChanged);
+            this.DamageTypeComboBox.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.DamageTypeComboBox_MouseWheel);
             // 
             // lblDamageType
             // 
@@ -103,6 +124,7 @@
             this.QuestorStateComboBox.Size = new System.Drawing.Size(130, 21);
             this.QuestorStateComboBox.TabIndex = 1;
             this.QuestorStateComboBox.SelectedIndexChanged += new System.EventHandler(this.QuestorStateComboBox_SelectedIndexChanged);
+            this.QuestorStateComboBox.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.QuestorStateComboBox_MouseWheel);
             // 
             // StartButton
             // 
@@ -139,36 +161,17 @@
             this.Disable3DCheckBox.UseVisualStyleBackColor = true;
             this.Disable3DCheckBox.CheckedChanged += new System.EventHandler(this.Disable3DCheckBox_CheckedChanged);
             // 
-            // txtExtConsole
+            // chkShowDetails
             // 
-            this.txtExtConsole.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtExtConsole.Location = new System.Drawing.Point(12, 105);
-            this.txtExtConsole.Multiline = true;
-            this.txtExtConsole.Name = "txtExtConsole";
-            this.txtExtConsole.ReadOnly = true;
-            this.txtExtConsole.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtExtConsole.Size = new System.Drawing.Size(875, 235);
-            this.txtExtConsole.TabIndex = 23;
-            // 
-            // txtComand
-            // 
-            this.txtComand.Location = new System.Drawing.Point(12, 345);
-            this.txtComand.Name = "txtComand";
-            this.txtComand.Size = new System.Drawing.Size(875, 20);
-            this.txtComand.TabIndex = 24;
-            this.txtComand.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtComand_KeyPress);
-            // 
-            // chkShowConsole
-            // 
-            this.chkShowConsole.Appearance = System.Windows.Forms.Appearance.Button;
-            this.chkShowConsole.Location = new System.Drawing.Point(270, 69);
-            this.chkShowConsole.Name = "chkShowConsole";
-            this.chkShowConsole.Size = new System.Drawing.Size(83, 26);
-            this.chkShowConsole.TabIndex = 7;
-            this.chkShowConsole.Text = "Show Console";
-            this.chkShowConsole.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.chkShowConsole.UseVisualStyleBackColor = true;
-            this.chkShowConsole.CheckedChanged += new System.EventHandler(this.chkShowConsole_CheckedChanged);
+            this.chkShowDetails.Appearance = System.Windows.Forms.Appearance.Button;
+            this.chkShowDetails.Location = new System.Drawing.Point(270, 68);
+            this.chkShowDetails.Name = "chkShowDetails";
+            this.chkShowDetails.Size = new System.Drawing.Size(83, 23);
+            this.chkShowDetails.TabIndex = 7;
+            this.chkShowDetails.Text = "Show Details";
+            this.chkShowDetails.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.chkShowDetails.UseVisualStyleBackColor = true;
+            this.chkShowDetails.CheckedChanged += new System.EventHandler(this.chkShowConsole_CheckedChanged);
             // 
             // lblMissionName
             // 
@@ -210,19 +213,214 @@
             this.lblCurrentPocketAction.TabIndex = 95;
             this.lblCurrentPocketAction.Text = "[  ]";
             // 
+            // buttonQuestormanager
+            // 
+            this.buttonQuestormanager.Location = new System.Drawing.Point(371, 4);
+            this.buttonQuestormanager.Name = "buttonQuestormanager";
+            this.buttonQuestormanager.Size = new System.Drawing.Size(109, 23);
+            this.buttonQuestormanager.TabIndex = 107;
+            this.buttonQuestormanager.Text = "QuestorManager";
+            this.buttonQuestormanager.UseVisualStyleBackColor = true;
+            this.buttonQuestormanager.Click += new System.EventHandler(this.buttonQuestormanager_Click);
+            // 
+            // buttonQuestorStatistics
+            // 
+            this.buttonQuestorStatistics.Location = new System.Drawing.Point(486, 4);
+            this.buttonQuestorStatistics.Name = "buttonQuestorStatistics";
+            this.buttonQuestorStatistics.Size = new System.Drawing.Size(109, 23);
+            this.buttonQuestorStatistics.TabIndex = 108;
+            this.buttonQuestorStatistics.Text = "QuestorStatistics";
+            this.buttonQuestorStatistics.UseVisualStyleBackColor = true;
+            this.buttonQuestorStatistics.Click += new System.EventHandler(this.buttonQuestorStatistics_Click);
+            // 
+            // buttonSettingsXML
+            // 
+            this.buttonSettingsXML.Location = new System.Drawing.Point(601, 4);
+            this.buttonSettingsXML.Name = "buttonSettingsXML";
+            this.buttonSettingsXML.Size = new System.Drawing.Size(109, 23);
+            this.buttonSettingsXML.TabIndex = 110;
+            this.buttonSettingsXML.Text = "QuestorSettings";
+            this.buttonSettingsXML.UseVisualStyleBackColor = true;
+            // 
+            // tabInterface1
+            // 
+            this.tabInterface1.Controls.Add(this.Console);
+            this.tabInterface1.Controls.Add(this.LiveSettings);
+            this.tabInterface1.Controls.Add(this.LiveScheduling);
+            this.tabInterface1.Controls.Add(this.tabCurrentMission);
+            this.tabInterface1.Location = new System.Drawing.Point(4, 101);
+            this.tabInterface1.Name = "tabInterface1";
+            this.tabInterface1.SelectedIndex = 0;
+            this.tabInterface1.Size = new System.Drawing.Size(777, 302);
+            this.tabInterface1.TabIndex = 117;
+            // 
+            // Console
+            // 
+            this.Console.Controls.Add(this.txtComand);
+            this.Console.Controls.Add(this.txtExtConsole);
+            this.Console.Location = new System.Drawing.Point(4, 22);
+            this.Console.Name = "Console";
+            this.Console.Padding = new System.Windows.Forms.Padding(3);
+            this.Console.Size = new System.Drawing.Size(769, 276);
+            this.Console.TabIndex = 0;
+            this.Console.Text = "Console";
+            this.Console.UseVisualStyleBackColor = true;
+            // 
+            // txtComand
+            // 
+            this.txtComand.Location = new System.Drawing.Point(3, 243);
+            this.txtComand.Name = "txtComand";
+            this.txtComand.Size = new System.Drawing.Size(760, 20);
+            this.txtComand.TabIndex = 26;
+            // 
+            // txtExtConsole
+            // 
+            this.txtExtConsole.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtExtConsole.Location = new System.Drawing.Point(0, 3);
+            this.txtExtConsole.Multiline = true;
+            this.txtExtConsole.Name = "txtExtConsole";
+            this.txtExtConsole.ReadOnly = true;
+            this.txtExtConsole.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtExtConsole.Size = new System.Drawing.Size(773, 234);
+            this.txtExtConsole.TabIndex = 25;
+            // 
+            // LiveSettings
+            // 
+            this.LiveSettings.Location = new System.Drawing.Point(4, 22);
+            this.LiveSettings.Name = "LiveSettings";
+            this.LiveSettings.Padding = new System.Windows.Forms.Padding(3);
+            this.LiveSettings.Size = new System.Drawing.Size(769, 276);
+            this.LiveSettings.TabIndex = 1;
+            this.LiveSettings.Text = "LiveSettings";
+            this.LiveSettings.UseVisualStyleBackColor = true;
+            // 
+            // LiveScheduling
+            // 
+            this.LiveScheduling.Controls.Add(this.dateTimePickerStopTime);
+            this.LiveScheduling.Controls.Add(this.lblStopTime);
+            this.LiveScheduling.Controls.Add(this.lblMaxRuntime2);
+            this.LiveScheduling.Controls.Add(this.textBoxMaxRunTime);
+            this.LiveScheduling.Controls.Add(this.dateTimePickerStartTime);
+            this.LiveScheduling.Controls.Add(this.lblMaxRunTime1);
+            this.LiveScheduling.Controls.Add(this.lblStartTime1);
+            this.LiveScheduling.Location = new System.Drawing.Point(4, 22);
+            this.LiveScheduling.Name = "LiveScheduling";
+            this.LiveScheduling.Padding = new System.Windows.Forms.Padding(3);
+            this.LiveScheduling.Size = new System.Drawing.Size(769, 276);
+            this.LiveScheduling.TabIndex = 2;
+            this.LiveScheduling.Text = "LiveScheduling";
+            this.LiveScheduling.UseVisualStyleBackColor = true;
+            // 
+            // dateTimePickerStopTime
+            // 
+            this.dateTimePickerStopTime.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.dateTimePickerStopTime.Location = new System.Drawing.Point(360, 129);
+            this.dateTimePickerStopTime.Name = "dateTimePickerStopTime";
+            this.dateTimePickerStopTime.ShowUpDown = true;
+            this.dateTimePickerStopTime.Size = new System.Drawing.Size(121, 20);
+            this.dateTimePickerStopTime.TabIndex = 113;
+            // 
+            // lblStopTime
+            // 
+            this.lblStopTime.AutoSize = true;
+            this.lblStopTime.Location = new System.Drawing.Point(302, 133);
+            this.lblStopTime.Name = "lblStopTime";
+            this.lblStopTime.Size = new System.Drawing.Size(52, 13);
+            this.lblStopTime.TabIndex = 112;
+            this.lblStopTime.Text = "StopTime";
+            // 
+            // lblMaxRuntime2
+            // 
+            this.lblMaxRuntime2.AutoSize = true;
+            this.lblMaxRuntime2.Location = new System.Drawing.Point(412, 155);
+            this.lblMaxRuntime2.Name = "lblMaxRuntime2";
+            this.lblMaxRuntime2.Size = new System.Drawing.Size(69, 13);
+            this.lblMaxRuntime2.TabIndex = 111;
+            this.lblMaxRuntime2.Text = "min from start";
+            // 
+            // textBoxMaxRunTime
+            // 
+            this.textBoxMaxRunTime.Location = new System.Drawing.Point(360, 152);
+            this.textBoxMaxRunTime.Name = "textBoxMaxRunTime";
+            this.textBoxMaxRunTime.Size = new System.Drawing.Size(46, 20);
+            this.textBoxMaxRunTime.TabIndex = 110;
+            this.textBoxMaxRunTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // dateTimePickerStartTime
+            // 
+            this.dateTimePickerStartTime.Enabled = false;
+            this.dateTimePickerStartTime.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.dateTimePickerStartTime.Location = new System.Drawing.Point(360, 105);
+            this.dateTimePickerStartTime.Name = "dateTimePickerStartTime";
+            this.dateTimePickerStartTime.ShowUpDown = true;
+            this.dateTimePickerStartTime.Size = new System.Drawing.Size(121, 20);
+            this.dateTimePickerStartTime.TabIndex = 109;
+            // 
+            // lblMaxRunTime1
+            // 
+            this.lblMaxRunTime1.AutoSize = true;
+            this.lblMaxRunTime1.Location = new System.Drawing.Point(288, 155);
+            this.lblMaxRunTime1.Name = "lblMaxRunTime1";
+            this.lblMaxRunTime1.Size = new System.Drawing.Size(66, 13);
+            this.lblMaxRunTime1.TabIndex = 108;
+            this.lblMaxRunTime1.Text = "MaxRuntime";
+            // 
+            // lblStartTime1
+            // 
+            this.lblStartTime1.AutoSize = true;
+            this.lblStartTime1.Location = new System.Drawing.Point(302, 109);
+            this.lblStartTime1.Name = "lblStartTime1";
+            this.lblStartTime1.Size = new System.Drawing.Size(52, 13);
+            this.lblStartTime1.TabIndex = 107;
+            this.lblStartTime1.Text = "StartTime";
+            // 
+            // tabCurrentMission
+            // 
+            this.tabCurrentMission.Location = new System.Drawing.Point(4, 22);
+            this.tabCurrentMission.Name = "tabCurrentMission";
+            this.tabCurrentMission.Padding = new System.Windows.Forms.Padding(3);
+            this.tabCurrentMission.Size = new System.Drawing.Size(769, 276);
+            this.tabCurrentMission.TabIndex = 3;
+            this.tabCurrentMission.Text = "CurrentMission";
+            this.tabCurrentMission.UseVisualStyleBackColor = true;
+            // 
+            // buttonOpenMissionXML
+            // 
+            this.buttonOpenMissionXML.Location = new System.Drawing.Point(486, 30);
+            this.buttonOpenMissionXML.Name = "buttonOpenMissionXML";
+            this.buttonOpenMissionXML.Size = new System.Drawing.Size(224, 23);
+            this.buttonOpenMissionXML.TabIndex = 118;
+            this.buttonOpenMissionXML.Text = "Open Current Mission XML";
+            this.buttonOpenMissionXML.UseVisualStyleBackColor = true;
+            this.buttonOpenMissionXML.Click += new System.EventHandler(this.buttonOpenMissionXML_Click);
+            // 
+            // buttonOpenLogDirectory
+            // 
+            this.buttonOpenLogDirectory.Location = new System.Drawing.Point(371, 30);
+            this.buttonOpenLogDirectory.Name = "buttonOpenLogDirectory";
+            this.buttonOpenLogDirectory.Size = new System.Drawing.Size(109, 23);
+            this.buttonOpenLogDirectory.TabIndex = 109;
+            this.buttonOpenLogDirectory.Text = "Open Log Directory";
+            this.buttonOpenLogDirectory.UseVisualStyleBackColor = true;
+            this.buttonOpenLogDirectory.Click += new System.EventHandler(this.buttonOpenLogDirectory_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnableAllowFocusChange;
             this.ClientSize = new System.Drawing.Size(356, 96);
+            this.Controls.Add(this.buttonOpenMissionXML);
+            this.Controls.Add(this.tabInterface1);
+            this.Controls.Add(this.buttonSettingsXML);
+            this.Controls.Add(this.buttonOpenLogDirectory);
+            this.Controls.Add(this.buttonQuestorStatistics);
+            this.Controls.Add(this.buttonQuestormanager);
             this.Controls.Add(this.lblCurrentPocketAction);
             this.Controls.Add(this.lblPocketAction);
             this.Controls.Add(this.lblCurrentMissionInfo);
             this.Controls.Add(this.lblMissionName);
-            this.Controls.Add(this.chkShowConsole);
-            this.Controls.Add(this.txtComand);
-            this.Controls.Add(this.txtExtConsole);
+            this.Controls.Add(this.chkShowDetails);
             this.Controls.Add(this.Disable3DCheckBox);
             this.Controls.Add(this.PauseCheckBox);
             this.Controls.Add(this.StartButton);
@@ -236,6 +434,11 @@
             this.Name = "frmMain";
             this.Text = "Questor";
             this.Load += new System.EventHandler(this.frmMain_Load);
+            this.tabInterface1.ResumeLayout(false);
+            this.Console.ResumeLayout(false);
+            this.Console.PerformLayout();
+            this.LiveScheduling.ResumeLayout(false);
+            this.LiveScheduling.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
         }
@@ -253,13 +456,30 @@
         private System.Windows.Forms.CheckBox Disable3DCheckBox;
         //private System.Windows.Forms.Button chkTraveler;
         //private System.Windows.Forms.CheckBox Anomaly_chk;
-        private System.Windows.Forms.TextBox txtExtConsole;
-        private System.Windows.Forms.TextBox txtComand;
-        private System.Windows.Forms.CheckBox chkShowConsole;
+        private System.Windows.Forms.CheckBox chkShowDetails;
         private System.Windows.Forms.Label lblMissionName;
         private System.Windows.Forms.Label lblCurrentMissionInfo;
         private System.Windows.Forms.Label lblPocketAction;
         private System.Windows.Forms.Label lblCurrentPocketAction;
+        private System.Windows.Forms.Button buttonQuestormanager;
+        private System.Windows.Forms.Button buttonQuestorStatistics;
+        private System.Windows.Forms.Button buttonSettingsXML;
+        private System.Windows.Forms.TabControl tabInterface1;
+        private System.Windows.Forms.TabPage Console;
+        private System.Windows.Forms.TextBox txtComand;
+        private System.Windows.Forms.TextBox txtExtConsole;
+        private System.Windows.Forms.TabPage LiveSettings;
+        private System.Windows.Forms.TabPage LiveScheduling;
+        private System.Windows.Forms.DateTimePicker dateTimePickerStopTime;
+        private System.Windows.Forms.Label lblStopTime;
+        private System.Windows.Forms.Label lblMaxRuntime2;
+        private System.Windows.Forms.TextBox textBoxMaxRunTime;
+        private System.Windows.Forms.DateTimePicker dateTimePickerStartTime;
+        private System.Windows.Forms.Label lblMaxRunTime1;
+        private System.Windows.Forms.Label lblStartTime1;
+        private System.Windows.Forms.TabPage tabCurrentMission;
+        private System.Windows.Forms.Button buttonOpenMissionXML;
+        private System.Windows.Forms.Button buttonOpenLogDirectory;
     }
 }
 
