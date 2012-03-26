@@ -337,25 +337,35 @@ namespace Questor
                             close |= window.Html.Contains("The user's connection has been usurped");
                             close |= window.Html.Contains("The EVE cluster has reached its maximum user limit");
                             close |= window.Html.Contains("The connection to the server was closed");
-                            //close |= window.Html.Contains("A client update is avilable and will now be installed");
+                            close |= window.Html.Contains("client is already connecting to the server");
+                            //close |= window.Html.Contains("A client update is available and will now be installed");
                             //
                             // eventually it would be nice to hit ok on this one and let it update
                             //
-                            close |= window.Html.StartsWith("<html><body>A client update is available and will now be installed.");
+                            close |= window.Html.Contains("client update is available and will now be installed");
                             close |= window.Html.Contains("You are on a <b>14 day trial</b>.");
                             //
                             // these windows require a quit of eve all together
                             //
-                            close |= window.Html.Contains("The connection was closed");
-                            close |= window.Html.Contains("Connection to server lost."); //INFORMATION
-                            close |= window.Html.Contains("Connection to server lost"); //INFORMATION
-                            close |= window.Html.Contains("Local cache is corrupt");
-                            close |= window.Html.Contains("Local session information is corrupt");
-                            close |= window.Html.Contains("The client's local session"); // information is corrupt");
+                            restart |= window.Html.Contains("The connection was closed");
+                            restart |= window.Html.Contains("Connection to server lost."); //INFORMATION
+                            restart |= window.Html.Contains("Connection to server lost"); //INFORMATION
+                            restart |= window.Html.Contains("Local cache is corrupt");
+                            restart |= window.Html.Contains("Local session information is corrupt");
+                            restart |= window.Html.Contains("The client's local session"); // information is corrupt");
+                            restart |= window.Html.Contains("restart the client prior to logging in");
 
                             //Logging.Log("[Startup] (2) close is: " + close);
                             //Logging.Log("[Startup] (1) window.Html is: " + window.Html);
                             _pulsedelay = 60;
+                        }
+
+                        if (restart)
+                        {
+                            Logging.Log("Startup: Restarting eve...");
+                            Logging.Log("Startup: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
+                            _directEve.ExecuteCommand(DirectCmd.CmdQuitGame);
+                            continue;
                         }
 
                         if (close)
@@ -365,13 +375,7 @@ namespace Questor
                             window.Close();
                             continue;
                         }
-                        if (restart)
-                        {
-                            Logging.Log("Startup: Restarting eve...");
-                            Logging.Log("Startup: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
-                            Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdQuitGame);
-                            continue;
-                        }
+                        
                     }
 
                     if (string.IsNullOrEmpty(window.Html))
@@ -422,7 +426,7 @@ namespace Questor
 
             if (_directEve.Login.AtLogin)
             {
-                if (DateTime.Now.Subtract(AppStarted).TotalSeconds > 15)
+                if (DateTime.Now.Subtract(AppStarted).TotalSeconds > 60)
                 {
                     Logging.Log("[Startup] Login account [" + _username + "]");
                     _directEve.Login.Login(_username, _password);
@@ -434,7 +438,7 @@ namespace Questor
 
             if (_directEve.Login.AtCharacterSelection && _directEve.Login.IsCharacterSelectionReady)
             {
-                if (DateTime.Now.Subtract(AppStarted).TotalSeconds > 30)
+                if (DateTime.Now.Subtract(AppStarted).TotalSeconds > 90)
                 {
                     foreach (var slot in _directEve.Login.CharacterSlots)
                     {
