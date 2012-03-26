@@ -449,9 +449,8 @@ namespace Questor
                         slot.Activate();
                         return;
                     }
+                    Logging.Log("[Startup] Character id/name [" + _character + "] not found, retrying in 10 seconds");
                 }
-
-                Logging.Log("[Startup] Character id/name [" + _character + "] not found, retrying in 10 seconds");
             }
         }
 
