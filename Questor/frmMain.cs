@@ -183,13 +183,16 @@ namespace Questor
                 if (lblCurrentPocketAction.Text != newlblCurrentPocketActiontext)
                     lblCurrentPocketAction.Text = newlblCurrentPocketActiontext;
             }
-            var missionXmlPath = Path.Combine(Settings.Instance.MissionsPath, Cache.Instance.MissionName + ".xml");
-            if (Cache.Instance.MissionName != string.Empty && File.Exists(missionXmlPath))
+            if (Cache.Instance.MissionName != string.Empty)
             {
-                var newlblCurrentMissionInfotext = "[ " + Cache.Instance.MissionName + " ][ " + Math.Round(DateTime.Now.Subtract(Statistics.Instance.StartedMission).TotalMinutes,0) + " min][ #" + Statistics.Instance.MissionsThisSession + " ]";
-                if (lblCurrentMissionInfo.Text != newlblCurrentMissionInfotext)
-                    lblCurrentMissionInfo.Text = newlblCurrentMissionInfotext;
-                buttonOpenMissionXML.Enabled = true;
+                var missionXmlPath = Path.Combine(Settings.Instance.MissionsPath, Cache.Instance.MissionName + ".xml");
+                if (File.Exists(missionXmlPath))
+                {
+                    var newlblCurrentMissionInfotext = "[ " + Cache.Instance.MissionName + " ][ " + Math.Round(DateTime.Now.Subtract(Statistics.Instance.StartedMission).TotalMinutes, 0) + " min][ #" + Statistics.Instance.MissionsThisSession + " ]";
+                    if (lblCurrentMissionInfo.Text != newlblCurrentMissionInfotext)
+                        lblCurrentMissionInfo.Text = newlblCurrentMissionInfotext;
+                    buttonOpenMissionXML.Enabled = true;
+                }
             }
             else if (Cache.Instance.MissionName == string.Empty)
             {
