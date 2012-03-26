@@ -666,7 +666,7 @@ namespace Questor.Modules
         /// <returns></returns>
         public DirectAgentMissionBookmark GetMissionBookmark(long agentId, string startsWith)
         {
-            // Get the missons
+            // Get the missions
             var mission = GetAgentMission(agentId);
             if (mission == null)
                 return null;

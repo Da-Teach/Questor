@@ -40,7 +40,7 @@ namespace Questor.Modules
                 if (module.GroupId == (int)Group.CloakingDevice)
                 {
                     //Logging.Log("This module has a typeID of: " + module.TypeId + " !!");
-                    if (module.TypeId != 11578)  //11578 Covert Ops Cloaking Device - if you dont have a covops cloak try the next module
+                    if (module.TypeId != 11578)  //11578 Covert Ops Cloaking Device - if you don't have a covert ops cloak try the next module
                     {
                         continue;
                     }
@@ -192,7 +192,7 @@ namespace Questor.Modules
             if (Cache.Instance.DirectEve.ActiveShip.Entity.IsCloaked)
                 return;
 
-            // Cap is SO low that we shouldn't care about hardeners/boosters as we arent being targeted anyhow
+            // Cap is SO low that we shouldn't care about hardeners/boosters as we aren't being targeted anyhow
             if (Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage < 10 && Cache.Instance.TargetedBy.Count() == 0)
                 return;
 

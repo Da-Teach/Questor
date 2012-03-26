@@ -107,14 +107,14 @@
                                 Logging.Log("Cleanup: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
                                 Cache.Instance.CloseQuestorCMDLogoff = false;
                                 Cache.Instance.CloseQuestorCMDExitGame = true;
-                                Cache.Instance.ReasonToStopQuestor = "A message from ccp indicated we were disonnected";
+                                Cache.Instance.ReasonToStopQuestor = "A message from ccp indicated we were disconnected";
                                 Cache.Instance.SessionState = "Quitting";
                                 window.Close();
                                 continue;
                             }
                             if (gotobasenow)
                             {
-                                Logging.Log("Cleanup: Evidentally the cluster is dieing... and CCP is restarting the server");
+                                Logging.Log("Cleanup: Evidentially the cluster is dieing... and CCP is restarting the server");
                                 Logging.Log("Cleanup: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
                                 Cache.Instance.GotoBaseNow = true;
                                 Settings.Instance.AutoStart = false;

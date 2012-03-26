@@ -234,7 +234,7 @@ namespace Questor.Modules
                     break;
 
                 case UnloadLootState.StackItemsHangar:
-                    // Dont stack until 5 seconds after the cargo has cleared
+                    // Don't stack until 5 seconds after the cargo has cleared
                     if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 5)
                         break;
 

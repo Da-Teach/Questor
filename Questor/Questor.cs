@@ -226,7 +226,7 @@ namespace Questor
             }
             
             // Start _cleanup.ProcessState
-            // Description: Closes Windows, and eventually other things considered 'cleanup' useful to more than just Questor(Missions) but also Anomolies, Mining, etc
+            // Description: Closes Windows, and eventually other things considered 'cleanup' useful to more than just Questor(Missions) but also Anomalies, Mining, etc
             //
             watch.Reset();
             watch.Start();
@@ -491,7 +491,7 @@ namespace Questor
 
                     if (Cache.Instance.InSpace)
                     {
-                        // Questor doesnt handle inspace-starts very well, head back to base to try again
+                        // Questor does not handle in space starts very well, head back to base to try again
                         Logging.Log("Questor: Started questor while in space, heading back to base in 15 seconds");
                         _lastAction = DateTime.Now;
                         State = QuestorState.DelayedGotoBase;
@@ -1927,7 +1927,7 @@ namespace Questor
                             _traveler.Destination = new BookmarkDestination(bookmarks.OrderBy(b => b.CreatedOn).First());
                         else
                         {
-                            Logging.Log("Traveler: (questor.cs) Destination: [" + Cache.Instance.DirectEve.Navigation.GetLocation(destination.Last()).Name + "]");
+                            Logging.Log("QuestorState.Traveler: Destination: [" + Cache.Instance.DirectEve.Navigation.GetLocation(destination.Last()).Name + "]");
                             _traveler.Destination = new SolarSystemDestination(destination.Last());
                         }
                     }

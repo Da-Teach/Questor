@@ -200,7 +200,7 @@ namespace Questor.Modules
         {
             var target = action.GetParameterValue("target");
 
-            // No parameter? Although we shouldnt really allow it, assume its the acceleration gate :)
+            // No parameter? Although we shouldn't really allow it, assume its the acceleration gate :)
             if (string.IsNullOrEmpty(target))
                 target = "Acceleration Gate";
 
@@ -1154,7 +1154,7 @@ namespace Questor.Modules
             Cache.Instance.MissionLoot = true;
             var items = action.GetParameterValues("item");
             var targetNames = action.GetParameterValues("target");
-                // if we arent generally looting we need to re-enable the opening of wrecks to
+                // if we aren't generally looting we need to re-enable the opening of wrecks to
                 // find this LootItems we are looking for
                 Cache.Instance.OpenWrecks = true;
 
@@ -1203,7 +1203,7 @@ namespace Questor.Modules
         {
             var items = action.GetParameterValues("item");
             var targetNames = action.GetParameterValues("target");
-                // if we arent generally looting we need to re-enable the opening of wrecks to
+                // if we aren't generally looting we need to re-enable the opening of wrecks to
                 // find this LootItems we are looking for
                 Cache.Instance.OpenWrecks = true;
             if (!Settings.Instance.LootEverything)

@@ -49,7 +49,7 @@
             this.label13 = new System.Windows.Forms.Label();
             this.lbmediatotal = new System.Windows.Forms.Label();
             this.Label6 = new System.Windows.Forms.Label();
-            this.LBGanacia = new System.Windows.Forms.Label();
+            this.LBProfit = new System.Windows.Forms.Label();
             this.Label5 = new System.Windows.Forms.Label();
             this.CHDia = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.LBNmision = new System.Windows.Forms.Label();
@@ -140,7 +140,7 @@
             this.TabPage2.Controls.Add(this.label13);
             this.TabPage2.Controls.Add(this.lbmediatotal);
             this.TabPage2.Controls.Add(this.Label6);
-            this.TabPage2.Controls.Add(this.LBGanacia);
+            this.TabPage2.Controls.Add(this.LBProfit);
             this.TabPage2.Controls.Add(this.Label5);
             this.TabPage2.Controls.Add(this.CHDia);
             this.TabPage2.Controls.Add(this.LBNmision);
@@ -228,13 +228,13 @@
             this.Label6.TabIndex = 12;
             this.Label6.Text = "Average:";
             // 
-            // LBGanacia
+            // LBProfit
             // 
-            this.LBGanacia.AutoSize = true;
-            this.LBGanacia.Location = new System.Drawing.Point(99, 154);
-            this.LBGanacia.Name = "LBGanacia";
-            this.LBGanacia.Size = new System.Drawing.Size(0, 13);
-            this.LBGanacia.TabIndex = 11;
+            this.LBProfit.AutoSize = true;
+            this.LBProfit.Location = new System.Drawing.Point(99, 154);
+            this.LBProfit.Name = "LBProfit";
+            this.LBProfit.Size = new System.Drawing.Size(0, 13);
+            this.LBProfit.TabIndex = 11;
             // 
             // Label5
             // 
@@ -345,7 +345,7 @@
             this.CmbDia.Name = "CmbDia";
             this.CmbDia.Size = new System.Drawing.Size(93, 21);
             this.CmbDia.TabIndex = 0;
-            this.CmbDia.SelectedIndexChanged += new System.EventHandler(this.CmbDia_SelectedIndexChanged_1);
+            this.CmbDia.SelectedIndexChanged += new System.EventHandler(this.CmbDay_SelectedIndexChanged_1);
             // 
             // TabPage3
             // 
@@ -621,7 +621,7 @@
         internal System.Windows.Forms.TabPage TabPage2;
         internal System.Windows.Forms.Label lbmediatotal;
         internal System.Windows.Forms.Label Label6;
-        internal System.Windows.Forms.Label LBGanacia;
+        internal System.Windows.Forms.Label LBProfit;
         internal System.Windows.Forms.Label Label5;
         internal System.Windows.Forms.DataVisualization.Charting.Chart CHDia;
         internal System.Windows.Forms.Label LBNmision;
