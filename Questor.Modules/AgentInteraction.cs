@@ -383,6 +383,28 @@ namespace Questor.Modules
             Cache.Instance.Wealth = Cache.Instance.DirectEve.Me.Wealth;
             accept.Say();
 
+            foreach (var window in Cache.Instance.Windows)
+            {
+                if (window.Name == "modal")
+                {
+                    bool sayyes = false;
+                    if (!string.IsNullOrEmpty(window.Html))
+                    {
+                        //
+                        // Modal Dialogs the need "yes" pressed
+                        //
+                        sayyes |= window.Html.Contains("objectives requiring a total capacity");
+                        sayyes |= window.Html.Contains("your ship only has space for");
+                    }
+                    if (sayyes)
+                    {
+                        Logging.Log("Cleanup: Found a window that needs 'yes' chosen...");
+                        Logging.Log("Cleanup: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
+                        window.AnswerModal("Yes");
+                        continue;
+                    }
+                }
+            }
             Logging.Log("AgentInteraction: Closing conversation");
             State = AgentInteractionState.CloseConversation;
             _nextAgentAction = DateTime.Now.AddSeconds(Settings.Instance.ramdom_number());

@@ -32,8 +32,7 @@
 
             _storylines = new Dictionary<string, IStoryline>();
             //_storylines.Add("__", new GenericCombatStoryline());
-            // broken in crucible 1.5 (yes/no dialog needs directeve support)
-            //_storylines.Add("Materials For War Preparation", new MaterialsForWarPreparation());
+            _storylines.Add("Materials For War Preparation", new MaterialsForWarPreparation());
             _storylines.Add("Shipyard Theft", new GenericCombatStoryline());
             _storylines.Add("Evolution", new GenericCombatStoryline());
             _storylines.Add("Record Cleaning", new GenericCombatStoryline());
@@ -134,7 +133,7 @@
 
             if (Cache.Instance.PriorityTargets.Any(pt => pt != null && pt.IsValid))
             {
-                Logging.Log("GotoBase: Priority targets found, engaging!");
+                Logging.Log("Storyline: GotoAgent: Priority targets found, engaging!");
                 _combat.ProcessState();
             }
 

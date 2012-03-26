@@ -42,6 +42,8 @@
                             bool close = false;
                             bool restart = false;
                             bool gotobasenow = false;
+                            bool sayyes = false;
+                            //bool sayno = false;
                             if (!string.IsNullOrEmpty(window.Html))
                             {
                                 // Server going down /unscheduled/ potentially very soon! 
@@ -92,13 +94,29 @@
                                 restart |= window.Html.Contains("Connection to server lost"); 														//INFORMATION
                                 restart |= window.Html.Contains("The user connection has been usurped on the proxy"); 								//CONNECTION LOST
                                 restart |= window.Html.Contains("The transport has not yet been connected, or authentication was not successful"); 	//CONNECTION LOST
+                                //
+                                // Modal Dialogs the need "yes" pressed
+                                //
+                                sayyes |= window.Html.Contains("objectives requiring a total capacity");
+                                sayyes |= window.Html.Contains("your ship only has space for");
+                                //
+                                // Modal Dialogs the need "no" pressed
+                                //
+                                //sayno |= window.Html.Contains("Do you wish to proceed with this dangerous action
                             }
-
+                            if (sayyes)
+                            {
+                                Logging.Log("Cleanup: Found a window that needs 'yes' chosen...");
+                                Logging.Log("Cleanup: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
+                                window.AnswerModal("Yes");
+                                continue;
+                            }
                             if (close)
                             {
                                 Logging.Log("Cleanup: Closing modal window...");
                                 Logging.Log("Cleanup: Content of modal window (HTML): [" + (window.Html ?? string.Empty).Replace("\n", "").Replace("\r", "") + "]");
                                 window.Close();
+                                continue;
                             }
 
                             if (restart)
