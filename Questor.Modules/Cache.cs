@@ -702,6 +702,16 @@ namespace Questor.Modules
         }
 
         /// <summary>
+        ///   Returns bookmarks that contain the supplied label anywhere in the title
+        /// </summary>
+        /// <param name = "label"></param>
+        /// <returns></returns>
+        public List<DirectBookmark> BookmarksThatContain(string label)
+        {
+            return DirectEve.Bookmarks.Where(b => !string.IsNullOrEmpty(b.Title) && b.Title.Contains(label)).ToList();
+        }
+
+        /// <summary>
         ///   Invalidate the cached items
         /// </summary>
         public void InvalidateCache()
