@@ -365,14 +365,7 @@ namespace Questor
                     }
                 }
             }
-            if (Paused)
-            {
-                Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
-                Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
-                Cache.Instance.GotoBaseNow = false;
-                Cache.Instance.SessionState = string.Empty;
-                return;
-            }
+
 
             // We always check our defense state if we're in space, regardless of questor state
             // We also always check panic
@@ -386,6 +379,14 @@ namespace Questor
 
                 if (Settings.Instance.DebugPerformance)
                     Logging.Log("Defense.ProcessState took " + watch.ElapsedMilliseconds + "ms");
+            }
+            if (Paused)
+            {
+                Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
+                Cache.Instance.GotoBaseNow = false;
+                Cache.Instance.SessionState = string.Empty;
+                return;
             }
 
             if (Cache.Instance.SessionState == "Quitting")
@@ -861,7 +862,7 @@ namespace Questor
                             Logging.Log("Questor.LocalWatch: local is clear");
                             if (State == QuestorState.LocalWatch)
                             {
-                                State = QuestorState.GotoMission;
+                                State = QuestorState.WarpOutStation;
                             } 
                         }
                         else
@@ -879,7 +880,7 @@ namespace Questor
                     {
                         if (State == QuestorState.LocalWatch)
                         {
-                            State = QuestorState.GotoMission;
+                            State = QuestorState.WarpOutStation;
                         } 
                     }
                     break;
@@ -1701,6 +1702,7 @@ namespace Questor
                             Cache.Instance.SalvageAll = false;
                             if (State == QuestorState.Salvage)
                             {
+                                Statistics.Instance.FinishedSalvaging = DateTime.Now;
                                 State = QuestorState.GotoBase;
                             }
                             return;
@@ -1730,6 +1732,7 @@ namespace Questor
                                 Logging.Log("Salvage: Acceleration gate found, useGatesInSalvage set to false - Returning to base");
                                 if (State == QuestorState.Salvage)
                                 {
+                                    Statistics.Instance.FinishedSalvaging = DateTime.Now;
                                     State = QuestorState.GotoBase;
                                 }
                                 _traveler.Destination = null;

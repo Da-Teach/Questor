@@ -191,7 +191,7 @@ namespace Questor
                     lblCurrentMissionInfo.Text = newlblCurrentMissionInfotext;
                 buttonOpenMissionXML.Enabled = true;
             }
-            else if (Cache.Instance.MissionName != string.Empty)
+            else if (Cache.Instance.MissionName == string.Empty)
             {
                 lblCurrentMissionInfo.Text = "No Mission Selected Yet";
                 buttonOpenMissionXML.Enabled = false;
