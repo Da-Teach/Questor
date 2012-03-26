@@ -35,6 +35,7 @@ namespace Questor.Modules
         private int _launchTries;
         private double _shieldPctTotal;
         private double _structurePctTotal;
+        public bool recall = false;
 
         public DroneState State { get; set; }
 
@@ -186,6 +187,7 @@ namespace Questor.Modules
 
                 case DroneState.Launch:
                     // Launch all drones
+                    recall = false;
                     _launchTimeout = DateTime.Now;
                     Cache.Instance.DirectEve.ActiveShip.LaunchAllDrones();
                     State = DroneState.Launching;
@@ -223,8 +225,7 @@ namespace Questor.Modules
                     break;
                 case DroneState.Fighting:
                     // Should we recall our drones? This is a possible list of reasons why we should
-                    var recall = false;
-
+                    
                     // Are we done (for now) ? 
                     if (Cache.Instance.TargetedBy.Count(e => !e.IsSentry && e.IsNpc && e.Distance < Settings.Instance.DroneControlRange) == 0)
                     {
@@ -325,6 +326,7 @@ namespace Questor.Modules
                     if (Cache.Instance.ActiveDrones.Count() == 0)
                     {
                         _lastRecall = DateTime.Now;
+                        recall = false;
                         State = DroneState.WaitingForTargets;
                         break;
                     }
