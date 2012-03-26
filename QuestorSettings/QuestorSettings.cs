@@ -9,15 +9,16 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml;
 using System.IO;
+using System.Reflection;
 
 namespace QuestorSettings
 {
-    public partial class Form1 : Form
+    public partial class QuestorSettings : Form
     {
-        string LocalRuta = Application.StartupPath;
-        
+        string Localpath = Application.StartupPath;
+        public string file { get; set; }
 
-        public Form1()
+        public QuestorSettings()
         {
 
             InitializeComponent();
@@ -27,8 +28,8 @@ namespace QuestorSettings
         public object Refres()
         {
             cmbXML.Items.Clear();
-            string LocalRuta = Application.StartupPath;
-            System.IO.DirectoryInfo o = new System.IO.DirectoryInfo(LocalRuta);
+            string Localpath = Application.StartupPath;
+            System.IO.DirectoryInfo o = new System.IO.DirectoryInfo(Localpath);
             System.IO.FileInfo[] myfiles = null;
 
             myfiles = o.GetFiles("*.xml");
@@ -43,8 +44,8 @@ namespace QuestorSettings
         private void cmbXML_SelectedIndexChanged(object sender, EventArgs e)
         {
             lblmessage.Text = "";
-            string fic = LocalRuta + "\\" + cmbXML.SelectedItem.ToString();
-            ReadXML(fic);
+            file = Localpath + "\\" + cmbXML.SelectedItem.ToString();
+            ReadXML(file);
 
         }
 
@@ -165,7 +166,7 @@ namespace QuestorSettings
         private void cmdSave_Click(object sender, EventArgs e)
         {
 
-            string fic = LocalRuta + "\\" + cmbXML.Text;
+            string file = Localpath + "\\" + cmbXML.Text;
             string strXml = "<Settings>";
 
             //Settings general
@@ -278,7 +279,7 @@ namespace QuestorSettings
 
             XElement xml = XElement.Parse(strXml);
             XDocument FileXml = new XDocument(xml);
-            FileXml.Save(fic);
+            FileXml.Save(file);
             lblmessage.ForeColor = System.Drawing.ColorTranslator.FromHtml("Green");
             lblmessage.Text = "Save as " + cmbXML.Text;
 
@@ -615,6 +616,16 @@ namespace QuestorSettings
         private void linkLabel63_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             MessageBox.Show("<!-- Maximum number of lines in the external console -->");
+        }
+
+        private void buttonOpenCharacterSettingXML_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(file);
+        }
+
+        private void buttonOpenDotNetprograms_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(Localpath);
         }
 
     }
