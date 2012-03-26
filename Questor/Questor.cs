@@ -1223,6 +1223,22 @@ namespace Questor
                     {
                         Logging.Log("QuestorState.CloseQuestor: Entered Traveler - making sure we will be docked at Home Station");
                     }
+                    // anti bump
+                    var structure2 = Cache.Instance.Entities.Where(i => i.GroupId == (int)Group.LargeCollidableStructure || i.GroupId == (int)Group.SpawnContainer).FirstOrDefault();
+                    if (Cache.Instance.TargetedBy.Any(t => t.IsWarpScramblingMe))
+                    {
+                        _combat.ProcessState();
+                        _drones.ProcessState();
+                    }
+                    else if (structure2 != null && structure2.Distance < (int)Distance.TooCloseToStructure)
+                    {
+                        if ((DateTime.Now.Subtract(_lastOrbit).TotalSeconds > 15))
+                        {
+                            structure2.Orbit((int)Distance.SafeDistancefromStructure);
+                            Logging.Log("Questor: GotoBase: initiating Orbit of [" + structure2.Name + "] orbiting at [" + Cache.Instance.OrbitDistance + "]");
+                            _lastOrbit = DateTime.Now;
+                        }
+                    }
                     var baseDestination2 = _traveler.Destination as StationDestination;
                     if (baseDestination2 == null || baseDestination2.StationId != Cache.Instance.Agent.StationId)
                         _traveler.Destination = new StationDestination(Cache.Instance.Agent.SolarSystemId, Cache.Instance.Agent.StationId, Cache.Instance.DirectEve.GetLocationName(Cache.Instance.Agent.StationId));
