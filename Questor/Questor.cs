@@ -199,6 +199,12 @@ namespace Questor
 
             // We are not in space or station, don't do shit yet!
             if (!Cache.Instance.InSpace && !Cache.Instance.InStation)
+            {
+                _lastDockedorJumping = DateTime.Now;
+                return;
+            }
+
+            if (DateTime.Now.Subtract(_lastDockedorJumping).TotalSeconds < 6)
                 return;
 
             // New frame, invalidate old cache
@@ -2000,11 +2006,13 @@ namespace Questor
                         }
                         else
                         {
-                           
                             if (station.Distance < 1900)
                             {
-                                station.Dock();
- 
+                                if (DateTime.Now.Subtract(_lastDock).TotalSeconds > 5)
+                                {
+                                    station.Dock();
+                                    _lastDock = DateTime.Now;
+                                }
                             }
                             else
                             {
