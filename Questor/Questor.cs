@@ -359,6 +359,14 @@ namespace Questor
                     }
                 }
             }
+            if (Paused)
+            {
+                Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
+                Cache.Instance.GotoBaseNow = false;
+                Cache.Instance.SessionState = string.Empty;
+                return;
+            }
 
             // We always check our defense state if we're in space, regardless of questor state
             // We also always check panic
@@ -372,13 +380,6 @@ namespace Questor
 
                 if (Settings.Instance.DebugPerformance)
                     Logging.Log("Defense.ProcessState took " + watch.ElapsedMilliseconds + "ms");
-            }
-
-            if (Paused)
-            {
-                Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
-                Cache.Instance.MyWalletBalance = Cache.Instance.DirectEve.Me.Wealth;
-                return;
             }
 
             if (Cache.Instance.SessionState == "Quitting")
