@@ -410,7 +410,7 @@ namespace Questor.Modules
                         {
                             Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdStopShip);
                             Cache.Instance.Approaching = null;
-                            Logging.Log("MissionController.ClearPocket: Using Optimal Range: Stop ship, target is in orbit range");
+                            Logging.Log("MissionController.ClearPocket: Using Optimal Range: Stop ship, target at [" + Math.Round(target.Distance / 1000, 0) + "k away] is inside optimal");
                         }
                     }
                     else
@@ -465,27 +465,29 @@ namespace Questor.Modules
             target = target ?? Cache.Instance.Entities.Where(t => t.Distance < distancetoconsidertargets && !t.IsSentry && !t.IsContainer && t.IsNpc && t.CategoryId == (int)CategoryID.Entity && t.GroupId != (int)Group.LargeCollidableStructure && !Cache.Instance.IgnoreTargets.Contains(t.Name.Trim())).OrderBy(t => t.Distance).FirstOrDefault();
             int targetedby = Cache.Instance.TargetedBy.Where(t => t.Distance < distancetoconsidertargets && !t.IsSentry && !t.IsContainer && t.IsNpc && t.CategoryId == (int)CategoryID.Entity && t.GroupId != (int)Group.LargeCollidableStructure && !Cache.Instance.IgnoreTargets.Contains(t.Name.Trim())).Count();
 
-            // Reset timeout
-            _clearPocketTimeout = null;
-
-            // Lock priority target if within weapons range
-            if (target.Distance < range)
+            if (target != null)
             {
-                if (Cache.Instance.DirectEve.ActiveShip.MaxLockedTargets > 0)
+                // Reset timeout
+                _clearPocketTimeout = null;
+
+                // Lock priority target if within weapons range
+                if (target.Distance < range)
                 {
-                    if (target.IsTarget || target.IsTargeting) //This target is already targeted no need to target it again
+                    if (Cache.Instance.DirectEve.ActiveShip.MaxLockedTargets > 0)
+                    {
+                        if (target.IsTarget || target.IsTargeting) //This target is already targeted no need to target it again
                         {
                             return;
                         }
                         else
                         {
-                            Logging.Log("MissionController.ClearwithinWeaponsRange: Targeting [" + target.Name + "][ID: " + target.Id + "][" + Math.Round(target.Distance/1000,0) + "k away]");
+                            Logging.Log("MissionController.ClearwithinWeaponsRange: Targeting [" + target.Name + "][ID: " + target.Id + "][" + Math.Round(target.Distance / 1000, 0) + "k away]");
                             target.LockTarget();
                         }
+                    }
+                    return;
                 }
-                return;
             }
-            
 
             // Do we have a timeout?  No, set it to now + 5 seconds
             if (!_clearPocketTimeout.HasValue)
