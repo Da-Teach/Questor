@@ -193,6 +193,14 @@ namespace Questor
                         lblCurrentMissionInfo.Text = newlblCurrentMissionInfotext;
                     buttonOpenMissionXML.Enabled = true;
                 }
+                else
+                {
+                    var newlblCurrentMissionInfotext = "[ " + Cache.Instance.MissionName + " ][ " + Math.Round(DateTime.Now.Subtract(Statistics.Instance.StartedMission).TotalMinutes, 0) + " min][ #" + Statistics.Instance.MissionsThisSession + " ]";
+                    if (lblCurrentMissionInfo.Text != newlblCurrentMissionInfotext)
+                        lblCurrentMissionInfo.Text = newlblCurrentMissionInfotext;
+                    buttonOpenMissionXML.Enabled = false;
+                }
+
             }
             else if (Cache.Instance.MissionName == string.Empty)
             {
