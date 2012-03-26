@@ -11,10 +11,10 @@
         private DateTime _lastStatisticsAction;
         public DateTime MissionLoggingStartedTimestamp { get; set; }
 
-        public DateTime StartedMission { get; set; }
-        public DateTime FinishedMission { get; set; }
-        public DateTime StartedSalvaging { get; set; }
-        public DateTime FinishedSalvaging { get; set; }
+        public DateTime StartedMission = DateTime.Now;
+        public DateTime FinishedMission = DateTime.Now;
+        public DateTime StartedSalvaging = DateTime.Now;
+        public DateTime FinishedSalvaging = DateTime.Now;
 
         public int LootValue { get; set; }
         public int LoyaltyPoints { get; set; }
@@ -68,15 +68,15 @@
                     //    _lastAction = DateTime.Now;
                     //    return;
                     //}
-                    if (DateTime.Now.Subtract(Statistics.Instance.FinishedSalvaging).TotalMinutes > 10) //FinishedSalvaging is the later of the 2 timestamps (FinishedMission and FinishedSalvaging), if you aren't after mission salvaging this timestamp is the same as FinishedMission
+                    if (DateTime.Now.Subtract(Statistics.Instance.FinishedSalvaging).TotalMinutes > 10 || DateTime.Now.Subtract(Cache.Instance.StartTime).TotalMinutes > 5) //FinishedSalvaging is the later of the 2 timestamps (FinishedMission and FinishedSalvaging), if you aren't after mission salvaging this timestamp is the same as FinishedMission
                     {
-                        Logging.Log("Statistics: it has been more than 10 minutes since the last mission was finished. No Mission log written.");
+                        Logging.Log("Statistics: It is unlikely a mission has been run... No Mission log will be written.");
                         Statistics.Instance.MissionLoggingCompleted = true; //if the mission was completed more than 10 min ago assume the logging has been done already.
                         return;
                     }
                     else
                     {
-                        Logging.Log("Statistics: it has not been been more than 10 minutes since the last mission was finished. The Mission log should be written.");                            
+                        //Logging.Log("Statistics: it has not been more than 10 minutes since the last mission was finished. The Mission log should be written.");                            
                     }
 
                     if (Statistics.Instance.DebugMissionStatistics) // we only need to see the following wall of comments if debugging mission statistics
