@@ -39,7 +39,7 @@ namespace Questor.Modules
             DirectContainer lootContainer = null;
             if(!string.IsNullOrEmpty(Settings.Instance.LootContainer))
             {
-                long lootContainerID = itemshangar.Items.FirstOrDefault(i => i.GivenName != null && i.GivenName == Settings.Instance.LootContainer).ItemId;
+                long lootContainerID = itemshangar.Items.FirstOrDefault(i => i.GivenName != null && i.GivenName.ToLower() == Settings.Instance.LootContainer.ToLower()).ItemId;
                 lootContainer = Cache.Instance.DirectEve.GetContainer(lootContainerID);
             }
 
@@ -205,8 +205,8 @@ namespace Questor.Modules
                         break;
                     }
 
-                    // Wait 5 seconds after moving
-                    if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 5)
+                    // Wait x seconds after moving
+                    if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 2)
                         break;
 
                     if (Cache.Instance.DirectEve.GetLockedItems().Count == 0)
@@ -250,44 +250,52 @@ namespace Questor.Modules
                     break;
 
                 case UnloadLootState.StackItemsCorpAmmo:
-                    // Dont stack until 5 seconds after the cargo has cleared
-                    if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 5)
-                        break;
-
-                    // Stack everything
-                    if (corpAmmoHangar != null)
+                    if (Settings.Instance.AmmoHangar != string.Empty)
                     {
-                        corpAmmoHangar.StackAll();
-                        _lastAction = DateTime.Now;
-                    }
+                        // Don't stack until 5 seconds after the cargo has cleared
+                        if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 5)
+                            break;
 
+                        // Stack everything
+                        if (corpAmmoHangar != null)
+                        {
+                            corpAmmoHangar.StackAll();
+                            _lastAction = DateTime.Now;
+                        }
+                    }
                     State = UnloadLootState.StackItemsCorpLoot;
                     break;
 
                 case UnloadLootState.StackItemsCorpLoot:
-                    // Dont stack until 5 seconds after the cargo has cleared
-                    if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 5)
-                        break;
-
-                    // Stack everything
-                    if (corpLootHangar != null)
+                    if (Settings.Instance.LootHangar != string.Empty)
                     {
-                        corpLootHangar.StackAll();
-                        _lastAction = DateTime.Now;
+                        // Don't stack until 5 seconds after the cargo has cleared
+                        if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 5)
+                            break;
+
+                        // Stack everything
+                        if (corpLootHangar != null)
+                        {
+                            corpLootHangar.StackAll();
+                            _lastAction = DateTime.Now;
+                        }
                     }
                     State = UnloadLootState.StackItemsLootContainer;
                     break;
 
                 case UnloadLootState.StackItemsLootContainer:
-                    // Dont stack until 5 seconds after the cargo has cleared
-                    if(DateTime.Now.Subtract(_lastAction).TotalSeconds < 5)
-                        break;
-
-                    // Stack everything
-                    if(lootContainer != null)
+                    if (Settings.Instance.LootContainer != string.Empty)
                     {
-                        lootContainer.StackAll();
-                        _lastAction = DateTime.Now;
+                        // Don't stack until 5 seconds after the cargo has cleared
+                        if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 5)
+                            break;
+
+                        // Stack everything
+                        if (lootContainer != null)
+                        {
+                            lootContainer.StackAll();
+                            _lastAction = DateTime.Now;
+                        }
                     }
                     State = UnloadLootState.WaitForStacking;
                     break;
