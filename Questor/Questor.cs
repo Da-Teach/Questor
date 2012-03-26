@@ -2003,7 +2003,7 @@ namespace Questor
                     
                     
                case QuestorState.Debug_Windows:
-                    var windows = new List<DirectWindow>();
+                    var windows = Cache.Instance.Windows;
             
                     foreach (var window in windows)
                     {
