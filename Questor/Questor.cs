@@ -48,10 +48,13 @@ namespace Questor
         private UnloadLoot _unloadLoot;
 
         private DateTime _lastAction;
+        private DateTime _lastDock;
+        private DateTime _lastDroneRecall;
         private DateTime _lastOrbit;
         private DateTime _lastLocalWatchAction;
         private DateTime _lastWalletCheck;
         private DateTime _lastupdateofSessionRunningTime;
+        private DateTime _lastDockedorJumping;
         //private DateTime _lastCheckWindowsAction;
         private DateTime _lastTimeCheckAction;
         private DateTime _lastWarpTo;
@@ -647,12 +650,14 @@ namespace Questor
                         Cache.Instance.Wealth = Cache.Instance.DirectEve.Me.Wealth;
                         Statistics.Instance.LootValue = 0;
                         Statistics.Instance.LoyaltyPoints = Cache.Instance.Agent.LoyaltyPoints;
-                        Statistics.Instance.StartedMission = DateTime.Now;
-                        Statistics.Instance.FinishedMission = DateTime.MaxValue;
+                        Statistics.Instance.StartedMission = DateTime.Now; //this especially should be moved to statistics.cs as currently it resets the mission timer even if we could not and did not finish the mission
+                        Statistics.Instance.FinishedMission = DateTime.MinValue;
                         Cache.Instance.MissionName = string.Empty;
                         Statistics.Instance.LostDrones = 0;
                         Statistics.Instance.AmmoConsumption = 0;
                         Statistics.Instance.AmmoValue = 0;
+                        Statistics.Instance.MissionLoggingCompleted = false;
+                        Cache.Instance.DroneStatsWritten = false;
 
                         Cache.Instance.panic_attempts_this_mission = 0;
                         Cache.Instance.lowest_shield_percentage_this_mission = 101;
@@ -969,30 +974,40 @@ namespace Questor
                 case QuestorState.GotoBase:
                     // anti bump
                     var structure = Cache.Instance.Entities.Where(i => i.GroupId == (int)Group.LargeCollidableStructure).OrderBy(t => t.Distance).FirstOrDefault();
-                    if (Cache.Instance.TargetedBy.Any(t => t.IsWarpScramblingMe))
+                    if (Cache.Instance.InSpace && Cache.Instance.TargetedBy.Any(t => t.IsWarpScramblingMe)) //Clear Warp Scramblers (if any)
                     {
                         _combat.ProcessState();
                         _drones.ProcessState();
                     }
-                    else if (structure != null && structure.Distance < (int)Distance.TooCloseToStructure)
+                    else if (Cache.Instance.InSpace && structure != null && structure.Distance < (int)Distance.TooCloseToStructure) //orbit structures if they are too close, so we have a better chance of not bumping into them at warp
                     {
                         if ((DateTime.Now.Subtract(_lastOrbit).TotalSeconds > 15))
                         {
                             structure.Orbit((int)Distance.SafeDistancefromStructure);
-                            Logging.Log("Questor: GotoBase: initiating Orbit of [" + structure.Name + "] orbiting at [" + Cache.Instance.OrbitDistance + "]");
+                            Logging.Log("Questor: GotoBase: We are too close! Initiating Orbit of [" + structure.Name + "] orbiting at [" + Cache.Instance.OrbitDistance + "] so that we don't get stuck on it");
                             _lastOrbit = DateTime.Now;
                         }
                     }
-                    else
+                    else //if any scramblers have been cleared and we aren't too close to any structures, set destination and warp out 
                     {
 
                         var baseDestination = _traveler.Destination as StationDestination;
                         if (baseDestination == null || baseDestination.StationId != Cache.Instance.Agent.StationId)
                             _traveler.Destination = new StationDestination(Cache.Instance.Agent.SolarSystemId, Cache.Instance.Agent.StationId, Cache.Instance.DirectEve.GetLocationName(Cache.Instance.Agent.StationId));
-                        if (Cache.Instance.PriorityTargets.Any(pt => pt != null && pt.IsValid))
+                        if (Cache.Instance.PriorityTargets.Any(pt => pt != null && pt.IsValid)) //fail safe just in case something scrambles you at the last second
                         {
-                            Logging.Log("GotoBase: Priority targets found, engaging!");
+                            Logging.Log("GotoBase: Priority targets found, engaging!"); 
                             _combat.ProcessState();
+                        }
+                        else
+                        {
+                            if (Cache.Instance.InSpace && Cache.Instance.ActiveDrones.Count() > 0 && DateTime.Now.Subtract(_lastDroneRecall).TotalSeconds > 30)
+                            {
+                                Logging.Log("GotoBase: We are not scrambled and will be warping soon: pulling drones");
+                                // Tell the drones module to retract drones
+                                Cache.Instance.IsMissionPocketDone = true;
+                                _lastDroneRecall = DateTime.Now;
+                            }
                         }
                         _traveler.ProcessState();
                         if (Settings.Instance.DebugStates)
@@ -1001,6 +1016,7 @@ namespace Questor
                         }
                         if (_traveler.State == TravelerState.AtDestination)
                         {
+                            Cache.Instance.GotoBaseNow = false; //we are there - turn off the 'forced' gotobase
                             Cache.Instance.mission = Cache.Instance.GetAgentMission(Cache.Instance.AgentId);
 
                             if (_missionController.State == MissionControllerState.Error)
@@ -1281,6 +1297,7 @@ namespace Questor
                                     var droneline = Cache.Instance.MissionName + ";";
                                     droneline += ((int)Statistics.Instance.LostDrones) + ";\r\n";
                                     File.AppendAllText(Settings.Instance.DroneStatslogFile, droneline);
+                                    Cache.Instance.DroneStatsWritten = true;
                                 }
                                 else
                                 {
