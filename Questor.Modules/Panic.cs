@@ -21,6 +21,7 @@ namespace Questor.Modules
         private double _lastNormalZ;
 
         private DateTime _resumeTime;
+        private DateTime _lastDock;
         private DateTime _lastWarpTo;
         private DateTime _lastDockedorJumping;
         private DateTime _lastWarpScrambled;
@@ -191,8 +192,11 @@ namespace Questor.Modules
                                 _lastWarpTo = DateTime.Now;
                             }
                         }
-                        else
+                        else if (DateTime.Now.Subtract(_lastDock).TotalSeconds > 5)
+                        {
                             station.Dock();
+                            _lastDock = DateTime.Now;
+                        }
                         break;
                     }
 
