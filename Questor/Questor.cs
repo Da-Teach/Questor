@@ -503,28 +503,20 @@ namespace Questor
                     }
 
                     // only attempt to write the mission statistics logs if one of the mission stats logs is enabled in settings
-                    //if (Settings.Instance.MissionStats1Log || Settings.Instance.MissionStats3Log || Settings.Instance.MissionStats3Log)
-                    //{   
-                        //
-                        // Start _statistics.ProcessState
-                        // Description: Closes Windows, and eventually other things considered 'cleanup' useful to more than just Questor(Missions) but also Anomalies, Mining, etc
-                        //
-                        watch.Reset();
-                        watch.Start();
-                        _statistics.State = StatisticsState.MissionLog;
-                        if (Settings.Instance.DebugStates)
-                            Logging.Log("statistics.State = " + _statistics.State);
-                        _statistics.ProcessState(); 
-                        watch.Stop();
-                        if (Settings.Instance.DebugPerformance)
-                            Logging.Log("statistics.ProcessState took " + watch.ElapsedMilliseconds + "ms");
-                        if (Settings.Instance.DebugStates)
-                            Logging.Log("statistics.State = " + _statistics.State);
-                        // Done
-                        // Statistics State: ProcessState
-                    //}
-   
-                    if (AutoStart)
+                    if (Settings.Instance.MissionStats1Log || Settings.Instance.MissionStats3Log || Settings.Instance.MissionStats3Log)
+                    {
+                        if (!Statistics.Instance.MissionLoggingCompleted)
+                        {
+                            Statistics.Instance.MissionLoggingStarted = false;
+                            if (State == QuestorState.Idle)
+                            {
+                                State = QuestorState.MissionStatistics;
+                            }
+                            break;
+                        }
+                    }
+
+                    if (Settings.Instance.AutoStart)
                     {
                         // Don't start missions hour before downtime
                         if (DateTime.UtcNow.Hour == 10)
@@ -559,6 +551,43 @@ namespace Questor
                     State = QuestorState.Cleanup;
                     break;
 
+                case QuestorState.MissionStatistics:
+                    
+                    // Start _statistics.ProcessState
+                    // Description: Writes the mission log(s), when necessary. 
+                    //
+                    watch.Reset();
+                    watch.Start();
+                    _statistics.State = StatisticsState.MissionLog;
+                    if (Settings.Instance.DebugStates | Statistics.Instance.DebugMissionStatistics)
+                        Logging.Log("statistics.State = " + _statistics.State);
+                    _statistics.ProcessState();
+                    watch.Stop();
+                    if (Settings.Instance.DebugPerformance | Statistics.Instance.DebugMissionStatistics)
+                        Logging.Log("statistics.ProcessState took " + watch.ElapsedMilliseconds + "ms");
+                    if (Settings.Instance.DebugStates | Statistics.Instance.DebugMissionStatistics)
+                        Logging.Log("statistics.State = " + _statistics.State);
+                    // Done
+                    // Statistics State: ProcessState
+                    if (DateTime.Now.Subtract(Statistics.Instance.MissionLoggingStartedTimestamp).TotalSeconds > 30)
+                    {
+                        Statistics.Instance.MissionLoggingCompleted = true; //not technically true but if we waited this long it isn't going to happen
+                        Logging.Log("Questor: statistics: Mission Logging took too long to complete, over [ " + "30" + " ] seconds: aborting logging.");
+                        if (State == QuestorState.MissionStatistics)
+                        {
+                            State = QuestorState.Idle;
+                        }
+                    }
+
+                    if (Statistics.Instance.MissionLoggingCompleted)
+                    {
+                        if (State == QuestorState.MissionStatistics)
+                        {
+                            State = QuestorState.Idle;
+                        }
+                    }
+
+                    break;
 
                 case QuestorState.DelayedGotoBase:
                     if (DateTime.Now.Subtract(_lastAction).TotalSeconds < (int)Time.DelayedGotoBase_seconds)
