@@ -724,6 +724,8 @@
             // RefineCheckBox
             // 
             this.RefineCheckBox.AutoSize = true;
+            this.RefineCheckBox.Checked = true;
+            this.RefineCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.RefineCheckBox.Location = new System.Drawing.Point(159, 34);
             this.RefineCheckBox.Name = "RefineCheckBox";
             this.RefineCheckBox.Size = new System.Drawing.Size(91, 17);
@@ -744,6 +746,8 @@
             // cbxSell
             // 
             this.cbxSell.AutoSize = true;
+            this.cbxSell.Checked = true;
+            this.cbxSell.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbxSell.Location = new System.Drawing.Point(7, 34);
             this.cbxSell.Name = "cbxSell";
             this.cbxSell.Size = new System.Drawing.Size(70, 17);

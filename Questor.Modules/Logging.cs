@@ -26,15 +26,21 @@ namespace Questor.Modules
                 {
                     if (Settings.Instance.ConsoleLogPath != null && Settings.Instance.ConsoleLogFile != null)
                     {
-                        if (!Directory.Exists(Settings.Instance.ConsoleLogPath)) 
-                            Directory.CreateDirectory(Settings.Instance.ConsoleLogPath);
+                        Directory.CreateDirectory(Path.GetDirectoryName(Settings.Instance.ConsoleLogFile));
+                        if (Directory.Exists(Path.GetDirectoryName(Settings.Instance.ConsoleLogFile)))
+                        {
+                            line = "Questor: Writing to Daily Console Log ";
+                            InnerSpace.Echo(string.Format("{0:HH:mm:ss} {1}", DateTime.Now, line));
+                            Cache.Instance.ExtConsole += string.Format("{0:HH:mm:ss} {1}", DateTime.Now, line + "\r\n");
+                            Cache.Instance.ConsoleLog += string.Format("{0:HH:mm:ss} {1}", DateTime.Now, line + "\r\n");
+                            Cache.Instance.ConsoleLogOpened = true;
+                            line = "";
+                        }
+                        else
+                        {
+                            InnerSpace.Echo(string.Format("{0:HH:mm:ss} {1}", DateTime.Now, "Logging: Unable to find (or create): " + Settings.Instance.ConsoleLogPath));
+                        }
 
-                        line = "Questor: Writing to Daily Console Log ";
-                        InnerSpace.Echo(string.Format("{0:HH:mm:ss} {1}", DateTime.Now, line));
-                        Cache.Instance.ExtConsole += string.Format("{0:HH:mm:ss} {1}", DateTime.Now, line + "\r\n");
-                        Cache.Instance.ConsoleLog += string.Format("{0:HH:mm:ss} {1}", DateTime.Now, line + "\r\n");
-                        Cache.Instance.ConsoleLogOpened = true;
-                        line = "";
                     }
                 }
                 if (Cache.Instance.ConsoleLogOpened)

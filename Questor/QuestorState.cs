@@ -12,6 +12,7 @@ namespace Questor
     public enum QuestorState
     {
         Idle,
+        MissionStatistics,
         DelayedStart,
         Cleanup,
         Start,
@@ -44,9 +45,6 @@ namespace Questor
         StorylinePanic,
         CombatHelper,
         CombatHelper_anomaly,
-        //ScoopStep1SetupBookmarkLocation,
-        //ScoopStep2GotoScoopBookmark,
-        //ScoopStep3WaitForWrecks,
         SalvageOnly,
         SalvageOnlyBookmarks,
         GotoSalvageOnlyBookmark,

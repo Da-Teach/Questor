@@ -96,6 +96,8 @@ del .\output\*.dll /Q >>nul 2>>nul
 ::
 copy .\bin\%releasetype%\*.exe .\output\ >>nul 2>>nul
 copy .\bin\%releasetype%\*.dll .\output\ >>nul 2>>nul
+if "%releasetype%"=="Debug" copy .\bin\%releasetype%\*.pdb .\output\ >>nul 2>>nul
+
 ::Echo Copying mostly static files...
 ::copy .\questor\invtypes.xml .\output\
 ::copy .\questor\ShipTargetValues.xml .\output\

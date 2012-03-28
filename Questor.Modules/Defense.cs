@@ -15,32 +15,41 @@ namespace Questor.Modules
 
     public class Defense
     {
+        private DateTime _nextActivateAction = DateTime.MinValue;
+        private DateTime _nextRepModuleAction = DateTime.MinValue;
+        private DateTime _nextAfterburnerAction = DateTime.MinValue;
+        private DateTime _lastSessionChange = DateTime.MinValue;
+
         private void ActivateOnce()
         {
+            if (DateTime.Now < _nextActivateAction) //if we just did something wait a fraction of a second
+                return;
+
             foreach (var module in Cache.Instance.Modules)
             {
                 if (!module.IsActivatable)
                     continue;
 
                 var activate = false;
+                activate |= module.GroupId == (int)Group.CloakingDevice;
                 activate |= module.GroupId == (int)Group.ShieldHardeners;
                 activate |= module.GroupId == (int)Group.DamageControl;
                 activate |= module.GroupId == (int)Group.ArmorHardeners;
                 activate |= module.GroupId == (int)Group.SensorBooster;
                 activate |= module.GroupId == (int)Group.TrackingComputer;
                 activate |= module.GroupId == (int)Group.ECCM;
-                activate |= module.GroupId == (int)Group.CloakingDevice;
+                
 
                 if (!activate)
                     continue;
 
-                if (module.IsActive | module.IsGoingOnline | module.IsDeactivating)
+                if (module.IsActive | module.IsGoingOnline | module.IsDeactivating | module.InLimboState)
                     continue;
 
                 if (module.GroupId == (int)Group.CloakingDevice)
                 {
                     //Logging.Log("This module has a typeID of: " + module.TypeId + " !!");
-                    if (module.TypeId != 11578)  //11578 Covert Ops Cloaking Device - if you dont have a covops cloak try the next module
+                    if (module.TypeId != 11578)  //11578 Covert Ops Cloaking Device - if you don't have a covert ops cloak try the next module
                     {
                         continue;
                     }
@@ -54,15 +63,23 @@ namespace Questor.Modules
                         }
                     }
                 }
+                //
+                // at this point the module should be active but isn't: activate it, set the delay and return. The process will resume on the next tick
+                //
                 module.Click();
-                //More human behaviour
-                //System.Threading.Thread.Sleep(333);
+                _nextActivateAction = DateTime.Now.AddMilliseconds((int)Time.DefenceDelay_milliseconds);
+                Logging.Log("Defense: Defensive module activated: [ " + module.ItemId + "] next Activation delayed until [" + _nextActivateAction.ToString("HH:mm:ss") + "]");
+                    
+                return;
             }
         }
 
         private void ActivateRepairModules()
         {
             var watch = new Stopwatch();
+            if (DateTime.Now < _nextRepModuleAction) //if we just did something wait a fraction of a second
+                return;
+
             foreach (var module in Cache.Instance.Modules)
             {
                 if (module.InLimboState)
@@ -101,11 +118,13 @@ namespace Questor.Modules
                         Cache.Instance.lowest_capacitor_percentage_this_mission = Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage;
                         Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
                     }
-                    //More human behaviour
+                    //More human behavior
                     //System.Threading.Thread.Sleep(333);
                     module.Click();
                     Cache.Instance.StartedBoosting = DateTime.Now;
-
+                    _nextRepModuleAction = DateTime.Now.AddMilliseconds((int)Time.DefenceDelay_milliseconds);
+                    Logging.Log("Defense: RepModule activated: [ " + module.ItemId + "] next Activation delayed until [" + _nextRepModuleAction.ToString("HH:mm:ss") + "]");
+                    return;
                     //Logging.Log("LowestShieldPercentage(pocket) [ " + Cache.Instance.lowest_shield_percentage_this_pocket + " ] ");
                     //Logging.Log("LowestArmorPercentage(pocket) [ " + Cache.Instance.lowest_armor_percentage_this_pocket + " ] ");
                     //Logging.Log("LowestCapacitorPercentage(pocket) [ " + Cache.Instance.lowest_capacitor_percentage_this_pocket + " ] ");
@@ -115,13 +134,15 @@ namespace Questor.Modules
                 }
                 else if (module.IsActive && perc >= Settings.Instance.DeactivateRepairModules)
                 {
-                    //More human behaviour
+                    //More human behavior
                     //System.Threading.Thread.Sleep(333);
                     module.Click();
                     Cache.Instance._lastModuleActivation = DateTime.Now;
                     Cache.Instance.repair_cycle_time_this_pocket = Cache.Instance.repair_cycle_time_this_pocket + ((int)DateTime.Now.Subtract(Cache.Instance.StartedBoosting).TotalSeconds);
                     Cache.Instance.repair_cycle_time_this_mission = Cache.Instance.repair_cycle_time_this_mission + ((int)DateTime.Now.Subtract(Cache.Instance.StartedBoosting).TotalSeconds);
                     Cache.Instance.lastKnownGoodConnectedTime = DateTime.Now;
+                    Logging.Log("Defense: RepModule deactivated: [ " + module.ItemId + "]");
+                    return;
                     //Cache.Instance.repair_cycle_time_this_pocket = Cache.Instance.repair_cycle_time_this_pocket + ((int)watch.Elapsed);
                     //Cache.Instance.repair_cycle_time_this_mission = Cache.Instance.repair_cycle_time_this_mission + watch.Elapsed.TotalMinutes;
                 }
@@ -130,6 +151,9 @@ namespace Questor.Modules
 
         private void ActivateAfterburner()
         {
+            if (DateTime.Now < _nextAfterburnerAction) //if we just did something wait a fraction of a second
+                return; 
+            
             foreach (var module in Cache.Instance.Modules)
             {
                 if (module.GroupId != (int)Group.Afterburner)
@@ -165,15 +189,19 @@ namespace Questor.Modules
 
                 if (activate)
                 {
-                    //More human behaviour
+                    //More human behavior
                     //System.Threading.Thread.Sleep(333); 
                     module.Click();
+                    _nextAfterburnerAction = DateTime.Now.AddMilliseconds((int)Time.AfterburnerDelay_milliseconds);
+                    return;
                 }
                 else if (deactivate && module.IsActive)
                 {
-                    //More human behaviour
+                    //More human behavior
                     //System.Threading.Thread.Sleep(333); 
                     module.Click();
+                    _nextAfterburnerAction = DateTime.Now.AddMilliseconds((int)Time.AfterburnerDelay_milliseconds);
+                    return;
                 }
             }
         }
@@ -184,15 +212,32 @@ namespace Questor.Modules
             if (Cache.Instance.InStation)
                 return;
 
+            if (!Cache.Instance.InSpace && !Cache.Instance.InStation)
+            {
+                _lastSessionChange = DateTime.Now;
+                return;
+            }
+
             // What? No ship entity?
             if (Cache.Instance.DirectEve.ActiveShip.Entity == null)
+            {
+                _lastSessionChange = DateTime.Now;
                 return;
+            }
+
+            if (DateTime.Now.Subtract(_lastSessionChange).TotalSeconds < 5)
+            {
+                Logging.Log("Defense: we just completed a session change less than 5 seconds ago... waiting.");
+                return;
+            }
+
+
 
             // There is no better defense then being cloaked ;)
             if (Cache.Instance.DirectEve.ActiveShip.Entity.IsCloaked)
                 return;
 
-            // Cap is SO low that we shouldn't care about hardeners/boosters as we arent being targeted anyhow
+            // Cap is SO low that we shouldn't care about hardeners/boosters as we aren't being targeted anyhow
             if (Cache.Instance.DirectEve.ActiveShip.CapacitorPercentage < 10 && Cache.Instance.TargetedBy.Count() == 0)
                 return;
 

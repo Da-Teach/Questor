@@ -68,8 +68,10 @@ namespace Questor.Modules
                             }
                         }
                     }
-
-                    State = SwitchShipState.OpenFittingWindow;
+                    if (Settings.Instance.UseFittingManager)
+                        State = SwitchShipState.OpenFittingWindow;
+                    else
+                        State = SwitchShipState.Done;
 
                     break;
 

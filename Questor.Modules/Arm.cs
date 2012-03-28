@@ -603,7 +603,7 @@ namespace Questor.Modules
                         }
                         catch (Exception e)
                         {
-                            Logging.Log("Arms.WaitForItems: Error, " + e.Message);
+                            Logging.Log("Arms.WaitForItems: Unable to load missionammo from mission XML: no XML found, " + e.Message);
                             Cache.Instance.missionAmmo = new List<Ammo>();
                         }
 

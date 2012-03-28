@@ -32,8 +32,7 @@
 
             _storylines = new Dictionary<string, IStoryline>();
             //_storylines.Add("__", new GenericCombatStoryline());
-            // broken in crucible 1.5 (yes/no dialog needs directeve support)
-            //_storylines.Add("Materials For War Preparation", new MaterialsForWarPreparation());
+            _storylines.Add("Materials For War Preparation", new MaterialsForWarPreparation());
             _storylines.Add("Shipyard Theft", new GenericCombatStoryline());
             _storylines.Add("Evolution", new GenericCombatStoryline());
             _storylines.Add("Record Cleaning", new GenericCombatStoryline());
@@ -52,20 +51,20 @@
             _storylines.Add("Whispers in the Dark - The Outpost (4 of 4)", new GenericCombatStoryline());
             _storylines.Add("Transaction Data Delivery", new TransactionDataDelivery());
             _storylines.Add("Innocents in the Crossfire", new GenericCombatStoryline());
-			_storylines.Add("Patient Zero", new GenericCombatStoryline());
+            _storylines.Add("Patient Zero", new GenericCombatStoryline());
             _storylines.Add("Soothe the Salvage Beast", new GenericCombatStoryline());
             _storylines.Add("Forgotten Outpost", new GenericCombatStoryline());
             _storylines.Add("Stem the Flow", new GenericCombatStoryline());
-			_storylines.Add("Quota Season", new GenericCombatStoryline());
-			//_storylines.Add("Matriarch", new GenericCombatStoryline());
+            _storylines.Add("Quota Season", new GenericCombatStoryline()); //why cant we pickup the Custom Circuitry? problem in salvage.cs somewhere: "salvage: Container" name: Number "contained no valuable loot"
+            //_storylines.Add("Matriarch", new GenericCombatStoryline());
             //_storylines.Add("Diplomatic Incident", new GenericCombatStoryline());
-			_storylines.Add("Nine Tenths of the Wormhole", new GenericCombatStoryline());
-		}
+            _storylines.Add("Nine Tenths of the Wormhole", new GenericCombatStoryline());
+        }
             //these work but are against other factions that I generally like to avoid
-			//_storylines.Add("The Blood of Angry Men", new GenericCombatStoryline());  //amarr faction
-			//_storylines.Add("Amarrian Excavators", new GenericCombatStoryline()); 	//amarr faction
-			
-        
+            //_storylines.Add("The Blood of Angry Men", new GenericCombatStoryline());  //amarr faction
+            //_storylines.Add("Amarrian Excavators", new GenericCombatStoryline()); 	//amarr faction
+
+
         public void Reset()
         {
             State = StorylineState.Idle;
@@ -98,7 +97,7 @@
             if (mission == null)
             {
                 State = StorylineState.Done;
-                Cache.Instance.MissionName = "";
+                Cache.Instance.MissionName = String.Empty;
                 return;
             }
 
@@ -134,7 +133,7 @@
 
             if (Cache.Instance.PriorityTargets.Any(pt => pt != null && pt.IsValid))
             {
-                Logging.Log("GotoBase: Priority targets found, engaging!");
+                Logging.Log("Storyline: GotoAgent: Priority targets found, engaging!");
                 _combat.ProcessState();
             }
 

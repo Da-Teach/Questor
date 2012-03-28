@@ -64,7 +64,7 @@ namespace Questor.Modules
                 if (tractorBeam.IsActive && (wreck == null || wreck.Distance <= (int)Distance.SafeScoopRange))
                 {
                     tractorBeam.Deactivate();
-                    //More human behaviour
+                    //More human behavior
                     //System.Threading.Thread.Sleep(333);
                 }
                 // Remove the tractor beam as a possible beam to activate
@@ -89,11 +89,9 @@ namespace Questor.Modules
                 tractorBeams.RemoveAt(0);
                 tractorBeam.Activate(wreck.Id);
 
-                Logging.Log("Salvage: Activating tractorbeam [" + tractorBeam.ItemId + "] on [" + wreck.Name + "][" + wreck.Id + "]");
+                Logging.Log("Salvage: Activating tractorbeam [" + tractorBeam.ItemId + "] on [" + wreck.Name + "][ID: " + wreck.Id + "]");
                 //More human behaviour
                 //System.Threading.Thread.Sleep(333);
-
-
             }
         }
 
@@ -124,9 +122,9 @@ namespace Questor.Modules
                 if (wreck == null)
                     return;
 
-                Logging.Log("Salvage: Activating salvager [" + salvager.ItemId + "] on [" + wreck.Name + "][" + wreck.Id + "]");
+                Logging.Log("Salvage: Activating salvager [" + salvager.ItemId + "] on [" + wreck.Name + "][ID: " + wreck.Id + "]");
                 salvager.Activate(wreck.Id);
-                //More human behaviour
+                //More human behavior
                 //System.Threading.Thread.Sleep(333);
             }
         }
@@ -152,7 +150,7 @@ namespace Questor.Modules
             {
                 if (Cache.Instance.IgnoreTargets.Contains(wreck.Name))
                 {
-                    Logging.Log("Salvage: Cargo Container [" + wreck.Name + "][" + wreck.Id + "] on the ignore list, ignoring.");
+                    Logging.Log("Salvage: Cargo Container [" + wreck.Name + "][ID: " + wreck.Id + "] on the ignore list, ignoring.");
                     wreck.UnlockTarget();
                     continue;
                 }
@@ -161,6 +159,7 @@ namespace Questor.Modules
                 {
                     if(Settings.Instance.WreckBlackList.Any(a => a == wreck.TypeId) && (wreck.Distance < (int)Distance.SafeScoopRange || wreck.IsWreckEmpty))
                     {
+                        Logging.Log("Salvage: Cargo Container [" + wreck.Name + "][ID: " + wreck.Id + "] within loot range,wreck is empty, or wreck is on our blacklist, unlocking container.");
                         wreck.UnlockTarget();
                         continue;
                     }
@@ -172,7 +171,7 @@ namespace Questor.Modules
                 // Unlock if within loot range
                 if (wreck.Distance < (int)Distance.SafeScoopRange)
                 {
-                    Logging.Log("Salvage: Cargo Container [" + wreck.Name + "][" + wreck.Id + "] within loot range, unlocking container.");
+                    Logging.Log("Salvage: Cargo Container [" + wreck.Name + "][ID: " + wreck.Id + "] within loot range, unlocking container.");
                     wreck.UnlockTarget();
                 }
             }
@@ -227,7 +226,7 @@ namespace Questor.Modules
                         continue;
                 }
 
-                Logging.Log("Salvage: Locking [" + wreck.Name + "][" + wreck.Id + "] - Distance [" + wreck.Distance + "]");
+                Logging.Log("Salvage: Locking [" + wreck.Name + "][ID:" + wreck.Id + "][" + Math.Round(wreck.Distance / 1000, 0) + "k away]");
 
                 wreck.LockTarget();
                 wreckTargets.Add(wreck);
@@ -393,7 +392,7 @@ namespace Questor.Modules
                             // Mark this item as moved
                             moveTheseItems.Add(wl.DirectItem);
 
-                            // Substract (now) free volume
+                            // Subtract (now) free volume
                             freeCargoCapacity += wl.TotalVolume;
 
                             // We freed up enough space?
@@ -440,11 +439,11 @@ namespace Questor.Modules
                 // Loot actual items
                 if (lootItems.Count != 0)
                 {
-                    Logging.Log("Salvage: Looting container [" + containerEntity.Name + "][" + containerEntity.Id + "], [" + lootItems.Count + "] valuable items");
+                    Logging.Log("Salvage: Looting container [" + containerEntity.Name + "][ID: " + containerEntity.Id + "], [" + lootItems.Count + "] valuable items");
                     cargo.Add(lootItems.Select(i => i.DirectItem));
                 }
                 else
-                    Logging.Log("Salvage: Container [" + containerEntity.Name + "][" + containerEntity.Id + "] contained no valuable items");
+                    Logging.Log("Salvage: Container [" + containerEntity.Name + "][ID: " + containerEntity.Id + "] contained no valuable items");
             }
 
             // Open a container in range
@@ -468,8 +467,8 @@ namespace Questor.Modules
                     continue;
 
                 // Don't even try to open a wreck if you are speed tanking and you aren't processing a loot action
-                //if (Settings.Instance.SpeedTank == true && Cache.Instance.OpenWrecks == false)
-                //    continue;
+                if (Settings.Instance.SpeedTank == true && Cache.Instance.OpenWrecks == false)
+                    continue;
 
                 // Don't even try to open a wreck if you are specified LootEverything as false and you aren't processing a loot action
                 //      this is currently commented out as it would keep golems and other non-speed tanked ships from looting the field as they cleared
@@ -478,7 +477,7 @@ namespace Questor.Modules
                 //    continue;
 
                 // Open the container
-                Logging.Log("Salvage: Opening container [" + containerEntity.Name + "][" + containerEntity.Id + "]");
+                Logging.Log("Salvage: Opening container [" + containerEntity.Name + "][ID: " + containerEntity.Id + "]");
                 containerEntity.OpenCargo();
                 _openedContainers[containerEntity.Id] = DateTime.Now;
                 break;

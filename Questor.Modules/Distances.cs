@@ -19,8 +19,8 @@ namespace Questor.Modules
         NextPocketDistance = 100000, // If we moved more then 100km, assume next Pocket
         GateActivationRange = 2300,
         CloseToGateActivationRange = GateActivationRange + 5000,
-        WayTooClose = -10100, // This is uaually used to determine how far inside the 'docking ring' of an acceleration gate we are. 
-        OrbitDistanceCushion = 5000, // This is used to determine when to stop orbitingor approaching, if not speed tanking (orbit distance + orbitdistancecushion)
+        WayTooClose = -10100, // This is usually used to determine how far inside the 'docking ring' of an acceleration gate we are. 
+        OrbitDistanceCushion = 5000, // This is used to determine when to stop orbiting or approaching, if not speed tanking (orbit distance + orbitdistancecushion)
         OptimalRangeCushion = 5000, // This is used to determine when to stop approaching, if not speed tanking (optimal distance + optimaldistancecushion)
         InsideThisRangeIsLIkelyToBeMostlyFrigates = 9000, // 9k - overall this assumption works, use with caution
         DecloakRange = 1900,

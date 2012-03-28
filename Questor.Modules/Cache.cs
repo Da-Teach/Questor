@@ -175,11 +175,14 @@ namespace Questor.Modules
         public bool NormalApproch = true;
         public bool CourierMission = false;
         public string MissionName = "";
+        public int MissionsThisSession = 0;
         public bool ConsoleLogOpened = false;
         public int TimeSpentReloading_seconds = 0;
         public int TimeSpentInMission_seconds = 0;
         public int TimeSpentInMissionInRange = 0;
         public int TimeSpentInMissionOutOfRange = 0;
+        public DirectAgentMission mission;
+        public bool DroneStatsWritten { get; set; }
 
         public bool Local_safe(int max_bad, double stand)
         {
@@ -190,7 +193,6 @@ namespace Questor.Modules
                 float[] alliance = {DirectEve.Standings.GetPersonalRelationship(LocalMember.AllianceId), DirectEve.Standings.GetCorporationRelationship(LocalMember.AllianceId), DirectEve.Standings.GetAllianceRelationship(LocalMember.AllianceId)};
                 float[] corporation = {DirectEve.Standings.GetPersonalRelationship(LocalMember.CorporationId), DirectEve.Standings.GetCorporationRelationship(LocalMember.CorporationId), DirectEve.Standings.GetAllianceRelationship(LocalMember.CorporationId)};
                 float[] personal = {DirectEve.Standings.GetPersonalRelationship(LocalMember.CharacterId), DirectEve.Standings.GetCorporationRelationship(LocalMember.CharacterId), DirectEve.Standings.GetAllianceRelationship(LocalMember.CharacterId)};
-
 
                 if(alliance.Min() <= stand || corporation.Min() <= stand || personal.Min() <= stand)
                 {
@@ -289,6 +291,7 @@ namespace Questor.Modules
         public DateTime lastKnownGoodConnectedTime { get; set; }
         public long totalMegaBytesOfMemoryUsed { get; set; }
         public double MyWalletBalance { get; set; }
+        public string CurrentPocketAction { get; set; }
         public string CurrentAgent
         {
             get
@@ -604,9 +607,11 @@ namespace Questor.Modules
         public bool? MissionUseDrones;
         public bool StopTimeSpecified { get; set; }
         public DateTime StopTime { get; set; }
+        public DateTime StartTime { get; set; }
         public int MaxRuntime { get; set; }
         public bool CloseQuestorCMDLogoff = false;
         public bool CloseQuestorCMDExitGame = true;
+        public bool GotoBaseNow = false;
         public string ReasonToStopQuestor { get; set; }
         public string SessionState { get; set; }
         public double SessionIskGenerated { get; set; }
@@ -664,7 +669,7 @@ namespace Questor.Modules
         /// <returns></returns>
         public DirectAgentMissionBookmark GetMissionBookmark(long agentId, string startsWith)
         {
-            // Get the missons
+            // Get the missions
             var mission = GetAgentMission(agentId);
             if (mission == null)
                 return null;
@@ -694,6 +699,16 @@ namespace Questor.Modules
         public List<DirectBookmark> BookmarksByLabel(string label)
         {
             return DirectEve.Bookmarks.Where(b => !string.IsNullOrEmpty(b.Title) && b.Title.StartsWith(label)).ToList();
+        }
+
+        /// <summary>
+        ///   Returns bookmarks that contain the supplied label anywhere in the title
+        /// </summary>
+        /// <param name = "label"></param>
+        /// <returns></returns>
+        public List<DirectBookmark> BookmarksThatContain(string label)
+        {
+            return DirectEve.Bookmarks.Where(b => !string.IsNullOrEmpty(b.Title) && b.Title.Contains(label)).ToList();
         }
 
         /// <summary>

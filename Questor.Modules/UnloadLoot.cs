@@ -26,7 +26,7 @@ namespace Questor.Modules
         public void ProcessState()
         {
             var cargo = Cache.Instance.DirectEve.GetShipsCargo();
-            var hangar = Cache.Instance.DirectEve.GetItemHangar();
+            var itemshangar = Cache.Instance.DirectEve.GetItemHangar();
 
             DirectContainer corpAmmoHangar = null;
             if (!string.IsNullOrEmpty(Settings.Instance.AmmoHangar))
@@ -39,7 +39,7 @@ namespace Questor.Modules
             DirectContainer lootContainer = null;
             if(!string.IsNullOrEmpty(Settings.Instance.LootContainer))
             {
-                long lootContainerID = hangar.Items.FirstOrDefault(i => i.GivenName != null && i.GivenName == Settings.Instance.LootContainer).ItemId;
+                long lootContainerID = itemshangar.Items.FirstOrDefault(i => i.GivenName != null && i.GivenName.ToLower() == Settings.Instance.LootContainer.ToLower()).ItemId;
                 lootContainer = Cache.Instance.DirectEve.GetContainer(lootContainerID);
             }
 
@@ -54,13 +54,15 @@ namespace Questor.Modules
                     break;
 
                 case UnloadLootState.Begin:
+                    if (cargo.Items.Count == 0)
+                        State = UnloadLootState.Done;
                     Logging.Log("UnloadLoot: Opening station hangar");
                     State = UnloadLootState.OpenItemHangar;
                     break;
 
                 case UnloadLootState.OpenItemHangar:
                     // Is the hangar open?
-                    if (hangar.Window == null)
+                    if (itemshangar.Window == null)
                     {
                         // No, command it to open
                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenHangarFloor);
@@ -68,7 +70,7 @@ namespace Questor.Modules
                     }
 
                     // Not ready yet
-                    if (!hangar.IsReady)
+                    if (!itemshangar.IsReady)
                         break;
 
                     Logging.Log("UnloadLoot: Opening ship's cargo");
@@ -89,12 +91,12 @@ namespace Questor.Modules
 
                     if (corpAmmoHangar != null || corpLootHangar != null)
                     {
-                        Logging.Log("UnloadLoot: Opening corporation hangar");
+                        //Logging.Log("UnloadLoot: Opening corporation hangar");
                         State = UnloadLootState.OpenCorpHangar;
                     }
                     else
                     {
-                        Logging.Log("UnloadLoot: CommonMissionCompletionitems");
+                        //Logging.Log("UnloadLoot: CommonMissionCompletionitems");
                         State = UnloadLootState.MoveCommonMissionCompletionitems;
                     }
                     break;
@@ -107,6 +109,7 @@ namespace Questor.Modules
                         if (corpHangar.Window == null)
                         {
                             // No, command it to open
+                            Logging.Log("UnloadLoot: Opening corporation hangar");
                             Cache.Instance.DirectEve.OpenCorporationHangar();
                             break;
                         }
@@ -115,17 +118,17 @@ namespace Questor.Modules
                             break;
                     }
 
-                    Logging.Log("UnloadLoot: Moving CommonMissionCompletionitems");
+                    Logging.Log("UnloadLoot: Moving Common Mission Completion items");
                     State = UnloadLootState.MoveCommonMissionCompletionitems;
                     break;
                 
                 case UnloadLootState.MoveCommonMissionCompletionitems:
-                    var CommonMissionCompletionItemHangar = hangar;
+                    var CommonMissionCompletionItemHangar = itemshangar;
                     //
                     // how do we get IsMissionItem to work for us here? (see ItemCache)
-                    // Zbikoki's Hacker Card 28260, Reports 3814, Gate Key 2076, Militants 25373, Marines 3810
+                    // Zbikoki's Hacker Card 28260, Reports 3814, Gate Key 2076, Militants 25373, Marines 3810, i.groupid == 314 (Misc Mission Items, mainly for storylines) and i.GroupId == 283 (Misc Mission Items, mainly for storylines)
                     //
-                    var ItemsToMove = cargo.Items.Where(i => i.TypeId == 17192 || i.TypeId == 2076 || i.TypeId == 3814 || i.TypeId == 17206 || i.TypeId == 28260 || i.GroupId == 283);
+                    var ItemsToMove = cargo.Items.Where(i => i.TypeId == 17192 || i.TypeId == 2076 || i.TypeId == 3814 || i.TypeId == 17206 || i.TypeId == 28260 || i.GroupId == 283 || i.GroupId == 314);
                     
                     CommonMissionCompletionItemHangar.Add(ItemsToMove);
                     _lastAction = DateTime.Now;
@@ -135,7 +138,7 @@ namespace Questor.Modules
                     break;
 
                 case UnloadLootState.MoveLoot:
-                    var lootHangar = corpLootHangar ?? lootContainer ?? hangar;
+                    var lootHangar = corpLootHangar ?? lootContainer ?? itemshangar;
 
                     var lootToMove = cargo.Items.Where(i => (i.TypeName ?? string.Empty).ToLower() != Cache.Instance.BringMissionItem && !Settings.Instance.Ammo.Any(a => a.TypeId == i.TypeId));
                     LootValue = 0;
@@ -165,13 +168,13 @@ namespace Questor.Modules
                             salvageBMs.Add((long)bookmark.BookmarkId);
                             if (salvageBMs.Count == 5)
                             {
-                                hangar.AddBookmarks(salvageBMs);
+                                itemshangar.AddBookmarks(salvageBMs);
                                 salvageBMs.Clear();
                             }
                         }
                         if (salvageBMs.Count > 0)
                         {
-                            hangar.AddBookmarks(salvageBMs);
+                            itemshangar.AddBookmarks(salvageBMs);
                             salvageBMs.Clear();
                         }
                     }
@@ -185,7 +188,7 @@ namespace Questor.Modules
                     if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 5)
                         break;
 
-                    var ammoHangar = corpAmmoHangar ?? hangar;
+                    var ammoHangar = corpAmmoHangar ?? itemshangar;
 
                     // Move the mission item & ammo to the ammo hangar
                     ammoHangar.Add(cargo.Items.Where(i => ((i.TypeName ?? string.Empty).ToLower() == Cache.Instance.BringMissionItem || Settings.Instance.Ammo.Any(a => a.TypeId == i.TypeId))));
@@ -202,8 +205,8 @@ namespace Questor.Modules
                         break;
                     }
 
-                    // Wait 5 seconds after moving
-                    if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 5)
+                    // Wait x seconds after moving
+                    if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 2)
                         break;
 
                     if (Cache.Instance.DirectEve.GetLockedItems().Count == 0)
@@ -211,7 +214,7 @@ namespace Questor.Modules
                         if (corpBookmarkHangar != null && Settings.Instance.CreateSalvageBookmarks)
                         {
                             Logging.Log("UnloadLoot: Moving salvage bookmarks to corp hangar");
-                            corpBookmarkHangar.Add(hangar.Items.Where(i => i.TypeId == 51));
+                            corpBookmarkHangar.Add(itemshangar.Items.Where(i => i.TypeId == 51));
                         }
 
                         Logging.Log("UnloadLoot: Stacking items");
@@ -231,7 +234,7 @@ namespace Questor.Modules
                     break;
 
                 case UnloadLootState.StackItemsHangar:
-                    // Dont stack until 5 seconds after the cargo has cleared
+                    // Don't stack until 5 seconds after the cargo has cleared
                     if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 5)
                         break;
 
@@ -239,7 +242,7 @@ namespace Questor.Modules
                     // Stack everything
                     if(corpAmmoHangar == null || corpLootHangar == null || lootContainer == null) // Only stack if we moved something
                     {
-                        hangar.StackAll();
+                        itemshangar.StackAll();
                         _lastAction = DateTime.Now;
                     }
 
@@ -247,44 +250,52 @@ namespace Questor.Modules
                     break;
 
                 case UnloadLootState.StackItemsCorpAmmo:
-                    // Dont stack until 5 seconds after the cargo has cleared
-                    if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 5)
-                        break;
-
-                    // Stack everything
-                    if (corpAmmoHangar != null)
+                    if (Settings.Instance.AmmoHangar != string.Empty)
                     {
-                        corpAmmoHangar.StackAll();
-                        _lastAction = DateTime.Now;
-                    }
+                        // Don't stack until 5 seconds after the cargo has cleared
+                        if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 5)
+                            break;
 
+                        // Stack everything
+                        if (corpAmmoHangar != null)
+                        {
+                            corpAmmoHangar.StackAll();
+                            _lastAction = DateTime.Now;
+                        }
+                    }
                     State = UnloadLootState.StackItemsCorpLoot;
                     break;
 
                 case UnloadLootState.StackItemsCorpLoot:
-                    // Dont stack until 5 seconds after the cargo has cleared
-                    if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 5)
-                        break;
-
-                    // Stack everything
-                    if (corpLootHangar != null)
+                    if (Settings.Instance.LootHangar != string.Empty)
                     {
-                        corpLootHangar.StackAll();
-                        _lastAction = DateTime.Now;
+                        // Don't stack until 5 seconds after the cargo has cleared
+                        if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 5)
+                            break;
+
+                        // Stack everything
+                        if (corpLootHangar != null)
+                        {
+                            corpLootHangar.StackAll();
+                            _lastAction = DateTime.Now;
+                        }
                     }
                     State = UnloadLootState.StackItemsLootContainer;
                     break;
 
                 case UnloadLootState.StackItemsLootContainer:
-                    // Dont stack until 5 seconds after the cargo has cleared
-                    if(DateTime.Now.Subtract(_lastAction).TotalSeconds < 5)
-                        break;
-
-                    // Stack everything
-                    if(lootContainer != null)
+                    if (Settings.Instance.LootContainer != string.Empty)
                     {
-                        lootContainer.StackAll();
-                        _lastAction = DateTime.Now;
+                        // Don't stack until 5 seconds after the cargo has cleared
+                        if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 5)
+                            break;
+
+                        // Stack everything
+                        if (lootContainer != null)
+                        {
+                            lootContainer.StackAll();
+                            _lastAction = DateTime.Now;
+                        }
                     }
                     State = UnloadLootState.WaitForStacking;
                     break;

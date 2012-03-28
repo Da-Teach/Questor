@@ -35,6 +35,7 @@ namespace Questor.Modules
         private int _launchTries;
         private double _shieldPctTotal;
         private double _structurePctTotal;
+        public bool recall = false;
 
         public DroneState State { get; set; }
 
@@ -103,21 +104,21 @@ namespace Questor.Modules
             if (!mustEngage)
                 return;
 
-            // Is the last target our current activetarget?
+            // Is the last target our current active target?
             if (target.IsActiveTarget)
             {
                 // Save target id (so we do not constantly switch)
                 _lastTarget = target.Id;
 
                 // Engage target
-                Logging.Log("Drones: Engaging drones on [" + target.Name + "][" + target.Id + "]");
+                Logging.Log("Drones: Engaging drones on [" + target.Name + "][ID: " + target.Id + "]" + Math.Round(target.Distance / 1000, 0) + "k away]");
                 Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdDronesEngage);
                 _lastEngageCommand = DateTime.Now;
             }
             else // Make the target active
             {
                 target.MakeActiveTarget();
-                Logging.Log("Drones: Making [" + target.Name + "][" + target.Id + "] the active target for drone engagement.");
+                Logging.Log("Drones: Making [" + target.Name + "][ID: " + target.Id + "]" + Math.Round(target.Distance/1000,0) + "k away] the active target for drone engagement.");
             }
         }
 
@@ -153,7 +154,7 @@ namespace Questor.Modules
                         // yes if there are targets to kill 
                         launch &= Cache.Instance.TargetedBy.Count(e => !e.IsSentry && e.CategoryId == (int)CategoryID.Entity && e.IsNpc && !e.IsContainer && e.GroupId != (int)Group.LargeCollidableStructure && e.Distance < Settings.Instance.DroneControlRange) > 0;
 
-                        // If drones get agro'd within 30 seconds, then wait (5 * _recallCount + 5) seconds since the last recall
+                        // If drones get aggro'd within 30 seconds, then wait (5 * _recallCount + 5) seconds since the last recall
                         if (_lastLaunch < _lastRecall && _lastRecall.Subtract(_lastLaunch).TotalSeconds < 30)
                         {
                             if (_lastRecall.AddSeconds(5 * _recallCount + 5) < DateTime.Now)
@@ -186,6 +187,7 @@ namespace Questor.Modules
 
                 case DroneState.Launch:
                     // Launch all drones
+                    recall = false;
                     _launchTimeout = DateTime.Now;
                     Cache.Instance.DirectEve.ActiveShip.LaunchAllDrones();
                     State = DroneState.Launching;
@@ -223,8 +225,7 @@ namespace Questor.Modules
                     break;
                 case DroneState.Fighting:
                     // Should we recall our drones? This is a possible list of reasons why we should
-                    var recall = false;
-
+                    
                     // Are we done (for now) ? 
                     if (Cache.Instance.TargetedBy.Count(e => !e.IsSentry && e.IsNpc && e.Distance < Settings.Instance.DroneControlRange) == 0)
                     {
@@ -325,6 +326,7 @@ namespace Questor.Modules
                     if (Cache.Instance.ActiveDrones.Count() == 0)
                     {
                         _lastRecall = DateTime.Now;
+                        recall = false;
                         State = DroneState.WaitingForTargets;
                         break;
                     }

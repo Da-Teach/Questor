@@ -19,7 +19,7 @@ namespace QuestorStatistics
     {
         
 
-        string LocalRuta = Application.StartupPath+"//log//";
+        string Localpath = Application.StartupPath+"//log//";
 
         //-------------------------------------------------------------------------
         // Start the Form and look for the files .Statistics.log in the root
@@ -30,7 +30,7 @@ namespace QuestorStatistics
         {
             InitializeComponent();
 
-            System.IO.DirectoryInfo o = new System.IO.DirectoryInfo(LocalRuta);
+            System.IO.DirectoryInfo o = new System.IO.DirectoryInfo(Localpath);
             System.IO.FileInfo[] myfiles = null;
 
             myfiles = o.GetFiles("*.CustomDatedStatistics.log");
@@ -101,48 +101,48 @@ namespace QuestorStatistics
             Lst1.GridLines = true;
             Lst1.LabelEdit = false;
             Lst1.Items.Clear();
-            string fic = LocalRuta + "\\" + cmb1.SelectedItem.ToString();
-            dynamic Datos = null;
-            bool Cabecera = false;
+            string fic = Localpath + "\\" + cmb1.SelectedItem.ToString();
+            dynamic Data = null;
+            bool Heading = false;
             bool AmmoStat = true;
             System.IO.StreamReader sr = new System.IO.StreamReader(fic);
-            Cabecera = true;
-            Limpieza();
+            Heading = true;
+            Cleardata();
 
 
             while (!(sr.Peek() == -1))
             {
-                Datos = Strings.Split(sr.ReadLine(), ";");
+                Data = Strings.Split(sr.ReadLine(), ";");
 
-                if (Cabecera)
+                if (Heading)
                 {
-                    Cabecera = false;
+                    Heading = false;
 
                 }
                 else
                 {
                     ListViewItem item = new ListViewItem("");
-                    if (Datos[6] == "")
+                    if (Data[6] == "")
                     {
                         AmmoStat = false;
                     }
       
                     var _with3 = item;
-                    _with3.SubItems.Add(Datos[0]);
-                    _with3.SubItems.Add(Datos[1]);
-                    _with3.SubItems.Add(Datos[2]);
-                    _with3.SubItems.Add(Strings.Format(Convert.ToDouble(Datos[3]), "###,###,##0"));
-                    _with3.SubItems.Add(Strings.Format(Convert.ToDouble(Datos[3]) / Convert.ToDouble(Datos[2]), "###,###,##0"));
-                    _with3.SubItems.Add(Strings.Format(Convert.ToDouble(Datos[4]), "###,###,##0"));
-                    _with3.SubItems.Add(Strings.Format(Convert.ToDouble(Datos[4]) / Convert.ToDouble(Datos[2]), "###,###,##0"));
-                    _with3.SubItems.Add(Strings.Format(Convert.ToDouble(Datos[5]), "###,###,##0"));
-                    _with3.SubItems.Add(Strings.Format(Convert.ToDouble(Datos[5]) / Convert.ToDouble(Datos[2]), "###,###,##0"));
-                    _with3.SubItems.Add(Strings.Format((Convert.ToDouble(Datos[3]) + Convert.ToDouble(Datos[4])) / Convert.ToDouble(Datos[2]), "###,###,##0"));
+                    _with3.SubItems.Add(Data[0]);
+                    _with3.SubItems.Add(Data[1]);
+                    _with3.SubItems.Add(Data[2]);
+                    _with3.SubItems.Add(Strings.Format(Convert.ToDouble(Data[3]), "###,###,##0"));
+                    _with3.SubItems.Add(Strings.Format(Convert.ToDouble(Data[3]) / Convert.ToDouble(Data[2]), "###,###,##0"));
+                    _with3.SubItems.Add(Strings.Format(Convert.ToDouble(Data[4]), "###,###,##0"));
+                    _with3.SubItems.Add(Strings.Format(Convert.ToDouble(Data[4]) / Convert.ToDouble(Data[2]), "###,###,##0"));
+                    _with3.SubItems.Add(Strings.Format(Convert.ToDouble(Data[5]), "###,###,##0"));
+                    _with3.SubItems.Add(Strings.Format(Convert.ToDouble(Data[5]) / Convert.ToDouble(Data[2]), "###,###,##0"));
+                    _with3.SubItems.Add(Strings.Format((Convert.ToDouble(Data[3]) + Convert.ToDouble(Data[4])) / Convert.ToDouble(Data[2]), "###,###,##0"));
                     if (AmmoStat)
                     {
-                        _with3.SubItems.Add(Strings.Format(Convert.ToDouble(Datos[6]), "###,###,##0"));
-                        _with3.SubItems.Add(Strings.Format(Convert.ToDouble(Datos[7]), "###,###,##0"));
-                        _with3.SubItems.Add(Strings.Format(Convert.ToDouble(Datos[8]), "###,###,##0"));
+                        _with3.SubItems.Add(Strings.Format(Convert.ToDouble(Data[6]), "###,###,##0"));
+                        _with3.SubItems.Add(Strings.Format(Convert.ToDouble(Data[7]), "###,###,##0"));
+                        _with3.SubItems.Add(Strings.Format(Convert.ToDouble(Data[8]), "###,###,##0"));
                     }
                     else
                     {
@@ -152,31 +152,31 @@ namespace QuestorStatistics
                     }
                     AmmoStat = true;
 
-                    _with3.SubItems.Add(Datos[9]);
-                    _with3.SubItems.Add(Datos[10]);
-                    _with3.SubItems.Add(Datos[11]);
-                    _with3.SubItems.Add(Datos[12]);
-                    _with3.SubItems.Add(Datos[13]);
-                    _with3.SubItems.Add(Datos[14]);
+                    _with3.SubItems.Add(Data[9]);
+                    _with3.SubItems.Add(Data[10]);
+                    _with3.SubItems.Add(Data[11]);
+                    _with3.SubItems.Add(Data[12]);
+                    _with3.SubItems.Add(Data[13]);
+                    _with3.SubItems.Add(Data[14]);
 
                     Lst1.Items.Add(item);
   
                 }
             }
             sr.Close();
-            Precarga();
+            Preload();
             StatsMision();
         }
 
         //----------------------------
         // Day Selector
         //----------------------------
-        private void CmbDia_SelectedIndexChanged_1(object sender, System.EventArgs e)
+        private void CmbDay_SelectedIndexChanged_1(object sender, System.EventArgs e)
         {
          
-         ListadoUP();
-         Dia(CmbDia.SelectedItem.ToString());
-         GraficaDia(CmbDia.SelectedItem.ToString());
+         SortListUP();
+         DayDataCalculated(CmbDia.SelectedItem.ToString());
+         ChartoftheDay(CmbDia.SelectedItem.ToString());
         }
 
         //----------------------------
@@ -184,48 +184,48 @@ namespace QuestorStatistics
         //----------------------------
         private void cmbMes_SelectedIndexChanged_1(object sender, System.EventArgs e)
         {
-           ListadoUP();
+           SortListUP();
            Mes(cmbMes.SelectedItem.ToString());
-           GraficaMes(cmbMes.SelectedItem.ToString());
+           ChartOfMonth(cmbMes.SelectedItem.ToString());
         }
 
 
         //---------------------------
         // Create the Chart of the Month
         //---------------------------
-        public object GraficaMes(string Seleccion)
+        public object ChartOfMonth(string Seleccion)
         {
      
-            double GananciaTotal = 0;
-            string SelectDia = null;
+            double ProfitTotal = 0;
+            string SelectedDay = null;
             string AntDia = "";
-            ListadoDown();
+            SortListDown();
 
             CHMes.Series[0].Points.Clear();
             for (var i = 0; i <= Lst1.Items.Count - 1; i++)
             {
                 if (Seleccion == Strings.Mid(Lst1.Items[i].SubItems[1].Text, 4, 7))
                 {
-                    SelectDia = Strings.Left(Lst1.Items[i].SubItems[1].Text, 10);
+                    SelectedDay = Strings.Left(Lst1.Items[i].SubItems[1].Text, 10);
 
                     for (var e = 0; e <= Lst1.Items.Count - 1; e++)
                     {
                        
-                        if (SelectDia == Strings.Left(Lst1.Items[e].SubItems[1].Text, 10))
+                        if (SelectedDay == Strings.Left(Lst1.Items[e].SubItems[1].Text, 10))
                         {
-                            GananciaTotal = GananciaTotal + Convert.ToDouble(Lst1.Items[e].SubItems[4].Text) + Convert.ToDouble(Lst1.Items[e].SubItems[6].Text);
+                            ProfitTotal = ProfitTotal + Convert.ToDouble(Lst1.Items[e].SubItems[4].Text) + Convert.ToDouble(Lst1.Items[e].SubItems[6].Text);
                         }
                     }
 
                     if (AntDia != Strings.Left(Lst1.Items[i].SubItems[1].Text, 10))
                     {
-                        CHMes.Series[0].Points.AddXY(Strings.Left(Lst1.Items[i].SubItems[1].Text, 10), GananciaTotal);
+                        CHMes.Series[0].Points.AddXY(Strings.Left(Lst1.Items[i].SubItems[1].Text, 10), ProfitTotal);
                         AntDia = Strings.Left(Lst1.Items[i].SubItems[1].Text, 10);
                     }
-                    GananciaTotal = 0;
+                    ProfitTotal = 0;
                 }
             }
-            ListadoUP();
+            SortListUP();
             return true;
         }
 
@@ -287,9 +287,9 @@ namespace QuestorStatistics
         //---------------------------
         // Create the Chart of the Day
         //---------------------------
-        public object GraficaDia(string Seleccion)
+        public object ChartoftheDay(string Seleccion)
         {
-            ListadoDown();
+            SortListDown();
             CHDia.Series[0].Points.Clear();
             for (var i = 0; i <= Lst1.Items.Count - 1; i++)
             {
@@ -306,7 +306,7 @@ namespace QuestorStatistics
                     CHDia.Series[1].Points.AddXY(Lst1.Items[i].SubItems[1].Text, Lst1.Items[i].SubItems[6].Text);
                 }
             }
-            ListadoUP();
+            SortListUP();
             return true;
         }
 
@@ -314,7 +314,7 @@ namespace QuestorStatistics
         //-------------------------------
         // Day data calculated
         //-------------------------------
-        public object Dia(string Seleccion)
+        public object DayDataCalculated(string Seleccion)
         {
 
             double TotalBounty = 0;
@@ -345,7 +345,7 @@ namespace QuestorStatistics
             LBtotalloot.Text = Strings.Format(TotalLoot, "###,###,###");
             LBtotallp.Text = Strings.Format(TotalLP, "###,###,###");
             LBNmision.Text = Strings.Format(Nmission, "###,###,###");
-            LBGanacia.Text = Strings.Format(TotalBounty + TotalLoot, "###,###,###");
+            LBProfit.Text = Strings.Format(TotalBounty + TotalLoot, "###,###,###");
             lbmediatotal.Text = Strings.Format((TotalBounty + TotalLoot) / cont1, "###,###,###");
             lblDaylostDrones.Text = Strings.Format(LostDrones, "###,###,###");
             lblDayAmmoConsu.Text = Strings.Format(AmmoConsumption, "###,###,###");
@@ -431,7 +431,7 @@ namespace QuestorStatistics
                     var1 = true;
                 }
             }
-            Colocarmisiones();
+            PutMissions();
             return true;
 
         }
@@ -440,13 +440,13 @@ namespace QuestorStatistics
         //--------------------------------
         // Load data in the combox
         //--------------------------------
-        public object Precarga()
+        public object Preload()
         {
             string SelectDia = null;
             string SelectMes = null;
             string var1 = "";
 
-            ListadoUP();
+            SortListUP();
             CmbDia.Items.Clear();
             for (var i = 0; i <= Lst1.Items.Count - 1; i++)
             {
@@ -484,7 +484,7 @@ namespace QuestorStatistics
         // We organize the listview in descending
         //----------------------------------------
 
-        public object ListadoUP()
+        public object SortListUP()
         {
 
             ListViewColumnSort oCompare = new ListViewColumnSort();
@@ -499,7 +499,7 @@ namespace QuestorStatistics
         //----------------------------------------
         // We organize the listview in ascending
         //----------------------------------------
-        public  object ListadoDown()
+        public  object SortListDown()
         {
 
             ListViewColumnSort oCompare = new ListViewColumnSort();
@@ -514,7 +514,7 @@ namespace QuestorStatistics
         //----------------------------------
         // Put mission list
         //----------------------------------
-        public object Colocarmisiones()
+        public object PutMissions()
         {
             ListViewColumnSort oCompare = new ListViewColumnSort();
             oCompare.Sorting = SortOrder.Descending;
@@ -528,7 +528,7 @@ namespace QuestorStatistics
         //-------------------------------
         // Clear Data
         //-------------------------------
-        public object Limpieza()
+        public object Cleardata()
         {
             Lst1.ResetText();
             Lst1.Items.Clear();
@@ -549,7 +549,7 @@ namespace QuestorStatistics
             LBtotalloot.Text = "";
             LBtotallp.Text = "";
             LBNmision.Text = "";
-            LBGanacia.Text = "";
+            LBProfit.Text = "";
             lbmediatotal.Text = "";
             lblDayAmmoConsu.Text = "";
             lblDayAmmoValue.Text = "";
@@ -672,6 +672,11 @@ namespace QuestorStatistics
 
             }
             LstMision.ListViewItemSorter = oCompare;
+
+        }
+
+        private void FrmMain_Load(object sender, EventArgs e)
+        {
 
         }
     }
