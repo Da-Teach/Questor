@@ -78,11 +78,11 @@ namespace Questor.Modules
                 // Find the first waypoint
                 var waypoint = destination.First();
 
-                // Get the name of the next system
+                // Get the name of the next systems
                 var locationName = Cache.Instance.DirectEve.Navigation.GetLocationName(waypoint);
 
                 // Find the stargate associated with it
-                var entities = Cache.Instance.EntitiesByName("Stargate (" + locationName + ")");
+                var entities = Cache.Instance.EntitiesByName(locationName).Where(e => e.GroupId == (int)Group.Stargate);
                 if (entities.Count() == 0)
                 {
                     // not found, that cant be true?!?!?!?!

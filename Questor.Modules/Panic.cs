@@ -21,10 +21,10 @@ namespace Questor.Modules
         private double _lastNormalZ;
 
         private DateTime _resumeTime;
-        private DateTime _lastDock;
-        private DateTime _lastWarpTo;
+        private DateTime _lastDock = DateTime.MinValue;
+        private DateTime _lastWarpTo = DateTime.MinValue;
         private DateTime _lastDockedorJumping;
-        private DateTime _lastWarpScrambled;
+        private DateTime _lastWarpScrambled = DateTime.MinValue;
         private bool _delayedResume;
         private int _randomDelay;
 
