@@ -51,10 +51,6 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DirectEve, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\DirectEve\DirectEve.dll</HintPath>
-    </Reference>
     <Reference Include="Lavish.InnerSpace, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9029a3ab4cbe108d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(ProgramFiles)\InnerSpace\Lavish.InnerSpace.dll</HintPath>
@@ -148,7 +144,22 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\DirectEve\DirectEve\DirectEve.csproj">
+      <Project>{E8585D05-804D-40EA-AE64-5DD4F3EC6E43}</Project>
+      <Name>DirectEve</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="CopyToInnerSpace" AfterTargets="AfterBuild">
+    <PropertyGroup>
+      <InnerSpacePath Condition="'$(InnerSpacePath)'==''">$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\App Paths\InnerSpace.exe@Path)</InnerSpacePath>
+      <InnerSpacePath Condition="'$(InnerSpacePath)'==''">$(registry:HKEY_CURRENT_USER\Software\Microsoft\IntelliPoint\AppSpecific\InnerSpace.exe@Path)</InnerSpacePath>
+      <InnerSpacePath Condition="'$(InnerSpacePath)'==''">$(registry:HKEY_CURRENT_USER\Software\Microsoft\IntelliType Pro\AppSpecific\InnerSpace.exe@Path)</InnerSpacePath>
+      <InnerSpacePath Condition="'$(InnerSpacePath.EndsWith(&quot;InnerSpace.exe&quot;))'=='True'">$(InnerSpacePath.Replace("InnerSpace.exe",""))</InnerSpacePath>
+    </PropertyGroup>
+    <Copy Condition="'$(InnerSpacePath)'!=''" SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).pdb" DestinationFolder="$(InnerSpacePath)\.NET Programs" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

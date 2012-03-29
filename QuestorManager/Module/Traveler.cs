@@ -13,6 +13,7 @@ namespace QuestorManager.Module
     using System.Linq;
     using DirectEve;
     using global::QuestorManager.Common;
+    using global::QuestorManager.Domains;
     using global::QuestorManager.Extensions;
     using DirectEve = global::QuestorManager.Common.DirectEve;
 
@@ -84,8 +85,8 @@ namespace QuestorManager.Module
             var locationName = DirectEve.Instance.Navigation.GetLocationName(waypoint);
 
             // Find the stargate associated with it
-            var entity = DirectEve.Instance.GetEntityByName("Stargate (" + locationName + ")");
-            if (entity == null)
+            var entities = DirectEve.Instance.GetEntitiesByName(locationName).Where(e => e.GroupId == (int)Group.Stargate);
+            if (entities.Count() == 0)
             {
                 // not found, that cant be true?!?!?!?!
                 Logging.Log("QuestorManager: Error [Stargate (" + locationName + ")] not found, most likely lag waiting 15 seconds.");
@@ -94,6 +95,7 @@ namespace QuestorManager.Module
             }
 
             // Warp to, approach or jump the stargate
+            var entity = entities.First();
             if (entity.Distance < 2500)
             {
                 Logging.Log("QuestorManager: Jumping to [" + locationName + "]");

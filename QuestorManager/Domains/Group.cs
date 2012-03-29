@@ -13,6 +13,7 @@ namespace QuestorManager.Domains
     {
         Star = 6,
         Station = 15,
+        Stargate = 10,
 
         Capsule = 29,
 
