@@ -104,7 +104,10 @@ namespace QuestorManager.Module
                 _nextAction = DateTime.Now.AddSeconds(15);
             }
             else if (entity.Distance < 150000)
+            {
                 entity.Approach();
+                _nextAction = DateTime.Now.AddSeconds(5);
+            }
             else
             {
                 Logging.Log("QuestorManager: Warping to [Stargate (" + locationName + ")]");
