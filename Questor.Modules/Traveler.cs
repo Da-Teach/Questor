@@ -78,11 +78,11 @@ namespace Questor.Modules
                 var locationName = Cache.Instance.DirectEve.Navigation.GetLocationName(waypoint);
 
                 // Find the stargate associated with it
-                var entities = Cache.Instance.EntitiesByName("Stargate (" + locationName + ")");
+                var entities = Cache.Instance.EntitiesByName(locationName);
                 if (entities.Count() == 0)
                 {
                     // not found, that cant be true?!?!?!?!
-                    Logging.Log("Traveler: Error [Stargate (" + locationName + ")] not found, most likely lag waiting 15 seconds.");
+                    Logging.Log("Traveler: Error [" + locationName + "] not found, most likely lag waiting 15 seconds.");
                     _nextAction = DateTime.Now.AddSeconds(15);
                     return;
                 }
@@ -100,7 +100,7 @@ namespace Questor.Modules
                     entity.Approach();
                 else
                 {
-                    Logging.Log("Traveler: Warping to [Stargate (" + locationName + ")]");
+                    Logging.Log("Traveler: Warping to [" + locationName + "]");
                     entity.WarpTo();
 
                     _nextAction = DateTime.Now.AddSeconds(5);
