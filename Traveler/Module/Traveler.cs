@@ -84,11 +84,11 @@ namespace Traveler.Module
             var locationName = DirectEve.Instance.Navigation.GetLocationName(waypoint);
 
             // Find the stargate associated with it
-            var entity = DirectEve.Instance.GetEntityByName("Stargate (" + locationName + ")");
+            var entity = DirectEve.Instance.GetEntityByName(locationName);
             if (entity == null)
             {
                 // not found, that cant be true?!?!?!?!
-                Logging.Log("Traveler: Error [Stargate (" + locationName + ")] not found, most likely lag waiting 15 seconds.");
+                Logging.Log("Traveler: Error [" + locationName + "] not found, most likely lag waiting 15 seconds.");
                 _nextAction = DateTime.Now.AddSeconds(15);
                 return;
             }
@@ -105,7 +105,7 @@ namespace Traveler.Module
                 entity.Approach();
             else
             {
-                Logging.Log("Traveler: Warping to [Stargate (" + locationName + ")]");
+                Logging.Log("Traveler: Warping to [" + locationName + "]");
                 entity.WarpTo();
 
                 _nextAction = DateTime.Now.AddSeconds(5);
