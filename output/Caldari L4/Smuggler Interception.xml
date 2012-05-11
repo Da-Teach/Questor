@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<mission>
+  <pockets>
+    <pocket id="0">
+      <actions>
+        <action name="Activate">
+          <parameter name="target" value="Acceleration Gate" />
+        </action>
+      </actions>
+    </pocket>
+    <pocket id="1">
+      <damagetype>EM</damagetype>
+      <actions>
+        <action name="WaitUntilTargeted">
+          <parameter name="Timeout" value="15" />
+        </action>
+        <action name="ClearPocket" />
+        <action name="Activate">
+          <parameter name="target" value="Acceleration Gate" />
+        </action>
+      </actions>
+    </pocket>
+    <pocket id="2">
+      <damagetype>EM</damagetype>
+      <actions>
+        <action name="WaitUntilTargeted">
+          <parameter name="Timeout" value="15" />
+        </action>
+        <action name="ClearPocket" />
+        <action name="Loot">
+          <parameter name="target" value="Blood Raider Personnel Transport Wreck" />
+          <parameter name="Item" value="Militants" />
+        </action>
+        <action name="Done" />
+      </actions>
+    </pocket>
+  </pockets>
+</mission>

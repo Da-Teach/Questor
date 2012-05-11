@@ -127,8 +127,9 @@
             {
                 if (_agentInteraction.Agent.Window != null)
                     _agentInteraction.Agent.Window.Close();
-
+                Logging.Log("GenericCombatStoryline: Mission offer is in a Low Security System"); //do storyline missions in lowsec get blacklisted by: "public StorylineState Arm(Storyline storyline)"?
                 throw new Exception("Low security systems");
+
             }
 
             if (_agentInteraction.State == AgentInteractionState.Done)
@@ -171,7 +172,7 @@
         public StorylineState PreAcceptMission(Storyline storyline)
         {
             // Not really a step is it? :)
-            _state = GenericCombatStorylineState.GotoMission;
+            _state = GenericCombatStorylineState.WarpOutStation;
             return StorylineState.AcceptMission;
         }
 
@@ -183,6 +184,49 @@
         {
             switch(_state)
             {
+                case GenericCombatStorylineState.WarpOutStation:
+                    var _bookmark = Cache.Instance.BookmarksByLabel(Settings.Instance.bookmarkWarpOut ?? "").OrderByDescending(b => b.CreatedOn).Where(b => b.LocationId == Cache.Instance.DirectEve.Session.SolarSystemId).FirstOrDefault();
+                    var _solarid = Cache.Instance.DirectEve.Session.SolarSystemId ?? -1;
+
+                    if (_bookmark == null)
+                    {
+                        Logging.Log("WarpOut: No Bookmark");
+                        if (_state == GenericCombatStorylineState.WarpOutStation)
+                        {
+                            _state = GenericCombatStorylineState.GotoMission;
+                        }
+                    }
+                    else if (_bookmark.LocationId == _solarid)
+                    {
+                        if (_traveler.Destination == null)
+                        {
+                            Logging.Log("WarpOut: Warp at " + _bookmark.Title);
+                            _traveler.Destination = new BookmarkDestination(_bookmark);
+                            Cache.Instance.DoNotBreakInvul = true;
+                        }
+
+                        _traveler.ProcessState();
+                        if (_traveler.State == TravelerState.AtDestination)
+                        {
+                            Logging.Log("WarpOut: Safe!");
+                            Cache.Instance.DoNotBreakInvul = false;
+                            if (_state == GenericCombatStorylineState.WarpOutStation)
+                            {
+                                _state = GenericCombatStorylineState.GotoMission;
+                            }
+                            _traveler.Destination = null;
+                        }
+                    }
+                    else
+                    {
+                        Logging.Log("WarpOut: No Bookmark in System");
+                        if (_state == GenericCombatStorylineState.WarpOutStation)
+                        {
+                            _state = GenericCombatStorylineState.GotoMission;
+                        } 
+                    }
+                    break;
+
                 case GenericCombatStorylineState.GotoMission:
                     var missionDestination = _traveler.Destination as MissionBookmarkDestination;
                     if (missionDestination == null || missionDestination.AgentId != storyline.AgentId) // We assume that this will always work "correctly" (tm)

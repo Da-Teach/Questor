@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<invtypes>
+	<invtype id="17192" name="Angel Diamond Tag" />
+	<invtype id="17206" name="Guristas Diamond Tag" />
+	<invtype id="201" name="EMP L" />
+	<invtype id="199" name="Fusion L" />
+	<invtype id="200" name="Phased Plasma L" />
+	<invtype id="12779" name="Hail L" />
+	<invtype id="12775" name="Barrage L" />
+	<invtype id="209" name="Trauma Heavy Missile" />
+	<invtype id="2506" name="Mjolnir Torpedo" />
+	<invtype id="2508" name="Nova Torpedo" />
+	<invtype id="2510" name="Inferno Torpedo" />
+	<invtype id="267" name="Trauma Torpedo" />
+	<invtype id="202" name="Mjolnir Cruise Missile" />
+	<invtype id="203" name="Trauma Cruise Missile" />
+	<invtype id="204" name="Inferno Cruise Missile" />
+	<invtype id="205" name="Nova Cruise Missile" />
+</invtypes>

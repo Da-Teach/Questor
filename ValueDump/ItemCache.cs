@@ -21,6 +21,9 @@ namespace Questor
 
             TypeId = item.TypeId;
             GroupId = item.GroupId;
+            BasePrice = item.BasePrice;
+            Volume = item.Volume;
+            Capacity = item.Capacity;
             MarketGroupId = item.MarketGroupId;
             PortionSize = item.PortionSize;
             
@@ -42,6 +45,9 @@ namespace Questor
 
         public int TypeId { get; private set; }
         public int GroupId { get; private set; }
+        public double BasePrice { get; private set; }
+        public double Volume { get; private set; }
+        public double Capacity { get; private set; }
         public int MarketGroupId { get; private set; }
         public int PortionSize { get; private set; }
 

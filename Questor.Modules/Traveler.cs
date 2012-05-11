@@ -1,4 +1,4 @@
-﻿// ------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 //   <copyright from='2010' to='2015' company='THEHACKERWITHIN.COM'>
 //     Copyright (c) TheHackerWithin.COM. All Rights Reserved.
 // 
@@ -16,9 +16,10 @@ namespace Questor.Modules
     public class Traveler
     {
         private TravelerDestination _destination;
-        private DateTime _nextAction;
+        private DateTime _nextTravelerAction;
 
         public TravelerState State { get; set; }
+        public DirectBookmark UndockBookmark { get; set; }
 
         public TravelerDestination Destination
         {
@@ -36,8 +37,11 @@ namespace Questor.Modules
         /// <param name = "solarSystemId"></param>
         private void NagivateToBookmarkSystem(long solarSystemId)
         {
-            if (_nextAction > DateTime.Now)
+            if (_nextTravelerAction > DateTime.Now)
                 return;
+
+			var undockBookmark = UndockBookmark;
+			UndockBookmark = undockBookmark;
 
             var destination = Cache.Instance.DirectEve.Navigation.GetDestinationPath();
             if (destination.Count == 0 || !destination.Any(d => d == solarSystemId))
@@ -64,7 +68,7 @@ namespace Questor.Modules
                     if (Cache.Instance.InStation)
                     {
                         Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.CmdExitStation);
-                        _nextAction = DateTime.Now.AddSeconds(30);
+                        _nextTravelerAction = DateTime.Now.AddSeconds((int)Time.TravelerExitStationAmIInSpaceYet_seconds);
                     }
 
                     // We are not yet in space, wait for it
@@ -74,36 +78,36 @@ namespace Questor.Modules
                 // Find the first waypoint
                 var waypoint = destination.First();
 
-                // Get the name of the next system
+                // Get the name of the next systems
                 var locationName = Cache.Instance.DirectEve.Navigation.GetLocationName(waypoint);
 
                 // Find the stargate associated with it
-                var entities = Cache.Instance.EntitiesByName(locationName);
+                var entities = Cache.Instance.EntitiesByName(locationName).Where(e => e.GroupId == (int)Group.Stargate);
                 if (entities.Count() == 0)
                 {
                     // not found, that cant be true?!?!?!?!
-                    Logging.Log("Traveler: Error [" + locationName + "] not found, most likely lag waiting 15 seconds.");
-                    _nextAction = DateTime.Now.AddSeconds(15);
+                    Logging.Log("Traveler: Error [Stargate (" + locationName + ")] not found, most likely lag waiting 15 seconds.");
+                    _nextTravelerAction = DateTime.Now.AddSeconds((int)Time.TravelerNoStargatesFoundRetryDelay_seconds);
                     return;
                 }
 
                 // Warp to, approach or jump the stargate
                 var entity = entities.First();
-                if (entity.Distance < 2500)
+                if (entity.Distance < (int)Distance.DecloakRange)
                 {
                     Logging.Log("Traveler: Jumping to [" + locationName + "]");
                     entity.Jump();
 
-                    _nextAction = DateTime.Now.AddSeconds(15);
+                    _nextTravelerAction = DateTime.Now.AddSeconds((int)Time.TravelerJumpedGateNextCommandDelay_seconds);
                 }
-                else if (entity.Distance < 150000)
-                    entity.Approach();
+                else if (entity.Distance < (int)Distance.WarptoDistance)
+                    entity.Approach(); //you could use a negative approach distance here but ultimately that is a bad idea.. Id like to go toward the entity without approaching it so we would end up inside the docking ring (eventually)
+                   
                 else
                 {
-                    Logging.Log("Traveler: Warping to [" + locationName + "]");
+                    Logging.Log("Traveler: Warping to [Stargate (" + locationName + ")]");
                     entity.WarpTo();
-
-                    _nextAction = DateTime.Now.AddSeconds(5);
+                    _nextTravelerAction = DateTime.Now.AddSeconds((int)Time.TravelerInWarpedNextCommandDelay_seconds);
                 }
             }
         }

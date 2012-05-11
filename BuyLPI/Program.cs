@@ -17,12 +17,13 @@ namespace BuyLPI
 
     internal class Program
     {
-        private const int WaitMillis = 1500;
+        private const int WaitMillis = 3500;
         private static long _lastLoyaltyPoints;
         private static DateTime _nextAction;
         private static DateTime _loyaltyPointTimeout;
         private static string _type;
         private static int? _quantity;
+        private static int? _totalquantityoforders;
         private static bool _done;
         private static DirectEve _directEve;
 
@@ -51,20 +52,21 @@ namespace BuyLPI
                 int dummy;
                 if (!int.TryParse(args[1], out dummy))
                 {
-                    Log("Quantity must be an integer, 0 - {0}", int.MaxValue);
+                    Log("BuyLPI: Quantity must be an integer, 0 - {0}", int.MaxValue);
                     return;
                 }
 
                 if (dummy < 0)
                 {
-                    Log("Quantity must be a positive number");
+                    Log("BuyLPI: Quantity must be a positive number");
                     return;
                 }
 
                 _quantity = dummy;
+                _totalquantityoforders = dummy;
             }
 
-            Log("Starting BuyLPI...");
+            Log("BuyLPI: Starting BuyLPI...");
             _directEve = new DirectEve();
             _directEve.OnFrame += OnFrame;
 
@@ -73,7 +75,7 @@ namespace BuyLPI
                 Thread.Sleep(50);
 
             _directEve.Dispose();
-            Log("BuyLPI finished.");
+            Log("BuyLPI: BuyLPI finished.");
         }
 
         private static void Log(string line, params object[] parms)
@@ -99,7 +101,7 @@ namespace BuyLPI
                 _nextAction = DateTime.Now.AddMilliseconds(WaitMillis);
                 _directEve.ExecuteCommand(DirectCmd.OpenHangarFloor);
 
-                Log("Opening item hangar");
+                Log("BuyLPI: Opening item hangar");
                 return;
             }
 
@@ -109,7 +111,7 @@ namespace BuyLPI
                 _nextAction = DateTime.Now.AddMilliseconds(WaitMillis);
                 _directEve.ExecuteCommand(DirectCmd.OpenLpstore);
 
-                Log("Opening loyalty point store");
+                Log("BuyLPI: Opening loyalty point store");
                 return;
             }
 
@@ -122,7 +124,7 @@ namespace BuyLPI
             {
                 if (_loyaltyPointTimeout < DateTime.Now)
                 {
-                    Log("It seems we have no loyalty points left");
+                    Log("BuyLPI: It seems we have no loyalty points left");
 
                     _done = true;
                     return;
@@ -136,7 +138,7 @@ namespace BuyLPI
             var offer = lpstore.Offers.FirstOrDefault(o => o.TypeId.ToString() == _type || string.Compare(o.TypeName, _type, true) == 0);
             if (offer == null)
             {
-                Log("Can't find offer with type name/id: {0}!", _type);
+                Log("BuyLPI: Can't find offer with type name/id: {0}!", _type);
 
                 _done = true;
                 return;
@@ -145,7 +147,7 @@ namespace BuyLPI
             // Check LP
             if (_lastLoyaltyPoints < offer.LoyaltyPointCost)
             {
-                Log("Not enough loyalty points left");
+                Log("BuyLPI: Not enough loyalty points left");
 
                 _done = true;
                 return;
@@ -154,7 +156,7 @@ namespace BuyLPI
             // Check ISK
             if (_directEve.Me.Wealth < offer.IskCost)
             {
-                Log("Not enough ISK left");
+                Log("BuyLPI: Not enough ISK left");
 
                 _done = true;
                 return;
@@ -167,14 +169,13 @@ namespace BuyLPI
                 if (item == null || item.Quantity < requiredItem.Quantity)
                 {
                     Log("Missing {0}x {1}", requiredItem.Quantity, requiredItem.TypeName);
-
                     _done = true;
                     return;
                 }
             }
 
             // All passed, accept offer
-            Log("Accepting {0}", offer.TypeName);
+            Log("BuyLPI: Accepting {0}", offer.TypeName, "[ ", _quantity.Value, " ] of [ ", _totalquantityoforders.Value, " ] orders");
             offer.AcceptOffer();
 
             // Set next action + loyalty point timeout

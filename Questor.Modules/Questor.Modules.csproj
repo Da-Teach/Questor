@@ -11,27 +11,10 @@
     <RootNamespace>Questor.Modules</RootNamespace>
     <AssemblyName>Questor.Modules</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <OutputPath>$(SolutionDir)bin\$(Configuration)\</OutputPath>
-    <CodeAnalysisLogFile>$(SolutionDir)bin\$(Configuration)\$(TargetName).$(TargetExt).CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <OutputPath>$(ProjectDir)..\bin\$(Configuration)\</OutputPath>
+    <CodeAnalysisLogFile>$(ProjectDir)..\bin\$(Configuration)\$(TargetName).$(TargetExt).CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisRuleSetDirectories>$(CodeAnalysisStaticAnalysisDirectory)Rule Sets</CodeAnalysisRuleSetDirectories>
     <CodeAnalysisRuleDirectories>$(CodeAnalysisPath)Rules</CodeAnalysisRuleDirectories>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_3.5|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <DefineConstants>TRACE;DEBUG;UseDirectEve</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_3.5|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -62,11 +45,11 @@
   <ItemGroup>
     <Reference Include="DirectEve, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)\DirectEve\DirectEve.dll</HintPath>
+      <HintPath>..\DirectEve\DirectEve.dll</HintPath>
     </Reference>
     <Reference Include="Lavish.InnerSpace, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9029a3ab4cbe108d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files (x86)\Innerspace\Lavish.InnerSpace.dll</HintPath>
+      <HintPath>$(ProgramFiles)\Innerspace\Lavish.InnerSpace.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -86,13 +69,33 @@
     <Compile Include="ArmState.cs" />
     <Compile Include="Cache.cs" />
     <Compile Include="CategoryID.cs" />
+    <Compile Include="CharSchedule.cs" />
+    <Compile Include="AnomalyControllerState.cs" />
+    <Compile Include="AnomalyController.cs" />
+    <Compile Include="CleanupState.cs" />
+    <Compile Include="Cleanup.cs" />
+    <Compile Include="StatisticsState.cs" />
+    <Compile Include="Statistics.cs" />
+    <Compile Include="SelectAgent.cs" />
+    <Compile Include="ScanInteraction.cs" />
+    <Compile Include="ScanInteractionState.cs" />
+    <Compile Include="LocalWatchState.cs" />
+    <Compile Include="LocalWatch.cs" />
     <Compile Include="Combat.cs" />
     <Compile Include="CombatState.cs" />
+    <Compile Include="CourierMission.cs" />
+    <Compile Include="CourierMissionState.cs" />
     <Compile Include="DamageType.cs" />
+    <Compile Include="DebugModule.cs" />
+    <Compile Include="DebugModuleState.cs" />
+    <Compile Include="Distances.cs" />
+    <Compile Include="SwitchShipState.cs" />
+    <Compile Include="SwitchShip.cs" />
     <Compile Include="Defense.cs" />
     <Compile Include="Drones.cs" />
     <Compile Include="DroneState.cs" />
     <Compile Include="EntityCache.cs" />
+    <Compile Include="Fitting.cs" />
     <Compile Include="GroupID.cs" />
     <Compile Include="InvType.cs" />
     <Compile Include="ItemCache.cs" />
@@ -106,10 +109,13 @@
     <Compile Include="Priority.cs" />
     <Compile Include="PriorityTarget.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scoop.cs" />
+    <Compile Include="ScoopState.cs" />
     <Compile Include="Salvage.cs" />
     <Compile Include="SalvageState.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="ShipTargetValue.cs" />
+    <Compile Include="Time.cs" />
     <Compile Include="Traveler.cs" />
     <Compile Include="TravelerDestination.cs" />
     <Compile Include="TravelerState.cs" />
@@ -117,15 +123,10 @@
     <Compile Include="UnloadLootState.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="CopyToInnerSpace" BeforeTargets="AfterBuild">
-    <PropertyGroup>
-      <InnerSpacePath Condition="'$(InnerSpacePath)'==''">$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\App Paths\InnerSpace.exe@Path)</InnerSpacePath>
-      <InnerSpacePath Condition="'$(InnerSpacePath)'==''">$(registry:HKEY_CURRENT_USER\Software\Microsoft\IntelliPoint\AppSpecific\InnerSpace.exe@Path)</InnerSpacePath>
-      <InnerSpacePath Condition="'$(InnerSpacePath)'==''">$(registry:HKEY_CURRENT_USER\Software\Microsoft\IntelliType Pro\AppSpecific\InnerSpace.exe@Path)</InnerSpacePath>
-      <InnerSpacePath Condition="'$(InnerSpacePath.EndsWith(&quot;InnerSpace.exe&quot;))'=='True'">$(InnerSpacePath.Replace("InnerSpace.exe",""))</InnerSpacePath>
-    </PropertyGroup>
-    <Copy Condition="'$(InnerSpacePath)'!=''" SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).pdb" DestinationFolder="$(InnerSpacePath)\.NET Programs" />
-  </Target>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

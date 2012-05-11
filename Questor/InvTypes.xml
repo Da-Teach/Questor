@@ -80,18 +80,18 @@
   <invtype id="199" name="Fusion L" groupid="83" baseprice="7000.00" volume="0.025" capacity="0" portionsize="100" />
   <invtype id="200" name="Phased Plasma L" groupid="83" baseprice="8000.00" volume="0.025" capacity="0" portionsize="100" />
   <invtype id="201" name="EMP L" groupid="83" baseprice="10000.00" volume="0.025" capacity="0" portionsize="100" />
-  <invtype id="202" name="Paradise Cruise Missile" groupid="386" baseprice="15000.00" volume="0.05" capacity="0" portionsize="100" />
-  <invtype id="203" name="Wrath Cruise Missile" groupid="386" baseprice="10000.00" volume="0.05" capacity="0" portionsize="100" />
-  <invtype id="204" name="Cataclysm Cruise Missile" groupid="386" baseprice="12500.00" volume="0.05" capacity="0" portionsize="100" />
-  <invtype id="205" name="Devastator Cruise Missile" groupid="386" baseprice="7500.00" volume="0.05" capacity="0" portionsize="100" />
-  <invtype id="206" name="Havoc Heavy Missile" groupid="385" baseprice="2000.00" volume="0.03" capacity="0" portionsize="100" />
-  <invtype id="207" name="Thunderbolt Heavy Missile" groupid="385" baseprice="3500.00" volume="0.03" capacity="0" portionsize="100" />
-  <invtype id="208" name="Widowmaker Heavy Missile" groupid="385" baseprice="3000.00" volume="0.03" capacity="0" portionsize="100" />
-  <invtype id="209" name="Scourge Heavy Missile" groupid="385" baseprice="2500.00" volume="0.03" capacity="0" portionsize="100" />
-  <invtype id="210" name="Bloodclaw Light Missile" groupid="384" baseprice="500.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="211" name="Flameburst Light Missile" groupid="384" baseprice="624.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="212" name="Sabretooth Light Missile" groupid="384" baseprice="750.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="213" name="Piranha Light Missile" groupid="384" baseprice="370.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="202" name="Mjolnir Cruise Missile" groupid="386" baseprice="15000.00" volume="0.05" capacity="0" portionsize="100" />
+  <invtype id="203" name="Trauma Cruise Missile" groupid="386" baseprice="10000.00" volume="0.05" capacity="0" portionsize="100" />
+  <invtype id="204" name="Inferno Cruise Missile" groupid="386" baseprice="12500.00" volume="0.05" capacity="0" portionsize="100" />
+  <invtype id="205" name="Nova Cruise Missile" groupid="386" baseprice="7500.00" volume="0.05" capacity="0" portionsize="100" />
+  <invtype id="206" name="Nova Heavy Missile" groupid="385" baseprice="2000.00" volume="0.03" capacity="0" portionsize="100" />
+  <invtype id="207" name="Mjolnir Heavy Missile" groupid="385" baseprice="3500.00" volume="0.03" capacity="0" portionsize="100" />
+  <invtype id="208" name="Inferno Heavy Missile" groupid="385" baseprice="3000.00" volume="0.03" capacity="0" portionsize="100" />
+  <invtype id="209" name="Trauma Heavy Missile" groupid="385" baseprice="2500.00" volume="0.03" capacity="0" portionsize="100" />
+  <invtype id="210" name="Trauma Light Missile" groupid="384" baseprice="500.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="211" name="Inferno Light Missile" groupid="384" baseprice="624.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="212" name="Mjolnir Light Missile" groupid="384" baseprice="750.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="213" name="Nova Light Missile" groupid="384" baseprice="370.00" volume="0.015" capacity="0" portionsize="100" />
   <invtype id="215" name="Iron Charge S" groupid="85" baseprice="200.00" volume="0.005" capacity="0" portionsize="100" />
   <invtype id="216" name="Tungsten Charge S" groupid="85" baseprice="300.00" volume="0.005" capacity="0" portionsize="100" />
   <invtype id="217" name="Iridium Charge S" groupid="85" baseprice="400.00" volume="0.005" capacity="0" portionsize="100" />
@@ -143,8 +143,8 @@
   <invtype id="263" name="Cap Booster 25" groupid="87" baseprice="1000.00" volume="1" capacity="100" portionsize="10" />
   <invtype id="264" name="Cap Booster 50" groupid="87" baseprice="2500.00" volume="2" capacity="100" portionsize="10" />
   <invtype id="265" name="Defender I" groupid="88" baseprice="500.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="266" name="Thorn Rocket" groupid="387" baseprice="240.00" volume="0.005" capacity="0" portionsize="100" />
-  <invtype id="267" name="Juggernaut Torpedo" groupid="89" baseprice="30000.00" volume="0.1" capacity="0" portionsize="100" />
+  <invtype id="266" name="Trauma Rocket" groupid="387" baseprice="240.00" volume="0.005" capacity="0" portionsize="100" />
+  <invtype id="267" name="Trauma Torpedo" groupid="89" baseprice="30000.00" volume="0.1" capacity="0" portionsize="100" />
   <invtype id="268" name="Bomb" groupid="90" baseprice="0.00" volume="10" capacity="0" portionsize="2" />
   <invtype id="269" name="Seeker F.O.F. Light Missile I" groupid="394" baseprice="750.00" volume="0.015" capacity="0" portionsize="100" />
   <invtype id="270" name="Python Mine" groupid="92" baseprice="1364.00" volume="0.15" capacity="0" portionsize="10" />
@@ -355,18 +355,18 @@
   <invtype id="786" name="Standard Missile Launcher I Blueprint" groupid="136" baseprice="60000.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="788" name="Heavy Missile Launcher I Blueprint" groupid="136" baseprice="300000.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="790" name="Siege Missile Launcher I Blueprint" groupid="136" baseprice="999960.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="803" name="Paradise Cruise Missile Blueprint" groupid="166" baseprice="5000000.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="804" name="Wrath Cruise Missile Blueprint" groupid="166" baseprice="3000000.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="805" name="Cataclysm Cruise Missile Blueprint" groupid="166" baseprice="4000000.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="806" name="Devastator Cruise Missile Blueprint" groupid="166" baseprice="2500000.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="807" name="Havoc Heavy Missile Blueprint" groupid="166" baseprice="700000.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="808" name="Thunderbolt Heavy Missile Blueprint" groupid="166" baseprice="900000.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="809" name="Widowmaker Heavy Missile Blueprint" groupid="166" baseprice="800000.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="810" name="Scourge Heavy Missile Blueprint" groupid="166" baseprice="750000.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="811" name="Bloodclaw Light Missile Blueprint" groupid="166" baseprice="150000.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="812" name="Flameburst Light Missile Blueprint" groupid="166" baseprice="160000.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="813" name="Sabretooth Light Missile Blueprint" groupid="166" baseprice="180000.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="814" name="Piranha Light Missile Blueprint" groupid="166" baseprice="140000.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="803" name="Mjolnir Cruise Missile Blueprint" groupid="166" baseprice="5000000.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="804" name="Trauma Cruise Missile Blueprint" groupid="166" baseprice="3000000.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="805" name="Inferno Cruise Missile Blueprint" groupid="166" baseprice="4000000.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="806" name="Nova Cruise Missile Blueprint" groupid="166" baseprice="2500000.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="807" name="Nova Heavy Missile Blueprint" groupid="166" baseprice="700000.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="808" name="Mjolnir Heavy Missile Blueprint" groupid="166" baseprice="900000.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="809" name="Inferno Heavy Missile Blueprint" groupid="166" baseprice="800000.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="810" name="Trauma Heavy Missile Blueprint" groupid="166" baseprice="750000.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="811" name="Trauma Light Missile Blueprint" groupid="166" baseprice="150000.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="812" name="Inferno Light Missile Blueprint" groupid="166" baseprice="160000.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="813" name="Mjolnir Light Missile Blueprint" groupid="166" baseprice="180000.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="814" name="Nova Light Missile Blueprint" groupid="166" baseprice="140000.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="817" name="Capsule Blueprint" groupid="109" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="819" name="125mm Gatling AutoCannon I Blueprint" groupid="135" baseprice="20000.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="820" name="150mm Light AutoCannon I Blueprint" groupid="135" baseprice="60000.00" volume="0.01" capacity="0" portionsize="1" />
@@ -1245,16 +1245,16 @@
   <invtype id="2505" name="Command Center Upgrades" groupid="1044" baseprice="500000.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="2506" name="Mjolnir Torpedo" groupid="89" baseprice="35000.00" volume="0.1" capacity="0" portionsize="100" />
   <invtype id="2507" name="Mjolnir Torpedo Blueprint" groupid="166" baseprice="7000000.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="2508" name="Bane Torpedo" groupid="89" baseprice="25000.00" volume="0.1" capacity="0" portionsize="100" />
-  <invtype id="2509" name="Bane Torpedo Blueprint" groupid="166" baseprice="10000000.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="2508" name="Nova Torpedo" groupid="89" baseprice="25000.00" volume="0.1" capacity="0" portionsize="100" />
+  <invtype id="2509" name="Nova Torpedo Blueprint" groupid="166" baseprice="10000000.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="2510" name="Inferno Torpedo" groupid="89" baseprice="32500.00" volume="0.1" capacity="0" portionsize="100" />
   <invtype id="2511" name="Inferno Torpedo Blueprint" groupid="166" baseprice="8000000.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="2512" name="Gremlin Rocket" groupid="387" baseprice="350.00" volume="0.005" capacity="0" portionsize="100" />
-  <invtype id="2513" name="Gremlin Rocket Blueprint" groupid="166" baseprice="35000.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="2514" name="Foxfire Rocket" groupid="387" baseprice="260.00" volume="0.005" capacity="0" portionsize="100" />
-  <invtype id="2515" name="Foxfire Rocket Blueprint" groupid="166" baseprice="40000.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="2516" name="Phalanx Rocket" groupid="387" baseprice="180.00" volume="0.005" capacity="0" portionsize="100" />
-  <invtype id="2517" name="Phalanx Rocket Blueprint" groupid="166" baseprice="50000.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="2512" name="Mjolnir Rocket" groupid="387" baseprice="350.00" volume="0.005" capacity="0" portionsize="100" />
+  <invtype id="2513" name="Mjolnir Rocket Blueprint" groupid="166" baseprice="35000.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="2514" name="Inferno Rocket" groupid="387" baseprice="260.00" volume="0.005" capacity="0" portionsize="100" />
+  <invtype id="2515" name="Inferno Rocket Blueprint" groupid="166" baseprice="40000.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="2516" name="Nova Rocket" groupid="387" baseprice="180.00" volume="0.005" capacity="0" portionsize="100" />
+  <invtype id="2517" name="Nova Rocket Blueprint" groupid="166" baseprice="50000.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="2524" name="Basic Barren Command Center" groupid="1027" baseprice="90000.00" volume="50" capacity="500" portionsize="1" />
   <invtype id="2525" name="Basic Oceanic Command Center" groupid="1027" baseprice="90000.00" volume="50" capacity="500" portionsize="1" />
   <invtype id="2526" name="TeleDock" groupid="225" baseprice="0.00" volume="0" capacity="0" portionsize="1" />
@@ -1329,30 +1329,30 @@
   <invtype id="2608" name="Crates Of Fertilizer" groupid="314" baseprice="0.00" volume="80" capacity="0" portionsize="1" />
   <invtype id="2610" name="Crates Of Frozen Food" groupid="314" baseprice="0.00" volume="40" capacity="0" portionsize="1" />
   <invtype id="2612" name="Hollow Asteroid" groupid="226" baseprice="0.00" volume="0" capacity="0" portionsize="1" />
-  <invtype id="2613" name="Sabretooth Fury Light Missile" groupid="653" baseprice="95240.00" volume="0.015" capacity="0" portionsize="5000" />
-  <invtype id="2614" name="Sabretooth Fury Light Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="2613" name="Mjolnir Fury Light Missile" groupid="653" baseprice="95240.00" volume="0.015" capacity="0" portionsize="5000" />
+  <invtype id="2614" name="Mjolnir Fury Light Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="2615" name="Crates Of Garbage" groupid="314" baseprice="0.00" volume="90" capacity="0" portionsize="1" />
   <invtype id="2616" name="Large Crates Of Coolant" groupid="314" baseprice="0.00" volume="800" capacity="0" portionsize="1" />
   <invtype id="2617" name="Crates Of Guidance Systems" groupid="314" baseprice="0.00" volume="100" capacity="0" portionsize="1" />
   <invtype id="2618" name="Crates Of Harroule Dryweed" groupid="314" baseprice="0.00" volume="40" capacity="0" portionsize="1" />
   <invtype id="2619" name="Crates Of High-Tech Small Arms" groupid="314" baseprice="0.00" volume="80" capacity="0" portionsize="1" />
   <invtype id="2620" name="Crates Of Liparer Cheese" groupid="314" baseprice="0.00" volume="100" capacity="0" portionsize="1" />
-  <invtype id="2621" name="Cataclysm Fury Cruise Missile" groupid="656" baseprice="810600.00" volume="0.05" capacity="0" portionsize="5000" />
-  <invtype id="2622" name="Cataclysm Fury Cruise Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="2621" name="Inferno Fury Cruise Missile" groupid="656" baseprice="810600.00" volume="0.05" capacity="0" portionsize="5000" />
+  <invtype id="2622" name="Inferno Fury Cruise Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="2623" name="Crates Of Listening Post Recordings" groupid="314" baseprice="0.00" volume="40" capacity="0" portionsize="1" />
   <invtype id="2624" name="Crates Of Mechanical Parts" groupid="314" baseprice="0.00" volume="100" capacity="0" portionsize="1" />
   <invtype id="2626" name="Crates Of Missile Guidance Systems" groupid="314" baseprice="0.00" volume="90" capacity="0" portionsize="1" />
   <invtype id="2627" name="Crates Of Mono-Cell Batteries" groupid="314" baseprice="0.00" volume="80" capacity="0" portionsize="1" />
   <invtype id="2628" name="Crates Of Odd Data Crystals" groupid="314" baseprice="0.00" volume="40" capacity="0" portionsize="1" />
-  <invtype id="2629" name="Scourge Fury Heavy Missile" groupid="655" baseprice="574400.00" volume="0.03" capacity="0" portionsize="5000" />
-  <invtype id="2630" name="Scourge Fury Heavy Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="2629" name="Trauma Fury Heavy Missile" groupid="655" baseprice="574400.00" volume="0.03" capacity="0" portionsize="5000" />
+  <invtype id="2630" name="Trauma Fury Heavy Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="2631" name="Crates Of OP Insecticide" groupid="314" baseprice="0.00" volume="60" capacity="0" portionsize="1" />
   <invtype id="2632" name="Crates Of Oxygen" groupid="314" baseprice="0.00" volume="70" capacity="0" portionsize="1" />
   <invtype id="2633" name="Crates Of Planetary Vehicles" groupid="314" baseprice="0.00" volume="40" capacity="0" portionsize="1" />
   <invtype id="2635" name="Crates Of Protein Delicacies" groupid="314" baseprice="0.00" volume="70" capacity="0" portionsize="1" />
   <invtype id="2636" name="Crates Of Raggy Dolls" groupid="314" baseprice="0.00" volume="40" capacity="0" portionsize="1" />
-  <invtype id="2637" name="Cataclysm Precision Cruise Missile" groupid="656" baseprice="810600.00" volume="0.05" capacity="0" portionsize="5000" />
-  <invtype id="2638" name="Cataclysm Precision Cruise Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="2637" name="Inferno Precision Cruise Missile" groupid="656" baseprice="810600.00" volume="0.05" capacity="0" portionsize="5000" />
+  <invtype id="2638" name="Inferno Precision Cruise Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="2639" name="Crates Of Repair Parts" groupid="314" baseprice="0.00" volume="70" capacity="0" portionsize="1" />
   <invtype id="2640" name="Crates Of Replacement Parts" groupid="314" baseprice="0.00" volume="40" capacity="0" portionsize="1" />
   <invtype id="2641" name="Crates Of Reports" groupid="314" baseprice="0.00" volume="40" capacity="0" portionsize="1" />
@@ -1360,13 +1360,13 @@
   <invtype id="2644" name="Crates Of Small Arms" groupid="314" baseprice="0.00" volume="60" capacity="0" portionsize="1" />
   <invtype id="2645" name="Crates Of Soil" groupid="314" baseprice="0.00" volume="50" capacity="0" portionsize="1" />
   <invtype id="2646" name="Crates Of Spiced Wine" groupid="314" baseprice="0.00" volume="90" capacity="0" portionsize="1" />
-  <invtype id="2647" name="Flameburst Precision Light Missile" groupid="653" baseprice="95240.00" volume="0.015" capacity="0" portionsize="5000" />
-  <invtype id="2648" name="Flameburst Precision Light Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="2647" name="Inferno Precision Light Missile" groupid="653" baseprice="95240.00" volume="0.015" capacity="0" portionsize="5000" />
+  <invtype id="2648" name="Inferno Precision Light Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="2652" name="Crates Of Synthetic Oil" groupid="314" baseprice="0.00" volume="60" capacity="0" portionsize="1" />
   <invtype id="2653" name="Crates Of Vaccine Injectors" groupid="314" baseprice="0.00" volume="90" capacity="0" portionsize="1" />
   <invtype id="2654" name="Crates Of Viral Agent" groupid="314" baseprice="0.00" volume="80" capacity="0" portionsize="1" />
-  <invtype id="2655" name="Havoc Precision Heavy Missile" groupid="655" baseprice="574400.00" volume="0.03" capacity="0" portionsize="5000" />
-  <invtype id="2656" name="Havoc Precision Heavy Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="2655" name="Nova Precision Heavy Missile" groupid="655" baseprice="574400.00" volume="0.03" capacity="0" portionsize="5000" />
+  <invtype id="2656" name="Nova Precision Heavy Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="2657" name="Crates Of Vitoc" groupid="314" baseprice="0.00" volume="70" capacity="0" portionsize="1" />
   <invtype id="2659" name="Crates Of Water" groupid="314" baseprice="0.00" volume="60" capacity="0" portionsize="1" />
   <invtype id="2660" name="Crates Of Zemnar" groupid="314" baseprice="0.00" volume="40" capacity="0" portionsize="1" />
@@ -1385,8 +1385,8 @@
   <invtype id="2676" name="Group Of Security Personnel" groupid="283" baseprice="0.00" volume="60" capacity="0" portionsize="1" />
   <invtype id="2677" name="Group Of Slaves" groupid="283" baseprice="0.00" volume="50" capacity="0" portionsize="1" />
   <invtype id="2678" name="Group Of Tourists" groupid="283" baseprice="0.00" volume="50" capacity="0" portionsize="1" />
-  <invtype id="2679" name="Terror Rage Assault Missile" groupid="654" baseprice="120240.00" volume="0.015" capacity="0" portionsize="5000" />
-  <invtype id="2680" name="Terror Rage Assault Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="2679" name="Trauma Rage Assault Missile" groupid="654" baseprice="120240.00" volume="0.015" capacity="0" portionsize="5000" />
+  <invtype id="2680" name="Trauma Rage Assault Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="2681" name="Group Of VIPs" groupid="283" baseprice="0.00" volume="50" capacity="0" portionsize="1" />
   <invtype id="2682" name="Large Crates Of Galeptos Medicine" groupid="314" baseprice="0.00" volume="1000" capacity="0" portionsize="1" />
   <invtype id="2683" name="Large Crates Of Guidance Systems" groupid="314" baseprice="0.00" volume="1000" capacity="0" portionsize="1" />
@@ -1506,8 +1506,8 @@
   <invtype id="2798" name="White Noise Generation Battery Blueprint" groupid="856" baseprice="50000000.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="2799" name="Energy Neutralizing Battery Blueprint" groupid="860" baseprice="50000000.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="2800" name="Jump Bridge Blueprint" groupid="1048" baseprice="250000000.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="2801" name="Bane Javelin Torpedo" groupid="657" baseprice="1440725.00" volume="0.1" capacity="0" portionsize="5000" />
-  <invtype id="2802" name="Bane Javelin Torpedo Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="2801" name="Nova Javelin Torpedo" groupid="657" baseprice="1440725.00" volume="0.1" capacity="0" portionsize="5000" />
+  <invtype id="2802" name="Nova Javelin Torpedo Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="2803" name="Large Blaster Battery Blueprint" groupid="855" baseprice="75000000.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="2804" name="Large Railgun Battery Blueprint" groupid="855" baseprice="75000000.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="2805" name="Large Artillery Battery Blueprint" groupid="854" baseprice="100000000.00" volume="0.01" capacity="0" portionsize="1" />
@@ -1522,8 +1522,8 @@
   <invtype id="2814" name="Medium AutoCannon Battery Blueprint" groupid="854" baseprice="50000000.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="2815" name="Small Railgun Battery Blueprint" groupid="855" baseprice="25000000.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="2816" name="Small Artillery Battery Blueprint" groupid="854" baseprice="25000000.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="2817" name="Gremlin Rage Rocket" groupid="648" baseprice="57320.00" volume="0.005" capacity="0" portionsize="5000" />
-  <invtype id="2818" name="Gremlin Rage Rocket Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="2817" name="Mjolnir Rage Rocket" groupid="648" baseprice="57320.00" volume="0.005" capacity="0" portionsize="5000" />
+  <invtype id="2818" name="Mjolnir Rage Rocket Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="2819" name="Small AutoCannon Battery Blueprint" groupid="854" baseprice="25000000.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="2820" name="Experimental Laboratory Blueprint" groupid="891" baseprice="75000000.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="2821" name="Mobile Laboratory Blueprint" groupid="891" baseprice="75000000.00" volume="0.01" capacity="0" portionsize="1" />
@@ -4327,7 +4327,7 @@
   <invtype id="13114" name="Angel Sentry Gun" groupid="383" baseprice="0.00" volume="1000" capacity="1000" portionsize="1" />
   <invtype id="13115" name="Serpentis Sentry Gun" groupid="383" baseprice="0.00" volume="1000" capacity="1000" portionsize="1" />
   <invtype id="13116" name="Blood Raider Sentry Gun" groupid="383" baseprice="0.00" volume="1000" capacity="1000" portionsize="1" />
-  <invtype id="13119" name="Gremlin Javelin Rocket" groupid="648" baseprice="57320.00" volume="0.005" capacity="0" portionsize="5000" />
+  <invtype id="13119" name="Mjolnir Javelin Rocket" groupid="648" baseprice="57320.00" volume="0.005" capacity="0" portionsize="5000" />
   <invtype id="13163" name="Mercenary Elite Fighter" groupid="818" baseprice="0.00" volume="16500" capacity="90" portionsize="1" />
   <invtype id="13164" name="Skunks Ballistic Control System I" groupid="367" baseprice="24960.00" volume="5" capacity="0" portionsize="1" />
   <invtype id="13166" name="Hardwiring - Inherent Implants 'Lancer' G1-Delta" groupid="742" baseprice="200000.00" volume="1" capacity="0" portionsize="1" />
@@ -4684,7 +4684,7 @@
   <invtype id="13835" name="Abandoned Drill - Ruined" groupid="226" baseprice="0.00" volume="0" capacity="0" portionsize="1" />
   <invtype id="13836" name="Walkway Debris" groupid="226" baseprice="0.00" volume="0" capacity="0" portionsize="1" />
   <invtype id="13837" name="Captives" groupid="283" baseprice="0.00" volume="1" capacity="0" portionsize="1" />
-  <invtype id="13856" name="Fulmination Javelin Assault Missile" groupid="654" baseprice="120240.00" volume="0.015" capacity="0" portionsize="5000" />
+  <invtype id="13856" name="Nova Javelin Assault Missile" groupid="654" baseprice="120240.00" volume="0.015" capacity="0" portionsize="5000" />
   <invtype id="13864" name="Shadow Serpentis 125mm Railgun" groupid="74" baseprice="4484.00" volume="5" capacity="0.4" portionsize="1" />
   <invtype id="13865" name="Dread Guristas 125mm Railgun" groupid="74" baseprice="4484.00" volume="5" capacity="0.4" portionsize="1" />
   <invtype id="13866" name="Shadow Serpentis 150mm Railgun" groupid="74" baseprice="7496.00" volume="5" capacity="0.2" portionsize="1" />
@@ -12213,79 +12213,79 @@
   <invtype id="24467" name="The Curator's Armageddon" groupid="517" baseprice="0.00" volume="0" capacity="0" portionsize="1" />
   <invtype id="24468" name="R.A.M.- Battlecruiser Tech" groupid="332" baseprice="57656.00" volume="15" capacity="0" portionsize="1" />
   <invtype id="24469" name="R.A.M.- Battlecruiser Tech Blueprint" groupid="356" baseprice="0.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24471" name="Thorn Rage Rocket" groupid="648" baseprice="57320.00" volume="0.005" capacity="0" portionsize="5000" />
-  <invtype id="24472" name="Thorn Rage Rocket Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24473" name="Phalanx Rage Rocket" groupid="648" baseprice="57320.00" volume="0.005" capacity="0" portionsize="5000" />
-  <invtype id="24474" name="Phalanx Rage Rocket Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24475" name="Foxfire Rage Rocket" groupid="648" baseprice="57320.00" volume="0.005" capacity="0" portionsize="5000" />
-  <invtype id="24476" name="Foxfire Rage Rocket Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24477" name="Thorn Javelin Rocket" groupid="648" baseprice="57320.00" volume="0.005" capacity="0" portionsize="5000" />
-  <invtype id="24478" name="Phalanx Javelin Rocket" groupid="648" baseprice="57320.00" volume="0.005" capacity="0" portionsize="5000" />
-  <invtype id="24479" name="Foxfire Javelin Rocket" groupid="648" baseprice="57320.00" volume="0.005" capacity="0" portionsize="5000" />
+  <invtype id="24471" name="Trauma Rage Rocket" groupid="648" baseprice="57320.00" volume="0.005" capacity="0" portionsize="5000" />
+  <invtype id="24472" name="Trauma Rage Rocket Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24473" name="Nova Rage Rocket" groupid="648" baseprice="57320.00" volume="0.005" capacity="0" portionsize="5000" />
+  <invtype id="24474" name="Nova Rage Rocket Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24475" name="Inferno Rage Rocket" groupid="648" baseprice="57320.00" volume="0.005" capacity="0" portionsize="5000" />
+  <invtype id="24476" name="Inferno Rage Rocket Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24477" name="Trauma Javelin Rocket" groupid="648" baseprice="57320.00" volume="0.005" capacity="0" portionsize="5000" />
+  <invtype id="24478" name="Nova Javelin Rocket" groupid="648" baseprice="57320.00" volume="0.005" capacity="0" portionsize="5000" />
+  <invtype id="24479" name="Inferno Javelin Rocket" groupid="648" baseprice="57320.00" volume="0.005" capacity="0" portionsize="5000" />
   <invtype id="24480" name="LCO Spatial Rift" groupid="226" baseprice="0.00" volume="0" capacity="0" portionsize="1" />
   <invtype id="24482" name="Key to the Labyrinth" groupid="474" baseprice="0.00" volume="0.1" capacity="0" portionsize="1" />
   <invtype id="24483" name="Nidhoggur" groupid="547" baseprice="771957982.00" volume="1.125e+007" capacity="845" portionsize="1" />
   <invtype id="24484" name="Nidhoggur Blueprint" groupid="643" baseprice="1150000000.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="24485" name="Aurora Gamma" groupid="300" baseprice="0.00" volume="1" capacity="0" portionsize="1" />
-  <invtype id="24486" name="Hellfire Rage Assault Missile" groupid="654" baseprice="120240.00" volume="0.015" capacity="0" portionsize="5000" />
-  <invtype id="24487" name="Hellfire Rage Assault Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24488" name="Fulmination Rage Assault Missile" groupid="654" baseprice="120240.00" volume="0.015" capacity="0" portionsize="5000" />
-  <invtype id="24489" name="Fulmination Rage Assault Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24490" name="Torrent Rage Assault Missile" groupid="654" baseprice="120240.00" volume="0.015" capacity="0" portionsize="5000" />
-  <invtype id="24491" name="Torrent Rage Assault Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24492" name="Terror Javelin Assault Missile" groupid="654" baseprice="120240.00" volume="0.015" capacity="0" portionsize="5000" />
-  <invtype id="24493" name="Torrent Javelin Assault Missile" groupid="654" baseprice="120240.00" volume="0.015" capacity="0" portionsize="5000" />
-  <invtype id="24494" name="Hellfire Javelin Assault Missile" groupid="654" baseprice="120240.00" volume="0.015" capacity="0" portionsize="5000" />
-  <invtype id="24495" name="Bloodclaw Fury Light Missile" groupid="653" baseprice="95240.00" volume="0.015" capacity="0" portionsize="5000" />
-  <invtype id="24496" name="Bloodclaw Fury Light Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24497" name="Piranha Fury Light Missile" groupid="653" baseprice="95240.00" volume="0.015" capacity="0" portionsize="5000" />
-  <invtype id="24498" name="Piranha Fury Light Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24499" name="Flameburst Fury Light Missile" groupid="653" baseprice="95240.00" volume="0.015" capacity="0" portionsize="5000" />
-  <invtype id="24500" name="Flameburst Fury Light Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24501" name="Bloodclaw Precision Light Missile" groupid="653" baseprice="95240.00" volume="0.015" capacity="0" portionsize="5000" />
-  <invtype id="24502" name="Bloodclaw Precision Light Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24503" name="Piranha Precision Light Missile" groupid="653" baseprice="95240.00" volume="0.015" capacity="0" portionsize="5000" />
-  <invtype id="24504" name="Piranha Precision Light Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24505" name="Sabretooth Precision Light Missile" groupid="653" baseprice="95240.00" volume="0.015" capacity="0" portionsize="5000" />
-  <invtype id="24506" name="Sabretooth Precision Light Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24507" name="Havoc Fury Heavy Missile" groupid="655" baseprice="574400.00" volume="0.03" capacity="0" portionsize="5000" />
-  <invtype id="24508" name="Havoc Fury Heavy Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24509" name="Thunderbolt Fury Heavy Missile" groupid="655" baseprice="574400.00" volume="0.03" capacity="0" portionsize="5000" />
-  <invtype id="24510" name="Thunderbolt Fury Heavy Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24511" name="Widowmaker Fury Heavy Missile" groupid="655" baseprice="574400.00" volume="0.03" capacity="0" portionsize="5000" />
-  <invtype id="24512" name="Widowmaker Fury Heavy Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24513" name="Scourge Precision Heavy Missile" groupid="655" baseprice="574400.00" volume="0.03" capacity="0" portionsize="5000" />
-  <invtype id="24514" name="Scourge Precision Heavy Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24515" name="Widowmaker Precision Heavy Missile" groupid="655" baseprice="574400.00" volume="0.03" capacity="0" portionsize="5000" />
-  <invtype id="24516" name="Widowmaker Precision Heavy Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24517" name="Thunderbolt Precision Heavy Missile" groupid="655" baseprice="574400.00" volume="0.03" capacity="0" portionsize="5000" />
-  <invtype id="24518" name="Thunderbolt Precision Heavy Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24519" name="Bane Rage Torpedo" groupid="657" baseprice="1440725.00" volume="0.1" capacity="0" portionsize="5000" />
-  <invtype id="24520" name="Bane Rage Torpedo Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24521" name="Juggernaut Rage Torpedo" groupid="657" baseprice="1440725.00" volume="0.1" capacity="0" portionsize="5000" />
-  <invtype id="24522" name="Juggernaut Rage Torpedo Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24486" name="Inferno Rage Assault Missile" groupid="654" baseprice="120240.00" volume="0.015" capacity="0" portionsize="5000" />
+  <invtype id="24487" name="Inferno Rage Assault Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24488" name="Nova Rage Assault Missile" groupid="654" baseprice="120240.00" volume="0.015" capacity="0" portionsize="5000" />
+  <invtype id="24489" name="Nova Rage Assault Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24490" name="Mjolnir Rage Assault Missile" groupid="654" baseprice="120240.00" volume="0.015" capacity="0" portionsize="5000" />
+  <invtype id="24491" name="Mjolnir Rage Assault Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24492" name="Trauma Javelin Assault Missile" groupid="654" baseprice="120240.00" volume="0.015" capacity="0" portionsize="5000" />
+  <invtype id="24493" name="Mjolnir Javelin Assault Missile" groupid="654" baseprice="120240.00" volume="0.015" capacity="0" portionsize="5000" />
+  <invtype id="24494" name="Inferno Javelin Assault Missile" groupid="654" baseprice="120240.00" volume="0.015" capacity="0" portionsize="5000" />
+  <invtype id="24495" name="Trauma Fury Light Missile" groupid="653" baseprice="95240.00" volume="0.015" capacity="0" portionsize="5000" />
+  <invtype id="24496" name="Trauma Fury Light Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24497" name="Nova Fury Light Missile" groupid="653" baseprice="95240.00" volume="0.015" capacity="0" portionsize="5000" />
+  <invtype id="24498" name="Nova Fury Light Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24499" name="Inferno Fury Light Missile" groupid="653" baseprice="95240.00" volume="0.015" capacity="0" portionsize="5000" />
+  <invtype id="24500" name="Inferno Fury Light Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24501" name="Trauma Precision Light Missile" groupid="653" baseprice="95240.00" volume="0.015" capacity="0" portionsize="5000" />
+  <invtype id="24502" name="Trauma Precision Light Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24503" name="Nova Precision Light Missile" groupid="653" baseprice="95240.00" volume="0.015" capacity="0" portionsize="5000" />
+  <invtype id="24504" name="Nova Precision Light Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24505" name="Mjolnir Precision Light Missile" groupid="653" baseprice="95240.00" volume="0.015" capacity="0" portionsize="5000" />
+  <invtype id="24506" name="Mjolnir Precision Light Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24507" name="Nova Fury Heavy Missile" groupid="655" baseprice="574400.00" volume="0.03" capacity="0" portionsize="5000" />
+  <invtype id="24508" name="Nova Fury Heavy Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24509" name="Mjolnir Fury Heavy Missile" groupid="655" baseprice="574400.00" volume="0.03" capacity="0" portionsize="5000" />
+  <invtype id="24510" name="Mjolnir Fury Heavy Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24511" name="Inferno Fury Heavy Missile" groupid="655" baseprice="574400.00" volume="0.03" capacity="0" portionsize="5000" />
+  <invtype id="24512" name="Inferno Fury Heavy Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24513" name="Trauma Precision Heavy Missile" groupid="655" baseprice="574400.00" volume="0.03" capacity="0" portionsize="5000" />
+  <invtype id="24514" name="Trauma Precision Heavy Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24515" name="Inferno Precision Heavy Missile" groupid="655" baseprice="574400.00" volume="0.03" capacity="0" portionsize="5000" />
+  <invtype id="24516" name="Inferno Precision Heavy Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24517" name="Mjolnir Precision Heavy Missile" groupid="655" baseprice="574400.00" volume="0.03" capacity="0" portionsize="5000" />
+  <invtype id="24518" name="Mjolnir Precision Heavy Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24519" name="Nova Rage Torpedo" groupid="657" baseprice="1440725.00" volume="0.1" capacity="0" portionsize="5000" />
+  <invtype id="24520" name="Nova Rage Torpedo Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24521" name="Trauma Rage Torpedo" groupid="657" baseprice="1440725.00" volume="0.1" capacity="0" portionsize="5000" />
+  <invtype id="24522" name="Trauma Rage Torpedo Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="24523" name="Mjolnir Rage Torpedo" groupid="657" baseprice="1440725.00" volume="0.1" capacity="0" portionsize="5000" />
   <invtype id="24524" name="Mjolnir Rage Torpedo Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="24525" name="Inferno Javelin Torpedo" groupid="657" baseprice="1440725.00" volume="0.1" capacity="0" portionsize="5000" />
   <invtype id="24526" name="Inferno Javelin Torpedo Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="24527" name="Mjolnir Javelin Torpedo" groupid="657" baseprice="1440725.00" volume="0.1" capacity="0" portionsize="5000" />
   <invtype id="24528" name="Mjolnir Javelin Torpedo Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24529" name="Juggernaut Javelin Torpedo" groupid="657" baseprice="1440725.00" volume="0.1" capacity="0" portionsize="5000" />
-  <invtype id="24530" name="Juggernaut Javelin Torpedo Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24531" name="Devastator Fury Cruise Missile" groupid="656" baseprice="810600.00" volume="0.05" capacity="0" portionsize="5000" />
-  <invtype id="24532" name="Devastator Fury Cruise Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24533" name="Wrath Fury Cruise Missile" groupid="656" baseprice="810600.00" volume="0.05" capacity="0" portionsize="5000" />
-  <invtype id="24534" name="Wrath Fury Cruise Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24535" name="Paradise Fury Cruise Missile" groupid="656" baseprice="810600.00" volume="0.05" capacity="0" portionsize="5000" />
-  <invtype id="24536" name="Paradise Fury Cruise Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24537" name="Devastator Precision Cruise Missile" groupid="656" baseprice="810600.00" volume="0.05" capacity="0" portionsize="5000" />
-  <invtype id="24538" name="Devastator Precision Cruise Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24539" name="Paradise Precision Cruise Missile" groupid="656" baseprice="810600.00" volume="0.05" capacity="0" portionsize="5000" />
-  <invtype id="24540" name="Paradise Precision Cruise Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24541" name="Wrath Precision Cruise Missile" groupid="656" baseprice="810600.00" volume="0.05" capacity="0" portionsize="5000" />
-  <invtype id="24542" name="Wrath Precision Cruise Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24543" name="Foxfire Javelin Rocket Blueprint" groupid="166" baseprice="0.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24544" name="Gremlin Javelin Rocket Blueprint" groupid="166" baseprice="0.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24529" name="Trauma Javelin Torpedo" groupid="657" baseprice="1440725.00" volume="0.1" capacity="0" portionsize="5000" />
+  <invtype id="24530" name="Trauma Javelin Torpedo Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24531" name="Nova Fury Cruise Missile" groupid="656" baseprice="810600.00" volume="0.05" capacity="0" portionsize="5000" />
+  <invtype id="24532" name="Nova Fury Cruise Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24533" name="Trauma Fury Cruise Missile" groupid="656" baseprice="810600.00" volume="0.05" capacity="0" portionsize="5000" />
+  <invtype id="24534" name="Trauma Fury Cruise Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24535" name="Mjolnir Fury Cruise Missile" groupid="656" baseprice="810600.00" volume="0.05" capacity="0" portionsize="5000" />
+  <invtype id="24536" name="Mjolnir Fury Cruise Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24537" name="Nova Precision Cruise Missile" groupid="656" baseprice="810600.00" volume="0.05" capacity="0" portionsize="5000" />
+  <invtype id="24538" name="Nova Precision Cruise Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24539" name="Mjolnir Precision Cruise Missile" groupid="656" baseprice="810600.00" volume="0.05" capacity="0" portionsize="5000" />
+  <invtype id="24540" name="Mjolnir Precision Cruise Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24541" name="Trauma Precision Cruise Missile" groupid="656" baseprice="810600.00" volume="0.05" capacity="0" portionsize="5000" />
+  <invtype id="24542" name="Trauma Precision Cruise Missile Blueprint" groupid="166" baseprice="9999999.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24543" name="Inferno Javelin Rocket Blueprint" groupid="166" baseprice="0.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24544" name="Mjolnir Javelin Rocket Blueprint" groupid="166" baseprice="0.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="24545" name="Capital Jump Bridge Array" groupid="873" baseprice="15706714.00" volume="10000" capacity="0" portionsize="1" />
   <invtype id="24546" name="Capital Jump Bridge Array Blueprint" groupid="915" baseprice="3141342800.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="24547" name="Capital Clone Vat Bay" groupid="873" baseprice="8417092.00" volume="10000" capacity="0" portionsize="1" />
@@ -12336,18 +12336,18 @@
   <invtype id="24595" name="Minmatar Republic Starbase Charter" groupid="652" baseprice="50000.00" volume="0.1" capacity="0" portionsize="1" />
   <invtype id="24596" name="Khanid Kingdom Starbase Charter" groupid="652" baseprice="50000.00" volume="0.1" capacity="0" portionsize="1" />
   <invtype id="24597" name="Ammatar Mandate Starbase Charter" groupid="652" baseprice="50000.00" volume="0.1" capacity="0" portionsize="1" />
-  <invtype id="24604" name="Phalanx Javelin Rocket Blueprint" groupid="166" baseprice="0.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24605" name="Thorn Javelin Rocket Blueprint" groupid="166" baseprice="0.00" volume="0" capacity="0" portionsize="1" />
+  <invtype id="24604" name="Nova Javelin Rocket Blueprint" groupid="166" baseprice="0.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24605" name="Trauma Javelin Rocket Blueprint" groupid="166" baseprice="0.00" volume="0" capacity="0" portionsize="1" />
   <invtype id="24606" name="Cloning Facility Operation" groupid="270" baseprice="125000000.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="24607" name="TestScanRadar" groupid="624" baseprice="0.00" volume="24500" capacity="60" portionsize="1" />
   <invtype id="24608" name="SnowballNewEffect" groupid="500" baseprice="0.00" volume="1" capacity="0" portionsize="100" />
   <invtype id="24609" name="LCO Gallente Stargate" groupid="226" baseprice="0.00" volume="1e+008" capacity="10000" portionsize="1" />
   <invtype id="24610" name="Ultra Fast Capital Ship Assembly Array" groupid="397" baseprice="128.00" volume="100" capacity="1e+009" portionsize="1" />
   <invtype id="24613" name="Advanced Drone Interfacing" groupid="273" baseprice="15000000.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24614" name="Terror Javelin Assault Missile Blueprint" groupid="166" baseprice="0.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24615" name="Hellfire Javelin Assault Missile Blueprint" groupid="166" baseprice="0.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24616" name="Fulmination Javelin Assault Missile Blueprint" groupid="166" baseprice="0.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="24617" name="Torrent Javelin Assault Missile Blueprint" groupid="166" baseprice="0.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24614" name="Trauma Javelin Assault Missile Blueprint" groupid="166" baseprice="0.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24615" name="Inferno Javelin Assault Missile Blueprint" groupid="166" baseprice="0.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24616" name="Nova Javelin Assault Missile Blueprint" groupid="166" baseprice="0.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="24617" name="Mjolnir Javelin Assault Missile Blueprint" groupid="166" baseprice="0.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="24618" name="horrible tracking drone" groupid="100" baseprice="70000.00" volume="25" capacity="1200" portionsize="1" />
   <invtype id="24619" name="horrible tracking drone Blueprint" groupid="176" baseprice="7000000.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="24620" name="Medium Tractor Beam I" groupid="650" baseprice="1555840.00" volume="10" capacity="0.8" portionsize="1" />
@@ -14091,9 +14091,9 @@
   <invtype id="26757" name="Sansha Shipyard Foreman" groupid="821" baseprice="0.00" volume="100100" capacity="235" portionsize="1" />
   <invtype id="26758" name="Serpentis Drug Carrier" groupid="820" baseprice="0.00" volume="112000" capacity="480" portionsize="1" />
   <invtype id="26759" name="Heavy Assault Missile Launcher I Blueprint" groupid="136" baseprice="300000.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="26760" name="Torrent Assault Missile Blueprint" groupid="166" baseprice="600000.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="26761" name="Hellfire Assault Missile Blueprint" groupid="166" baseprice="600000.00" volume="0.01" capacity="0" portionsize="1" />
-  <invtype id="26762" name="Terror Assault Missile Blueprint" groupid="166" baseprice="600000.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="26760" name="Mjolnir Assault Missile Blueprint" groupid="166" baseprice="600000.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="26761" name="Inferno Assault Missile Blueprint" groupid="166" baseprice="600000.00" volume="0.01" capacity="0" portionsize="1" />
+  <invtype id="26762" name="Trauma Assault Missile Blueprint" groupid="166" baseprice="600000.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="26763" name="Rogue Drone Logistic Overseer" groupid="820" baseprice="0.00" volume="60" capacity="1200" portionsize="1" />
   <invtype id="26764" name="Rogue Production Captain" groupid="820" baseprice="0.00" volume="60" capacity="1200" portionsize="1" />
   <invtype id="26765" name="Hive Overseer" groupid="820" baseprice="0.00" volume="60" capacity="1200" portionsize="1" />
@@ -14562,78 +14562,78 @@
   <invtype id="27310" name="TEST Skin" groupid="185" baseprice="0.00" volume="24500" capacity="60" portionsize="1" />
   <invtype id="27311" name="TEST FedSkin" groupid="185" baseprice="0.00" volume="16500" capacity="235" portionsize="1" />
   <invtype id="27312" name="TEST COPY Dire Pithi Wrecker" groupid="185" baseprice="0.00" volume="16500" capacity="235" portionsize="1" />
-  <invtype id="27313" name="Guristas Foxfire Rocket" groupid="387" baseprice="260.00" volume="0.005" capacity="0" portionsize="100" />
-  <invtype id="27315" name="Caldari Navy Foxfire Rocket" groupid="387" baseprice="260.00" volume="0.005" capacity="0" portionsize="100" />
-  <invtype id="27317" name="Dread Guristas Foxfire Rocket" groupid="387" baseprice="260.00" volume="0.005" capacity="0" portionsize="100" />
-  <invtype id="27319" name="Guristas Gremlin Rocket" groupid="387" baseprice="350.00" volume="0.005" capacity="0" portionsize="100" />
-  <invtype id="27321" name="Caldari Navy Gremlin Rocket" groupid="387" baseprice="350.00" volume="0.005" capacity="0" portionsize="100" />
-  <invtype id="27323" name="Dread Guristas Gremlin Rocket" groupid="387" baseprice="350.00" volume="0.005" capacity="0" portionsize="100" />
-  <invtype id="27325" name="Guristas Phalanx Rocket" groupid="387" baseprice="180.00" volume="0.005" capacity="0" portionsize="100" />
-  <invtype id="27327" name="Caldari Navy Phalanx Rocket" groupid="387" baseprice="180.00" volume="0.005" capacity="0" portionsize="100" />
-  <invtype id="27329" name="Dread Guristas Phalanx Rocket" groupid="387" baseprice="180.00" volume="0.005" capacity="0" portionsize="100" />
-  <invtype id="27331" name="Guristas Thorn Rocket" groupid="387" baseprice="240.00" volume="0.005" capacity="0" portionsize="100" />
-  <invtype id="27333" name="Caldari Navy Thorn Rocket" groupid="387" baseprice="240.00" volume="0.005" capacity="0" portionsize="100" />
-  <invtype id="27335" name="Dread Guristas Thorn Rocket" groupid="387" baseprice="240.00" volume="0.005" capacity="0" portionsize="100" />
+  <invtype id="27313" name="Guristas Inferno Rocket" groupid="387" baseprice="260.00" volume="0.005" capacity="0" portionsize="100" />
+  <invtype id="27315" name="Caldari Navy Inferno Rocket" groupid="387" baseprice="260.00" volume="0.005" capacity="0" portionsize="100" />
+  <invtype id="27317" name="Dread Guristas Inferno Rocket" groupid="387" baseprice="260.00" volume="0.005" capacity="0" portionsize="100" />
+  <invtype id="27319" name="Guristas Mjolnir Rocket" groupid="387" baseprice="350.00" volume="0.005" capacity="0" portionsize="100" />
+  <invtype id="27321" name="Caldari Navy Mjolnir Rocket" groupid="387" baseprice="350.00" volume="0.005" capacity="0" portionsize="100" />
+  <invtype id="27323" name="Dread Guristas Mjolnir Rocket" groupid="387" baseprice="350.00" volume="0.005" capacity="0" portionsize="100" />
+  <invtype id="27325" name="Guristas Nova Rocket" groupid="387" baseprice="180.00" volume="0.005" capacity="0" portionsize="100" />
+  <invtype id="27327" name="Caldari Navy Nova Rocket" groupid="387" baseprice="180.00" volume="0.005" capacity="0" portionsize="100" />
+  <invtype id="27329" name="Dread Guristas Nova Rocket" groupid="387" baseprice="180.00" volume="0.005" capacity="0" portionsize="100" />
+  <invtype id="27331" name="Guristas Trauma Rocket" groupid="387" baseprice="240.00" volume="0.005" capacity="0" portionsize="100" />
+  <invtype id="27333" name="Caldari Navy Trauma Rocket" groupid="387" baseprice="240.00" volume="0.005" capacity="0" portionsize="100" />
+  <invtype id="27335" name="Dread Guristas Trauma Rocket" groupid="387" baseprice="240.00" volume="0.005" capacity="0" portionsize="100" />
   <invtype id="27337" name="Guristas Mjolnir Torpedo" groupid="89" baseprice="35000.00" volume="0.1" capacity="0" portionsize="100" />
   <invtype id="27339" name="Caldari Navy Mjolnir Torpedo" groupid="89" baseprice="35000.00" volume="0.1" capacity="0" portionsize="100" />
   <invtype id="27341" name="Dread Guristas Mjolnir Torpedo" groupid="89" baseprice="35000.00" volume="0.1" capacity="0" portionsize="100" />
-  <invtype id="27343" name="Guristas Juggernaut Torpedo" groupid="89" baseprice="30000.00" volume="0.1" capacity="0" portionsize="100" />
-  <invtype id="27345" name="Caldari Navy Juggernaut Torpedo" groupid="89" baseprice="30000.00" volume="0.1" capacity="0" portionsize="100" />
-  <invtype id="27347" name="Dread Guristas Juggernaut Torpedo" groupid="89" baseprice="30000.00" volume="0.1" capacity="0" portionsize="100" />
+  <invtype id="27343" name="Guristas Trauma Torpedo" groupid="89" baseprice="30000.00" volume="0.1" capacity="0" portionsize="100" />
+  <invtype id="27345" name="Caldari Navy Trauma Torpedo" groupid="89" baseprice="30000.00" volume="0.1" capacity="0" portionsize="100" />
+  <invtype id="27347" name="Dread Guristas Trauma Torpedo" groupid="89" baseprice="30000.00" volume="0.1" capacity="0" portionsize="100" />
   <invtype id="27349" name="Guristas Inferno Torpedo" groupid="89" baseprice="32500.00" volume="0.1" capacity="0" portionsize="100" />
   <invtype id="27351" name="Caldari Navy Inferno Torpedo" groupid="89" baseprice="32500.00" volume="0.1" capacity="0" portionsize="100" />
-  <invtype id="27353" name="Guristas Bloodclaw Light Missile" groupid="384" baseprice="500.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27353" name="Guristas Trauma Light Missile" groupid="384" baseprice="500.00" volume="0.015" capacity="0" portionsize="100" />
   <invtype id="27355" name="Dread Guristas Inferno Torpedo" groupid="89" baseprice="32500.00" volume="0.1" capacity="0" portionsize="100" />
-  <invtype id="27357" name="Guristas Bane Torpedo" groupid="89" baseprice="25000.00" volume="0.1" capacity="0" portionsize="100" />
-  <invtype id="27359" name="Caldari Navy Bane Torpedo" groupid="89" baseprice="25000.00" volume="0.1" capacity="0" portionsize="100" />
-  <invtype id="27361" name="Caldari Navy Bloodclaw Light Missile" groupid="384" baseprice="500.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27363" name="Dread Guristas Bane Torpedo" groupid="89" baseprice="25000.00" volume="0.1" capacity="0" portionsize="100" />
-  <invtype id="27365" name="Dread Guristas Bloodclaw Light Missile" groupid="384" baseprice="500.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27367" name="Guristas Flameburst Light Missile" groupid="384" baseprice="624.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27369" name="Dread Guristas Flameburst Light Missile" groupid="384" baseprice="624.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27371" name="Caldari Navy Flameburst Light Missile" groupid="384" baseprice="624.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27373" name="Guristas Paradise Cruise Missile" groupid="386" baseprice="15000.00" volume="0.05" capacity="0" portionsize="100" />
-  <invtype id="27375" name="Dread Guristas Piranha Light Missile" groupid="384" baseprice="370.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27377" name="Caldari Navy Paradise Cruise Missile" groupid="386" baseprice="15000.00" volume="0.05" capacity="0" portionsize="100" />
-  <invtype id="27379" name="Guristas Piranha Light Missile" groupid="384" baseprice="370.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27381" name="Caldari Navy Piranha Light Missile" groupid="384" baseprice="370.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27383" name="Guristas Sabretooth Light Missile" groupid="384" baseprice="750.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27385" name="Dread Guristas Sabretooth Light Missile" groupid="384" baseprice="750.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27387" name="Caldari Navy Sabretooth Light Missile" groupid="384" baseprice="750.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27389" name="Dread Guristas Paradise Cruise Missile" groupid="386" baseprice="15000.00" volume="0.05" capacity="0" portionsize="100" />
-  <invtype id="27391" name="Guristas Wrath Cruise Missile" groupid="386" baseprice="10000.00" volume="0.05" capacity="0" portionsize="100" />
-  <invtype id="27393" name="Guristas Fulmination Assault Missile" groupid="772" baseprice="2000.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27395" name="Caldari Navy Wrath Cruise Missile" groupid="386" baseprice="10000.00" volume="0.05" capacity="0" portionsize="100" />
-  <invtype id="27397" name="Dread Guristas Fulmination Assault Missile" groupid="772" baseprice="2000.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27399" name="Dread Guristas Wrath Cruise Missile" groupid="386" baseprice="10000.00" volume="0.05" capacity="0" portionsize="100" />
-  <invtype id="27401" name="Caldari Navy Fulmination Assault Missile" groupid="772" baseprice="2000.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27403" name="Guristas Hellfire Assault Missile" groupid="772" baseprice="3000.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27405" name="Caldari Navy Hellfire Assault Missile" groupid="772" baseprice="3000.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27407" name="Dread Guristas Hellfire Assault Missile" groupid="772" baseprice="3000.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27409" name="Guristas Cataclysm Cruise Missile" groupid="386" baseprice="12500.00" volume="0.05" capacity="0" portionsize="100" />
-  <invtype id="27411" name="Guristas Terror Assault Missile" groupid="772" baseprice="2516.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27413" name="Caldari Navy Terror Assault Missile" groupid="772" baseprice="2516.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27415" name="Dread Guristas Terror Assault Missile" groupid="772" baseprice="2516.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27417" name="Guristas Torrent Assault Missile" groupid="772" baseprice="3500.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27419" name="Caldari Navy Torrent Assault Missile" groupid="772" baseprice="3500.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27421" name="Dread Guristas Torrent Assault Missile" groupid="772" baseprice="3500.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27423" name="Caldari Navy Cataclysm Cruise Missile" groupid="386" baseprice="12500.00" volume="0.05" capacity="0" portionsize="100" />
-  <invtype id="27425" name="Dread Guristas Cataclysm Cruise Missile" groupid="386" baseprice="12500.00" volume="0.05" capacity="0" portionsize="100" />
-  <invtype id="27427" name="Guristas Devastator Cruise Missile" groupid="386" baseprice="7500.00" volume="0.05" capacity="0" portionsize="100" />
-  <invtype id="27429" name="Caldari Navy Devastator Cruise Missile" groupid="386" baseprice="7500.00" volume="0.05" capacity="0" portionsize="100" />
-  <invtype id="27431" name="Dread Guristas Devastator Cruise Missile" groupid="386" baseprice="7500.00" volume="0.05" capacity="0" portionsize="100" />
-  <invtype id="27433" name="Guristas Thunderbolt Heavy Missile" groupid="385" baseprice="3500.00" volume="0.03" capacity="0" portionsize="100" />
-  <invtype id="27435" name="Caldari Navy Thunderbolt Heavy Missile" groupid="385" baseprice="3500.00" volume="0.03" capacity="0" portionsize="100" />
-  <invtype id="27437" name="Dread Guristas Thunderbolt Heavy Missile" groupid="385" baseprice="3500.00" volume="0.03" capacity="0" portionsize="100" />
-  <invtype id="27439" name="Guristas Scourge Heavy Missile" groupid="385" baseprice="2500.00" volume="0.03" capacity="0" portionsize="100" />
-  <invtype id="27441" name="Caldari Navy Scourge Heavy Missile" groupid="385" baseprice="2500.00" volume="0.03" capacity="0" portionsize="100" />
-  <invtype id="27443" name="Dread Guristas Scourge Heavy Missile" groupid="385" baseprice="2500.00" volume="0.03" capacity="0" portionsize="100" />
-  <invtype id="27445" name="Guristas Widowmaker Heavy Missile" groupid="385" baseprice="3000.00" volume="0.03" capacity="0" portionsize="100" />
-  <invtype id="27447" name="Caldari Navy Widowmaker Heavy Missile" groupid="385" baseprice="3000.00" volume="0.03" capacity="0" portionsize="100" />
-  <invtype id="27449" name="Dread Guristas Widowmaker Heavy Missile" groupid="385" baseprice="3000.00" volume="0.03" capacity="0" portionsize="100" />
-  <invtype id="27451" name="Guristas Havoc Heavy Missile" groupid="385" baseprice="2000.00" volume="0.03" capacity="0" portionsize="100" />
-  <invtype id="27453" name="Caldari Navy Havoc Heavy Missile" groupid="385" baseprice="2000.00" volume="0.03" capacity="0" portionsize="100" />
-  <invtype id="27455" name="Dread Guristas Havoc Heavy Missile" groupid="385" baseprice="2000.00" volume="0.03" capacity="0" portionsize="100" />
+  <invtype id="27357" name="Guristas Nova Torpedo" groupid="89" baseprice="25000.00" volume="0.1" capacity="0" portionsize="100" />
+  <invtype id="27359" name="Caldari Navy Nova Torpedo" groupid="89" baseprice="25000.00" volume="0.1" capacity="0" portionsize="100" />
+  <invtype id="27361" name="Caldari Navy Trauma Light Missile" groupid="384" baseprice="500.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27363" name="Dread Guristas Nova Torpedo" groupid="89" baseprice="25000.00" volume="0.1" capacity="0" portionsize="100" />
+  <invtype id="27365" name="Dread Guristas Trauma Light Missile" groupid="384" baseprice="500.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27367" name="Guristas Inferno Light Missile" groupid="384" baseprice="624.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27369" name="Dread Guristas Inferno Light Missile" groupid="384" baseprice="624.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27371" name="Caldari Navy Inferno Light Missile" groupid="384" baseprice="624.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27373" name="Guristas Mjolnir Cruise Missile" groupid="386" baseprice="15000.00" volume="0.05" capacity="0" portionsize="100" />
+  <invtype id="27375" name="Dread Guristas Nova Light Missile" groupid="384" baseprice="370.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27377" name="Caldari Navy Mjolnir Cruise Missile" groupid="386" baseprice="15000.00" volume="0.05" capacity="0" portionsize="100" />
+  <invtype id="27379" name="Guristas Nova Light Missile" groupid="384" baseprice="370.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27381" name="Caldari Navy Nova Light Missile" groupid="384" baseprice="370.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27383" name="Guristas Mjolnir Light Missile" groupid="384" baseprice="750.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27385" name="Dread Guristas Mjolnir Light Missile" groupid="384" baseprice="750.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27387" name="Caldari Navy Mjolnir Light Missile" groupid="384" baseprice="750.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27389" name="Dread Guristas Mjolnir Cruise Missile" groupid="386" baseprice="15000.00" volume="0.05" capacity="0" portionsize="100" />
+  <invtype id="27391" name="Guristas Trauma Cruise Missile" groupid="386" baseprice="10000.00" volume="0.05" capacity="0" portionsize="100" />
+  <invtype id="27393" name="Guristas Nova Assault Missile" groupid="772" baseprice="2000.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27395" name="Caldari Navy Trauma Cruise Missile" groupid="386" baseprice="10000.00" volume="0.05" capacity="0" portionsize="100" />
+  <invtype id="27397" name="Dread Guristas Nova Assault Missile" groupid="772" baseprice="2000.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27399" name="Dread Guristas Trauma Cruise Missile" groupid="386" baseprice="10000.00" volume="0.05" capacity="0" portionsize="100" />
+  <invtype id="27401" name="Caldari Navy Nova Assault Missile" groupid="772" baseprice="2000.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27403" name="Guristas Inferno Assault Missile" groupid="772" baseprice="3000.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27405" name="Caldari Navy Inferno Assault Missile" groupid="772" baseprice="3000.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27407" name="Dread Guristas Inferno Assault Missile" groupid="772" baseprice="3000.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27409" name="Guristas Inferno Cruise Missile" groupid="386" baseprice="12500.00" volume="0.05" capacity="0" portionsize="100" />
+  <invtype id="27411" name="Guristas Trauma Assault Missile" groupid="772" baseprice="2516.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27413" name="Caldari Navy Trauma Assault Missile" groupid="772" baseprice="2516.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27415" name="Dread Guristas Trauma Assault Missile" groupid="772" baseprice="2516.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27417" name="Guristas Mjolnir Assault Missile" groupid="772" baseprice="3500.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27419" name="Caldari Navy Mjolnir Assault Missile" groupid="772" baseprice="3500.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27421" name="Dread Guristas Mjolnir Assault Missile" groupid="772" baseprice="3500.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27423" name="Caldari Navy Inferno Cruise Missile" groupid="386" baseprice="12500.00" volume="0.05" capacity="0" portionsize="100" />
+  <invtype id="27425" name="Dread Guristas Inferno Cruise Missile" groupid="386" baseprice="12500.00" volume="0.05" capacity="0" portionsize="100" />
+  <invtype id="27427" name="Guristas Nova Cruise Missile" groupid="386" baseprice="7500.00" volume="0.05" capacity="0" portionsize="100" />
+  <invtype id="27429" name="Caldari Navy Nova Cruise Missile" groupid="386" baseprice="7500.00" volume="0.05" capacity="0" portionsize="100" />
+  <invtype id="27431" name="Dread Guristas Nova Cruise Missile" groupid="386" baseprice="7500.00" volume="0.05" capacity="0" portionsize="100" />
+  <invtype id="27433" name="Guristas Mjolnir Heavy Missile" groupid="385" baseprice="3500.00" volume="0.03" capacity="0" portionsize="100" />
+  <invtype id="27435" name="Caldari Navy Mjolnir Heavy Missile" groupid="385" baseprice="3500.00" volume="0.03" capacity="0" portionsize="100" />
+  <invtype id="27437" name="Dread Guristas Mjolnir Heavy Missile" groupid="385" baseprice="3500.00" volume="0.03" capacity="0" portionsize="100" />
+  <invtype id="27439" name="Guristas Trauma Heavy Missile" groupid="385" baseprice="2500.00" volume="0.03" capacity="0" portionsize="100" />
+  <invtype id="27441" name="Caldari Navy Trauma Heavy Missile" groupid="385" baseprice="2500.00" volume="0.03" capacity="0" portionsize="100" />
+  <invtype id="27443" name="Dread Guristas Trauma Heavy Missile" groupid="385" baseprice="2500.00" volume="0.03" capacity="0" portionsize="100" />
+  <invtype id="27445" name="Guristas Inferno Heavy Missile" groupid="385" baseprice="3000.00" volume="0.03" capacity="0" portionsize="100" />
+  <invtype id="27447" name="Caldari Navy Inferno Heavy Missile" groupid="385" baseprice="3000.00" volume="0.03" capacity="0" portionsize="100" />
+  <invtype id="27449" name="Dread Guristas Inferno Heavy Missile" groupid="385" baseprice="3000.00" volume="0.03" capacity="0" portionsize="100" />
+  <invtype id="27451" name="Guristas Nova Heavy Missile" groupid="385" baseprice="2000.00" volume="0.03" capacity="0" portionsize="100" />
+  <invtype id="27453" name="Caldari Navy Nova Heavy Missile" groupid="385" baseprice="2000.00" volume="0.03" capacity="0" portionsize="100" />
+  <invtype id="27455" name="Dread Guristas Nova Heavy Missile" groupid="385" baseprice="2000.00" volume="0.03" capacity="0" portionsize="100" />
   <invtype id="27457" name="Blood Hunter F.O.F. Cruise Missile I" groupid="396" baseprice="15000.00" volume="0.05" capacity="0" portionsize="100" />
   <invtype id="27459" name="Imperial Navy Hunter F.O.F. Cruise Missile I" groupid="396" baseprice="15000.00" volume="0.05" capacity="0" portionsize="100" />
   <invtype id="27461" name="Dark Blood Hunter F.O.F. Cruise Missile I" groupid="396" baseprice="15000.00" volume="0.05" capacity="0" portionsize="100" />
@@ -14964,18 +14964,18 @@
   <invtype id="27880" name="LCS Minmatar Station 150k" groupid="319" baseprice="0.00" volume="0" capacity="0" portionsize="1" />
   <invtype id="27881" name="LCS Caldari Station 150k" groupid="319" baseprice="0.00" volume="0" capacity="0" portionsize="1" />
   <invtype id="27882" name="LCS Amarr Station 150k" groupid="319" baseprice="0.00" volume="0" capacity="0" portionsize="1" />
-  <invtype id="27883" name="Sansha Gremlin Rocket" groupid="387" baseprice="350.00" volume="0.005" capacity="0" portionsize="100" />
-  <invtype id="27884" name="True Sansha Gremlin Rocket" groupid="387" baseprice="350.00" volume="0.005" capacity="0" portionsize="100" />
-  <invtype id="27885" name="Sansha Sabretooth Light Missile" groupid="384" baseprice="750.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27886" name="True Sansha Sabretooth Light Missile" groupid="384" baseprice="750.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27887" name="Sansha Torrent Assault Missile" groupid="772" baseprice="3500.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27888" name="True Sansha Torrent Assault Missile" groupid="772" baseprice="3500.00" volume="0.015" capacity="0" portionsize="100" />
-  <invtype id="27889" name="Sansha Thunderbolt Heavy Missile" groupid="385" baseprice="3500.00" volume="0.03" capacity="0" portionsize="100" />
-  <invtype id="27890" name="True Sansha Thunderbolt Heavy Missile" groupid="385" baseprice="3500.00" volume="0.03" capacity="0" portionsize="100" />
+  <invtype id="27883" name="Sansha Mjolnir Rocket" groupid="387" baseprice="350.00" volume="0.005" capacity="0" portionsize="100" />
+  <invtype id="27884" name="True Sansha Mjolnir Rocket" groupid="387" baseprice="350.00" volume="0.005" capacity="0" portionsize="100" />
+  <invtype id="27885" name="Sansha Mjolnir Light Missile" groupid="384" baseprice="750.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27886" name="True Sansha Mjolnir Light Missile" groupid="384" baseprice="750.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27887" name="Sansha Mjolnir Assault Missile" groupid="772" baseprice="3500.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27888" name="True Sansha Mjolnir Assault Missile" groupid="772" baseprice="3500.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="27889" name="Sansha Mjolnir Heavy Missile" groupid="385" baseprice="3500.00" volume="0.03" capacity="0" portionsize="100" />
+  <invtype id="27890" name="True Sansha Mjolnir Heavy Missile" groupid="385" baseprice="3500.00" volume="0.03" capacity="0" portionsize="100" />
   <invtype id="27891" name="Sansha Mjolnir Torpedo" groupid="89" baseprice="35000.00" volume="0.1" capacity="0" portionsize="100" />
   <invtype id="27892" name="True Sansha Mjolnir Torpedo" groupid="89" baseprice="35000.00" volume="0.1" capacity="0" portionsize="100" />
-  <invtype id="27893" name="Sansha Paradise Cruise Missile" groupid="386" baseprice="15000.00" volume="0.05" capacity="0" portionsize="100" />
-  <invtype id="27894" name="True Sansha Paradise Cruise Missile" groupid="386" baseprice="15000.00" volume="0.05" capacity="0" portionsize="100" />
+  <invtype id="27893" name="Sansha Mjolnir Cruise Missile" groupid="386" baseprice="15000.00" volume="0.05" capacity="0" portionsize="100" />
+  <invtype id="27894" name="True Sansha Mjolnir Cruise Missile" groupid="386" baseprice="15000.00" volume="0.05" capacity="0" portionsize="100" />
   <invtype id="27895" name="TEST 10MN Bumperburner I" groupid="46" baseprice="103248.00" volume="5" capacity="0" portionsize="1" />
   <invtype id="27896" name="TEST 10MN Bumperburner I Blueprint" groupid="126" baseprice="0.00" volume="0.01" capacity="0" portionsize="1" />
   <invtype id="27897" name="Jump Bridge" groupid="707" baseprice="100000000.00" volume="100000" capacity="10000" portionsize="1" />
@@ -18743,7 +18743,7 @@
   <invtype id="32458" name="Infrastructure Hub" groupid="1012" baseprice="500000000.00" volume="750000" capacity="10000" portionsize="1" />
   <invtype id="32459" name="Civilian Warp Disruptor" groupid="52" baseprice="39424.00" volume="5" capacity="0" portionsize="1" />
   <invtype id="32461" name="Civilian Standard Missile Launcher" groupid="509" baseprice="6000.00" volume="5" capacity="0.6" portionsize="1" />
-  <invtype id="32463" name="Civilian Bloodclaw Light Missile" groupid="384" baseprice="500.00" volume="0.015" capacity="0" portionsize="100" />
+  <invtype id="32463" name="Civilian Trauma Light Missile" groupid="384" baseprice="500.00" volume="0.015" capacity="0" portionsize="100" />
   <invtype id="32465" name="Civilian Hobgoblin" groupid="100" baseprice="2500.00" volume="5" capacity="1200" portionsize="1" />
   <invtype id="32467" name="Civilian Remote Shield Transporter" groupid="41" baseprice="4996.00" volume="5" capacity="0" portionsize="1" />
   <invtype id="32469" name="Civilian Remote Armor Repair System" groupid="325" baseprice="4996.00" volume="5" capacity="0" portionsize="1" />

@@ -72,12 +72,15 @@ namespace UpdateInvTypes
                 var types = _invTypes.Skip(Progress.Value).Take(Progress.Step);
                 try
                 {
-                    var needUpdating = types.Where(type => !type.LastUpdate.HasValue || DateTime.Now.Subtract(type.LastUpdate.Value).TotalDays > 7);
+                    var needUpdating = types.Where(type => !type.LastUpdate.HasValue || DateTime.Now.Subtract(type.LastUpdate.Value).TotalDays > 4 );
+                    if (chkfast.Checked)
+                        needUpdating = types.Where(type => !type.LastUpdate.HasValue || DateTime.Now.Subtract(type.LastUpdate.Value).TotalMinutes > 2);
+
                     if (needUpdating.Count() == 0)
                         return;
 
                     var queryString = string.Join("&", types.Select(type => "typeid=" + type.Id).ToArray());
-                    queryString += "&regionlimit=10000002";
+                    queryString += "&usesystem=30000142"; //jita
 
                     var url = "http://api.eve-central.com/api/marketstat?" + queryString;
                     try
@@ -98,11 +101,17 @@ namespace UpdateInvTypes
 
                             var buy = type.Element("buy");
                             if (buy != null)
+                            {
                                 invType.MedianBuy = (double?)buy.Element("median");
+                                invType.MaxBuy = (double?)buy.Element("max");
+                            }
 
                             var sell = type.Element("sell");
                             if (sell != null)
+                            {
                                 invType.MedianSell = (double?)sell.Element("median");
+                                invType.MinSell = (double?)sell.Element("min");
+                            }
 
                             invType.LastUpdate = DateTime.Now;
                         }

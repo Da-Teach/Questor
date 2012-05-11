@@ -12,6 +12,7 @@ namespace Questor.Modules
     public enum AgentInteractionState
     {
         Idle,
+        ChangeAgent,
         StartConversation,
         WaitForConversation,
         ReplyToAgent,

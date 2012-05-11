@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<mission>
+  <pockets>
+    <pocket id="0">
+      <damagetype>Thermal</damagetype>
+      <actions>
+        <action name="ClearPocket" />
+        <action name="Kill">
+          <parameter name="Target" value="Kruul's Pleasure Gardens" />
+        </action>
+        <action name="Loot">
+          <parameter name="Item" value="The Damsel" />
+        </action>
+        <action name="ClearPocket" />
+        <action name="Loot" />
+        <action name="Done" />
+      </actions>
+    </pocket>
+  </pockets>
+</mission>

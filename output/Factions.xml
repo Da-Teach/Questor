@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<factions>
+  <faction logo="500001" name="Caldari State" damagetype="Kinetic" />
+  <faction logo="500002" name="Minmatar Republic" damagetype="Explosive" />
+  <faction logo="500003" name="Amarr Empire" damagetype="EM" />
+  <faction logo="500004" name="Gallente Federation" damagetype="Kinetic" />
+  <faction logo="500006" name="CONCORD Assembly" damagetype="Thermal" />
+  <faction logo="500007" name="Ammatar Mandate" damagetype="EM" />
+  <faction logo="500008" name="Khanid Kingdom" damagetype="Thermal" />
+  <faction logo="500015" name="Thukker Tribe" damagetype="Thermal" />
+  <faction logo="500018" name="Mordu's Legion Command" damagetype="Kinetic" />
+  <faction logo="500010" name="Guristas Pirates" damagetype="Kinetic" />
+  <faction logo="500011" name="Angel Cartel" damagetype="Explosive" />
+  <faction logo="500012" name="Blood Raiders" damagetype="EM" />
+  <faction logo="500019" name="Sansha's Nation" damagetype="EM" />
+  <faction logo="500020" name="Serpentis" damagetype="Kinetic" />
+  <faction logo="500005" name="Jovian Directorate" damagetype="Kinetic" />
+  <faction logo="500009" name="Intaki Syndicate" damagetype="Kinetic" />
+  <faction logo="500013" name="Interbus" damagetype="Kinetic" />
+  <faction logo="500014" name="ORE" damagetype="Kinetic" />
+  <faction logo="500016" name="Sisters of Eve" damagetype="Kinetic" />
+  <faction logo="500017" name="Society of Conscious Thought" damagetype="Kinetic" />
+</factions>

@@ -28,29 +28,10 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <OutputPath>$(SolutionDir)bin\$(Configuration)\</OutputPath>
-    <CodeAnalysisLogFile>$(SolutionDir)bin\$(Configuration)\$(TargetName).$(TargetExt).CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <OutputPath>$(ProjectDir)..\bin\$(Configuration)\</OutputPath>
+    <CodeAnalysisLogFile>$(ProjectDir)..\bin\$(Configuration)\$(TargetName).$(TargetExt).CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisRuleSetDirectories>$(CodeAnalysisStaticAnalysisDirectory)Rule Sets</CodeAnalysisRuleSetDirectories>
     <CodeAnalysisRuleDirectories>$(CodeAnalysisPath)Rules</CodeAnalysisRuleDirectories>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_3.5|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_3.5|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -82,14 +63,15 @@
   <ItemGroup>
     <Reference Include="DirectEve, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)\DirectEve\DirectEve.dll</HintPath>
+      <HintPath>..\DirectEve\DirectEve.dll</HintPath>
     </Reference>
     <Reference Include="Lavish.InnerSpace, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9029a3ab4cbe108d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files (x86)\InnerSpace\Lavish.InnerSpace.dll</HintPath>
+      <HintPath>$(ProgramFiles)\InnerSpace\Lavish.InnerSpace.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -120,6 +102,7 @@
     <Compile Include="Storylines\TransactionDataDeliveryState.cs" />
     <EmbeddedResource Include="frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -141,19 +124,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Recon %283 of 3%29.xml" />
-    <Content Include="Factions.xml" />
-    <Content Include="Recon %282 of 3%29.xml" />
-    <Content Include="Settings.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="ShipTargetValues.xml" />
-    <Content Include="InvTypes.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Worlds Collide.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Questor.Modules\Questor.Modules.csproj">
@@ -179,7 +149,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="CopyToInnerSpace" BeforeTargets="AfterBuild">
+  <Target Name="CopyToInnerSpace" AfterTargets="AfterBuild">
     <PropertyGroup>
       <InnerSpacePath Condition="'$(InnerSpacePath)'==''">$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\App Paths\InnerSpace.exe@Path)</InnerSpacePath>
       <InnerSpacePath Condition="'$(InnerSpacePath)'==''">$(registry:HKEY_CURRENT_USER\Software\Microsoft\IntelliPoint\AppSpecific\InnerSpace.exe@Path)</InnerSpacePath>

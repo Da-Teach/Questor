@@ -8,6 +8,8 @@
 //  </copyright>
 //-------------------------------------------------------------------------------
 
+#define manual
+
 namespace ValueDump
 {
     using System;
@@ -28,6 +30,7 @@ namespace ValueDump
         private List<ItemCache> ItemsToRefine { get; set; }
         private ValueDumpState State { get; set; }
         private DirectEve DirectEve { get; set; }
+        private static double _delay { get; set; }
 
         public string InvTypesPath
         {
@@ -57,14 +60,23 @@ namespace ValueDump
 
             DirectEve = new DirectEve();
             DirectEve.OnFrame += OnFrame;
+            _delay = 5;
         }
 
         private InvType _currentMineral;
         private ItemCache _currentItem;
         private DateTime _lastExecute = DateTime.MinValue;
 
+
+
         private void OnFrame(object sender, EventArgs e)
         {
+
+
+
+
+
+
             if (State == ValueDumpState.Idle)
                 return;
 
@@ -75,10 +87,15 @@ namespace ValueDump
             switch (State)
             {
                 case ValueDumpState.CheckMineralPrices:
-                    _currentMineral = InvTypesById.Values.FirstOrDefault(i => i.Id != 27029 && i.GroupId == 18 && i.LastUpdate < DateTime.Now.AddHours(-4));
+                    if (RefineCheckBox.Checked)
+                        _currentMineral = InvTypesById.Values.FirstOrDefault(i => i.ReprocessValue.HasValue && i.LastUpdate < DateTime.Now.AddDays(-7));
+                    else
+                        _currentMineral = InvTypesById.Values.FirstOrDefault(i => i.Id != 27029 && i.GroupId == 18 && i.LastUpdate < DateTime.Now.AddHours(-4));
+                        //_currentMineral = InvTypesById.Values.FirstOrDefault(i => i.Id != 27029 && i.GroupId == 18 && i.LastUpdate < DateTime.Now.AddMinutes(-1));
+                        //_currentMineral = InvTypesById.Values.FirstOrDefault(i => i.Id == 20236 && i.LastUpdate < DateTime.Now.AddMinutes(-1));
                     if (_currentMineral == null)
                     {
-                        if (DateTime.Now.Subtract(_lastExecute).TotalSeconds > 5)
+                        if (DateTime.Now.Subtract(_lastExecute).TotalSeconds > _delay)
                         {
                             State = ValueDumpState.SaveMineralPrices;
                             if (marketWindow != null)
@@ -86,51 +103,123 @@ namespace ValueDump
                         }
                     }
                     else
-                        State = ValueDumpState.GetMineralPrice;
+                    {
+                        //State = ValueDumpState.GetMineralPrice;
+                        if (marketWindow == null)
+                        {
+                            if (DateTime.Now.Subtract(_lastExecute).TotalSeconds > _delay)
+                            {
+                                DirectEve.ExecuteCommand(DirectCmd.OpenMarket);
+                                _lastExecute = DateTime.Now;
+                            }
+                            return;
+                        }
+
+                        if (!marketWindow.IsReady)
+                            return;
+
+                        if (marketWindow.DetailTypeId != _currentMineral.Id)
+                        {
+                            if (DateTime.Now.Subtract(_lastExecute).TotalSeconds < _delay)
+                                return;
+
+                            Log("Loading orders for " + _currentMineral.Name);
+
+                            marketWindow.LoadTypeId(_currentMineral.Id);
+                            _lastExecute = DateTime.Now;
+                            return;
+                        }
+
+                        if (!marketWindow.BuyOrders.Any(o => o.StationId == DirectEve.Session.StationId))
+                        {
+                            _currentMineral.LastUpdate = DateTime.Now;
+
+                            Log("No buy orders found for " + _currentMineral.Name);
+                            State = ValueDumpState.CheckMineralPrices;
+                        }
+
+                        // Take top 5 orders, average the buy price and consider that median-buy (it's not really median buy but its what we want)
+                        //_currentMineral.MedianBuy = marketWindow.BuyOrders.Where(o => o.StationId == DirectEve.Session.StationId).OrderByDescending(o => o.Price).Take(5).Average(o => o.Price);
+
+                        // Take top 1% orders and count median-buy price (no botter covers more than 1% Jita orders anyway)
+                        var orders = marketWindow.BuyOrders.Where(o => o.StationId == DirectEve.Session.StationId && o.MinimumVolume == 1).OrderByDescending(o => o.Price).ToList();
+                        var totalAmount = orders.Sum(o => (double)o.VolumeRemaining);
+                        double amount = 0, value = 0, count = 0;
+                        for (var i = 0; i < orders.Count(); i++)
+                        {
+                            amount += orders[i].VolumeRemaining;
+                            value += orders[i].VolumeRemaining * orders[i].Price;
+                            count++;
+                            //Log(_currentMineral.Name + " " + count + ": " + orders[i].VolumeRemaining.ToString("#,##0") + " items @ " + orders[i].Price);
+                            if (amount / totalAmount > 0.01)
+                                break;
+                        }
+                        _currentMineral.MedianBuy = value / amount;
+                        Log("Average buy price for " + _currentMineral.Name + " is " + _currentMineral.MedianBuy.Value.ToString("#,##0.00") + " (" + count + " / " + orders.Count() + " orders, " + amount.ToString("#,##0") + " / " + totalAmount.ToString("#,##0") + " items)");
+
+                        if (!marketWindow.SellOrders.Any(o => o.StationId == DirectEve.Session.StationId))
+                        {
+                            _currentMineral.LastUpdate = DateTime.Now;
+
+                            Log("No sell orders found for " + _currentMineral.Name);
+                            State = ValueDumpState.CheckMineralPrices;
+                        }
+
+                        // Take top 1% orders and count median-sell price
+                        orders = marketWindow.SellOrders.Where(o => o.StationId == DirectEve.Session.StationId).OrderBy(o => o.Price).ToList();
+                        totalAmount = orders.Sum(o => (double)o.VolumeRemaining);
+                        amount = 0; value = 0; count = 0;
+                        for (var i = 0; i < orders.Count(); i++)
+                        {
+                            amount += orders[i].VolumeRemaining;
+                            value += orders[i].VolumeRemaining * orders[i].Price;
+                            count++;
+                            //Log(_currentMineral.Name + " " + count + ": " + orders[i].VolumeRemaining.ToString("#,##0") + " items @ " + orders[i].Price);
+                            if (amount / totalAmount > 0.01)
+                                break;
+                        }
+                        _currentMineral.MedianSell = value / amount - 0.01;
+                        Log("Average sell price for " + _currentMineral.Name + " is " + _currentMineral.MedianSell.Value.ToString("#,##0.00") + " (" + count + " / " + orders.Count() + " orders, " + amount.ToString("#,##0") + " / " + totalAmount.ToString("#,##0") + " items)");
+
+                        if (_currentMineral.MedianSell.HasValue && !double.IsNaN(_currentMineral.MedianSell.Value))
+                            _currentMineral.MedianAll = _currentMineral.MedianSell;
+                        else if (_currentMineral.MedianBuy.HasValue && !double.IsNaN(_currentMineral.MedianBuy.Value))
+                            _currentMineral.MedianAll = _currentMineral.MedianBuy;
+                        _currentMineral.LastUpdate = DateTime.Now;
+                        //State = ValueDumpState.CheckMineralPrices;
+                    }
                     break;
 
                 case ValueDumpState.GetMineralPrice:
-                    if (marketWindow == null)
-                    {
-                        if (DateTime.Now.Subtract(_lastExecute).TotalSeconds > 5)
-                        {
-                            DirectEve.ExecuteCommand(DirectCmd.OpenMarket);
-                            _lastExecute = DateTime.Now;
-                        }
-
-                        return;
-                    }
-
-                    if (marketWindow.DetailTypeId != _currentMineral.Id)
-                    {
-                        if (DateTime.Now.Subtract(_lastExecute).TotalSeconds < 5)
-                            return;
-
-                        Log("Loading orders for " + _currentMineral.Name);
-
-                        marketWindow.LoadTypeId(_currentMineral.Id);
-                        _lastExecute = DateTime.Now;
-                        return;
-                    }
-
-                    if (!marketWindow.BuyOrders.Any(o => o.StationId == DirectEve.Session.StationId))
-                    {
-                        _currentMineral.LastUpdate = DateTime.Now;
-
-                        Log("No orders found for " + _currentMineral.Name);
-                        State = ValueDumpState.CheckMineralPrices;
-                    }
-
-                    // Take top 5 orders, average the buy price and consider that median-buy (it's not really median buy but its what we want)
-                    _currentMineral.MedianBuy = marketWindow.BuyOrders.Where(o => o.StationId == DirectEve.Session.StationId).OrderByDescending(o => o.Price).Take(5).Average(o => o.Price);
-                    _currentMineral.LastUpdate = DateTime.Now;
-                    State = ValueDumpState.CheckMineralPrices;
-
-                    Log("Average price for " + _currentMineral.Name + " is " + _currentMineral.MedianBuy.Value.ToString("#,##0.00"));
                     break;
 
                 case ValueDumpState.SaveMineralPrices:
-                    Log("Saving InvItems.xml");
+                    Log("Updating reprocess prices");
+
+                    // a quick price check table
+                    var MineralPrices = new Dictionary<string, double>();
+                    foreach (var i in InvTypesById.Values)
+                        if (InvType.Minerals.Contains(i.Name))
+#if manual
+                            MineralPrices.Add(i.Name, i.MedianSell ?? 0);
+#else
+                            MineralPrices.Add(i.Name, i.MedianBuy ?? 0);
+#endif
+
+                    double temp;
+                    foreach (var i in InvTypesById.Values)
+                    {
+                        temp = 0;
+                        foreach (var m in InvType.Minerals)
+                            if (i.Reprocess[m].HasValue && i.Reprocess[m] > 0)
+                                temp += i.Reprocess[m].Value * MineralPrices[m];
+                        if (temp > 0)
+                            i.ReprocessValue = temp;
+                        else
+                            i.ReprocessValue = null;
+                    }
+
+                    Log("Saving InvTypes.xml");
 
                     var xdoc = new XDocument(new XElement("invtypes"));
                     foreach (var type in InvTypesById.Values.OrderBy(i => i.Id))
@@ -144,7 +233,7 @@ namespace ValueDump
                     if (hangar.Window == null)
                     {
                         // No, command it to open
-                        if (DateTime.Now.Subtract(_lastExecute).TotalSeconds > 5)
+                        if (DateTime.Now.Subtract(_lastExecute).TotalSeconds > _delay)
                         {
                             Log("Opening hangar");
                             DirectEve.ExecuteCommand(DirectCmd.OpenHangarFloor);
@@ -163,22 +252,28 @@ namespace ValueDump
                     Items.Clear();
                     var hangarItems = hangar.Items;
                     if (hangarItems != null)
-                        Items.AddRange(hangarItems.Where(i => i.ItemId > 0 && i.MarketGroupId > 0 && i.Quantity > 0).Select(i => new ItemCache(i, RefineCheckBox.Checked)));
+                        Items.AddRange(hangarItems.Where(i => i.ItemId > 0 && i.Quantity > 0).Select(i => new ItemCache(i, RefineCheckBox.Checked)));
 
                     State = ValueDumpState.UpdatePrices;
                     break;
 
                 case ValueDumpState.UpdatePrices:
+                    bool updated = false;
+
                     foreach (var item in Items)
                     {
                         InvType invType;
                         if (!InvTypesById.TryGetValue(item.TypeId, out invType))
                         {
-                            Log("Unknown TypeId " + item.TypeId + " for " + item.Name);
+                            Log("Unknown TypeId " + item.TypeId + " for " + item.Name + ", adding to the list");
+                            invType = new InvType(item);
+                            InvTypesById.Add(item.TypeId, invType);
+                            updated = true;
                             continue;
                         }
-
                         item.InvType = invType;
+
+                        bool updItem = false;
                         foreach(var material in item.RefineOutput)
                         {
                             if (!InvTypesById.TryGetValue(material.TypeId, out invType))
@@ -186,22 +281,46 @@ namespace ValueDump
                                 Log("Unknown TypeId " + material.TypeId + " for " + material.Name);
                                 continue;
                             }
-
                             material.InvType = invType;
+
+                            var matsPerItem = (double) material.Quantity / item.PortionSize;
+                            var exists = InvTypesById[(int)item.TypeId].Reprocess[material.Name].HasValue;
+                            if ((!exists && matsPerItem > 0) || (exists && InvTypesById[(int)item.TypeId].Reprocess[material.Name] != matsPerItem))
+                            {
+                                if (exists)
+                                    Log("[" + item.Name + "][" + material.Name + "] old value: [" + InvTypesById[(int)item.TypeId].Reprocess[material.Name] + ", new value: [" + matsPerItem + "]");
+                                InvTypesById[(int)item.TypeId].Reprocess[material.Name] = matsPerItem;
+                                updItem = true;
+                            }
                         }
+
+                        if (updItem)
+                            Log("Updated [" + item.Name + "] refine materials");
+                        updated |= updItem;
                     }
 
-                    State = ValueDumpState.Idle;
+                    if (updated)
+                        State = ValueDumpState.SaveMineralPrices;
+                    else
+                        State = ValueDumpState.Idle;
+
                     if (cbxSell.Checked)
                     {
                         // Copy the items to sell list
                         ItemsToSell.Clear();
                         ItemsToRefine.Clear();
                         if (cbxUndersell.Checked)
-                            ItemsToSell.AddRange(Items.Where(i => i.InvType != null));
+#if manual
+                            ItemsToSell.AddRange(Items.Where(i => i.InvType != null && i.MarketGroupId > 0));
+#else
+                            ItemsToSell.AddRange(Items.Where(i => i.InvType != null && i.MarketGroupId > 0));
+#endif
                         else
-                            ItemsToSell.AddRange(Items.Where(i => i.InvType != null && i.InvType.MedianBuy.HasValue));
-                        
+#if manual
+                            ItemsToSell.AddRange(Items.Where(i => i.InvType != null && i.MarketGroupId > 0 && i.InvType.MedianBuy.HasValue));
+#else
+                            ItemsToSell.AddRange(Items.Where(i => i.InvType != null && i.MarketGroupId > 0 && i.InvType.MedianBuy.HasValue));
+#endif
                         State = ValueDumpState.NextItem;
                     }
                     break;
@@ -232,7 +351,7 @@ namespace ValueDump
                     break;
 
                 case ValueDumpState.StartQuickSell:
-                    if (DateTime.Now.Subtract(_lastExecute).TotalSeconds < 1)
+                    if (DateTime.Now.Subtract(_lastExecute).TotalSeconds < 5)
                         break;
                     _lastExecute = DateTime.Now;
 
@@ -372,7 +491,7 @@ namespace ValueDump
                 case ValueDumpState.RefineItems:
                     if (reprorcessingWindow == null)
                     {
-                        if (DateTime.Now.Subtract(_lastExecute).TotalSeconds > 5)
+                        if (DateTime.Now.Subtract(_lastExecute).TotalSeconds > _delay)
                         {
                             var refineItems = hangar.Items.Where(i => ItemsToRefine.Any(r => r.Id == i.ItemId));
                             DirectEve.ReprocessStationItems(refineItems);
@@ -384,7 +503,7 @@ namespace ValueDump
 
                     if (reprorcessingWindow.NeedsQuote)
                     {
-                        if (DateTime.Now.Subtract(_lastExecute).TotalSeconds > 5)
+                        if (DateTime.Now.Subtract(_lastExecute).TotalSeconds > _delay)
                         {
                             reprorcessingWindow.GetQuotes();
                             _lastExecute = DateTime.Now;
@@ -401,7 +520,7 @@ namespace ValueDump
                     }
                     
                     // Wait another 5 seconds to view the quote and then reprocess the stuff
-                    if (DateTime.Now.Subtract(_lastExecute).TotalSeconds > 5)
+                    if (DateTime.Now.Subtract(_lastExecute).TotalSeconds > _delay)
                     {
                         // TODO: We should wait for the items to appear in our hangar and then sell them...
                         reprorcessingWindow.Reprocess();
@@ -471,6 +590,45 @@ namespace ValueDump
         private void UpdateMineralPricesButton_Click(object sender, EventArgs e)
         {
             State = ValueDumpState.CheckMineralPrices;
+        }
+
+        private void lvItems_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+                 
+            ListViewColumnSort oCompare = new ListViewColumnSort();
+
+            if (lvItems.Sorting == SortOrder.Ascending)
+                oCompare.Sorting = SortOrder.Descending;
+            else
+               oCompare.Sorting = SortOrder.Ascending;
+               lvItems.Sorting = oCompare.Sorting;
+               oCompare.ColumnIndex = e.Column;
+
+            switch (e.Column)
+            {
+                case 1:
+                    oCompare.CompararPor = ListViewColumnSort.TipoCompare.Cadena;
+                    break;
+                case 2:
+                    oCompare.CompararPor = ListViewColumnSort.TipoCompare.Numero;
+                    break;
+                case 3:
+                    oCompare.CompararPor = ListViewColumnSort.TipoCompare.Numero;
+                    break;
+                case 4:
+                    oCompare.CompararPor = ListViewColumnSort.TipoCompare.Numero;
+                    break;
+                case 5:
+                    oCompare.CompararPor = ListViewColumnSort.TipoCompare.Numero;
+                    break;
+                case 6:
+                    oCompare.CompararPor = ListViewColumnSort.TipoCompare.Numero;
+                    break;
+
+            }
+
+            lvItems.ListViewItemSorter = oCompare;
+        
         }
     }
 }

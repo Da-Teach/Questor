@@ -55,6 +55,17 @@ namespace Questor.Modules
             }
         }
 
+        public int TypeId
+        {
+            get
+            {
+                if(_directEntity != null)
+                    return _directEntity.TypeId;
+
+                return 0;
+            }
+        }
+
         public long FollowId
         {
             get
@@ -308,21 +319,32 @@ namespace Questor.Modules
             }
         }
 
+        public int Health
+        {
+            get
+            {
+                if (_directEntity != null)
+                    return (int)((_directEntity.ShieldPct + _directEntity.ArmorPct + _directEntity.StructurePct) * 100);
+
+                return 0;
+            }
+        }
+
         public bool IsSentry
         {
             get
             {
-                if (GroupId == (int) Group.SentryGun) return true;
-                if (GroupId == (int) Group.ProtectiveSentryGun) return true;
-                if (GroupId == (int) Group.MobileSentryGun) return true;
-                if (GroupId == (int) Group.DestructibleSentryGun) return true;
-                if (GroupId == (int) Group.MobileMissileSentry) return true;
-                if (GroupId == (int) Group.MobileProjectileSentry) return true;
-                if (GroupId == (int) Group.MobileLaserSentry) return true;
-                if (GroupId == (int) Group.MobileHybridSentry) return true;
-                if (GroupId == (int) Group.DeadspaceOverseersSentry) return true;
-                if (GroupId == (int) Group.StasisWebificationBattery) return true;
-                if (GroupId == (int) Group.EnergyNeutralizingBattery) return true;
+                if (GroupId == (int)Group.SentryGun) return true;
+                if (GroupId == (int)Group.ProtectiveSentryGun) return true;
+                if (GroupId == (int)Group.MobileSentryGun) return true;
+                if (GroupId == (int)Group.DestructibleSentryGun) return true;
+                if (GroupId == (int)Group.MobileMissileSentry) return true;
+                if (GroupId == (int)Group.MobileProjectileSentry) return true;
+                if (GroupId == (int)Group.MobileLaserSentry) return true;
+                if (GroupId == (int)Group.MobileHybridSentry) return true;
+                if (GroupId == (int)Group.DeadspaceOverseersSentry) return true;
+                if (GroupId == (int)Group.StasisWebificationBattery) return true;
+                if (GroupId == (int)Group.EnergyNeutralizingBattery) return true;
                 return false;
             }
         }
@@ -331,7 +353,7 @@ namespace Questor.Modules
         {
             get
             {
-                if (GroupId == (int) Group.SpawnContainer)
+                if (GroupId == (int)Group.SpawnContainer)
                     return true;
 
                 if (_directEntity != null)
@@ -382,10 +404,10 @@ namespace Questor.Modules
         {
             get
             {
-                if (GroupId == (int) Group.Wreck) return true;
-                if (GroupId == (int) Group.CargoContainer) return true;
-                if (GroupId == (int) Group.SpawnContainer) return true;
-                if (GroupId == (int) Group.MissionContainer) return true;
+                if (GroupId == (int)Group.Wreck) return true;
+                if (GroupId == (int)Group.CargoContainer) return true;
+                if (GroupId == (int)Group.SpawnContainer) return true;
+                if (GroupId == (int)Group.MissionContainer) return true;
                 return false;
             }
         }
@@ -410,7 +432,7 @@ namespace Questor.Modules
                 result |= GroupId == (int)Group.PrototypeExplorationShip;
 
                 // Technically not frigs, but for our purposes they are
-                result |= GroupId == (int)Group.Destroyer; 
+                result |= GroupId == (int)Group.Destroyer;
                 result |= GroupId == (int)Group.Interdictor;
                 result |= GroupId == (int)Group.Interceptor;
                 return result;
@@ -476,6 +498,9 @@ namespace Questor.Modules
                 result |= GroupId == (int)Group.ConcordDrone;
                 result |= GroupId == (int)Group.CustomsOfficial;
                 result |= GroupId == (int)Group.Billboard;
+                result |= GroupId == (int)Group.Stargate;
+                result |= GroupId == (int)Group.Station;
+                result |= GroupId == (int)Group.Capsule;
                 result |= IsFrigate;
                 result |= IsCruiser;
                 result |= IsBattlecruiser;
@@ -560,13 +585,19 @@ namespace Questor.Modules
                 _directEntity.WarpTo();
         }
 
+        public void AlignTo()
+        {
+            if (_directEntity != null)
+                _directEntity.AlignTo();
+        }
+
         public void WarpToAndDock()
         {
             if (_directEntity != null)
                 _directEntity.WarpToAndDock();
         }
 
-        internal void Dock()
+        public void Dock()
         {
             if (_directEntity != null)
                 _directEntity.Dock();
