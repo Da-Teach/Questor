@@ -16,7 +16,7 @@ namespace Questor.Modules.States
         OpenMarket,
         BuyItems,
         AcceptOffer,
-        Quatity,
+        Quantity,
         Done,
     }
 }
