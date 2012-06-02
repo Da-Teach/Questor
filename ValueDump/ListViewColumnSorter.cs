@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Windows.Forms;
 
-
 public class ListViewColumnSort : IComparer
 {
     public enum TipoCompare
@@ -11,21 +10,22 @@ public class ListViewColumnSort : IComparer
         Numero,
         Fecha
     }
+
     public TipoCompare CompararPor;
     public int ColumnIndex = 0;
     public SortOrder Sorting = SortOrder.Ascending;
 
     public ListViewColumnSort()
     {
-
     }
+
     public ListViewColumnSort(int columna)
     {
         ColumnIndex = columna;
     }
+
     public int Compare(Object a, Object b)
     {
-
         int menor = -1, mayor = 1;
         String s1, s2;
         //
@@ -83,7 +83,6 @@ public class ListViewColumnSort : IComparer
             default:
 
                 return System.String.Compare(s1, s2, true) * mayor;
-
         }
     }
 }

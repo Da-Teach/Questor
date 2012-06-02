@@ -65,20 +65,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="frmMain.cs">
+    <Compile Include="ValueDumpUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmMain.Designer.cs">
-      <DependentUpon>frmMain.cs</DependentUpon>
+    <Compile Include="ValueDumpUI.Designer.cs">
+      <DependentUpon>ValueDumpUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="InvType.cs" />
-    <Compile Include="ItemCache.cs" />
     <Compile Include="ListViewColumnSorter.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="ValueDump.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValueDumpState.cs" />
-    <EmbeddedResource Include="frmMain.resx">
-      <DependentUpon>frmMain.cs</DependentUpon>
+    <EmbeddedResource Include="ValueDumpUI.resx">
+      <DependentUpon>ValueDumpUI.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -100,6 +99,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Questor.Modules\Questor.Modules.csproj">
+      <Project>{6D5DAAB6-0208-46AA-BA56-92B6068028C9}</Project>
+      <Name>Questor.Modules</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

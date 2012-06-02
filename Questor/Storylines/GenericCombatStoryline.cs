@@ -1,22 +1,35 @@
-﻿namespace Questor.Storylines
+﻿
+
+namespace Questor.Storylines
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using global::Questor.Modules;
+    using DirectEve;
+    using global::Questor.Behaviors;
+    using global::Questor.Modules.Actions;
+    using global::Questor.Modules.Activities;
+    using global::Questor.Modules.BackgroundTasks;
+    using global::Questor.Modules.Caching;
+    using global::Questor.Modules.Combat;
+    using global::Questor.Modules.Logging;
+    using global::Questor.Modules.Lookup;
+    using global::Questor.Modules.States;
 
     public class GenericCombatStoryline : IStoryline
     {
-        private long _agentId;
-        private List<Ammo> _neededAmmo;
 
-        private AgentInteraction _agentInteraction;
-        private Arm _arm;
-        private Traveler _traveler;
-        private MissionController _missionController;
-        private Combat _combat;
-        private Drones _drones;
-        private Salvage _salvage;
+        private long _agentId;
+        private readonly List<Ammo> _neededAmmo;
+
+        private readonly AgentInteraction _agentInteraction;
+        private readonly Arm _arm;
+        private readonly Traveler _traveler;
+        private readonly CombatMissionCtrl _combatMissionCtrl;
+        private readonly Combat _combat;
+        private readonly Drones _drones;
+        private readonly Salvage _salvage;
+        private readonly Statistics _statistics;
 
         private GenericCombatStorylineState _state;
 
@@ -36,7 +49,8 @@
             _combat = new Combat();
             _drones = new Drones();
             _salvage = new Salvage();
-            _missionController = new MissionController();
+            _statistics = new Statistics();
+            _combatMissionCtrl = new CombatMissionCtrl();
 
             Settings.Instance.SettingsLoaded += ApplySettings;
         }
@@ -60,26 +74,30 @@
         /// <returns></returns>
         public StorylineState Arm(Storyline storyline)
         {
-            if (_agentId != storyline.AgentId)
+            if (_agentId != Cache.Instance.CurrentStorylineAgentId)
             {
                 _neededAmmo.Clear();
-                _agentId = storyline.AgentId;
+                _agentId = Cache.Instance.CurrentStorylineAgentId;
 
                 _agentInteraction.AgentId = _agentId;
                 _agentInteraction.ForceAccept = true; // This makes agent interaction skip the offer-check
-                _agentInteraction.State = AgentInteractionState.Idle;
+                _States.CurrentAgentInteractionState = AgentInteractionState.Idle;
                 _agentInteraction.Purpose = AgentInteractionPurpose.AmmoCheck;
 
                 _arm.AgentId = _agentId;
-                _arm.State = ArmState.Idle;
+                _States.CurrentArmState = ArmState.Idle;
                 _arm.AmmoToLoad.Clear();
 
-                _missionController.AgentId = _agentId;
-                _missionController.State = MissionControllerState.Start;
+                //Questor.AgentID = _agentId;
 
-                _combat.State = CombatState.CheckTargets;
+                _statistics.AgentID = _agentId;
 
-                _drones.State = DroneState.WaitingForTargets;
+                _combatMissionCtrl.AgentId = _agentId;
+                _States.CurrentCombatMissionCtrlState = CombatMissionCtrlState.Start;
+
+                _States.CurrentCombatState = CombatState.CheckTargets;
+
+                _States.CurrentDroneState = DroneState.WaitingForTargets;
             }
 
             try
@@ -91,14 +109,14 @@
                     return StorylineState.Arm;
 
                 // We are done, reset agent id
-                _agentId = 0; 
-                
+                _agentId = 0;
+
                 return StorylineState.GotoAgent;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 // Something went wrong!
-                Logging.Log("GenericCombatStoryline: Something went wrong, blacklist this agent [" + ex.Message + "]");
+                Logging.Log("GenericCombatStoryline", "Something went wrong, blacklist this agent [" + ex.Message + "]", Logging.orange);
                 return StorylineState.BlacklistAgent;
             }
         }
@@ -110,29 +128,28 @@
         private bool Interact()
         {
             // Are we done?
-            if (_agentInteraction.State == AgentInteractionState.Done)
+            if (_States.CurrentAgentInteractionState == AgentInteractionState.Done)
                 return true;
 
             if (_agentInteraction.Agent == null)
                 throw new Exception("Invalid agent");
 
             // Start the conversation
-            if (_agentInteraction.State == AgentInteractionState.Idle)
-                _agentInteraction.State = AgentInteractionState.StartConversation;
+            if (_States.CurrentAgentInteractionState == AgentInteractionState.Idle)
+                _States.CurrentAgentInteractionState = AgentInteractionState.StartConversation;
 
             // Interact with the agent to find out what ammo we need
             _agentInteraction.ProcessState();
 
-            if (_agentInteraction.State == AgentInteractionState.DeclineMission)
+            if (_States.CurrentAgentInteractionState == AgentInteractionState.DeclineMission)
             {
                 if (_agentInteraction.Agent.Window != null)
                     _agentInteraction.Agent.Window.Close();
-                Logging.Log("GenericCombatStoryline: Mission offer is in a Low Security System"); //do storyline missions in lowsec get blacklisted by: "public StorylineState Arm(Storyline storyline)"?
+                Logging.Log("GenericCombatStoryline", "Mission offer is in a Low Security System", Logging.orange); //do storyline missions in lowsec get blacklisted by: "public StorylineState Arm(Storyline storyline)"?
                 throw new Exception("Low security systems");
-
             }
 
-            if (_agentInteraction.State == AgentInteractionState.Done)
+            if (_States.CurrentAgentInteractionState == AgentInteractionState.Done)
             {
                 _arm.AmmoToLoad.Clear();
                 _arm.AmmoToLoad.AddRange(_agentInteraction.AmmoToLoad);
@@ -148,17 +165,17 @@
         /// <returns></returns>
         private bool LoadAmmo()
         {
-            if (_arm.State == ArmState.Done)
+            if (_States.CurrentArmState == ArmState.Done)
                 return true;
 
-            if (_arm.State == ArmState.Idle)
-                _arm.State = ArmState.Begin;
+            if (_States.CurrentArmState == ArmState.Idle)
+                _States.CurrentArmState = ArmState.Begin;
 
             _arm.ProcessState();
 
-            if (_arm.State == ArmState.Done)
+            if (_States.CurrentArmState == ArmState.Done)
             {
-                _arm.State = ArmState.Idle;
+                _States.CurrentArmState = ArmState.Idle;
                 return true;
             }
 
@@ -182,33 +199,33 @@
         /// <returns></returns>
         public StorylineState ExecuteMission(Storyline storyline)
         {
-            switch(_state)
+            switch (_state)
             {
                 case GenericCombatStorylineState.WarpOutStation:
-                    var _bookmark = Cache.Instance.BookmarksByLabel(Settings.Instance.bookmarkWarpOut ?? "").OrderByDescending(b => b.CreatedOn).Where(b => b.LocationId == Cache.Instance.DirectEve.Session.SolarSystemId).FirstOrDefault();
-                    var _solarid = Cache.Instance.DirectEve.Session.SolarSystemId ?? -1;
+                    DirectBookmark warpOutBookMark = Cache.Instance.BookmarksByLabel(Settings.Instance.BookmarkWarpOut ?? "").OrderByDescending(b => b.CreatedOn).FirstOrDefault(b => b.LocationId == Cache.Instance.DirectEve.Session.SolarSystemId);
+                    long solarid = Cache.Instance.DirectEve.Session.SolarSystemId ?? -1;
 
-                    if (_bookmark == null)
+                    if (warpOutBookMark == null)
                     {
-                        Logging.Log("WarpOut: No Bookmark");
+                        Logging.Log("GenericCombatStoryline.WarpOut", "No Bookmark", Logging.orange);
                         if (_state == GenericCombatStorylineState.WarpOutStation)
                         {
                             _state = GenericCombatStorylineState.GotoMission;
                         }
                     }
-                    else if (_bookmark.LocationId == _solarid)
+                    else if (warpOutBookMark.LocationId == solarid)
                     {
                         if (_traveler.Destination == null)
                         {
-                            Logging.Log("WarpOut: Warp at " + _bookmark.Title);
-                            _traveler.Destination = new BookmarkDestination(_bookmark);
+                            Logging.Log("GenericCombatStoryline.WarpOut", "Warp at " + warpOutBookMark.Title, Logging.white);
+                            _traveler.Destination = new BookmarkDestination(warpOutBookMark);
                             Cache.Instance.DoNotBreakInvul = true;
                         }
 
                         _traveler.ProcessState();
-                        if (_traveler.State == TravelerState.AtDestination)
+                        if (_States.CurrentTravelerState == TravelerState.AtDestination)
                         {
-                            Logging.Log("WarpOut: Safe!");
+                            Logging.Log("GenericCombatStoryline.WarpOut", "Safe!", Logging.white);
                             Cache.Instance.DoNotBreakInvul = false;
                             if (_state == GenericCombatStorylineState.WarpOutStation)
                             {
@@ -219,29 +236,39 @@
                     }
                     else
                     {
-                        Logging.Log("WarpOut: No Bookmark in System");
+                        Logging.Log("GenericCombatStoryline.WarpOut", "o Bookmark in System", Logging.white);
                         if (_state == GenericCombatStorylineState.WarpOutStation)
                         {
                             _state = GenericCombatStorylineState.GotoMission;
-                        } 
+                        }
                     }
                     break;
 
                 case GenericCombatStorylineState.GotoMission:
                     var missionDestination = _traveler.Destination as MissionBookmarkDestination;
-                    if (missionDestination == null || missionDestination.AgentId != storyline.AgentId) // We assume that this will always work "correctly" (tm)
-                        _traveler.Destination = new MissionBookmarkDestination(Cache.Instance.GetMissionBookmark(storyline.AgentId, "Encounter"));
+                    //
+                    // if we have no destination yet... OR if missionDestination.AgentId != storyline.CurrentStorylineAgentId
+                    //
+                    //if (missionDestination != null) Logging.Log("GenericCombatStoryline: missionDestination.AgentId [" + missionDestination.AgentId + "] " + "and storyline.CurrentStorylineAgentId [" + storyline.CurrentStorylineAgentId + "]");
+                    //if (missionDestination == null) Logging.Log("GenericCombatStoryline: missionDestination.AgentId [ NULL ] " + "and storyline.CurrentStorylineAgentId [" + storyline.CurrentStorylineAgentId + "]");
+                    if (missionDestination == null || missionDestination.AgentId != Cache.Instance.CurrentStorylineAgentId) // We assume that this will always work "correctly" (tm)
+                    {
+                        const string nameOfBookmark = "Encounter";
+                        Logging.Log("GenericCombatStoryline", "Setting Destination to 1st bookmark from AgentID: [" + Cache.Instance.CurrentStorylineAgentId + "] with [" + nameOfBookmark + "] in the title", Logging.white);
+                        _traveler.Destination = new MissionBookmarkDestination(Cache.Instance.GetMissionBookmark(Cache.Instance.CurrentStorylineAgentId, nameOfBookmark));
+                    }
 
                     if (Cache.Instance.PriorityTargets.Any(pt => pt != null && pt.IsValid))
                     {
-                        Logging.Log("GenericCombatStoryline: Priority targets found while traveling, engaging!");
+                        Logging.Log("GenericCombatStoryline", "Priority targets found while traveling, engaging!", Logging.white);
                         _combat.ProcessState();
                     }
 
                     _traveler.ProcessState();
-                    if (_traveler.State == TravelerState.AtDestination)
+                    if (_States.CurrentTravelerState == TravelerState.AtDestination)
                     {
                         _state = GenericCombatStorylineState.ExecuteMission;
+                        _States.CurrentCombatState = CombatState.CheckTargets;
                         _traveler.Destination = null;
                     }
                     break;
@@ -250,20 +277,20 @@
                     _combat.ProcessState();
                     _drones.ProcessState();
                     _salvage.ProcessState();
-                    _missionController.ProcessState();
+                    _combatMissionCtrl.ProcessState();
 
                     // If we are out of ammo, return to base, the mission will fail to complete and the bot will reload the ship
                     // and try the mission again
-                    if (_combat.State == CombatState.OutOfAmmo)
+                    if (_States.CurrentCombatState == CombatState.OutOfAmmo)
                     {
                         // Clear looted containers
                         Cache.Instance.LootedContainers.Clear();
 
-                        Logging.Log("GenericCombatStoryline: Out of Ammo!");
+                        Logging.Log("GenericCombatStoryline", "Out of Ammo!", Logging.orange);
                         return StorylineState.ReturnToAgent;
                     }
 
-                    if (_missionController.State == MissionControllerState.Done)
+                    if (_States.CurrentCombatMissionCtrlState == CombatMissionCtrlState.Done)
                     {
                         // Clear looted containers
                         Cache.Instance.LootedContainers.Clear();
@@ -271,12 +298,12 @@
                     }
 
                     // If in error state, just go home and stop the bot
-                    if (_missionController.State == MissionControllerState.Error)
+                    if (_States.CurrentCombatMissionCtrlState == CombatMissionCtrlState.Error)
                     {
                         // Clear looted containers
                         Cache.Instance.LootedContainers.Clear();
 
-                        Logging.Log("MissionController: Error");
+                        Logging.Log("MissionController", "Error", Logging.red);
                         return StorylineState.ReturnToAgent;
                     }
                     break;

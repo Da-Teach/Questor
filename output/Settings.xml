@@ -1,175 +1,245 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <settings>
-  <!-- Auto start when Questor is loaded -->
-  <autoStart>true</autoStart>  <!-- default is true -->
+  <!--                                                -->
+  <!--         DEBUG SETTINGS         -->
+  <!--                                                -->
+  
   <!-- debugStates: creates more verbose logging: use for debugging purposes only -->
   <debugStates>false</debugStates>  <!-- default is false -->
   <!-- debugPerformance: creates more verbose logging: use for debugging purposes only -->
   <debugPerformance>false</debugPerformance>  <!-- default is false -->
-  <!-- CharacterMode: DPS or Salvage -->
-  <CharacterMode>dps</CharacterMode>  <!-- default is dps -->
+  <!-- debugCurrentTarget: Shows detailed Shields and Armor levels for the currenttarget as things get killed (or not) -->  
+  <detailedCurrentTargetHealthLogging>false</detailedCurrentTargetHealthLogging>
+  <debugLootWrecks>false</debugLootWrecks>
+  <debugActivateWeapons>false</debugActivateWeapons>
+  <debugreloadorChangeAmmo>false</debugreloadorChangeAmmo>
+  <debugStatistics>false</debugStatistics>
+  <debugGotobase>false</debugGotobase>
+  <debugIdle>false</debugIdle>
+  <debugAutoStart>false</debugAutoStart>
+  <useInnerspace>true</useInnerspace>
   
-  <!-- EVEProcessMemoryCieling: If this instance of EVE consumes more than the stated MB of Memory close eve when in station between missions-->
-  <EVEProcessMemoryCeiling>1150</EVEProcessMemoryCeiling>  <!-- default is 1150-->
   
-  <!-- walletbalancechangelogoffdelay: If your characters wallet ballance does not change within this many minutes exit eve, the assumption is your toon is stuck or disconnected -->
-  <walletbalancechangelogoffdelay>40</walletbalancechangelogoffdelay>  <!-- default is 40 -->
+  <!--                                                -->
+  <!--          MISC SETTINGS          -->
+  <!--                                                -->
   
-  <!-- These two options are mutually exclusive: choose ONE: -->
-  <!-- When questor has to quit (walletbalance or eveprocessmemoryceiling or <insert reason here> questor will try to initiate a timedcommand to the innerspace uplink to restart the session -->
-  <!-- it needs to know if you want to launch the session using the innerspace profile or the ISBoxer Character Set-->
-  <CloseQuestorCMDUplinkInnerspaceProfile>true</CloseQuestorCMDUplinkInnerspaceProfile>  <!-- default is: true -->
-  <CloseQuestorCMDUplinkIsboxerCharacterSet>false</CloseQuestorCMDUplinkIsboxerCharacterSet>  <!-- default is: false -->
+  <!-- Character Mode is either Combat Missions or salvage for combat mode or dedicated salvager mode -->
+  <characterMode>Combat Missions</characterMode><!-- default is "Combat Missions" -->
+  <!-- Autostart is either true or false and is for automatically running questor when ran -->
+  <autoStart>true</autoStart><!-- default is true -->
+  <!-- Disable 3d is either true or false and is for automatically disabling the 3D visuals in game -->
+  <disable3D>false</disable3D><!-- default is false -->
+  <!-- MinimumDelay is a number and is the minimum amount of seconds it will wait between getting missions in station with randomdelay or by itself -->
+  <minimumDelay>20</minimumDelay><!-- default is 20 -->
+  <!-- RandomDelay is a number and is a random amount of seconds it will wait between getting missions in station added with minimumdelay or by itself -->
+  <randomDelay>45</randomDelay><!-- default is 45 -->
   
+  <!--                                                -->
+  <!--   CONSOLE LOG SETTINGS   -->
+  <!--                                                -->
+  
+  <!-- Enable or Disable the SessionsLog that tracks Logins / Logoffs and overall session stats for questor -->
+  <saveLog>true</saveLog><!-- default is true -->
   <!-- Maximum number of lines in the external console -->
-  <maxLineConsole>1000</maxLineConsole>  <!-- default is 1000 -->
-
-  <!-- disable 3d rendering -->
-  <disable3D>false</disable3D>  <!-- default is false -->
+  <maxLineConsole>1000</maxLineConsole><!-- default is 1000 -->
   
-  <!-- Random delay between missions -->
-  <randomDelay>45</randomDelay>
-  <minimumDelay>20</minimumDelay>
-
-  <!-- X Position of Questor Window -->
-  <windowXPosition>1600</windowXPosition>  <!-- needs to be customized -->
-
-  <!-- Y Position of Questor Window -->
-  <windowYPosition>1050</windowYPosition> <!-- needs to be customized -->
-
-  <!-- Local Watch Settings -->
-  <UseLocalWatch>true</UseLocalWatch> <!-- if false all local watching for bad standings pilots is disabled -->
-  <LocalBadStandingPilotsToTolerate>1</LocalBadStandingPilotsToTolerate> <!--  minimum is 1 -->
-  <LocalBadStandingLevelToConsiderBad>-0.1</LocalBadStandingLevelToConsiderBad> <!--  from -10 to 10, I recommend -0.1 so that all negative standings will cause alarm -->
-			
-  <!-- Invasion resume delay -->
-  <invasionRandomDelay>300</invasionRandomDelay>
-  <invasionMinimumDelay>15</invasionMinimumDelay>
-
-  <!-- Invasion limits, panic if these number of ships enter your mission pocket -->
+  <!--                                                -->
+  <!--       MAJOR FEATURES          -->
+  <!--                                                -->
+  
+  <!-- EnableStoryLines is either true or false and enables questor to run storyline missions -->
+  <enableStorylines>false</enableStorylines><!-- default is false -->
+  <MaterialsForWarOreID>20</MaterialsForWarOreID>
+  <MaterialsForWarOreQty>8000</MaterialsForWarOreQty>
+  <!-- UseLocalWatch is either true or false and is a feature to look at the CORP standings of OTHER corps that you have manually set in your OWN corp then decides to not leave station or run back home -->
+  <UseLocalWatch>true</UseLocalWatch><!-- if false all local watching for bad standings pilots is disabled -->
+  <!-- UseFittingManager is either true of false and allows questor to use the IN GAME EVE fitting manager to change your fits per faction/mission -->
+  <UseFittingManager>true</UseFittingManager><!-- default is true -->
+  
+  <!--                                                         -->
+  <!-- AGENT AND MISSION SETTINGS -->
+  <!--                                                         -->
+  
+  <!-- Wait for mission decline timer to expire before declining again -->
+  <waitDecline>true</waitDecline>
+  <!-- MinAgentBlackListStandings is a number between -10 and 10 and is used for WaitDecline if WaitDecline is true, MinAgentBlackListStandings will only kick in if your standings have gone below MinAgentBlackListStandings -->
+  <minAgentBlackListStandings>-2.5</minAgentBlackListStandings>
+  <!-- MinAgentGreyListStandings is a number between -10 and 10 and is used to determine if you can decline more greylist missions, Once you drop below this threshold greylist missions will be accepted in order to keep your standings up -->
+  <minAgentGreyListStandings>-1.7</minAgentGreyListStandings>
+  <!-- Missionspath is a string and is used for the path in /.net programs/ to point questor to where you want it to use the mission xmls from -->
+  <missionsPath>Caldari Missions</missionsPath><!-- needs to be customized -->
+  <!-- Run missions that take us into low security space? - READ: DANGEROUS!!! -->
+  <LowSecMissionsInShuttles>false</LowSecMissionsInShuttles><!-- default is: false -->
+  <!-- By Default ClearPocket ignores sentries. If you would like them cleared as part of clearpocket you need this set to true --> 
+  <killSentries>false</killSentries>
+  <!-- agentsList is used when WaitDecine is true and your standings have gone below MinStandings, it will switch to a lower priority agent, need to be filled out for at least one agent -->
+  <agentsList>
+    <agentList name="" priority="0" /><!-- needs to be customized -->
+    <!-- <agentList name="" priority="1" /> -->
+    <!-- <agentList name="" priority="2" /> -->
+    <!-- <agentList name="" priority="3" /> -->
+  </agentsList>
+  
+  <!--                                                -->
+  <!--   LOCAL WATCH SETTINGS   -->
+  <!--                                                -->
+  
+  <!-- LocalBadStandingsPilotsToTolerate is a number and is used for UseLocalWatch, this tells questor how many bad standings pilots for questor to ignore -->
+  <LocalBadStandingPilotsToTolerate>1</LocalBadStandingPilotsToTolerate><!--  minimum is 1 -->
+  <!-- LocalBadStandingLevelToConsiderBad is a number and is used for UseLocalWatch, this tells questor how bad of a standing you want to tolerate in other corps -->
+  <LocalBadStandingLevelToConsiderBad>-0.1</LocalBadStandingLevelToConsiderBad><!--  from -10 to 10, I recommend -0.1 so that all negative standings will cause alarm -->
+  
+  <!--                                                -->
+  <!--      INVASION SETTINGS     -->
+  <!--                                                -->
+  
+  <!-- Invasion limits, panic if these number of ships enter your mission pocket in case of possible gank! -->
   <frigateInvasionLimit>10</frigateInvasionLimit>
   <cruiserInvasionLimit>8</cruiserInvasionLimit>
   <battlecruiserInvasionLimit>4</battlecruiserInvasionLimit>
   <battleshipInvasionLimit>2</battleshipInvasionLimit>
-
-  <!-- Propulsion mod settings, do not activate AB/MWD unless these settings are matched -->
-  <minimumPropulsionModuleDistance>5000</minimumPropulsionModuleDistance>
-  <minimumPropulsionModuleCapacitor>55</minimumPropulsionModuleCapacitor>
+  <!-- Invasion resume delay -->
+  <invasionRandomDelay>300</invasionRandomDelay>
+  <invasionMinimumDelay>15</invasionMinimumDelay>  
   
-  <!-- The agent that you are running missions for -->
-  <agentsList>
-	<agentList name="" priority="0" />
-	<!-- <agentList name="" priority="1" /> -->
-  </agentsList> <!-- needs to be customized -->
+  <!--                                                -->
+  <!--              SHIP NAMES             -->
+  <!--                                                -->
+  <!-- Ship used for combat missions, empty means current ship  -->
+  <combatShipName></combatShipName><!-- needs to be customized -->
+  <!-- Ship used for after mission salvaging, empty means current ship -->
+  <salvageShipName></salvageShipName><!-- needs to be customized-->
+  <!-- Ship used for Enemy Abound 2of5 -->
+  <transportShipName></transportShipName><!-- needs to be customized-->
+
   
-  <!-- The agent that you are running missions for | this setting is no longer used: please configure agentsList-->
-  <!-- <agentName></agentName>  --> <!-- old setting no longer in use -->
-  
-  <!-- Run missions that take us into low security space? - READ: DANGEROUS!!! -->
-  <LowSecMissions>false</LowSecMissions> <!-- default is: false -->
-  
-  <!-- Enable storyline botting (experimental) -->
-  <enableStorylines>false</enableStorylines>  <!-- default is false -->
-
-  <!-- undock delay -->
-  <undockdelay>11</undockdelay>
-
-  <!-- prefix for undock bookmarks -->
-  <bookmarkWarpOut>Insta</bookmarkWarpOut>
-  <undockprefix>Insta</undockprefix>
-
-  <!-- Wait for mission decline timer to expire before declining again -->
-  <waitDecline>true</waitDecline>
-  <minStandings>5.0</minStandings>
-  
-  <!-- Use Faction Fittings: default is enabled (true): if disabled (false) this will turn off all fitting manager related features -->
-  <UseFittingManager>true</UseFittingManager>
-  
-  <!-- Faction specific fittings listed here -->
-  <factionfittings>
-    <factionfitting faction="Default" fitting="default" />
-	<!-- <factionfitting faction="Angel Cartel" fitting="angel" dronetype="2488" /> -->
-  </factionfittings>
-
-  <missionfittings>
-  <!-- <missionfitting mission="Cargo Delivery" fitting="cargo" dronetype="2185" /> -->
-  </missionfittings>
-
-  <!-- List of factions which the bot will try to avoid -->
-  <factionblacklist>
-	<faction>Caldari State</faction>
-	<faction>Gallente Federation</faction>
-    <faction>Minmatar Republic</faction>
-    <faction>Amarr Empire</faction>
-    <faction>CONCORD Assembly</faction>
-    <faction>Ammatar Mandate</faction>
-    <faction>Khanid Kingdom</faction>
-    <faction>Thukker Tribe</faction>
-  </factionblacklist>
-
-  <useGatesInSalvage>True</useGatesInSalvage> <!-- default is true -->
-
-  <!-- List of missions which the bot will always decline -->
-  <blacklist>
-    <mission>Enemies Abound (1 of 5)</mission>
-  </blacklist>
-
-  <MaterialsForWarOreID>20</MaterialsForWarOreID>
-  <MaterialsForWarOreQty>8000</MaterialsForWarOreQty>
-  
-  <!-- missionsPath is the sub-directory where the mission xml's are located -->
-  <missionsPath>Caldari Missions</missionsPath>  <!-- needs to be customized -->
+  <!--                                                                                                     -->
+  <!-- STORAGE LOCATION FOR LOOT, AMNMO AND BOOKMARKS -->
+  <!--                                                                                                     -->
 
   <!-- Corporation hangar to use for loot (empty is personal hangar) -->
-  <lootHangar></lootHangar>  <!-- default is no value -->
-
+  <lootHangar></lootHangar><!-- default is no value -->
   <!-- Corporation hangar to use for ammo (empty is personal hangar) -->
-  <ammoHangar></ammoHangar>  <!-- default is: no value -->
-
+  <ammoHangar></ammoHangar><!-- default is: no value -->
+  <!-- Bookmark hangar.. dont use this anymore -->
+  <bookMarkHangar></bookMarkHangar>
   <!-- container to use for Loot (empty would not use a container at all) : this ONLY works with General Freight Containers at the moment-->
   <lootContainer></lootContainer>
   
-  <!-- Ship used for combat missions, empty means current ship -->
-  <combatShipName></combatShipName>  <!-- needs to be customized -->
-
-  <!-- Ship used for after mission salvaging, empty means current ship -->
-  <salvageShipName></salvageShipName>  <!-- needs to be customized-->
-  
-  <!-- Ship used for Enemy Abound 2of5 -->
-  <transportShipName></transportShipName> <!-- needs to be customized-->
+  <!--                                                      -->
+  <!-- SALVAGE AND LOOT SETTINGS -->
+  <!--                                                      -->
 
   <!-- Create salvage bookmarks once a pocket has been cleared and there are wrecks/cans left
        Note: All salvage bookmarks will be in this naming format:  BookmarkPrefix [time]
        Note: It will check all salvage bookmarks to see if the current spot has to be bookmarked 
        Warning: The bot could become slow with a lot of salvage-bookmarks, make sure that
-                after mission salvaging is enabled or that you manually delete bookmarks! -->
-  <createSalvageBookmarks>True</createSalvageBookmarks>  <!-- default is true -->
-
+       after mission salvaging is enabled or that you manually delete bookmarks! -->
+  <createSalvageBookmarks>True</createSalvageBookmarks><!-- default is true -->
+  <!-- CreateSalvageBookmarksIn is used for salvaging, Player is only needed for non-dedicated, and Corp is used for dedicated (character mode: dps is non-dedicated, salvage is -->
+  <createSalvageBookmarksIn>Player</createSalvageBookmarksIn><!-- default is "Player", other option is "Corp" -->
+  <!-- Setting allow you to complete multiple missions before doing after mission salvaging -->
+  <salvageMultpleMissionsinOnePass>false</salvageMultpleMissionsinOnePass>
+  <!-- Unload loot at station when doing after-mission salvaging (*only* when doing after-mission salvaging)
+       Note: If this is disabled then the bot will use the isk/m3 algorithm used in missions to dump low-value loot -->
+  <unloadLootAtStation>false</unloadLootAtStation><!-- default is false -->
+  <!-- Amount of cargo capacity to reserve, should be at least 80m3 if you are salvaging -->
+  <reserveCargoCapacity>100</reserveCargoCapacity>
+  <!-- maximum number of wreck targets, at least 1 is required for salvager or tractor beam to work -->
+  <maximumWreckTargets>2</maximumWreckTargets>
+  <!-- if the mission does not despawn (ninja looters?) and the accel gates are still present: use gates! -->
+  <useGatesInSalvage>true</useGatesInSalvage><!-- default is true -->
   <!-- All salvage bookmarks will be prefixed by this string, default: Salvage: -->
-  <bookmarkPrefix>Salvage:</bookmarkPrefix>  <!-- default is salvage: -->
-
+  <bookmarkPrefix>Salvage:</bookmarkPrefix><!-- default is salvage: -->
   <!-- Minimum amount of wrecks / unlooted containers needed for a bookmark to be created -->
-  <minimumWreckCount>5</minimumWreckCount>  <!-- default is 5 -->
-
-  <!-- If enabled this would blacklist all Small wrecks from being salvaged or looted -->
-  <WreckBlackListSmallWrecks>false</WreckBlackListSmallWrecks> <!-- default is false -->
-
-  <!-- If enabled this would blacklist all Medium wrecks from being salvaged or looted -->
-  <WreckBlackListMediumWrecks>false</WreckBlackListMediumWrecks> <!-- default is false -->
-
-
+  <minimumWreckCount>5</minimumWreckCount><!-- default is 5 -->
   <!-- After-mission salvaging, this will cause the bot to visit all salvage bookmarks 
        with the salvage ship and pickup loot / salvage wrecks 
        Note: After mission salvaging will *only* take place if there are *no* accepted missions left ! -->
-  <afterMissionSalvaging>false</afterMissionSalvaging>  <!-- default is false -->
+  <afterMissionSalvaging>false</afterMissionSalvaging><!-- default is false -->
+  <!-- Loot everything or only mission loot, if turned off empty loot-actions are ignored 
+       and the action is finished as soon as the mission item is in the ship's cargo, if turned
+       on then the bot will loot all wrecks/cans before finishing the loot-action -->
+  <lootEverything>true</lootEverything>
+  <!-- This is the age bookmarks have to reach in minutes before the dedicated salvager will attempt to use the bookmark -->
+  <!-- It is HIGHLY recommended that you leave this at greater than 30 min - wrecks roughly (exactly?) 2 hours -->
+  <ageofBookmarksForSalvageBehavior>45</ageofBookmarksForSalvageBehavior>
 
-  <!-- Unload loot at station when doing after-mission salvaging (*only* when doing after-mission salvaging)
-       Note: If this is disabled then the bot will use the isk/m3 algorithm used in missions to dump low-value loot -->
-  <unloadLootAtStation>false</unloadLootAtStation>  <!-- default is false -->
+  <!--                                                -->
+  <!--    UNDOCKING SETTINGS     -->
+  <!--                                                -->
+  
+  <!-- prefix for undock bookmarks -->
+  <undockprefix>Insta</undockprefix>
+  <bookmarkWarpOut>Insta</bookmarkWarpOut>
+  <!-- undock delay -->
+  <undockdelay>11</undockdelay>
+  
+  <!--                                                                 -->
+  <!-- EVE PROCESS AND WALLET SETTINGS -->
+  <!--                                                                 -->
 
-  <!-- Maximum number of targets per value -->
-  <maximumHighValueTargets>4</maximumHighValueTargets>  <!-- default is 4 -->
-  <maximumLowValueTargets>3</maximumLowValueTargets>  <!-- default is 3 -->
+  <!-- walletbalancechangelogoffdelay: If your characters wallet ballance does not change within this many minutes exit eve, the assumption is your toon is stuck or disconnected -->
+  <walletbalancechangelogoffdelay>40</walletbalancechangelogoffdelay><!-- default is 40 -->
+  <!-- EVEProcessMemoryCieling: If this instance of EVE consumes more than the stated MB of Memory close eve when in station between missions-->
+  <EVEProcessMemoryCeiling>1150</EVEProcessMemoryCeiling><!-- default is 1150-->
+  <!-- These three options are mutually exclusive: choose ONE: -->
+  <!-- When questor has to quit (walletbalance or eveprocessmemoryceiling or <insert reason here> questor will try to initiate a timedcommand to the innerspace uplink to restart the session -->
+  <!-- it needs to know if you want to launch the session using the innerspace profile or the ISBoxer Character Set or just execute an arbitrary OS command-->
+  <CloseQuestorCMDUplinkInnerspaceProfile>true</CloseQuestorCMDUplinkInnerspaceProfile>  <!-- default is: true -->
+  <CloseQuestorCMDUplinkIsboxerCharacterSet>false</CloseQuestorCMDUplinkIsboxerCharacterSet>  <!-- default is: false -->
+  <CloseQuestorArbitraryOSCmd>false</CloseQuestorArbitraryOSCmd> <!-- default is: false -->
+  <CloseQuestorOSCmdContents></CloseQuestorOSCmdContents> <!-- contains the command to be executed, must be valid in a cmd shell executed in the IS directory -->
+
+
+  <!--                                                -->
+  <!--        WRECKS SETTINGS        -->
+  <!--                                                -->
+
+  <!-- If enabled this would blacklist all Small wrecks from being salvaged or looted -->
+  <WreckBlackListSmallWrecks>false</WreckBlackListSmallWrecks><!-- default is false -->
+  <!-- If enabled this would blacklist all Medium wrecks from being salvaged or looted -->
+  <WreckBlackListMediumWrecks>false</WreckBlackListMediumWrecks><!-- default is false -->
+
+  <!--                                                -->
+  <!--       LOGGING SETTINGS       -->
+  <!--                                                -->
+
+  <!--                                                                                                                                                   -->
+  <!--      Logging Options: All logs are in ./.Net Programs/Logs/<CharacterName>/<optionalsubdirectory> -->
+  <!--                                                                                                                                                   -->
+  <!-- Save Log Console: the logs will save to: ./.Net Programs/Logs/<CharacterName>/consolelogs/<DailyLog> -->
+  <SessionsLog>true</SessionsLog><!-- default is: true -->
+  <!-- Enable or Disable the DroneStatsLog that tracks drone losses -->
+  <DroneStatsLog>true</DroneStatsLog><!-- default is: true -->
+  <!-- Enable or Disable the WreckLootStatistics Log - this log can get quite large -->
+  <WreckLootStatistics>false</WreckLootStatistics><!-- default is: false -->
+  <!-- Enable of Disable the MissionStats1Log: original and compatible with QuestorStatistics -->
+  <MissionStats1Log>true</MissionStats1Log><!-- default is: true -->
+  <!-- Enable of Disable the MissionStats2Log: more verbose that MissionStats1Log -->
+  <MissionStats2Log>true</MissionStats2Log><!-- default is: true -->
+  <!-- Enable of Disable the MissionStats3Log: most verbose and is in csv format that can be opened in excel for sorting and beancounting -->
+  <MissionStats3Log>true</MissionStats3Log><!-- default is: true -->
+  <!-- Enable of Disable the PocketStatistics logs: each and every pocket of missions will generate a seperate log with completion times and other statistics for your XML tuning pleasure -->
+  <PocketStatistics>true</PocketStatistics><!-- default is: true -->
+
+  <!--                                                -->
+  <!--       FITTING SETTINGS        -->
+  <!--                                                -->
+
+  <!-- Faction specific fittings listed here -->
+  <factionfittings>
+    <factionfitting faction="Default" fitting="default" />
+    <!-- <factionfitting faction="Angel Cartel" fitting="angel" dronetype="2488" /> -->
+  </factionfittings>
+  <missionfittings>
+    <!-- <missionfitting mission="Cargo Delivery" fitting="cargo" dronetype="2185" /> -->
+  </missionfittings>
+
+  <!--                                                -->
+  <!--      WEAPON SETTINGS         -->
+  <!--                                                -->
 
   <!-- When defining ammo here, do NOT define them by the damage that the ammo does 
        but define them based on the ammo you want to use when the bot faces rats weak 
@@ -184,115 +254,120 @@
     <ammoType typeId="2801"  damageType="Explosive" range="55000" quantity="1250" />
     <ammoType typeId="27359" damageType="Explosive" range="35000" quantity="1250" />
   </ammoTypes>
-
   <!-- If the weapon has less then minimumAmmoCharges, the weapon is forced to reload 
        before attacking a new target -->
   <minimumAmmoCharges>6</minimumAmmoCharges>
-
-  <!-- Weapon group (508 = Siege, 506 = Cruise, 771 = HAM, etc) -->
+  <!-- Weapon group (508 = Siege, 506 = Cruise, 771 = HAM, etc of the Launcher / Guns / Lasors, NOT the Ammo, *the weapon*) -->
   <weaponGroupId>508</weaponGroupId>
+  <!-- Use ONLY drones and NOT torps or autocannons on frigates -->
+  <DontShootFrigatesWithSiegeorAutoCannons>false</DontShootFrigatesWithSiegeorAutoCannons>
+  <!-- Maximum number of targets per value -->
+  <maximumHighValueTargets>4</maximumHighValueTargets><!-- default is 4 -->
+  <maximumLowValueTargets>3</maximumLowValueTargets><!-- default is 3 -->
 
-  <!-- Amount of cargo capacity to reserve, should be at least 80m3 if you are salvaging -->
-  <reserveCargoCapacity>100</reserveCargoCapacity>
-
-  <!-- maximum number of wreck targets, at least 1 is required for salvager or tractor beam to work -->
-  <maximumWreckTargets>2</maximumWreckTargets>
+  <!--                                                -->
+  <!--      MOVEMENT SETTINGS    -->
+  <!--                                                -->
 
   <!-- When SpeedTank is enabled, Combat-module will try to orbit ships at orbitDistance -->
   <speedTank>false</speedTank>
-
   <!-- The range used by SpeedTank -->
   <orbitDistance>5000</orbitDistance>
-
+  <!-- Propulsion mod settings, do not activate AB/MWD unless these settings are matched -->
+  <minimumPropulsionModuleDistance>5000</minimumPropulsionModuleDistance>
+  <minimumPropulsionModuleCapacitor>55</minimumPropulsionModuleCapacitor>
   <!-- if you are not speed tanking then this value is used to determine where you are 'in range' if it is set. If you want your maximum range to be 'in range' leave this at 0: if you are in a gunboat you probably want this set to your optimal range-->
   <optimalRange>0</optimalRange>
   
+  <!--                                                -->
+  <!--          TANK SETTINGS          -->
+  <!--                                                -->
+
   <!-- Activate shield booster or armor rep when shields/armor drop below this percentage -->
   <activateRepairModules>65</activateRepairModules>
-
   <!-- Deactivate shield booster or armor rep when shields/armor are above this percentage -->
   <deactivateRepairModules>95</deactivateRepairModules>
+  
+  <!--                                                -->
+  <!--          PANIC SETTINGS         -->
+  <!--                                                -->
 
   <!-- Minimum amount of shields before the bot panics and warps to safety -->
   <minimumShieldPct>50</minimumShieldPct>
-
   <!-- Minimum amount of armor before the bot panics and warps to safety -->
   <minimumArmorPct>0</minimumArmorPct>
-
   <!-- Minimum amount of capacitor before the bot panics and warps to safety -->
   <minimumCapacitorPct>15</minimumCapacitorPct>
-
   <!-- Amount of shield that is seen as "safe" to return to the mission -->
   <safeShieldPct>0</safeShieldPct>
-
   <!-- Amount of armor that is seen as "safe" to return to the mission -->
   <safeArmorPct>0</safeArmorPct>
-
   <!-- Amount of capacitor that is seen as "safe" to return to the mission -->
   <safeCapacitorPct>65</safeCapacitorPct>
 
-  <!-- Loot everything or only mission loot, if turned off empty loot-actions are ignored 
-       and the action is finished as soon as the mission item is in the ship's cargo, if turned
-       on then the bot will loot all wrecks/cans before finishing the loot-action -->
-  <lootEverything>true</lootEverything>
-
-  <!-- Use ONLY drones and NOT torps or autocannons on frigates -->
-  <DontShootFrigatesWithSiegeorAutoCannons>false</DontShootFrigatesWithSiegeorAutoCannons>
-
+  <!--                                                -->
+  <!--        DRONE SETTINGS          -->
+  <!--                                                -->
+  
   <!-- Use drones, disable on ships without a drone bay! -->
   <useDrones>true</useDrones>
-
   <!-- Drone type id to load (set to 0 to not reload drones) -->
   <droneTypeId>2488</droneTypeId>
-
   <!-- Maximum drone control range -->
   <droneControlRange>50000</droneControlRange>
-
   <!-- Do not launch drones if below this shield percentage -->
   <droneMinimumShieldPct>55</droneMinimumShieldPct>
-
   <!-- Do not launch drones if below this armor percentage -->
   <droneMinimumArmorPct>0</droneMinimumArmorPct>
-
   <!-- Do not launch drones if below this capacitor percentage -->
   <droneMinimumCapacitorPct>35</droneMinimumCapacitorPct>
-
   <!-- Recall drones if below this shield percentage -->
   <droneRecallShieldPct>60</droneRecallShieldPct>
-
   <!-- Recall drones if below this armor percentage -->
   <droneRecallArmorPct>0</droneRecallArmorPct>
-
   <!-- Recall drones if below this capacitor percentage -->
   <droneRecallCapacitorPct>25</droneRecallCapacitorPct>
-
   <!-- Recall drones if below this shield percentage and further away then half the drone control range -->
   <longRangeDroneRecallShieldPct>60</longRangeDroneRecallShieldPct>
-
   <!-- Recall drones if below this armor percentage and further away then half the drone control range -->
   <longRangeDroneRecallArmorPct>0</longRangeDroneRecallArmorPct>
-
   <!-- Recall drones if below this capacitor percentage and further away then half the drone control range -->
   <longRangeDroneRecallCapacitorPct>30</longRangeDroneRecallCapacitorPct>
+  <!-- Drones normally kill low value targets (frigates) first. If you would prefer your drones to kill high value targets first set this to true -->
+  <dronesKillHighValueTargets>false</dronesKillHighValueTargets>
+
+  <!--                                                        -->
+  <!-- MISSION BLACKLIST SETTINGS -->
+  <!--                                                        -->
+
+    <!-- List of factions which the bot will try to avoid -->
+  <factionblacklist>
+	<faction>Caldari State</faction>
+	<faction>Gallente Federation</faction>
+    <faction>Minmatar Republic</faction>
+    <faction>Amarr Empire</faction>
+    <faction>CONCORD Assembly</faction>
+    <faction>Ammatar Mandate</faction>
+    <faction>Khanid Kingdom</faction>
+    <faction>Thukker Tribe</faction>
+  </factionblacklist>
+  <!-- BLACKLIST: List of missions which the bot will always decline -->
+  <blacklist>
+    <mission>Enemies Abound (1 of 5)</mission>
+  </blacklist>
   
-  <!--                                                                                                                                                   -->
-  <!--      Logging Options: All logs are in ./.Net Programs/Logs/<CharacterName>/<optionalsubdirectory> -->
-  <!--                                                                                                                                                   -->
-  <!-- Save Log Console: the logs will save to: ./.Net Programs/Logs/<CharacterName>/consolelogs/<DailyLog> -->
-  <saveLog>true</saveLog>  <!-- default is true -->
-  <!-- Enable or Disable the SessionsLog that tracks Logins / Logoffs and overall session stats for questor -->
-  <SessionsLog>true</SessionsLog> <!-- default is: true -->
-  <!-- Enable or Disable the DroneStatsLog that tracks drone losses -->
-  <DroneStatsLog>true</DroneStatsLog><!-- default is: true -->
-  <!-- Enable or Disable the WreckLootStatistics Log - this log can get quite large -->
-  <WreckLootStatistics>false</WreckLootStatistics><!-- default is: false -->
-  <!-- Enable of Disable the MissionStats1Log: original and compatible with QuestorStatistics -->
-  <MissionStats1Log>true</MissionStats1Log><!-- default is: true -->
-  <!-- Enable of Disable the MissionStats2Log: more verbose that MissionStats1Log -->
-  <MissionStats2Log>true</MissionStats2Log><!-- default is: true -->
-  <!-- Enable of Disable the MissionStats3Log: most verbose and is in csv format that can be opened in excel for sorting and beancounting -->
-  <MissionStats3Log>true</MissionStats3Log><!-- default is: true -->
-  <!-- Enable of Disable the PocketStatistics logs: each and every pocket of missions will generate a seperate log with completion times and other statistics for your XML tuning pleasure -->
-  <PocketStatistics>true</PocketStatistics><!-- default is: true -->
+  <!-- GREYLIST: List of missions which the bot will decline until standings drop below MinAgentGreyListStandings-->
+  <greylist>
+    <!-- <mission>The Blockade</mission> -->
+  </greylist>
   
+  <!--                                                -->
+  <!--            GUI SETTINGS           -->
+  <!--                                                -->
+  
+  <!-- X Position of Questor Window -->
+  <windowXPosition>1600</windowXPosition><!-- needs to be customized -->
+  <!-- Y Position of Questor Window -->
+  <windowYPosition>1050</windowYPosition><!-- needs to be customized -->
+
 </settings>

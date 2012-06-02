@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8" ?> 
+<!-- Mission XML Examples -->
+<Missions>
+  <bring>Item</bring>
+  <pockets>
+    <pocket id="0">
+      <action name="MoveTo">
+        <parameter name="Target">Acceleration Gate</parameter>
+        <parameter name="Distance" value="5000"></parameter>
+      </action>
+      <action name="MoveToBackground">
+        <parameter name="Target">Acceleration Gate</parameter>
+        <parameter name="Distance" value="5000"></parameter>
+      </action>
+      <action name="WaitUntilTargeted">
+        <parameter name="Timeout" value="15"></parameter>
+      </action>
+      <action name="ClearPocket"></action>
+      <action name="ClearWithinWeaponsRangeOnly"></action>
+      <action name="AggroOnly">
+        <parameter name="IgnoreAttackers" value="true"></parameter>
+        <parameter name="BreakOnAttackers" value="true"></parameter>
+        <parameter name="NotClosest" value="true"></parameter>
+        <parameter name="NumberToIgnore" value="50"></parameter>
+        <parameter name="Target" value="Dim"></parameter>
+      </action>
+      <action name="Kill">
+        <parameter name="IgnoreAttackers" value="true"></parameter>
+        <parameter name="BreakOnAttackers" value="true"></parameter>
+        <parameter name="NotClosest" value="true"></parameter>
+        <parameter name="NumberToIgnore" value="50"></parameter>
+        <parameter name="Target" value="Dim"></parameter>
+      </action>
+      <action name="KillOnce">
+        <parameter name="IgnoreAttackers" value="true"></parameter>
+        <parameter name="BreakOnAttackers" value="true"></parameter>
+        <parameter name="NotClosest" value="true"></parameter>
+        <parameter name="NumberToIgnore" value="50"></parameter>
+        <parameter name="Target" value="Dim"></parameter>
+      </action>
+      <action name="UseDrones">
+        <parameter name="Use" value="true"></parameter>
+      </action>
+      <action name="KillClosestByName">
+        <parameter name="NotClosest" value="true"></parameter>
+        <parameter name="Target" value="Dim"></parameter>
+      </action>
+      <action name="KillClosest">
+        <parameter name="NotClosest" value="true"></parameter>
+        <parameter name="Target" value="Dim"></parameter>
+      </action>
+      <action name="Ignore">
+        <parameter name="Clear" value="true"></parameter>
+        <parameter name="Add" value="Dim"></parameter>
+        <parameter name="Remove" value="Dim"></parameter>
+      </action>
+      <action name="Loot">
+        <parameter name="Item" value="DimsIsk"></parameter>
+        <parameter name="Target" value="Dim"></parameter>
+      </action>
+      <action name="LootItem">
+        <parameter name="Item" value="DimsIsk"></parameter>
+        <parameter name="Target" value="Dim"></parameter>
+        <parameter name="Quantity" value="30"></parameter>
+      </action>
+      <action name="Done"></action>
+	  <action name="SalvageBookmark"></action>
+    </pocket>
+  </pockets>
+</Missions>

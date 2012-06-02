@@ -1,0 +1,36 @@
+﻿namespace Questor.Modules.States
+{
+    public enum CombatMissionsBehaviorState
+    {
+        Default,
+        Idle,
+        MissionStatistics,
+        DelayedStart,
+        Cleanup,
+        Start,
+        Switch,
+        Arm,
+        LocalWatch,
+        WaitingforBadGuytoGoAway,
+        WarpOutStation,
+        GotoMission,
+        ExecuteMission,
+        DelayedGotoBase,
+        GotoBase,
+        CourierMission,
+        CompleteMission,
+        UnloadLoot,
+        BeginAfterMissionSalvaging,
+        GotoSalvageBookmark,
+        SalvageUseGate,
+        SalvageNextPocket,
+        Salvage,
+        GotoNearestStation,
+        Error,
+        Paused,
+        Panic,
+        Traveler,
+        Storyline,
+        StorylinePanic,
+    }
+}

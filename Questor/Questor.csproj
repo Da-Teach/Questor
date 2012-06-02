@@ -81,29 +81,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="frmMain.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmMain.Designer.cs">
-      <DependentUpon>frmMain.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Behaviors\CombatHelperBehavior.cs" />
+    <Compile Include="Behaviors\CombatMissionsBehavior.cs" />
+    <Compile Include="Behaviors\DedicatedBookmarkSalvagerBehavior.cs" />
+    <Compile Include="Behaviors\DirectionalScannerBehavior.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Questor.cs" />
-    <Compile Include="QuestorState.cs" />
+    <Compile Include="QuestorUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="QuestorUI.Designer.cs">
+      <DependentUpon>QuestorUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="Storylines\GenericCombatStoryline.cs" />
     <Compile Include="Storylines\GenericCombatStorylineState.cs" />
+    <Compile Include="Storylines\GenericCourierStoryline.cs" />
+    <Compile Include="Storylines\GenericCourierStorylineState.cs" />
     <Compile Include="Storylines\IStoryline.cs" />
     <Compile Include="Storylines\MaterialsForWarPreparation.cs" />
     <Compile Include="Storylines\Storyline.cs" />
-    <Compile Include="Storylines\StorylineState.cs" />
     <Compile Include="Storylines\TransactionDataDelivery.cs" />
     <Compile Include="Storylines\TransactionDataDeliveryState.cs" />
-    <EmbeddedResource Include="frmMain.resx">
-      <DependentUpon>frmMain.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -114,6 +114,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="QuestorUI.resx">
+      <DependentUpon>QuestorUI.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -149,15 +152,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="CopyToInnerSpace" AfterTargets="AfterBuild">
-    <PropertyGroup>
-      <InnerSpacePath Condition="'$(InnerSpacePath)'==''">$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\App Paths\InnerSpace.exe@Path)</InnerSpacePath>
-      <InnerSpacePath Condition="'$(InnerSpacePath)'==''">$(registry:HKEY_CURRENT_USER\Software\Microsoft\IntelliPoint\AppSpecific\InnerSpace.exe@Path)</InnerSpacePath>
-      <InnerSpacePath Condition="'$(InnerSpacePath)'==''">$(registry:HKEY_CURRENT_USER\Software\Microsoft\IntelliType Pro\AppSpecific\InnerSpace.exe@Path)</InnerSpacePath>
-      <InnerSpacePath Condition="'$(InnerSpacePath.EndsWith(&quot;InnerSpace.exe&quot;))'=='True'">$(InnerSpacePath.Replace("InnerSpace.exe",""))</InnerSpacePath>
-    </PropertyGroup>
-    <Copy Condition="'$(InnerSpacePath)'!=''" SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).pdb" DestinationFolder="$(InnerSpacePath)\.NET Programs" />
-  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

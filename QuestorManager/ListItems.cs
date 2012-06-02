@@ -7,7 +7,8 @@ namespace QuestorManager
 {
     public class ListItems
     {
-       public int Id { get; set; }
-       public string name { get; set; }
+        public int Id { get; set; }
+
+        public string name { get; set; }
     }
 }

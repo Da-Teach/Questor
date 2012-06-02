@@ -1,57 +1,52 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using DirectEve;
+using Questor.Modules.Caching;
+using Questor.Modules.Logging;
+using Questor.Modules.States;
+
 namespace QuestorManager.Actions
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using DirectEve;
-    using DirectEve = global::QuestorManager.Common.DirectEve;
-    using global::QuestorManager.Common;
-    using global::QuestorManager.Domains;
-    using global::QuestorManager.Module;
-
-
-    class BuyLPI
+    public class BuyLPI
     {
-        public StateBuyLPI State { get; set; }
-
         public int Item { get; set; }
+
         public int Unit { get; set; }
 
-        private MainForm _form;
+        private QuestorManagerUI _form;
 
         private static DateTime _lastAction;
         private static DateTime _loyaltyPointTimeout;
         private static long _lastLoyaltyPoints;
-        private int requiredUnit;
-        private int requiredItemId;
+        private int _requiredUnit;
+        private int _requiredItemId;
 
-        public BuyLPI(MainForm form1)
+        public BuyLPI(QuestorManagerUI form1)
         {
             _form = form1;
         }
 
         public void ProcessState()
         {
+            DirectContainer hangar = Cache.Instance.DirectEve.GetItemHangar();
+            DirectContainer shiphangar = Cache.Instance.DirectEve.GetShipHangar();
+            DirectLoyaltyPointStoreWindow lpstore =
+                Cache.Instance.DirectEve.Windows.OfType<DirectLoyaltyPointStoreWindow>().FirstOrDefault();
+            DirectMarketWindow marketWindow =
+                Cache.Instance.DirectEve.Windows.OfType<DirectMarketWindow>().FirstOrDefault();
 
-            var hangar = DirectEve.Instance.GetItemHangar();
-            var shiphangar = DirectEve.Instance.GetShipHangar();
-            var lpstore = DirectEve.Instance.Windows.OfType<DirectLoyaltyPointStoreWindow>().FirstOrDefault();
-            var marketWindow = DirectEve.Instance.Windows.OfType<DirectMarketWindow>().FirstOrDefault();
-
-            if(DateTime.Now.Subtract(_lastAction).TotalSeconds < 1)
+            if (DateTime.Now.Subtract(_lastAction).TotalSeconds < 1)
                 return;
             _lastAction = DateTime.Now;
 
-            switch(State)
+            switch (_States.CurrentBuyLPIState)
             {
-                case StateBuyLPI.Idle:
-                case StateBuyLPI.Done:
+                case BuyLPIState.Idle:
+                case BuyLPIState.Done:
                     break;
 
-
-                case StateBuyLPI.Begin:
+                case BuyLPIState.Begin:
 
                     /*
                     if(marketWindow != null)
@@ -60,196 +55,209 @@ namespace QuestorManager.Actions
                     if(lpstore != null)
                         lpstore.Close();*/
 
-                    State = StateBuyLPI.OpenItemHangar;
+                    _States.CurrentBuyLPIState = BuyLPIState.OpenItemHangar;
 
                     break;
 
-                case StateBuyLPI.OpenItemHangar:
+                case BuyLPIState.OpenItemHangar:
 
-                    if(!hangar.IsReady)
+                    if (!hangar.IsReady)
                     {
-                        DirectEve.Instance.ExecuteCommand(DirectCmd.OpenHangarFloor);
-                        Logging.Log("BuyLPI: Opening item hangar");
+                        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenHangarFloor);
+                        Logging.Log("BuyLPI", "Opening item hangar", Logging.white);
                     }
-                    State = StateBuyLPI.OpenLpStore;
+                    _States.CurrentBuyLPIState = BuyLPIState.OpenLpStore;
 
                     break;
 
-                case StateBuyLPI.OpenLpStore:
+                case BuyLPIState.OpenLpStore:
 
-                    if(lpstore == null)
+                    if (lpstore == null)
                     {
-                        DirectEve.Instance.ExecuteCommand(DirectCmd.OpenLpstore);
-                        Logging.Log("BuyLPI: Opening loyalty point store");
+                        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenLpstore);
+                        Logging.Log("BuyLPI", "Opening loyalty point store", Logging.white);
                     }
-                    State = StateBuyLPI.FindOffer;
+                    _States.CurrentBuyLPIState = BuyLPIState.FindOffer;
 
                     break;
 
-                case StateBuyLPI.FindOffer:
+                case BuyLPIState.FindOffer:
 
-                    var offer = lpstore.Offers.FirstOrDefault(o => o.TypeId == Item);
-
-                    // Wait for the amount of LP to change
-                    if(_lastLoyaltyPoints == lpstore.LoyaltyPoints)
-                        break;
-
-                    // Do not expect it to be 0 (probably means its reloading)
-                    if(lpstore.LoyaltyPoints == 0)
+                    if (lpstore != null)
                     {
-                        if(_loyaltyPointTimeout < DateTime.Now)
+                        DirectLoyaltyPointOffer offer = lpstore.Offers.FirstOrDefault(o => o.TypeId == Item);
+
+                        // Wait for the amount of LP to change
+                        if (_lastLoyaltyPoints == lpstore.LoyaltyPoints)
+                            break;
+
+                        // Do not expect it to be 0 (probably means its reloading)
+                        if (lpstore.LoyaltyPoints == 0)
                         {
-                            Logging.Log("BuyLPI: It seems we have no loyalty points left");
-
-                            State = StateBuyLPI.Done;
-                        }
-                        break;
-                    }
-
-                    _lastLoyaltyPoints = lpstore.LoyaltyPoints;
-
-                    // Find the offer
-                    if(offer == null)
-                    {
-                        Logging.Log("BuyLPI: Can't find offer with type name/id: {0}!", Item);
-
-                        State = StateBuyLPI.Done;
-                        break;
-                    }
-
-                    State = StateBuyLPI.CheckPetition;
-
-
-                    break;
-
-                case StateBuyLPI.CheckPetition:
-
-                    var offer1 = lpstore.Offers.FirstOrDefault(o => o.TypeId == Item);
-
-                    // Check LP
-                    if(_lastLoyaltyPoints < offer1.LoyaltyPointCost)
-                    {
-                        Logging.Log("BuyLPI: Not enough loyalty points left");
-
-                        State = StateBuyLPI.Done;
-                        break;
-                    }
-
-                    // Check ISK
-                    if(DirectEve.Instance.Me.Wealth < offer1.IskCost)
-                    {
-                        Logging.Log("BuyLPI: Not enough ISK left");
-
-                        State = StateBuyLPI.Done;
-                        break;
-                    }
-
-                    // Check items
-                    foreach(var requiredItem in offer1.RequiredItems)
-                    {
-
-                        var ship = shiphangar.Items.FirstOrDefault(i => i.TypeId == requiredItem.TypeId);
-                        var item = hangar.Items.FirstOrDefault(i => i.TypeId == requiredItem.TypeId);
-                        if(item == null || item.Quantity < requiredItem.Quantity)
-                        {
-                            if(ship == null || ship.Quantity < requiredItem.Quantity)
+                            if (_loyaltyPointTimeout < DateTime.Now)
                             {
-                                Logging.Log("BuyLPI: Missing {0}x {1}", requiredItem.Quantity, requiredItem.TypeName);
+                                Logging.Log("BuyLPI", "It seems we have no loyalty points left", Logging.white);
 
-                                if(!_form.chkBuyItems.Checked)
-                                {
-                                    Logging.Log("BuyLPI: Done, do not buy item");
-                                    State = StateBuyLPI.Done;
-                                    break;
-                                }
-
-                                Logging.Log("BuyLPI: Are buying the item " + requiredItem.TypeName);
-                                requiredUnit = Convert.ToInt32(requiredItem.Quantity);
-                                requiredItemId = requiredItem.TypeId;
-                                State = StateBuyLPI.OpenMarket;
-                                return;
+                                _States.CurrentBuyLPIState = BuyLPIState.Done;
                             }
+                            break;
+                        }
+
+                        _lastLoyaltyPoints = lpstore.LoyaltyPoints;
+
+                        // Find the offer
+                        if (offer == null)
+                        {
+                            Logging.Log("BuyLPI", "Can't find offer with type name/id: " + Item + "!", Logging.white);
+
+                            _States.CurrentBuyLPIState = BuyLPIState.Done;
+                            break;
                         }
                     }
 
-                    State = StateBuyLPI.AcceptOffer;
+                    _States.CurrentBuyLPIState = BuyLPIState.CheckPetition;
 
                     break;
 
+                case BuyLPIState.CheckPetition:
 
-                case StateBuyLPI.OpenMarket:
-
-                    if(marketWindow == null)
+                    if (lpstore != null)
                     {
-                        DirectEve.Instance.ExecuteCommand(DirectCmd.OpenMarket);
+                        DirectLoyaltyPointOffer offer1 = lpstore.Offers.FirstOrDefault(o => o.TypeId == Item);
+
+                        // Check LP
+                        if (offer1 != null && _lastLoyaltyPoints < offer1.LoyaltyPointCost)
+                        {
+                            Logging.Log("BuyLPI", "Not enough loyalty points left", Logging.white);
+
+                            _States.CurrentBuyLPIState = BuyLPIState.Done;
+                            break;
+                        }
+
+                        // Check ISK
+                        if (offer1 != null && Cache.Instance.DirectEve.Me.Wealth < offer1.IskCost)
+                        {
+                            Logging.Log("BuyLPI", "Not enough ISK left", Logging.white);
+
+                            _States.CurrentBuyLPIState = BuyLPIState.Done;
+                            break;
+                        }
+
+                        // Check items
+                        if (offer1 != null)
+                            foreach (DirectLoyaltyPointOfferRequiredItem requiredItem in offer1.RequiredItems)
+                            {
+                                DirectItem ship = shiphangar.Items.FirstOrDefault(i => i.TypeId == requiredItem.TypeId);
+                                DirectItem item = hangar.Items.FirstOrDefault(i => i.TypeId == requiredItem.TypeId);
+                                if (item == null || item.Quantity < requiredItem.Quantity)
+                                {
+                                    if (ship == null || ship.Quantity < requiredItem.Quantity)
+                                    {
+                                        Logging.Log("BuyLPI", "Missing [" + requiredItem.Quantity + "] x [" +
+                                                    requiredItem.TypeName + "]", Logging.white);
+
+                                        //if(!_form.chkBuyItems.Checked)
+                                        //{
+                                        //    Logging.Log("BuyLPI: Done, do not buy item");
+                                        //    States.CurrentBuyLPIState = BuyLPIState.Done;
+                                        //    break;
+                                        //}
+
+                                        Logging.Log("BuyLPI", "Are buying the item [" + requiredItem.TypeName + "]", Logging.white);
+                                        _requiredUnit = Convert.ToInt32(requiredItem.Quantity);
+                                        _requiredItemId = requiredItem.TypeId;
+                                        _States.CurrentBuyLPIState = BuyLPIState.OpenMarket;
+                                        return;
+                                    }
+                                }
+                            }
+                    }
+
+                    _States.CurrentBuyLPIState = BuyLPIState.AcceptOffer;
+
+                    break;
+
+                case BuyLPIState.OpenMarket:
+
+                    if (marketWindow == null)
+                    {
+                        Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenMarket);
                         break;
                     }
 
-                    if(!marketWindow.IsReady)
+                    if (!marketWindow.IsReady)
                         break;
 
-                    State = StateBuyLPI.BuyItems;
+                    _States.CurrentBuyLPIState = BuyLPIState.BuyItems;
 
                     break;
 
-                case StateBuyLPI.BuyItems:
+                case BuyLPIState.BuyItems:
 
-                    Logging.Log("BuyLPI: Opening Market");
+                    Logging.Log("BuyLPI", "Opening Market", Logging.white);
 
-                    if(marketWindow.DetailTypeId != requiredItemId)
+                    if (marketWindow != null && marketWindow.DetailTypeId != _requiredItemId)
                     {
-                        marketWindow.LoadTypeId(requiredItemId);
+                        marketWindow.LoadTypeId(_requiredItemId);
                         break;
                     }
 
-                    var orders = marketWindow.SellOrders.Where(o => o.StationId == DirectEve.Instance.Session.StationId);
-
-                    var order = orders.OrderBy(o => o.Price).FirstOrDefault();
-
-                    if(order == null)
+                    if (marketWindow != null)
                     {
-                        Logging.Log("BuyLPI: No orders");
-                        State = StateBuyLPI.Done;
-                        break;
+                        IEnumerable<DirectOrder> orders =
+                            marketWindow.SellOrders.Where(o => o.StationId == Cache.Instance.DirectEve.Session.StationId);
+
+                        DirectOrder order = orders.OrderBy(o => o.Price).FirstOrDefault();
+
+                        if (order == null)
+                        {
+                            Logging.Log("BuyLPI", "No orders", Logging.white);
+                            _States.CurrentBuyLPIState = BuyLPIState.Done;
+                            break;
+                        }
+
+                        order.Buy(_requiredUnit, DirectOrderRange.Station);
                     }
 
-                    order.Buy(requiredUnit, DirectOrderRange.Station);
+                    Logging.Log("BuyLPI", "Buy Item", Logging.white);
 
-                    Logging.Log("BuyLPI: Buy Item");
-
-
-                    State = StateBuyLPI.CheckPetition;
+                    _States.CurrentBuyLPIState = BuyLPIState.CheckPetition;
 
                     break;
 
-                case StateBuyLPI.AcceptOffer:
+                case BuyLPIState.AcceptOffer:
 
-                    var offer2 = lpstore.Offers.FirstOrDefault(o => o.TypeId == Item);
+                    if (lpstore != null)
+                    {
+                        DirectLoyaltyPointOffer offer2 = lpstore.Offers.FirstOrDefault(o => o.TypeId == Item);
 
-                    Logging.Log("BuyLPI: Accepting {0}", offer2.TypeName);
-                    offer2.AcceptOffer();
-                    State = StateBuyLPI.Quatity;
+                        if (offer2 != null)
+                        {
+                            Logging.Log("BuyLPI", "Accepting [" + offer2.TypeName + "]", Logging.white);
+                            offer2.AcceptOffer();
+                        }
+                    }
+                    _States.CurrentBuyLPIState = BuyLPIState.Quatity;
 
                     break;
 
-                case StateBuyLPI.Quatity:
+                case BuyLPIState.Quatity:
 
                     _loyaltyPointTimeout = DateTime.Now.AddSeconds(1);
 
                     Unit = Unit - 1;
-                    if(Unit <= 0)
+                    if (Unit <= 0)
                     {
-                        Logging.Log("BuyLPI: Quantity limit reached");
+                        Logging.Log("BuyLPI", "Quantity limit reached", Logging.white);
 
-                        State = StateBuyLPI.Done;
+                        _States.CurrentBuyLPIState = BuyLPIState.Done;
                         break;
                     }
 
-                    State = StateBuyLPI.Begin;
+                    _States.CurrentBuyLPIState = BuyLPIState.Begin;
 
                     break;
             }
         }
-
     }
 }

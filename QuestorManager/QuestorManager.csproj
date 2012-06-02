@@ -51,6 +51,10 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DirectEve, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\DirectEve\DirectEve.dll</HintPath>
+    </Reference>
     <Reference Include="Lavish.InnerSpace, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9029a3ab4cbe108d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(ProgramFiles)\InnerSpace\Lavish.InnerSpace.dll</HintPath>
@@ -66,45 +70,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\Buy.cs" />
     <Compile Include="Actions\BuyLPI.cs" />
-    <Compile Include="Actions\StateBuyLPI.cs" />
-    <Compile Include="Actions\InvType.cs" />
-    <Compile Include="Actions\ItemCache.cs" />
     <Compile Include="Actions\ValueDump.cs" />
-    <Compile Include="Actions\StateDrop.cs" />
-    <Compile Include="Actions\StateGrab.cs" />
-    <Compile Include="Actions\StateSell.cs" />
-    <Compile Include="Actions\StateBuy.cs" />
-    <Compile Include="Actions\Grab.cs" />
-    <Compile Include="Actions\Drop.cs" />
-    <Compile Include="Actions\Sell.cs" />
-    <Compile Include="Actions\ValueDumpState.cs" />
     <Compile Include="ListItems.cs" />
     <Compile Include="ListViewColumnSorter.cs" />
-    <Compile Include="State.cs" />
-    <Compile Include="Domains\Category.cs" />
-    <Compile Include="Domains\Group.cs" />
-    <Compile Include="Module\BookmarkDestination.cs" />
-    <Compile Include="Common\DirectEve.cs" />
-    <Compile Include="Extensions\DirectEveExtension.cs" />
-    <Compile Include="Common\Logging.cs" />
-    <Compile Include="MainForm.cs">
+    <Compile Include="QuestormanagerState.cs" />
+    <Compile Include="QuestorManagerUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
+    <Compile Include="QuestorManagerUI.Designer.cs">
+      <DependentUpon>QuestorManagerUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Module\MissionBookmarkDestination.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="QuestorManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Module\SolarSystemDestination.cs" />
-    <Compile Include="Module\StationDestination.cs" />
-    <Compile Include="Module\Traveler.cs" />
-    <Compile Include="Module\TravelerDestination.cs" />
-    <Compile Include="Module\TravelerState.cs" />
-    <EmbeddedResource Include="MainForm.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
+    <EmbeddedResource Include="QuestorManagerUI.resx">
+      <DependentUpon>QuestorManagerUI.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -145,21 +126,12 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\DirectEve\DirectEve\DirectEve.csproj">
-      <Project>{E8585D05-804D-40EA-AE64-5DD4F3EC6E43}</Project>
-      <Name>DirectEve</Name>
+    <ProjectReference Include="..\Questor.Modules\Questor.Modules.csproj">
+      <Project>{6D5DAAB6-0208-46AA-BA56-92B6068028C9}</Project>
+      <Name>Questor.Modules</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="CopyToInnerSpace" AfterTargets="AfterBuild">
-    <PropertyGroup>
-      <InnerSpacePath Condition="'$(InnerSpacePath)'==''">$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\App Paths\InnerSpace.exe@Path)</InnerSpacePath>
-      <InnerSpacePath Condition="'$(InnerSpacePath)'==''">$(registry:HKEY_CURRENT_USER\Software\Microsoft\IntelliPoint\AppSpecific\InnerSpace.exe@Path)</InnerSpacePath>
-      <InnerSpacePath Condition="'$(InnerSpacePath)'==''">$(registry:HKEY_CURRENT_USER\Software\Microsoft\IntelliType Pro\AppSpecific\InnerSpace.exe@Path)</InnerSpacePath>
-      <InnerSpacePath Condition="'$(InnerSpacePath.EndsWith(&quot;InnerSpace.exe&quot;))'=='True'">$(InnerSpacePath.Replace("InnerSpace.exe",""))</InnerSpacePath>
-    </PropertyGroup>
-    <Copy Condition="'$(InnerSpacePath)'!=''" SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).pdb" DestinationFolder="$(InnerSpacePath)\.NET Programs" />
-  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

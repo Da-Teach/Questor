@@ -1,14 +1,19 @@
-﻿namespace Questor.Storylines
+﻿
+namespace Questor.Storylines
 {
     using System;
     using System.Linq;
     using DirectEve;
-    using global::Questor.Modules;
+    using global::Questor.Modules.Actions;
+    using global::Questor.Modules.Activities;
+    using global::Questor.Modules.States;
+    using global::Questor.Modules.Caching;
+    using global::Questor.Modules.Logging;
 
     public class TransactionDataDelivery : IStoryline
     {
         private DateTime _nextAction;
-        private Traveler _traveler;
+        private readonly Traveler _traveler;
         private TransactionDataDeliveryState _state;
 
         public TransactionDataDelivery()
@@ -25,33 +30,19 @@
             if (_nextAction > DateTime.Now)
                 return StorylineState.Arm;
 
-            // Are we in a shuttle?  Yes, goto the agent
-            var directEve = Cache.Instance.DirectEve;
+            // Are we in a shuttle?  Yes, go to the agent
+            DirectEve directEve = Cache.Instance.DirectEve;
             if (directEve.ActiveShip.GroupId == 31)
                 return StorylineState.GotoAgent;
 
             // Open the ship hangar
-            var ships = directEve.GetShipHangar();
-            if (ships.Window == null)
-            {
-                _nextAction = DateTime.Now.AddSeconds(10);
-
-                Logging.Log("TransactionDataDelivery: Opening ship hangar");
-
-                // No, command it to open
-                directEve.ExecuteCommand(DirectCmd.OpenShipHangar);
-                return StorylineState.Arm;
-            }
-
-            // If the ship hangar is not ready then wait for it
-            if (!ships.IsReady)
-                return StorylineState.Arm;
+            if (!Cache.Instance.OpenShipsHangar("TransactionDataDelivery")) return StorylineState.Arm;
 
             //  Look for a shuttle
-            var item = ships.Items.FirstOrDefault(i => i.Quantity == -1 && i.GroupId == 31);
+            DirectItem item = Cache.Instance.ShipHangar.Items.FirstOrDefault(i => i.Quantity == -1 && i.GroupId == 31);
             if (item != null)
             {
-                Logging.Log("TransactionDataDelivery: Switching to shuttle");
+                Logging.Log("TransactionDataDelivery", "Switching to shuttle", Logging.white);
 
                 _nextAction = DateTime.Now.AddSeconds(10);
 
@@ -60,7 +51,7 @@
             }
             else
             {
-                Logging.Log("TransactionDataDelivery: No shuttle found, going in active ship");
+                Logging.Log("TransactionDataDelivery", "No shuttle found, going in active ship", Logging.orange);
                 return StorylineState.GotoAgent;
             }
         }
@@ -73,8 +64,8 @@
         public StorylineState PreAcceptMission(Storyline storyline)
         {
             _state = TransactionDataDeliveryState.GotoPickupLocation;
-            
-            _traveler.State = TravelerState.Idle;
+
+            _States.CurrentTravelerState = TravelerState.Idle;
             _traveler.Destination = null;
 
             return StorylineState.AcceptMission;
@@ -83,12 +74,12 @@
         private bool GotoMissionBookmark(long agentId, string title)
         {
             var destination = _traveler.Destination as MissionBookmarkDestination;
-            if (destination == null || destination.AgentId != agentId || !destination.Title.StartsWith(title))
+            if (destination == null || destination.AgentId != agentId || !destination.Title.ToLower().StartsWith(title.ToLower()))
                 _traveler.Destination = new MissionBookmarkDestination(Cache.Instance.GetMissionBookmark(agentId, title));
 
             _traveler.ProcessState();
 
-            if (_traveler.State == TravelerState.AtDestination)
+            if (_States.CurrentTravelerState == TravelerState.AtDestination)
             {
                 _traveler.Destination = null;
                 return true;
@@ -99,42 +90,17 @@
 
         private bool MoveItem(bool pickup)
         {
-            var directEve = Cache.Instance.DirectEve;
+            DirectEve directEve = Cache.Instance.DirectEve;
 
             // Open the item hangar (should still be open)
-            var hangar = directEve.GetItemHangar();
-            if (hangar.Window == null)
-            {
-                _nextAction = DateTime.Now.AddSeconds(10);
+            if (!Cache.Instance.OpenItemsHangar("TransactionDataDelivery")) return false;
 
-                Logging.Log("TransactionDataDelivery: Opening hangar floor");
-
-                directEve.ExecuteCommand(DirectCmd.OpenHangarFloor);
-                return false;
-            }
-
-            // Wait for it to become ready
-            if (!hangar.IsReady)
-                return false;
-
-            var cargo = directEve.GetShipsCargo();
-            if (cargo.Window == null)
-            {
-                _nextAction = DateTime.Now.AddSeconds(10);
-
-                Logging.Log("TransactionDataDelivery: Opening cargo");
-
-                directEve.ExecuteCommand(DirectCmd.OpenCargoHoldOfActiveShip);
-                return false;
-            }
-
-            if (!cargo.IsReady)
-                return false;
+            if (!Cache.Instance.OpenCargoHold("TransactionDataDelivery")) return false;
 
             // 314 == Transaction And Salary Logs (all different versions)
             const int groupId = 314;
-            DirectContainer from = pickup ? hangar : cargo;
-            DirectContainer to = pickup ? cargo : hangar;
+            DirectContainer from = pickup ? Cache.Instance.ItemHangar : Cache.Instance.CargoHold;
+            DirectContainer to = pickup ? Cache.Instance.CargoHold : Cache.Instance.ItemHangar;
 
             // We moved the item
             if (to.Items.Any(i => i.GroupId == groupId))
@@ -144,13 +110,13 @@
                 return false;
 
             // Move items
-            foreach (var item in from.Items.Where(i => i.GroupId == groupId))
+            foreach (DirectItem item in from.Items.Where(i => i.GroupId == groupId))
             {
-                Logging.Log("TransactionDataDelivery: Moving [" + item.TypeName + "][" + item.ItemId + "] to " + (pickup ? "cargo" : "hangar"));
+                Logging.Log("TransactionDataDelivery", "Moving [" + item.TypeName + "][" + item.ItemId + "] to " + (pickup ? "cargo" : "hangar"), Logging.white);
                 to.Add(item);
             }
-                _nextAction = DateTime.Now.AddSeconds(10);
-                return false;
+            _nextAction = DateTime.Now.AddSeconds(10);
+            return false;
         }
 
         /// <summary>
@@ -166,12 +132,12 @@
         public StorylineState ExecuteMission(Storyline storyline)
         {
             if (_nextAction > DateTime.Now)
-                return StorylineState.ExecuteMission; 
-            
+                return StorylineState.ExecuteMission;
+
             switch (_state)
             {
                 case TransactionDataDeliveryState.GotoPickupLocation:
-                    if (GotoMissionBookmark(storyline.AgentId, "Objective (Pick Up)"))
+                    if (GotoMissionBookmark(Cache.Instance.CurrentStorylineAgentId, "Objective (Pick Up)"))
                         _state = TransactionDataDeliveryState.PickupItem;
                     break;
 
@@ -181,7 +147,7 @@
                     break;
 
                 case TransactionDataDeliveryState.GotoDropOffLocation:
-                    if (GotoMissionBookmark(storyline.AgentId, "Objective (Drop Off)"))
+                    if (GotoMissionBookmark(Cache.Instance.CurrentStorylineAgentId, "Objective (Drop Off)"))
                         _state = TransactionDataDeliveryState.DropOffItem;
                     break;
 
