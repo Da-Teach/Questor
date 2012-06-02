@@ -93,7 +93,7 @@ namespace BuyLPI
             }
 
             DirectContainer hangar = _directEve.GetItemHangar();
-            if (!hangar.IsReady)
+            if (!hangar.Window.IsReady)
             {
                 _nextAction = DateTime.Now.AddMilliseconds(WaitMillis);
                 _directEve.ExecuteCommand(DirectCmd.OpenHangarFloor);

@@ -54,7 +54,7 @@ namespace Questor.Modules.Actions
                             Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenHangarFloor);
                             break;
                         }
-                        if (!_hangar.IsReady)
+                        if (!_hangar.Window.IsReady)
                             break;
                     }
                     else if ("Ship Hangar" == Hangar)
@@ -65,7 +65,7 @@ namespace Questor.Modules.Actions
                             Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenShipHangar);
                             break;
                         }
-                        if (!_hangar.IsReady)
+                        if (!_hangar.Window.IsReady)
                             break;
                     }
                     else
@@ -77,7 +77,7 @@ namespace Questor.Modules.Actions
                             break;
                         }
 
-                        if (!_hangar.IsReady)
+                        if (!_hangar.Window.IsReady)
                             break;
                     }
 
@@ -97,7 +97,7 @@ namespace Questor.Modules.Actions
                         break;
                     }
 
-                    if (!cargo.IsReady)
+                    if (!cargo.Window.IsReady)
                         break;
 
                     Logging.Log("Drop", "Opening Cargo Hold", Logging.white);

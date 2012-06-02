@@ -44,7 +44,7 @@ namespace Questor.Modules.Actions
                         break;
                     }
 
-                    if (!hangar.IsReady)
+                    if (!hangar.Window.IsReady)
                         break;
 
                     DirectItem directItem = hangar.Items.FirstOrDefault(i => (i.TypeId == Item));

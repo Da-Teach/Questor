@@ -114,7 +114,7 @@ namespace Questor.Storylines
             }
 
             // Wait for it to become ready
-            if (!hangar.IsReady)
+            if (!hangar.Window.IsReady)
                 return false;
 
             var cargo = directEve.GetShipsCargo();
@@ -128,7 +128,7 @@ namespace Questor.Storylines
                 return false;
             }
 
-            if (!cargo.IsReady)
+            if (!cargo.Window.IsReady)
                 return false;
 
             // 314 == Giant Sealed Cargo Containers

@@ -388,7 +388,7 @@ namespace Questor.Modules.BackgroundTasks
 
                     // Default action
                     _States.CurrentScoopState = ScoopState.TargetHostileWrecks;
-                    //if (cargo.IsReady && cargo.Items.Any() && _nextAction < DateTime.Now)
+                    //if (cargo.Window.IsReady && cargo.Items.Any() && _nextAction < DateTime.Now)
                     //{
                     // Check if there are actually duplicates
                     //    var duplicates = cargo.Items.Where(i => i.Quantity > 0).GroupBy(i => i.TypeId).Any(t => t.Count() > 1);

@@ -622,7 +622,7 @@ namespace Questor.Behaviors
                     {
                         if (!Cache.Instance.OpenCargoHold("DedicatedSalvageBehavior: Salvage")) break;
 
-                        if (Settings.Instance.UnloadLootAtStation && salvageCargo.IsReady && (salvageCargo.Capacity - salvageCargo.UsedCapacity) < 100)
+                        if (Settings.Instance.UnloadLootAtStation && salvageCargo.Window.IsReady && (salvageCargo.Capacity - salvageCargo.UsedCapacity) < 100)
                         {
                             Logging.Log("DedicatedBookmarkSalvagerBehavior.Salvage", "We are full, go to base to unload", Logging.white);
                             if (_States.CurrentDedicatedBookmarkSalvagerBehaviorState == DedicatedBookmarkSalvagerBehaviorState.Salvage)
