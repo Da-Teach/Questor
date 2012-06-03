@@ -2126,7 +2126,9 @@ namespace Questor.Modules.Caching
                 if (!Cache.Instance.CargoHold.Window.Name.Contains("Secondary"))
                 {
                     Logging.Log(module, "Opening cargo window as secondary", Logging.white);
-                    Cache.Instance.CargoHold.Window.OpenAsSecondary();
+                    //Cache.Instance.CargoHold.Window.OpenAsSecondary();
+                    Cache.Instance.DirectEve.ExecuteCommand(DirectCmd.OpenCargoHoldOfActiveShip);
+                    Cache.Instance.NextOpenCargoAction = DateTime.Now.AddSeconds(2 + Cache.Instance.RandomNumber(1, 3));
                     return false;
                 }
                 return true;                
