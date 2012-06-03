@@ -266,6 +266,14 @@ namespace Questor.Modules.Caching
 
                 return Cache.Instance.InvTypesById[TypeId];
             }
+
+            set
+            {
+                if (!Cache.Instance.InvTypesById.ContainsKey(TypeId))
+                {
+                    Cache.Instance.InvTypesById[TypeId] = value;
+                }
+            }
         }
 
         public double? IskPerM3

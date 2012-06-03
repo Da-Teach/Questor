@@ -275,7 +275,7 @@ namespace ValueDump
                             updated = true;
                             continue;
                         }
-                        //item.InvType = invType;
+                        item.InvType = invType;
 
                         bool updItem = false;
                         foreach (ItemCache material in item.RefineOutput)
@@ -285,7 +285,7 @@ namespace ValueDump
                                 Logging.Log("Valuedump","Unknown TypeId " + material.TypeId + " for " + material.Name,Logging.white);
                                 continue;
                             }
-                            //material.InvType = invType;
+                            material.InvType = invType;
 
                             double matsPerItem = (double)material.Quantity / item.PortionSize;
                             bool exists = InvTypesById[(int)item.TypeId].Reprocess[material.Name].HasValue;

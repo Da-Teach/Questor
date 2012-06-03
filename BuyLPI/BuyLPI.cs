@@ -92,6 +92,17 @@ namespace BuyLPI
                 return;
             }
 
+            foreach (var window in _directEve.Windows)
+            {
+                if (window.Name == "modal")
+                {
+                    _nextAction = DateTime.Now.AddMilliseconds(WaitMillis);
+                    window.AnswerModal("Ok");
+                    Logging.Log("BuyLPI", "BuyLPI: Saying OK to modal window for lpstore offer.", Logging.white);                    
+                    return;
+                }
+            }
+
             DirectContainer hangar = _directEve.GetItemHangar();
             if (!hangar.Window.IsReady)
             {
@@ -176,7 +187,7 @@ namespace BuyLPI
             if (_quantity != null)
                 if (_totalquantityoforders != null)
                     Logging.Log("BuyLPI", "Accepting " + offer.TypeName + " [ " + _quantity.Value + " ] of [ " + _totalquantityoforders.Value + " ] orders and will cost another [" + Math.Round(((offer.IskCost * _quantity.Value) / (double)1000000), 2) + "mil isk]", Logging.white);
-            offer.AcceptOffer();
+            offer.AcceptOfferFromWindow();
 
             // Set next action + loyalty point timeout
             _nextAction = DateTime.Now.AddMilliseconds(WaitMillis);
