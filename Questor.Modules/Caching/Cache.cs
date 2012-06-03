@@ -2033,7 +2033,7 @@ namespace Questor.Modules.Caching
                     return false;
                 if (Cache.Instance.AmmoHangar.Window.IsReady)
                 {
-                    if (!Cache.Instance.AmmoHangar.Window.IsPrimary())
+                    if (Cache.Instance.AmmoHangar.Window.IsPrimary())
                     {
                         Cache.Instance.AmmoHangar.Window.OpenAsSecondary();
                         return false;
