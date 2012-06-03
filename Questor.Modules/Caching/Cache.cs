@@ -2093,17 +2093,19 @@ namespace Questor.Modules.Caching
                 if (DateTime.Now.Subtract(Cache.Instance.NextOpenCargoAction).TotalSeconds > 0)
                 {
                     Logging.Log(module, "Opening CargoHold: waiting [" +
-                                Math.Round(Cache.Instance.NextDroneBayAction.Subtract(DateTime.Now).TotalSeconds, 0) +
+                                Math.Round(Cache.Instance.NextOpenCargoAction.Subtract(DateTime.Now).TotalSeconds, 0) +
                                 "sec]", Logging.white);
                 }
                 return false;
             }
 
+
+
+            Cache.Instance.CargoHold = Cache.Instance.DirectEve.GetShipsCargo();
             if (Cache.Instance.InStation || Cache.Instance.InSpace) //do we need to special case pods here?
             {
-                Cache.Instance.CargoHold = Cache.Instance.DirectEve.GetShipsCargo();
 
-                // Is cargohold open?
+
                 if (Cache.Instance.CargoHold.Window == null)
                 {
                     // No, command it to open
@@ -2116,16 +2118,18 @@ namespace Questor.Modules.Caching
                 }
 
                 if (!Cache.Instance.CargoHold.Window.IsReady)
-                    return false;
-                if (Cache.Instance.CargoHold.Window.IsReady)
                 {
-                    if (!Cache.Instance.CargoHold.Window.Name.ToLower().Contains("secondary".ToLower()))
-                    {
-                        Cache.Instance.CargoHold.Window.OpenAsSecondary();
-                        return false;
-                    }
-                    return true;
+                    Logging.Log(module, "cargo window is not ready", Logging.white);
+                    return false;
                 }
+
+                if (!Cache.Instance.CargoHold.Window.Name.Contains("Secondary"))
+                {
+                    Logging.Log(module, "Opening cargo window as secondary", Logging.white);
+                    Cache.Instance.CargoHold.Window.OpenAsSecondary();
+                    return false;
+                }
+                return true;                
             }
             return false;
         }

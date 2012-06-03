@@ -268,9 +268,17 @@ namespace Questor.Modules.Actions
 
                 case ArmState.OpenCargo:
                     // Is CargoBay  and AmmoHangar open?
-                    if (!Cache.Instance.OpenAmmoHangar("Arm")) break;
+                    if (!Cache.Instance.OpenAmmoHangar("Arm"))
+                    {
+                        Logging.Log("Arm", "Opening ammo hangar", Logging.white);
+                        break;
+                    }
 
-                    if (!Cache.Instance.OpenCargoHold("Arm")) break;
+                    if (!Cache.Instance.OpenCargoHold("Arm"))
+                    {
+                        Logging.Log("Arm", "Opening cargohold", Logging.white);
+                        break;
+                    }
 
                     if (Settings.Instance.UseDrones && (Cache.Instance.DirectEve.ActiveShip.GroupId != 31 && Cache.Instance.DirectEve.ActiveShip.GroupId != 28 && Cache.Instance.DirectEve.ActiveShip.GroupId != 380))
                     {
