@@ -681,31 +681,7 @@ namespace Questor
                 txtExtConsole.AppendText(Cache.Instance.ExtConsole);
                 Cache.Instance.ExtConsole = null;
             }
-            if (DateTime.Now.Subtract(Cache.Instance.LastFrame).TotalSeconds > 45 && DateTime.Now.Subtract(Program.AppStarted).TotalSeconds > 300)
-            {
-                if (DateTime.Now.Subtract(Cache.Instance.LastLogMessage).TotalSeconds > 30)
-                {
-                    Logging.Log("QuestorUI", "The Last UI Frame Drawn by EVE was more than 30 seconds ago! This is bad. - Exiting EVE", Logging.red);
-                    //
-                    // closing eve would be a very good idea here
-                    //
-                    CloseQuestor();
-                    //Application.Exit();
-                }
-            }
-            if (DateTime.Now.Subtract(Cache.Instance.LastSessionIsReady).TotalSeconds > 60 && DateTime.Now.Subtract(Program.AppStarted).TotalSeconds > 300)
-            {
-                if (DateTime.Now.Subtract(Cache.Instance.LastLogMessage).TotalSeconds > 60)
-                {
-                    Logging.Log("QuestorUI", "The Last Session.IsReady = true was more than 60 seconds ago! This is bad. - Exiting EVE", Logging.red);
-                    //
-                    // closing eve would be a very good idea here
-                    //
-                    CloseQuestor();
-                    //Application.Exit();
-                   
-                }
-            }
+            
 
             //
             // Targets Tab
