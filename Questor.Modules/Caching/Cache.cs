@@ -2488,6 +2488,8 @@ namespace Questor.Modules.Caching
             {
                 if (!Cache.Instance.OpenLootContainer("Cache.StackLootContainer")) return false;
                 Cache.Instance.NextOpenLootContainerAction = DateTime.Now.AddSeconds(Cache.Instance.RandomNumber(3, 5));
+                if (LootHangar.Window == null) return false;
+                if (!LootHangar.Window.IsReady) return false;
                 Logging.Log(module, "Loot Container named: [ " + LootHangar.Window.Name +
                             " ] was found and its contents are being stacked", Logging.white);
                 if (LootHangar != null && LootHangar.Window.IsReady)

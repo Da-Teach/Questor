@@ -56,15 +56,6 @@ set csproj=.\valuedump\ValueDump.csproj
 Echo Done building %nameofproject% - see above for any errors - 5 of 7 builds
 pause
 ::
-:: Build Project 6
-::
-set nameofproject=QuestorManager
-set csproj=.\QuestorManager\QuestorManager.csproj
-::"%msbuild4%" "%csproj%" /p:configuration="%releasetype%" /target:Clean;Build
-"%msbuild4%" "%csproj%" /p:configuration="%releasetype%"
-Echo Done building %nameofproject% - see above for any errors - 6 of 7 builds
-pause
-::
 :: Build Project 7
 ::
 set nameofproject=QuestorStatistics

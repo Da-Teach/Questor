@@ -325,8 +325,10 @@ namespace Questor.Modules.BackgroundTasks
             List<ItemCache> shipsCargo = Cache.Instance.CargoHold.Items.Select(i => new ItemCache(i)).ToList();
             double freeCargoCapacity = Cache.Instance.CargoHold.Capacity - Cache.Instance.CargoHold.UsedCapacity;
             
-            DirectContainerWindow lootWindows = Cache.Instance.DirectEve.Windows.OfType<DirectContainerWindow>().FirstOrDefault(w => w.Type == "form.Inventory");
-            List<long> ContainersID = lootWindows.GetIdsFromTree();
+            DirectContainerWindow lootWindows = Cache.Instance.DirectEve.Windows.OfType<DirectContainerWindow>().FirstOrDefault(w => w.Type == "form.Inventory" && w.IsPrimary());
+            List<long> ContainersID = new List<long>();
+            if(lootWindows != null)
+                ContainersID = lootWindows.GetIdsFromTree();
 
             foreach (long ContainerID in ContainersID) //ItemWreck and ItemFloatingCargo
             {
