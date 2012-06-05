@@ -2494,7 +2494,7 @@ namespace Questor.Modules.Caching
                     if (firstlootcontainer != null)
                     {
                         long lootContainerID = firstlootcontainer.ItemId;
-                        var inventory = Cache.Instance.Windows.OfType<DirectContainerWindow>().FirstOrDefault(w => w.Name.StartsWith("('Inventory'"));
+                        var inventory = Cache.Instance.Windows.OfType<DirectContainerWindow>().FirstOrDefault(w => w.IsPrimary());
                         if (inventory == null)
                         {
                             Cache.Instance.DirectEve.OpenInventory();
