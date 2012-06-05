@@ -2523,7 +2523,8 @@ namespace Questor.Modules.Caching
                         }
                     }
                     else return false;
-                }                
+                }
+                if (LootHangar.Window == null) return false;
                 if (!LootHangar.Window.IsReady) return false;
                 Logging.Log(module, "Loot Container named: [ " + LootHangar.Window.Name +
                             " ] was found and its contents are being stacked", Logging.white);
