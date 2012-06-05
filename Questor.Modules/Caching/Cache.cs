@@ -2494,8 +2494,9 @@ namespace Questor.Modules.Caching
                     if (firstlootcontainer != null)
                     {
                         long lootContainerID = firstlootcontainer.ItemId;
-                        var inventories = Cache.Instance.Windows.OfType<DirectContainerWindow>().Where(w => w.IsPrimary() && w.Name == "('Inventory', None)");
-                        var inventory = inventories.FirstOrDefault(i => i.GetIdsFromTree().Count > 1);
+                        //var inventories = Cache.Instance.Windows.OfType<DirectContainerWindow>().Where(w => w.IsPrimary() && w.Name == "('Inventory', None)");
+                        //var inventory = inventories.FirstOrDefault(i => i.GetIdsFromTree(false).Count > 1);
+                        var inventory = Cache.Instance.Windows.OfType<DirectContainerWindow>().FirstOrDefault(w => w.IsPrimary());
                         //more than 1 primary window ??
                         if (inventory == null)
                         {
@@ -2503,10 +2504,10 @@ namespace Questor.Modules.Caching
                         }
                         else
                         {
-                            if (!inventory.GetIdsFromTree().Contains(lootContainerID))
+                            if (!inventory.GetIdsFromTree(false).Contains(lootContainerID))
                             {
                                 Logging.Log(module, "Error: can't find inventory container item in the tree. Found the following ids:", Logging.red);
-                                var idsintree = inventory.GetIdsFromTree();                                
+                                var idsintree = inventory.GetIdsFromTree(false);                                
                                 foreach (var itemintree in idsintree)
                                 {
                                     Logging.Log(module, "ID: " + itemintree, Logging.red);
