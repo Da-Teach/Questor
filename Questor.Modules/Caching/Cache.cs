@@ -2503,7 +2503,14 @@ namespace Questor.Modules.Caching
                         {
                             if (!inventory.GetIdsFromTree().Contains(lootContainerID))
                             {
-                                Logging.Log(module, "Error: can't find inventory container item in the tree", Logging.red);
+                                Logging.Log(module, "Error: can't find inventory container item in the tree. Found the following ids:", Logging.red);
+                                var idsintree = inventory.GetIdsFromTree();                                
+                                foreach (var itemintree in idsintree)
+                                {
+                                    Logging.Log(module, "ID: " + itemintree, Logging.red);
+                                }
+                                Logging.Log(module, "Was looking for: " + lootContainerID, Logging.red);
+                                
                                 return false;
                             }
                             else
@@ -2514,7 +2521,7 @@ namespace Questor.Modules.Caching
                         }
                     }
                     else return false;
-                }
+                }                
                 if (!LootHangar.Window.IsReady) return false;
                 Logging.Log(module, "Loot Container named: [ " + LootHangar.Window.Name +
                             " ] was found and its contents are being stacked", Logging.white);
