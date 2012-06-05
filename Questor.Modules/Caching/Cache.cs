@@ -2494,7 +2494,8 @@ namespace Questor.Modules.Caching
                     if (firstlootcontainer != null)
                     {
                         long lootContainerID = firstlootcontainer.ItemId;
-                        var inventory = Cache.Instance.Windows.OfType<DirectContainerWindow>().FirstOrDefault(w => w.IsPrimary() && w.Name == "('Inventory', None)");
+                        var inventories = Cache.Instance.Windows.OfType<DirectContainerWindow>().Where(w => w.IsPrimary() && w.Name == "('Inventory', None)");
+                        var inventory = inventories.FirstOrDefault(i => i.GetIdsFromTree().Count > 1);
                         //more than 1 primary window ??
                         if (inventory == null)
                         {
