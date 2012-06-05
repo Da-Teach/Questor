@@ -2488,7 +2488,33 @@ namespace Questor.Modules.Caching
             {
                 if (!Cache.Instance.OpenLootContainer("Cache.StackLootContainer")) return false;
                 Cache.Instance.NextOpenLootContainerAction = DateTime.Now.AddSeconds(Cache.Instance.RandomNumber(3, 5));
-                if (LootHangar.Window == null) return false;
+                if (LootHangar.Window == null)
+                {
+                    var firstlootcontainer = Cache.Instance.ItemHangar.Items.FirstOrDefault(i => i.GivenName != null && i.IsSingleton && i.GroupId == (int)Group.FreightContainer && i.GivenName.ToLower() == Settings.Instance.LootContainer.ToLower());
+                    if (firstlootcontainer != null)
+                    {
+                        long lootContainerID = firstlootcontainer.ItemId;
+                        var inventory = Cache.Instance.Windows.OfType<DirectContainerWindow>().FirstOrDefault(w => w.Name.StartsWith("('Inventory'"));
+                        if (inventory == null)
+                        {
+                            Cache.Instance.DirectEve.OpenInventory();
+                        }
+                        else
+                        {
+                            if (!inventory.GetIdsFromTree().Contains(lootContainerID))
+                            {
+                                Logging.Log(module, "Error: can't find inventory container item in the tree", Logging.red);
+                                return false;
+                            }
+                            else
+                            {
+                                inventory.SelectTreeEntryByID(lootContainerID);
+                                return false;
+                            }
+                        }
+                    }
+                    else return false;
+                }
                 if (!LootHangar.Window.IsReady) return false;
                 Logging.Log(module, "Loot Container named: [ " + LootHangar.Window.Name +
                             " ] was found and its contents are being stacked", Logging.white);
