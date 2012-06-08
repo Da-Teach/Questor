@@ -2492,8 +2492,9 @@ namespace Questor.Modules.Caching
             if (inventory == null)
             {
                 Cache.Instance.DirectEve.OpenInventory();
+                return false;
             }
-            else
+            else //inventory is not null
             {
                 if (!inventory.GetIdsFromTree(false).Contains(ID))
                 {
@@ -2506,12 +2507,15 @@ namespace Questor.Modules.Caching
                     Logging.Log(module, "Was looking for: " + ID, Logging.red);                                
                     return false;
                 }
-                else
+                else //inventory contains the id we want to select
                 {
-                    inventory.SelectTreeEntryByID(ID);
-                    return false;
+                    if(inventory.currInvIdItem != ID)
+                    {
+                        inventory.SelectTreeEntryByID(ID); 
+                        return false;
+                    }
                 }             
-            }
+            } //it is currently selected, if it's also ready, return true
             if (!inventory.IsReady)
                 return false;
             return true;
