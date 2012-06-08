@@ -2225,19 +2225,10 @@ namespace Questor.Modules.Caching
                 {
                     Cache.Instance.AmmoHangar = Cache.Instance.DirectEve.GetCorporationHangar(Settings.Instance.AmmoHangar);
 
-                    //method 1: look for the primary inventory window, or open it, then expand the tree.
-                    bool found = false;
-                    DirectContainerWindow inventory=null;
-                    foreach (var window in Cache.Instance.Windows.OfType<DirectContainerWindow>())
-                    {
-                        if (window.IsPrimary())
-                        {
-                            found = true;
-                            inventory = window;
-                            break;
-                        }
-                    }
-                    if (!found)
+                    //method 1: look for the primary inventory window, or open it, then expand the tree.                    
+                    DirectContainerWindow inventory = Cache.Instance.Windows.OfType<DirectContainerWindow>().FirstOrDefault(w => w.IsPrimary());
+                    
+                    if (inventory == null)
                     {
                         Cache.Instance.DirectEve.OpenInventory();
                         return false;
@@ -2326,13 +2317,20 @@ namespace Questor.Modules.Caching
                     Cache.Instance.LootHangar =
                         Cache.Instance.DirectEve.GetCorporationHangar(Settings.Instance.LootHangar);
 
+                    DirectContainerWindow inventory = Cache.Instance.Windows.OfType<DirectContainerWindow>().FirstOrDefault(w => w.IsPrimary());
+                    if (inventory == null)
+                    {
+                        Cache.Instance.DirectEve.OpenInventory();
+                        return false;
+                    }
+
                     // Is the corp loot Hangar open?
                     if (Cache.Instance.LootHangar != null)
                     {
                         if (Cache.Instance.LootHangar.Window == null)
                         {
                             // No, command it to open
-                            //Cache.Instance.DirectEve.OpenCorporationHangar();
+                            //Cache.Instance.DirectEve.OpenCorporationHangar();                           
                             Cache.Instance.NextOpenHangarAction =
                                 DateTime.Now.AddSeconds(2 + Cache.Instance.RandomNumber(1, 3));
                             Logging.Log(module,"Opening Corporate Loot Hangar: waiting [" +
@@ -2340,7 +2338,14 @@ namespace Questor.Modules.Caching
                                             Cache.Instance.NextOpenHangarAction.Subtract(DateTime.Now).
                                                 TotalSeconds,
                                             0) + "sec]", Logging.white);
-                            return false;
+                            if (!inventory.SelectTreeEntry("StationCorpHangar", Cache.Instance.DirectEve.GetCorpHangarId(Settings.Instance.LootHangar) - 1))
+                            {
+                                if (!inventory.ExpandCorpHangarView())
+                                {
+                                    Logging.Log(module, "Failed to expand corp hangar tree", Logging.red);
+                                    return false;
+                                }
+                            }                    
                         }
                         if (!Cache.Instance.LootHangar.Window.IsReady)
                         {
@@ -2381,7 +2386,7 @@ namespace Questor.Modules.Caching
                 return false;
             if (Cache.Instance.InStation)
             {
-                if (!Cache.Instance.OpenCorpLootHangar("Cache.StackCorpLoothangar")) return false;
+                if (!Cache.Instance.OpenAmmoHangar("Cache.StackCorpAmmoHangar")) return false;
                 Cache.Instance.NextOpenHangarAction = DateTime.Now.AddSeconds(Cache.Instance.RandomNumber(3, 5));
                 Logging.Log(module, "Stacking Corporate Loot Hangar: waiting [" +
                                         Math.Round(Cache.Instance.NextOpenHangarAction.Subtract(DateTime.Now).TotalSeconds, 0) + "sec]", Logging.white);
@@ -2479,6 +2484,39 @@ namespace Questor.Modules.Caching
             return false;
         }
 
+        public bool OpenAndSelectInvItem(string module, long ID)
+        {
+            var inventory = Cache.Instance.Windows.OfType<DirectContainerWindow>().FirstOrDefault(w => w.IsPrimary());
+            if(ID < 0) return false;
+            
+            if (inventory == null)
+            {
+                Cache.Instance.DirectEve.OpenInventory();
+            }
+            else
+            {
+                if (!inventory.GetIdsFromTree(false).Contains(ID))
+                {
+                    Logging.Log(module, "Error: can't find inventory item in the tree. Found the following ids:", Logging.red);
+                    var idsintree = inventory.GetIdsFromTree(false);                                
+                    foreach (var itemintree in idsintree)
+                    {
+                        Logging.Log(module, "ID: " + itemintree, Logging.red);
+                    }
+                    Logging.Log(module, "Was looking for: " + ID, Logging.red);                                
+                    return false;
+                }
+                else
+                {
+                    inventory.SelectTreeEntryByID(ID);
+                    return false;
+                }             
+            }
+            if (!inventory.IsReady)
+                return false;
+            return true;
+        }
+
         public bool StackLootContainer(String module)
         {
             if (DateTime.Now < Cache.Instance.NextOpenLootContainerAction)
@@ -2494,34 +2532,8 @@ namespace Questor.Modules.Caching
                     if (firstlootcontainer != null)
                     {
                         long lootContainerID = firstlootcontainer.ItemId;
-                        //var inventories = Cache.Instance.Windows.OfType<DirectContainerWindow>().Where(w => w.IsPrimary() && w.Name == "('Inventory', None)");
-                        //var inventory = inventories.FirstOrDefault(i => i.GetIdsFromTree(false).Count > 1);
-                        var inventory = Cache.Instance.Windows.OfType<DirectContainerWindow>().FirstOrDefault(w => w.IsPrimary());
-                        //more than 1 primary window ??
-                        if (inventory == null)
-                        {
-                            Cache.Instance.DirectEve.OpenInventory();
-                        }
-                        else
-                        {
-                            if (!inventory.GetIdsFromTree(false).Contains(lootContainerID))
-                            {
-                                Logging.Log(module, "Error: can't find inventory container item in the tree. Found the following ids:", Logging.red);
-                                var idsintree = inventory.GetIdsFromTree(false);                                
-                                foreach (var itemintree in idsintree)
-                                {
-                                    Logging.Log(module, "ID: " + itemintree, Logging.red);
-                                }
-                                Logging.Log(module, "Was looking for: " + lootContainerID, Logging.red);
-                                
-                                return false;
-                            }
-                            else
-                            {
-                                inventory.SelectTreeEntryByID(lootContainerID);
-                                return false;
-                            }
-                        }
+                        if(!OpenAndSelectInvItem(module, lootContainerID))
+                            return false;
                     }
                     else return false;
                 }

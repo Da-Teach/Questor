@@ -265,13 +265,19 @@ namespace Questor.Modules.Combat
             correctAmmo1 = correctAmmo1.Where(a => cargo.Items.Any(i => i.TypeId == a.TypeId)).ToList();
 
             if (!correctAmmo1.Any())
+            {
+                Logging.Log("Combat", "Cannot find any correct ammo", Logging.orange);
                 return;
+            }
 
             Ammo ammo = correctAmmo1.Where(a => a.Range > 1).OrderBy(a => a.Range).FirstOrDefault();
             DirectItem charge = cargo.Items.FirstOrDefault(i => ammo != null && i.TypeId == ammo.TypeId);
 
             if (ammo == null)
+            {
+                Logging.Log("Combat", "Cannot find ammo definition", Logging.orange);
                 return;
+            }
 
             Cache.Instance.TimeSpentReloading_seconds = Cache.Instance.TimeSpentReloading_seconds + (int)Time.ReloadWeaponDelayBeforeUsable_seconds;
 

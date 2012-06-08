@@ -11,7 +11,7 @@ namespace Questor.Modules.Lookup
 {
     public enum Time
     {
-        LootingDelay_milliseconds = 13500,                       // Delay between loot attempts
+        LootingDelay_milliseconds = 3500,                       // Delay between loot attempts
         WarpScrambledNoDelay_seconds = 10,                       // Time after you are no longer warp scrambled to consider it IMPORTANT That you warp soon
         RemoveBookmarkDelay_seconds = 2,                         // Delay between each removal of a bookmark
         QuestorPulse_milliseconds = 1000,                        // Used to delay the next pulse, units: milliseconds. Default is 1500
@@ -38,8 +38,8 @@ namespace Questor.Modules.Lookup
         QuestorBeforeLoginPulseDelay_seconds = 40,               // Pulse Delay for Program.cs: Used to control the speed at which the program will retry logging in and retry checking the schedule
         SwitchShipsDelay_seconds = 10,                           // Switch Ships Delay before retrying, units: seconds. Default is 10
         SwitchShipsCheck_seconds = 5,                            // Switch Ships Check to see if ship is correct, units: seconds. Default is 7
-        FittingWindowLoadFittingDelay_seconds = 7,               // We can ask the fitting to be loaded using the fitting window, but we cant know it is done, thus this delay, units: seconds. Default is 10
-        WaitforItemstoMove_seconds = 5,                          // Arm state: wait for items to move, units: seconds. Default is 5
+        FittingWindowLoadFittingDelay_seconds = 3,               // We can ask the fitting to be loaded using the fitting window, but we cant know it is done, thus this delay, units: seconds. Default is 10
+        WaitforItemstoMove_seconds = 2,                          // Arm state: wait for items to move, units: seconds. Default is 5
         CheckLocalDelay_seconds = 5,                             // Local Check for bad standings pilots, delay between checks, units: seconds. Default is 5
         ReloadWeaponDelayBeforeUsable_seconds = 22,              // Delay after reloading before that module is usable again (non-energy weapons), units: seconds. Default is 22
         BookmarkPocketRetryDelay_seconds = 20,                   // When checking to see if a bookmark needs to be made in a pocket for after mission salvaging this is the delay between retries, units: seconds. Default is 20
