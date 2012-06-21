@@ -44,7 +44,7 @@ namespace TreeSharp
             ContextChanger = contextChange;
         }
 
-        protected override IEnumerable<RunStatus> Execute(object context)
+        public override IEnumerable<RunStatus> Execute(object context)
         {
             if (ContextChanger != null)
             {
