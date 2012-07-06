@@ -34,7 +34,7 @@ namespace TreeSharp
     /// </remarks>
     public class Wait : Decorator
     {
-        private DateTime _end;
+        protected DateTime _end;
 
         /// <summary>
         ///   Creates a new Wait decorator using the specified timeout, run delegate, and child composite.
