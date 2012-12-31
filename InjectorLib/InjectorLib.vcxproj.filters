@@ -1,0 +1,176 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Unmanaged">
+      <UniqueIdentifier>{91108bf2-f1c9-414b-9a8a-31f09186fb2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AsmJit">
+      <UniqueIdentifier>{a6ace1a6-978b-4f7d-a936-385687c14f7f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="InjectorLib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Injection.h">
+      <Filter>Unmanaged</Filter>
+    </ClInclude>
+    <ClInclude Include="NativeInjection.h">
+      <Filter>Unmanaged</Filter>
+    </ClInclude>
+    <ClInclude Include="ManagedInjection.h">
+      <Filter>Unmanaged</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\ApiBegin.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\ApiEnd.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\AsmJit.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\Assembler.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\AssemblerX86X64.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\Build.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\CodeGenerator.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\Compiler.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\CompilerX86X64.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\Config.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\CpuInfo.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\Defs.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\DefsX86X64.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\Logger.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\MemoryManager.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\Operand.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\OperandX86X64.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\Platform.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\Util.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\Util_p.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="EnsureCleanup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="InjectorLib.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AssemblyInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Injection.cpp">
+      <Filter>Unmanaged</Filter>
+    </ClCompile>
+    <ClCompile Include="NativeInjection.cpp">
+      <Filter>Unmanaged</Filter>
+    </ClCompile>
+    <ClCompile Include="ManagedInjection.cpp">
+      <Filter>Unmanaged</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\AssemblerX86X64.cpp">
+      <Filter>AsmJit</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\CodeGenerator.cpp">
+      <Filter>AsmJit</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\Compiler.cpp">
+      <Filter>AsmJit</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\CompilerX86X64.cpp">
+      <Filter>AsmJit</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\CpuInfo.cpp">
+      <Filter>AsmJit</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\Defs.cpp">
+      <Filter>AsmJit</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\DefsX86X64.cpp">
+      <Filter>AsmJit</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\Logger.cpp">
+      <Filter>AsmJit</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\MemoryManager.cpp">
+      <Filter>AsmJit</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\Operand.cpp">
+      <Filter>AsmJit</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\OperandX86X64.cpp">
+      <Filter>AsmJit</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\Platform.cpp">
+      <Filter>AsmJit</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\Util.cpp">
+      <Filter>AsmJit</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+    <None Include="app.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="app.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

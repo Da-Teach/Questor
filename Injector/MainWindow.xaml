@@ -1,0 +1,39 @@
+﻿<Window x:Class="Injector.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="400" Width="500" ResizeMode="NoResize">
+    <Grid Width="485" HorizontalAlignment="Center" VerticalAlignment="Top">
+        <GroupBox Header="DLL to inject" Height="60" HorizontalAlignment="Center" Margin="0,10,0,0" Name="groupBox1" VerticalAlignment="Top" Width="463">
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBox Height="20" HorizontalAlignment="Left" Margin="6,0,0,0" Name="textBoxDLL" VerticalAlignment="Top" Width="366" />
+                <Button Content="Browse" Height="20" HorizontalAlignment="Left" Margin="378,0,0,0" Name="btnBrowseDLL" VerticalAlignment="Top" Width="67" Click="btnBrowseDLL_Click" />
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="Exported function/Class method to run (leave empty for none)" Height="60" HorizontalAlignment="Center" Margin="0,75,0,0" Name="groupBox2" VerticalAlignment="Top" Width="463">
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBox Height="20" HorizontalAlignment="Left" Margin="6,0,0,0" Name="textBoxFunction" VerticalAlignment="Top" Width="366" />
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="Function Arguments" Height="60" HorizontalAlignment="Center" Margin="0,140,0,0" Name="groupBox3" VerticalAlignment="Top" Width="463">
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBox Height="20" HorizontalAlignment="Left" Margin="6,0,0,0" Name="textBoxArguments" VerticalAlignment="Top" Width="366" />
+            </Grid>
+        </GroupBox>
+        <TabControl Height="110" HorizontalAlignment="Center" Margin="0,215,0,0" Name="tabControl1" VerticalAlignment="Top" Width="463">
+            <TabItem Header="Running Processes" Name="tabItemPid">
+                <Grid>
+                    <ComboBox Height="20" HorizontalAlignment="Center" Margin="10,10,0,0" Name="comboBoxProcesses" VerticalAlignment="Top" Width="366" DropDownOpened="comboBoxProcesses_DropDownOpened" />
+                    <Button Content="Inject" Height="20" HorizontalAlignment="Center" Margin="0,50,0,0" Name="btnInject" VerticalAlignment="Top" Width="75" Click="btnInject_Click" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Launch Process" Name="tabItemLaunch">
+                <Grid>
+                    <TextBox Height="20" HorizontalAlignment="Left" Margin="10,10,0,0" Name="textBoxProcess" VerticalAlignment="Top" Width="362" />
+                    <Button Content="Browse" Height="20" HorizontalAlignment="Left" Margin="378,10,0,0" Name="btnBrowseProcess" VerticalAlignment="Top" Width="67" Click="btnBrowseProcess_Click" />
+                    <Button Content="Launch" Height="20" HorizontalAlignment="Center" Margin="0,50,0,0" Name="btnLaunch" VerticalAlignment="Top" Width="75" Click="btnLaunch_Click" />
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <TextBox Text="" Height="25" HorizontalAlignment="Center" Margin="0,335,0,0" Name="txtStatus" VerticalAlignment="Top" Width="463" FontWeight="Bold" IsReadOnly="True" IsEnabled="True" TextAlignment="Center" />
+    </Grid>
+</Window>
