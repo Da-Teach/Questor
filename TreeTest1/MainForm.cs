@@ -49,7 +49,7 @@
             }
             cbBehaviors.SelectedIndex = 0;
 
-            _directEve = new DirectEve();
+            _directEve = new DirectEve(new StandaloneFramework());
             Cache.Instance.DirectEve = _directEve;
             _directEve.OnFrame += OnFrame;
         }
