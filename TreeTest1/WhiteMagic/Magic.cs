@@ -80,7 +80,14 @@ namespace WhiteMagic
         /// </summary>
         public Magic()
         {
-            Process.EnterDebugMode();
+            try
+            {
+                Process.EnterDebugMode();
+            }
+            catch (Exception ex)
+            {
+                // EnterDebugMode will throw an exception if we are already in debug mode.  Ignore this...
+            }
             _win32 = new Win32(IntPtr.Zero);
             _detours = new DetourManager(_win32);
             _patches = new PatchManager(_win32);

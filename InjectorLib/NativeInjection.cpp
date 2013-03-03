@@ -6,15 +6,70 @@ using Hades::Windows::EnsureFreeLibrary;
 using Hades::Windows::EnsureVirtualFree;
 
 
+BOOL SetPrivilege( HANDLE hToken, LPCTSTR lpszPrivilege, BOOL bEnablePrivilege ) 
+{
+    TOKEN_PRIVILEGES tp;
+    LUID luid;
+
+    if ( !LookupPrivilegeValue( NULL, lpszPrivilege, &luid ) )
+    {
+        return FALSE; 
+    }
+
+    tp.PrivilegeCount = 1;
+    tp.Privileges[0].Luid = luid;
+    if (bEnablePrivilege)
+	{
+        tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+	}
+    else
+	{
+        tp.Privileges[0].Attributes = 0;
+	}
+
+    if( !AdjustTokenPrivileges( hToken, FALSE, &tp, sizeof(TOKEN_PRIVILEGES), (PTOKEN_PRIVILEGES) NULL, (PDWORD) NULL) )
+    { 
+          return FALSE; 
+    } 
+
+    if( GetLastError() == ERROR_NOT_ALL_ASSIGNED )
+    {
+          return FALSE;
+    } 
+
+    return TRUE;
+}
+
+
 bool InjectAndRunNative(HANDLE process, std::wstring& nativeDllPath,
 	std::wstring& nativeFunction, std::wstring& nativeArgs, DWORD& returnCode)
 {
+    LPVOID lpMsgBuf;
+
 	if(!process)
 	{
 		returnCode = 1;
 		return false;
 	}
-	
+
+	HANDLE hToken;
+	if( OpenProcessToken( GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken ) == false )
+	{
+	    FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+			NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR) &lpMsgBuf, 0, NULL );
+		MessageBox(NULL,(LPCWSTR)lpMsgBuf,L"OpenProcessToken() error",MB_OK);
+	}
+	else
+	{
+		if( SetPrivilege( hToken, SE_DEBUG_NAME, TRUE ) == false )
+		{
+			FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+				NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR) &lpMsgBuf, 0, NULL );
+			MessageBox(NULL,(LPCWSTR)lpMsgBuf,L"SetPrivilege() error",MB_OK);
+		}
+		CloseHandle(hToken);
+	}
+
 	EnsureFreeLibrary Dll = LoadLibrary(nativeDllPath.c_str());
 	if(!Dll)
 	{
@@ -48,6 +103,9 @@ bool InjectAndRunNative(HANDLE process, std::wstring& nativeDllPath,
 	EnsureCloseHandle Thread = CreateRemoteThread(process, NULL, NULL, (LPTHREAD_START_ROUTINE)address_LoadLibraryW, remoteBuffer, NULL, NULL);
 	if(!Thread)
 	{
+	    FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+			NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR) &lpMsgBuf, 0, NULL );
+		MessageBox(NULL,(LPCWSTR)lpMsgBuf,L"CreateRemoteThread() error",MB_OK);
 		returnCode = 6;
 		return false;
 	}

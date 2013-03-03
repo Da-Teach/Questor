@@ -2,6 +2,7 @@
 {
     using System;
     using D3DDetour;
+    using System.Diagnostics;
 
     public class StandaloneFramework : IFramework
     {
@@ -17,6 +18,7 @@
 
         public void Log(string msg)
         {
+            Debugger.Log(0, "", msg);
         }
 
         #region IDisposable Members

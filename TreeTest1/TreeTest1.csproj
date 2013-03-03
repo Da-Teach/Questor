@@ -12,9 +12,11 @@
     <AssemblyName>TreeTest1</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <OutputPath>$(SolutionDir)bin\$(Configuration)\</OutputPath>
-    <CodeAnalysisLogFile>$(SolutionDir)bin\$(Configuration)\DirectEveTesterV2.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <OutputPath Condition="'$(Platform)'!='AnyCPU'">$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutputPath>
+    <CodeAnalysisLogFile>$(SolutionDir)bin\$(Configuration)\TreeTest1.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisRuleSetDirectories>$(CodeAnalysisStaticAnalysisDirectory)Rule Sets</CodeAnalysisRuleSetDirectories>
     <CodeAnalysisRuleDirectories>$(CodeAnalysisPath)Rules</CodeAnalysisRuleDirectories>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -27,6 +29,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <UseVSHostingProcess>true</UseVSHostingProcess>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -37,10 +40,10 @@
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Lavish.InnerSpace, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9029a3ab4cbe108d, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -53,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cache.cs" />
+    <None Include="app.config" />
     <None Include="D3DDetour\D3D10.cs" />
     <None Include="D3DDetour\D3D11.cs" />
     <Compile Include="D3DDetour\D3D9.cs" />
@@ -101,16 +105,15 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\DirectEve\DirectEve\DirectEve.csproj">
-      <Project>{E8585D05-804D-40EA-AE64-5DD4F3EC6E43}</Project>
+    <ProjectReference Include="..\..\directeve\DirectEve\DirectEve.csproj">
+      <Project>{e8585d05-804d-40ea-ae64-5dd4f3ec6e43}</Project>
       <Name>DirectEve</Name>
     </ProjectReference>
     <ProjectReference Include="..\TreeSharp\TreeSharp\TreeSharp.csproj">
-      <Project>{8BFDD80E-9E64-4386-B676-ED3CFDF1B095}</Project>
+      <Project>{8bfdd80e-9e64-4386-b676-ed3cfdf1b095}</Project>
       <Name>TreeSharp</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="CopyToInnerSpace" BeforeTargets="AfterBuild">
     <PropertyGroup>

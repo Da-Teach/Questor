@@ -4,7 +4,6 @@
     using System.Reflection;
     using System.Linq;
     using System.Windows.Forms;
-    using InnerSpaceAPI;
     using DirectEve;
     using TreeSharp;
 
@@ -56,7 +55,7 @@
 
         private void Log(string format, params object[] parms)
         {
-            InnerSpace.Echo(string.Format("{0:HH:mm:ss} {1}", DateTime.Now, string.Format(format, parms)));
+            System.Diagnostics.Debugger.Log(0,"",string.Format("{0:HH:mm:ss} {1}", DateTime.Now, string.Format(format, parms)));
         }
 
         private void OnFrame(object sender, EventArgs e)
