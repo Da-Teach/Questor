@@ -6,10 +6,13 @@
 
     public class StandaloneFramework : IFramework
     {
+        private EventHandler<EventArgs> _frameHook = null;
+
         public void RegisterFrameHook(EventHandler<EventArgs> frameHook)
         {
             Pulse.Initialize(D3DVersion.Direct3D9);
-            D3DHook.OnFrame += frameHook;
+            _frameHook = frameHook;
+            D3DHook.OnFrame += _frameHook;
         }
 
         public void RegisterLogger(EventHandler<EventArgs> logger)
@@ -24,6 +27,8 @@
         #region IDisposable Members
         public void Dispose()
         {
+            D3DHook.OnFrame -= _frameHook;
+            Pulse.Shutdown();
         }
         #endregion
     }

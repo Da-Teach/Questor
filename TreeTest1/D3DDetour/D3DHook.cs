@@ -13,6 +13,7 @@ namespace D3DDetour
         public static event OnFrameDelegate OnFrameOnce;
 
         public abstract void Initialize();
+        public abstract void Remove();
 
         protected void RaiseEvent()
         {

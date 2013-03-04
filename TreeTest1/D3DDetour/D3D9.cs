@@ -74,6 +74,11 @@ namespace D3DDetour
             return (int)_endSceneHook.CallOriginal(device);
         }
 
+        public override void Remove()
+        {
+            _endSceneHook.Remove();
+        }
+
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate int Direct3D9Reset(IntPtr device, IntPtr presentationParameters);
 

@@ -33,6 +33,9 @@
         private Composite _behavior = null;
         private string _activeBehavior;
 
+        // Behavior "state" variables
+        private DirectEntity _warpToMe = null;
+
         public MainForm()
         {
             InitializeComponent();
@@ -75,7 +78,34 @@
 
                 if (_behavior != null)
                 {
-                    _behavior.Tick(this);
+                    bool hasValue;
+                    try
+                    {
+                        if (Cache.Instance.DirectEve.Session.IsReady == false || Cache.Instance.InWarp == false)
+                        {
+                            _behavior.Tick(this);
+                            RunStatus? lastStatus = _behavior.LastStatus;
+                            if( lastStatus.GetValueOrDefault() != RunStatus.Running )
+                            {
+                                hasValue = true;
+                            }
+                            else
+                            {
+                                hasValue = !lastStatus.HasValue;
+                            }
+                            if (hasValue)
+                            {
+                                _behavior.Stop(this);
+                                _behavior.Start(this);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log("Exception: {0}", ex);
+                        _behavior.Stop(null);
+                        _behavior.Start(null);
+                    }
                 }
             }
             catch (Exception ex)
@@ -128,8 +158,57 @@
                 ));
         }
 
+        [Test("Simple Warp")]
+        private Composite CreateBehavior_SimpleWarp()
+        {
+            return (
+                new Sequence(
+                    // Session must be ready (i.e. we are logged in)...
+                    new Decorator(ret => Cache.Instance.DirectEve.Session.IsReady, new ActionAlwaysSucceed()),
+
+                    // We must be in space...
+                    new Decorator(ret => Cache.Instance.InSpace, new ActionAlwaysSucceed()),
+
+                    // We must not be in warp...
+                    new Decorator(ret => Cache.Instance.InWarp == false, new ActionAlwaysSucceed()),
+
+                    // Find a celestial to warp to
+                    new TreeSharp.Action( delegate {
+                        _warpToMe = null;
+                        var entities = Cache.Instance.DirectEve.Entities.Where( e => e.GroupId == 7 );      // 7 is planets
+                        if( entities.Count() > 0 )
+                        {
+                            _warpToMe = entities.OrderByDescending(e => e.Distance).First();
+                        }
+                    } ),
+
+                    // do we have an entity?
+                    new Decorator(ret => _warpToMe != null, new ActionAlwaysSucceed()),
+
+                    // warp to it if we can
+                    new Decorator(ret => _warpToMe.Distance > 152000, new TreeSharp.Action(delegate
+                    {
+                        _warpToMe.WarpTo();
+                    })),
+
+                    // Wait for warp to start...  Use 30 seconds for big slow ships
+                    new Wait(30, ret => Cache.Instance.InWarp == true, new ActionAlwaysSucceed()),
+
+                    // Wait for warp to complete...
+                    new WaitContinue(30, ret => Cache.Instance.InWarp == false, new ActionAlwaysSucceed())
+                )
+            );
+        }
+        
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            // If I single step through this no exceptions occur.  Otherwise a null pointer gets dereferenced somewhere.
+            _activeBehavior = null;
+            if (_behavior != null)
+            {
+                _behavior.Stop(this);
+            }
+            _behavior = null;
             _directEve.Dispose();
             _directEve = null;
         }

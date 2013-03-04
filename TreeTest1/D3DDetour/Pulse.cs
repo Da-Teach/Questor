@@ -33,5 +33,10 @@ namespace D3DDetour
 
             Hook.Initialize();
         }
+
+        public static void Shutdown()
+        {
+            Hook.Remove();
+        }
     }
 }
