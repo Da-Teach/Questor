@@ -20,23 +20,32 @@ namespace Onyx.DomainManager
         [STAThread]
         public static int Entry(string args)
         {
-            bool firstLoaded = false;
-            while (true)
-            {
-                if (!firstLoaded)
-                {
-                    firstLoaded = true;
-                    new OnyxDomain(args);
-                }
+            //bool firstLoaded = false;
+            //while (true)
+            //{
+            //    if (!firstLoaded)
+            //    {
+            //        firstLoaded = true;
+            //        new OnyxDomain(args);
+            //    }
 
-                if ((GetAsyncKeyState(Keys.F11) & 1) == 1)
-                {
-                    new OnyxDomain(args);
-                }
+            //    if ((GetAsyncKeyState(Keys.F11) & 1) == 1)
+            //    {
+            //        new OnyxDomain(args);
+            //    }
 
-                Thread.Sleep(10);
-            }
+            //    Thread.Sleep(10);
+            //}
+            ThreadPool.QueueUserWorkItem(new WaitCallback(ThreadProc),
+                Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), args));
+            Thread.Sleep(5000);
+
             return 0;
+        }
+
+        static void ThreadProc(Object stateInfo)
+        {
+            new OnyxDomain((string)stateInfo);
         }
     }
 
