@@ -64,7 +64,7 @@ namespace Questor.Modules
             {
                 if (TypeId == 41) return true;      // Garbage
                 if (TypeId == 42) return true;      // Spiced Wine
-                if (TypeId == 42) return true;      // Antibiotics
+                if (TypeId == 43) return true;      // Antibiotics
                 if (TypeId == 44) return true;      // Enriched Uranium
                 if (TypeId == 45) return true;      // Frozen Plant Seeds
                 if (TypeId == 3673) return true;    // Wheat
